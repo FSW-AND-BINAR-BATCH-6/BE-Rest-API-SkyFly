@@ -16,8 +16,8 @@ const upload = multer({ storage: storage });
 
 router.get("/", getAllAirplane);
 router.get("/:id", getAirplaneById);
-router.post("/create", upload.single("image"), createAirplane);
-router.put("/update/:id", upload.single("image"), updateAirplane);
-router.delete("/delete/:id", deleteAirplane);
+router.post("/", upload.single("image"), createAirplane);
+router.put("/:id", upload.single("image"), updateAirplane);
+router.delete("/:id", deleteAirplane);
 
 module.exports = router;

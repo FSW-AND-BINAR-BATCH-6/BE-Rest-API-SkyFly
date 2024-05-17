@@ -30,6 +30,12 @@ enum StatusTicket {
   FAILED
 }
 
+enum StatusFlightSeat {
+  AVAILABLE
+  BOOKED
+  OCCUPIED
+}
+
 model User {
   id         String   @id @default(cuid())
   name       String
