@@ -1,0 +1,363 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "team01-api-Skyfly Express-rest API Swagger Documentation",
+      "description": "Development For Final Project Binar FSW1 Team1 Fullstack Dashboard for a library designed to manage library data and a library website utilizing, Express.js as the backend and Postgress as the Database Management System (DBMS). Github: [TEAM1-API-SKYFLY](https://github.com/orgs/FSW-AND-BINAR-BATCH-6/repositories)",
+      "version": "1.0.0",
+      "license": {
+        "name": "ISC",
+        "url": "https://spdx.org/licenses/ISC.html"
+      },
+      "contact": {
+        "name": "team1-FSW1",
+        "url": "https://github.com/orgs/FSW-AND-BINAR-BATCH-6/repositories"
+      }
+    },
+    "tags": [
+      {
+        "name": "Auths",
+        "description": "this is the API for AUTHS resources"
+      },
+      {
+        "name": "Airplanes",
+        "description": "this is the API for AIRPLANES resources"
+      },
+      {
+        "name": "Flights",
+        "description": "this is the API for FLIGHTS resources"
+      },
+      {
+        "name": "Flight Seats",
+        "description": "this is the API for FLIGHT SEATS resources"
+      },
+      {
+        "name": "Tickets",
+        "description": "this is the API for TICKETS resources"
+      },
+      {
+        "name": "Users",
+        "description": "this is the API for USERS resources"
+      }
+    ],
+    "servers": [
+      {
+        "url": "http://localhost:3000/api/v1"
+      }
+    ],
+    "paths": {
+      "/airplane": {
+        "get": {
+          "tags": ["Airplanes"],
+          "security": [
+            {
+              "bearerToken": []
+            }
+          ],
+          "summary": "Return result HIT API get all airplanes data",
+          "description": "This is an API for getting all airplanes data",
+          "responses": {
+            "200": {
+              "description": "Success getting all airplanes data",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "all airplane data retrieved successfully"
+                      },
+                      "data": {
+                        "type": "object",
+                        "example": {
+                            "airplanes": [
+                                {
+                                    "id": "clw9abc650000enqweyz697md",
+                                    "code": "1",
+                                    "name": "pappapap",
+                                    "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/airplanes/1715866000111.png"
+                                },
+                                {
+                                    "id": "clwaeh22b0000uzbjstxii4b7",
+                                    "code": "2",
+                                    "name": "JawAir",
+                                    "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/airplanes/1715933451194.png"
+                                },
+                                {
+                                    "id": "clwaehve10001uzbjgbq8hg44",
+                                    "code": "3",
+                                    "name": "SundAir",
+                                    "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/airplanes/1715933489881.png"
+                                }
+                            ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/airplane/{id}": {
+        "get": {
+          "tags": ["Airplanes"],
+          "security": [
+            {
+              "bearerToken": []
+            }
+          ],
+          "summary": "Return result HIT API get airplane by id",
+          "description": "This is an API for getting airplane data based on Id",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "example": "clwaeh22b0000uzbjstxii4b7"
+              },
+              "description": "Airplane ID"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success getting airplane data based on Id",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "message" : {
+                        "type": "string",
+                        "example": "airplane data retrieved successfully"
+                      },
+                      "data": {
+                        "type": "object",
+                        "example": {
+                            "airplane": {
+                                "id": "clwaeh22b0000uzbjstxii4b7",
+                                "code": "2",
+                                "name": "JawAir",
+                                "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/airplanes/1715933451194.png"
+                            }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/airplane/create": {
+        "patch": {
+          "tags": ["Airplanes"],
+          "security": [
+            {
+              "bearerToken": []
+            }
+          ],
+          "summary": "Return result HIT API create airplane",
+          "description": "This is an API for creating airplane data",
+          "requestBody": {
+            "description": "This is a request body for create new airplane",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 4
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "BatakAir"
+                    },
+                    "image": {
+                      "type": "http",
+                      "example": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/airplanes/1715935002439.png"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success create new airplane data",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "data": {
+                        "type": "object",
+                        "example": {
+                            "airplanes": {
+                                "id": "clwafg1pu000111ghakckyuuf",
+                                "code": "4",
+                                "name": "BatakAir",
+                                "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/airplanes/1715935084484.png"
+                            }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/airplane/update/{id}": {
+        "patch": {
+          "tags": ["Airplanes"],
+          "security": [
+            {
+              "bearerToken": []
+            }
+          ],
+          "summary": "Return result HIT API update airplane by Id",
+          "description": "This is an API for updatting airplane data based on Id",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "example": "clwafg1pu000111ghakckyuuf"
+              },
+              "description": "Airplane ID"
+            }
+          ],
+          "requestBody": {
+            "description": "This is a request body for update airplane",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 5
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "AirBatak"
+                    },
+                    "image": {
+                      "type": "http",
+                      "example": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/airplanes/1715935625171.png"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success editting transaction data based on Id",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "data": {
+                        "type": "object",
+                        "example": {
+                            "airplane": {
+                                "id": "clwafg1pu000111ghakckyuuf",
+                                "code": "5",
+                                "name": "AirBatak",
+                                "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/airplanes/1715935625171.png"
+                            }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/airplane/delete/{id}": {
+        "delete": {
+          "tags": ["Airplanes"],
+          "security": [
+            {
+              "bearerToken": []
+            }
+          ],
+          "summary": "Return result HIT API delete airplane by Id",
+          "description": "This is an API for deletting airplane data based on Id",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "example": "clwafg1pu000111ghakckyuuf"
+              },
+              "description": "Airplane ID"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success deletting airplane data based on Id",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "airplane deleted successfully"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "securitySchemes": {
+        "bearerToken": {
+          "type": "http",
+          "scheme": "bearer",
+          "bearerFormat": "JWT"
+        }
+      }
+    }
+  }
+  
