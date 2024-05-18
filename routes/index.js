@@ -9,9 +9,11 @@ router.get('/api/v1', (req, res, next) => {
 		message: 'Welcome to API skyfly',
 	});
 });
+const auth = require("./auth")
 
 
 router.use('/api/v1/airplane', airplane);
 router.use("/api/v1/flight", flight);
+router.use("/api/v1/auth", auth);
 
 module.exports = router;
