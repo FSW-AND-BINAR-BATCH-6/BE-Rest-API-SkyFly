@@ -940,6 +940,305 @@
             }
           }
         }
+      },
+
+      "/ticket": {
+        "get": {
+          "tags": ["Tickets"],
+          "security": [
+            {
+              "bearerToken": []
+            }
+          ],
+          "summary": "Return result HIT API get all tickets data",
+          "description": "This is an API for getting all tickets data",
+          "responses": {
+            "200": {
+              "description": "Success getting all tickets data",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "all ticket data retrieved successfully"
+                      },
+                      "data": {
+                        "type": "object",
+                        "example": {
+                            "tickets": [
+                                {
+                                    "id": "clw9abc650000enqweyz697md",
+                                    "code": "1",
+                                    "name": "pappapap",
+                                    "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/tickets/1715866000111.png"
+                                },
+                                {
+                                    "id": "clwaeh22b0000uzbjstxii4b7",
+                                    "code": "2",
+                                    "name": "JawAir",
+                                    "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/tickets/1715933451194.png"
+                                },
+                                {
+                                    "id": "clwaehve10001uzbjgbq8hg44",
+                                    "code": "3",
+                                    "name": "SundAir",
+                                    "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/tickets/1715933489881.png"
+                                }
+                            ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": ["Tickets"],
+          "security": [
+            {
+              "bearerToken": []
+            }
+          ],
+          "summary": "Return result HIT API create ticket",
+          "description": "This is an API for creating ticket data",
+          "requestBody": {
+            "description": "This is a request body for create new ticket",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 4
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "BatakAir"
+                    },
+                    "image": {
+                      "type": "http",
+                      "example": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/tickets/1715935002439.png"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success create new ticket data",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "data": {
+                        "type": "object",
+                        "example": {
+                            "tickets": {
+                                "id": "clwafg1pu000111ghakckyuuf",
+                                "code": "4",
+                                "name": "BatakAir",
+                                "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/tickets/1715935084484.png"
+                            }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/ticket/{id}": {
+        "get": {
+          "tags": ["Tickets"],
+          "security": [
+            {
+              "bearerToken": []
+            }
+          ],
+          "summary": "Return result HIT API get ticket by id",
+          "description": "This is an API for getting ticket data based on Id",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "example": "clwaeh22b0000uzbjstxii4b7"
+              },
+              "description": "Ticket ID"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success getting ticket data based on Id",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "message" : {
+                        "type": "string",
+                        "example": "ticket data retrieved successfully"
+                      },
+                      "data": {
+                        "type": "object",
+                        "example": {
+                            "ticket": {
+                                "id": "clwaeh22b0000uzbjstxii4b7",
+                                "code": "2",
+                                "name": "JawAir",
+                                "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/tickets/1715933451194.png"
+                            }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "put": {
+          "tags": ["Tickets"],
+          "security": [
+            {
+              "bearerToken": []
+            }
+          ],
+          "summary": "Return result HIT API update ticket by Id",
+          "description": "This is an API for updatting ticket data based on Id",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "example": "clwafg1pu000111ghakckyuuf"
+              },
+              "description": "Ticket ID"
+            }
+          ],
+          "requestBody": {
+            "description": "This is a request body for update ticket",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 5
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "AirBatak"
+                    },
+                    "image": {
+                      "type": "http",
+                      "example": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/tickets/1715935625171.png"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success editting transaction data based on Id",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "data": {
+                        "type": "object",
+                        "example": {
+                            "ticket": {
+                                "id": "clwafg1pu000111ghakckyuuf",
+                                "code": "5",
+                                "name": "AirBatak",
+                                "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/tickets/1715935625171.png"
+                            }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "delete": {
+          "tags": ["Tickets"],
+          "security": [
+            {
+              "bearerToken": []
+            }
+          ],
+          "summary": "Return result HIT API delete ticket by Id",
+          "description": "This is an API for deletting ticket data based on Id",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "example": "clwafg1pu000111ghakckyuuf"
+              },
+              "description": "Ticket ID"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success deletting ticket data based on Id",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "ticket deleted successfully"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "components": {
