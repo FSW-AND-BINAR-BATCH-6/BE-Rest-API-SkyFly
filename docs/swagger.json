@@ -641,6 +641,305 @@
             }
           }
         }
+      },
+
+      "/flight-seat": {
+        "get": {
+          "tags": ["Flight Seats"],
+          "security": [
+            {
+              "bearerToken": []
+            }
+          ],
+          "summary": "Return result HIT API get all flight-seats data",
+          "description": "This is an API for getting all flight-seats data",
+          "responses": {
+            "200": {
+              "description": "Success getting all flight-seats data",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "all flight-seat data retrieved successfully"
+                      },
+                      "data": {
+                        "type": "object",
+                        "example": {
+                            "flight-seats": [
+                                {
+                                    "id": "clw9abc650000enqweyz697md",
+                                    "code": "1",
+                                    "name": "pappapap",
+                                    "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/flight-seats/1715866000111.png"
+                                },
+                                {
+                                    "id": "clwaeh22b0000uzbjstxii4b7",
+                                    "code": "2",
+                                    "name": "JawAir",
+                                    "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/flight-seats/1715933451194.png"
+                                },
+                                {
+                                    "id": "clwaehve10001uzbjgbq8hg44",
+                                    "code": "3",
+                                    "name": "SundAir",
+                                    "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/flight-seats/1715933489881.png"
+                                }
+                            ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": ["Flight Seats"],
+          "security": [
+            {
+              "bearerToken": []
+            }
+          ],
+          "summary": "Return result HIT API create flight-seat",
+          "description": "This is an API for creating flight-seat data",
+          "requestBody": {
+            "description": "This is a request body for create new flight-seat",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 4
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "BatakAir"
+                    },
+                    "image": {
+                      "type": "http",
+                      "example": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/flight-seats/1715935002439.png"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success create new flight-seat data",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "data": {
+                        "type": "object",
+                        "example": {
+                            "flight-seats": {
+                                "id": "clwafg1pu000111ghakckyuuf",
+                                "code": "4",
+                                "name": "BatakAir",
+                                "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/flight-seats/1715935084484.png"
+                            }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/flight-seat/{id}": {
+        "get": {
+          "tags": ["Flight Seats"],
+          "security": [
+            {
+              "bearerToken": []
+            }
+          ],
+          "summary": "Return result HIT API get flight-seat by id",
+          "description": "This is an API for getting flight-seat data based on Id",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "example": "clwaeh22b0000uzbjstxii4b7"
+              },
+              "description": "Flight-seat ID"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success getting flight-seat data based on Id",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "message" : {
+                        "type": "string",
+                        "example": "flight-seat data retrieved successfully"
+                      },
+                      "data": {
+                        "type": "object",
+                        "example": {
+                            "flight-seat": {
+                                "id": "clwaeh22b0000uzbjstxii4b7",
+                                "code": "2",
+                                "name": "JawAir",
+                                "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/flight-seats/1715933451194.png"
+                            }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "put": {
+          "tags": ["Flight Seats"],
+          "security": [
+            {
+              "bearerToken": []
+            }
+          ],
+          "summary": "Return result HIT API update flight-seat by Id",
+          "description": "This is an API for updatting flight-seat data based on Id",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "example": "clwafg1pu000111ghakckyuuf"
+              },
+              "description": "Flight-seat ID"
+            }
+          ],
+          "requestBody": {
+            "description": "This is a request body for update flight-seat",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 5
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "AirBatak"
+                    },
+                    "image": {
+                      "type": "http",
+                      "example": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/flight-seats/1715935625171.png"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success editting transaction data based on Id",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "data": {
+                        "type": "object",
+                        "example": {
+                            "flight-seat": {
+                                "id": "clwafg1pu000111ghakckyuuf",
+                                "code": "5",
+                                "name": "AirBatak",
+                                "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/flight-seats/1715935625171.png"
+                            }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "delete": {
+          "tags": ["Flight Seats"],
+          "security": [
+            {
+              "bearerToken": []
+            }
+          ],
+          "summary": "Return result HIT API delete flight-seat by Id",
+          "description": "This is an API for deletting flight-seat data based on Id",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "example": "clwafg1pu000111ghakckyuuf"
+              },
+              "description": "Flight-seat ID"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success deletting flight-seat data based on Id",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "flight-seat deleted successfully"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "components": {
