@@ -1538,6 +1538,305 @@
             }
           }
         }
+      },
+
+      "/auth": {
+        "get": {
+          "tags": ["Auths"],
+          "security": [
+            {
+              "bearerToken": []
+            }
+          ],
+          "summary": "Return result HIT API get all auths data",
+          "description": "This is an API for getting all auths data",
+          "responses": {
+            "200": {
+              "description": "Success getting all auths data",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "all auth data retrieved successfully"
+                      },
+                      "data": {
+                        "type": "object",
+                        "example": {
+                            "auths": [
+                                {
+                                    "id": "clw9abc650000enqweyz697md",
+                                    "code": "1",
+                                    "name": "pappapap",
+                                    "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/auths/1715866000111.png"
+                                },
+                                {
+                                    "id": "clwaeh22b0000uzbjstxii4b7",
+                                    "code": "2",
+                                    "name": "JawAir",
+                                    "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/auths/1715933451194.png"
+                                },
+                                {
+                                    "id": "clwaehve10001uzbjgbq8hg44",
+                                    "code": "3",
+                                    "name": "SundAir",
+                                    "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/auths/1715933489881.png"
+                                }
+                            ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": ["Auths"],
+          "security": [
+            {
+              "bearerToken": []
+            }
+          ],
+          "summary": "Return result HIT API create auth",
+          "description": "This is an API for creating auth data",
+          "requestBody": {
+            "description": "This is a request body for create new auth",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 4
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "BatakAir"
+                    },
+                    "image": {
+                      "type": "http",
+                      "example": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/auths/1715935002439.png"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success create new auth data",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "data": {
+                        "type": "object",
+                        "example": {
+                            "auths": {
+                                "id": "clwafg1pu000111ghakckyuuf",
+                                "code": "4",
+                                "name": "BatakAir",
+                                "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/auths/1715935084484.png"
+                            }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/auth/{id}": {
+        "get": {
+          "tags": ["Auths"],
+          "security": [
+            {
+              "bearerToken": []
+            }
+          ],
+          "summary": "Return result HIT API get auth by id",
+          "description": "This is an API for getting auth data based on Id",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "example": "clwaeh22b0000uzbjstxii4b7"
+              },
+              "description": "Auth ID"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success getting auth data based on Id",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "message" : {
+                        "type": "string",
+                        "example": "auth data retrieved successfully"
+                      },
+                      "data": {
+                        "type": "object",
+                        "example": {
+                            "auth": {
+                                "id": "clwaeh22b0000uzbjstxii4b7",
+                                "code": "2",
+                                "name": "JawAir",
+                                "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/auths/1715933451194.png"
+                            }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "put": {
+          "tags": ["Auths"],
+          "security": [
+            {
+              "bearerToken": []
+            }
+          ],
+          "summary": "Return result HIT API update auth by Id",
+          "description": "This is an API for updatting auth data based on Id",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "example": "clwafg1pu000111ghakckyuuf"
+              },
+              "description": "Auth ID"
+            }
+          ],
+          "requestBody": {
+            "description": "This is a request body for update auth",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 5
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "AirBatak"
+                    },
+                    "image": {
+                      "type": "http",
+                      "example": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/auths/1715935625171.png"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success editting transaction data based on Id",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "data": {
+                        "type": "object",
+                        "example": {
+                            "auth": {
+                                "id": "clwafg1pu000111ghakckyuuf",
+                                "code": "5",
+                                "name": "AirBatak",
+                                "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/auths/1715935625171.png"
+                            }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "delete": {
+          "tags": ["Auths"],
+          "security": [
+            {
+              "bearerToken": []
+            }
+          ],
+          "summary": "Return result HIT API delete auth by Id",
+          "description": "This is an API for deletting auth data based on Id",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "example": "clwafg1pu000111ghakckyuuf"
+              },
+              "description": "Auth ID"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success deletting auth data based on Id",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "auth deleted successfully"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "components": {
