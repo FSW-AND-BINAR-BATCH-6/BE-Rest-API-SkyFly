@@ -6,10 +6,17 @@ const {
     getAllFlight,
     getFlightById,
     createFlight,
+    removeFlight,
+    updateFlight
 } = require('../controllers/flight');
 
-router.get("/", getAllFlight);
-router.get("/:id", getFlightById)
-router.post("/", createFlight)
+router.route("/")
+    .get(getAllFlight)
+    .post(createFlight);
 
+router.route("/:id")
+    .get(getFlightById)
+    .put(updateFlight)
+    .delete(removeFlight);
+    
 module.exports = router
