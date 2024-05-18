@@ -1,77 +1,99 @@
 const {PrismaClient} = require("@prisma/client");
+const httpError = require("http-errors")
 const prisma = new PrismaClient();
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const inputValidation = require("../utils/validation/authInputValidation")
 
-const handleRegister = async (req, res) => {
- try {
-    const {name, email, phoneNumber, password} = req.body
-    const saltRounds = 10
-    console.log(saltRounds)
-    const hashedPassword = bcrypt.hashSync(password, saltRounds)
-    
-    const newAccount = await prisma.User.create({
-        data:{
-            name,
-            phoneNumber,
-            role: "CUSTOMER",
-            Auth: {
-                create: {
-                    email,
-                    password: hashedPassword
-                }
-            }
-        }
-    });
-    res.status(200).json({
-        status: true,
-        message: "Success creating new account",
-        data: {
-            name,
-            email,
-            phoneNumber,
-            password
-        }
-    });
- } catch (error) {
-    res.status(500).json({message: error.message})
- }
-}
-
-const handleLogin = async (req, res) => {
+const handleRegister = async (req, res, next) => {
     try {
-        const {email, password} = req.body
+        const { error, value } = inputValidation.validateRegisterInput(req.body);
+        if (error) {
+            return res.status(400).json({
+                status: false,
+                message: "Validation failed",
+                errors: error.details.map(detail => detail.message)
+            });
+        }
+
+        const saltRounds = parseInt(process.env.SALT);
+        const hashedPassword = bcrypt.hashSync(value.password, saltRounds);
+
+        try {
+            await prisma.user.create({
+                data: {
+                    name: value.name,
+                    phoneNumber: value.phoneNumber,
+                    role: "CUSTOMER",
+                    Auth: {
+                        create: {
+                            email: value.email,
+                            password: hashedPassword
+                        }
+                    }
+                }
+            });
+    
+            res.status(200).json({
+                status: true,
+                message: "Success creating new account",
+                data: {
+                    value
+                }
+            });
+        } catch (error) {
+            next(new httpError(409, {message: "Email has already tekken"}))
+        }
+        
+    } catch (error) {
+        next(new httpError(500, {message: error.message}))
+    }
+};
+
+
+const handleLogin = async (req, res, next) => {
+    try {
+        const {error, value} = inputValidation.validateLoginInput(req.body)
+
+        if(error){
+            return res.status(400).json({
+                status: false,
+                message: "Validation failed",
+                errors: error.details.map(detail => detail.message)
+            })
+        }
 
         const userAccount = await prisma.Auth.findUnique({
             where: {
-                email: email
+                email: value.email
             },
             include: {
                 user: true
             }
         })
-        if(userAccount && bcrypt.compareSync(password, userAccount.password)){
-            console.log(userAccount.user.id)
+        if(userAccount && bcrypt.compareSync(value.password, userAccount.password)){
             const token = jwt.sign({
-                id: userAccount.user.id,
-                name: userAccount.user.name,
-                email: userAccount.email,
-                phoneNumber: userAccount.user.phoneNumber
-            },
-            process.env.JWT_SECRET,
-            {
-                expiresIn: process.env.JWT_EXPIRED
-            }
-        );
+                    id: userAccount.user.id,
+                    name: userAccount.user.name,
+                    email: userAccount.email,
+                    phoneNumber: userAccount.user.phoneNumber
+                },
+                process.env.JWT_SECRET,
+                {
+                    expiresIn: process.env.JWT_EXPIRED
+                }
+            );
+            res.status(200).json({
+                data: userAccount,
+                _token: token
+            })
         }
-        
-        res.status(200).end()
 
-        
+        !userAccount ? next(new httpError(404, {message: "Email not register"})) : null
+        !bcrypt.compareSync(value.password, userAccount.password) ? next(new httpError(401, {message: "Wrong password"})) : null
+
     } catch (error) {
-        res.status(500).json({
-            error
-        })
+        next(new httpError(500, {error: error.message}))
     }
 }
 
