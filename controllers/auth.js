@@ -1,100 +1,248 @@
-const {PrismaClient} = require("@prisma/client");
-const httpError = require("http-errors")
-const prisma = new PrismaClient();
+const { PrismaClient } = require("@prisma/client");
+const { randomUUID } = require("crypto");
+const { generateTOTP, validateTOTP } = require("../utils/otp");
+
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const inputValidation = require("../utils/validation/authInputValidation")
+const createHttpError = require("http-errors");
+const nodeMailer = require("../lib/nodeMailer");
+
+const prisma = new PrismaClient();
 
 const handleRegister = async (req, res, next) => {
     try {
-        const { error, value } = inputValidation.validateRegisterInput(req.body);
-        if (error) {
-            return res.status(400).json({
-                status: false,
-                message: "Validation failed",
-                errors: error.details.map(detail => detail.message)
-            });
-        }
+        const data = req.body;
 
         const saltRounds = parseInt(process.env.SALT);
-        const hashedPassword = bcrypt.hashSync(value.password, saltRounds);
+        const hashedPassword = bcrypt.hashSync(data.password, saltRounds);
+
+        const OTPToken = generateTOTP();
 
         try {
-            await prisma.user.create({
+            const userauthData = await prisma.user.create({
                 data: {
-                    name: value.name,
-                    phoneNumber: value.phoneNumber,
+                    id: randomUUID(),
+                    name: data.name,
+                    phoneNumber: data.phoneNumber,
                     role: "CUSTOMER",
                     Auth: {
                         create: {
-                            email: value.email,
-                            password: hashedPassword
-                        }
-                    }
-                }
+                            id: randomUUID(),
+                            email: data.email,
+                            password: hashedPassword,
+                            otpToken: OTPToken,
+                            isVerified: false,
+                        },
+                    },
+                },
             });
-    
+
+            const urlTokenVerification = `http://localhost:2000/api/v1/auth/verified?secret=${bcrypt.hashSync(
+                userauthData.id,
+                saltRounds
+            )}&data=${data.email}&key=${userauthData.id}&unique=${
+                userauthData.phoneNumber
+            }skyfly1`;
+
+            const html = await nodeMailer.getHtml("verifyOtp.ejs", {
+                email: data.email,
+                OTPToken,
+                urlTokenVerification,
+            });
+
+            nodeMailer.sendEmail(
+                data.email,
+                "Email Activation | SkyFly Team 01 Jago",
+                html
+            );
+
             res.status(200).json({
                 status: true,
-                message: "Success creating new account",
+                message:
+                    "Verification token has been sent, please check your email",
                 data: {
-                    value
-                }
+                    name: data.name,
+                    email: data.email,
+                    phoneNumber: data.phoneNumber,
+                },
             });
         } catch (error) {
-            next(new httpError(409, {message: "Email has already tekken"}))
+            next(createHttpError(409, { message: "Email has already taken" }));
         }
-        
     } catch (error) {
-        next(new httpError(500, {message: error.message}))
+        next(createHttpError(500, { message: error.message }));
     }
 };
 
-
 const handleLogin = async (req, res, next) => {
     try {
-        const {error, value} = inputValidation.validateLoginInput(req.body)
+        const data = req.body;
 
-        if(error){
-            return res.status(400).json({
-                status: false,
-                message: "Validation failed",
-                errors: error.details.map(detail => detail.message)
-            })
-        }
-
-        const userAccount = await prisma.Auth.findUnique({
+        const userAccount = await prisma.auth.findUnique({
             where: {
-                email: value.email
+                email: data.email,
             },
             include: {
-                user: true
-            }
-        })
-        if(userAccount && bcrypt.compareSync(value.password, userAccount.password)){
-            const token = jwt.sign({
+                user: true,
+            },
+        });
+
+        if (
+            userAccount &&
+            bcrypt.compareSync(data.password, userAccount.password)
+        ) {
+            const token = jwt.sign(
+                {
                     id: userAccount.user.id,
                     name: userAccount.user.name,
                     email: userAccount.email,
-                    phoneNumber: userAccount.user.phoneNumber
+                    phoneNumber: userAccount.user.phoneNumber,
                 },
                 process.env.JWT_SECRET,
                 {
-                    expiresIn: process.env.JWT_EXPIRED
+                    expiresIn: process.env.JWT_EXPIRED,
                 }
             );
+
             res.status(200).json({
-                data: userAccount,
-                _token: token
-            })
+                message: "user logged in successfully",
+                _token: token,
+            });
         }
 
-        !userAccount ? next(new httpError(404, {message: "Email not register"})) : null
-        !bcrypt.compareSync(value.password, userAccount.password) ? next(new httpError(401, {message: "Wrong password"})) : null
-
+        !userAccount
+            ? next(createHttpError(404, { message: "Email not register" }))
+            : null;
+        !bcrypt.compareSync(data.password, userAccount.password)
+            ? next(createHttpError(401, { message: "Wrong password" }))
+            : null;
     } catch (error) {
-        next(new httpError(500, {error: error.message}))
+        next(createHttpError(500, { error: error.message }));
     }
-}
+};
 
-module.exports = {handleRegister, handleLogin}
+const resendOTP = async (req, res, next) => {
+    try {
+        const { secret, data, key, unique } = req.query;
+
+        const saltRounds = parseInt(process.env.SALT);
+
+        if (!bcrypt.compareSync(key, secret)) {
+            return next(
+                createHttpError(401, {
+                    message: "You does not have an access to be here",
+                })
+            );
+        }
+
+        const foundUser = await prisma.auth.findUnique({
+            where: {
+                email: data,
+            },
+            include: {
+                user: true,
+            },
+        });
+
+        if (!foundUser) {
+            return next(createHttpError(404, { message: "User is not found" }));
+        }
+
+        if (foundUser.isVerified) {
+            return next(
+                createHttpError(403, {
+                    message: "User email verification is done",
+                })
+            );
+        }
+
+        const OTPToken = generateTOTP();
+
+        await prisma.auth.update(
+            {
+                where: { email: data },
+            },
+            {
+                otpToken: OTPToken,
+            }
+        );
+
+        const urlTokenVerification = `http://localhost:2000/api/v1/auth/verified?secret=${bcrypt.hashSync(
+            key,
+            saltRounds
+        )}&data=${data}&key=${key}&unique=${unique}skyfly1-resendOTP`;
+
+        const html = await nodeMailer.getHtml("verifyOtp.ejs", {
+            email: data,
+            OTPToken,
+            urlTokenVerification,
+        });
+
+        nodeMailer.sendEmail(
+            data,
+            "Email Activation | SkyFly Team 01 Jago",
+            html
+        );
+
+        res.status(201).json({
+            status: true,
+            message: "Verification link has been sent, please check your email",
+        });
+    } catch (error) {
+        next(createHttpError(500, { message: error.message }));
+    }
+};
+
+const verifyOTP = async (req, res, next) => {
+    try {
+        const { secret, data, key, unique } = req.query;
+        const { otp } = req.body;
+
+        if (!bcrypt.compareSync(key, secret)) {
+            return next(
+                createHttpError(401, {
+                    message: "You does not have an access to be here",
+                })
+            );
+        }
+
+        const foundUser = await prisma.auth.findUnique({
+            where: {
+                email: data,
+            },
+            include: {
+                user: true,
+            },
+        });
+
+        if (!foundUser) {
+            return next(createHttpError(404, { message: "User is not found" }));
+        }
+
+        let delta = validateTOTP(otp);
+
+        if (delta === null || delta === 0 || otp != foundUser.otpToken) {
+            return next(
+                createHttpError(422, { message: "Token OTP is invalid" })
+            );
+        }
+
+        await prisma.auth.update({
+            where: {
+                id: foundUser.id,
+            },
+            data: {
+                isVerified: true,
+            },
+        });
+
+        res.status(200).json({
+            status: true,
+            message: "user email verified successfully",
+        });
+    } catch (error) {
+        next(createHttpError(500, { message: error.message }));
+    }
+};
+
+module.exports = { handleRegister, handleLogin, verifyOTP, resendOTP };
