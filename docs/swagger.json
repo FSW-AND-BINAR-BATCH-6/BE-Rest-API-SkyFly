@@ -1239,6 +1239,305 @@
             }
           }
         }
+      },
+
+      "/user": {
+        "get": {
+          "tags": ["Users"],
+          "security": [
+            {
+              "bearerToken": []
+            }
+          ],
+          "summary": "Return result HIT API get all users data",
+          "description": "This is an API for getting all users data",
+          "responses": {
+            "200": {
+              "description": "Success getting all users data",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "all user data retrieved successfully"
+                      },
+                      "data": {
+                        "type": "object",
+                        "example": {
+                            "users": [
+                                {
+                                    "id": "clw9abc650000enqweyz697md",
+                                    "code": "1",
+                                    "name": "pappapap",
+                                    "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/users/1715866000111.png"
+                                },
+                                {
+                                    "id": "clwaeh22b0000uzbjstxii4b7",
+                                    "code": "2",
+                                    "name": "JawAir",
+                                    "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/users/1715933451194.png"
+                                },
+                                {
+                                    "id": "clwaehve10001uzbjgbq8hg44",
+                                    "code": "3",
+                                    "name": "SundAir",
+                                    "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/users/1715933489881.png"
+                                }
+                            ]
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": ["Users"],
+          "security": [
+            {
+              "bearerToken": []
+            }
+          ],
+          "summary": "Return result HIT API create user",
+          "description": "This is an API for creating user data",
+          "requestBody": {
+            "description": "This is a request body for create new user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 4
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "BatakAir"
+                    },
+                    "image": {
+                      "type": "http",
+                      "example": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/users/1715935002439.png"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success create new user data",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "data": {
+                        "type": "object",
+                        "example": {
+                            "users": {
+                                "id": "clwafg1pu000111ghakckyuuf",
+                                "code": "4",
+                                "name": "BatakAir",
+                                "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/users/1715935084484.png"
+                            }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/user/{id}": {
+        "get": {
+          "tags": ["Users"],
+          "security": [
+            {
+              "bearerToken": []
+            }
+          ],
+          "summary": "Return result HIT API get user by id",
+          "description": "This is an API for getting user data based on Id",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "example": "clwaeh22b0000uzbjstxii4b7"
+              },
+              "description": "User ID"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success getting user data based on Id",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "message" : {
+                        "type": "string",
+                        "example": "user data retrieved successfully"
+                      },
+                      "data": {
+                        "type": "object",
+                        "example": {
+                            "user": {
+                                "id": "clwaeh22b0000uzbjstxii4b7",
+                                "code": "2",
+                                "name": "JawAir",
+                                "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/users/1715933451194.png"
+                            }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "put": {
+          "tags": ["Users"],
+          "security": [
+            {
+              "bearerToken": []
+            }
+          ],
+          "summary": "Return result HIT API update user by Id",
+          "description": "This is an API for updatting user data based on Id",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "example": "clwafg1pu000111ghakckyuuf"
+              },
+              "description": "User ID"
+            }
+          ],
+          "requestBody": {
+            "description": "This is a request body for update user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "example": 5
+                    },
+                    "name": {
+                      "type": "string",
+                      "example": "AirBatak"
+                    },
+                    "image": {
+                      "type": "http",
+                      "example": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/users/1715935625171.png"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Success editting transaction data based on Id",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "data": {
+                        "type": "object",
+                        "example": {
+                            "user": {
+                                "id": "clwafg1pu000111ghakckyuuf",
+                                "code": "5",
+                                "name": "AirBatak",
+                                "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/users/1715935625171.png"
+                            }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "delete": {
+          "tags": ["Users"],
+          "security": [
+            {
+              "bearerToken": []
+            }
+          ],
+          "summary": "Return result HIT API delete user by Id",
+          "description": "This is an API for deletting user data based on Id",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "example": "clwafg1pu000111ghakckyuuf"
+              },
+              "description": "User ID"
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Success deletting user data based on Id",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string",
+                        "example": "success"
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "user deleted successfully"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     },
     "components": {
