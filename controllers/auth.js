@@ -7,6 +7,9 @@ const { randomUUID } = require("crypto");
 const { generateTOTP, validateTOTP } = require("../utils/otp");
 const { secretCompare, secretHash } = require("../lib/secretHash");
 
+const {authorizationUrl, oauth2Client} = require("../lib/googleOauth2");
+const { google } = require("googleapis");
+
 const prisma = new PrismaClient();
 
 const handleRegister = async (req, res, next) => {
@@ -47,7 +50,7 @@ const handleRegister = async (req, res, next) => {
             }&data=${dataUrl.data}&key=${dataUrl.key}&unique=${
                 dataUrl.unique + dataUrl.note
             }`;
-
+            console.log(urlTokenVerification)
             const html = await nodeMailer.getHtml("verifyOtp.ejs", {
                 email: email,
                 OTPToken,
@@ -101,14 +104,16 @@ const handleLogin = async (req, res, next) => {
             },
         });
 
+        const payload = {
+            id: userAccount.user.id,
+            name: userAccount.user.name,
+            email: userAccount.email,
+            phoneNumber: userAccount.user.phoneNumber,
+        }
+
         if (userAccount && secretCompare(password, userAccount.password)) {
             const token = jwt.sign(
-                {
-                    id: userAccount.user.id,
-                    name: userAccount.user.name,
-                    email: userAccount.email,
-                    phoneNumber: userAccount.user.phoneNumber,
-                },
+                payload,
                 process.env.JWT_SECRET,
                 {
                     expiresIn: process.env.JWT_EXPIRED,
@@ -116,13 +121,13 @@ const handleLogin = async (req, res, next) => {
             );
 
             res.status(200).json({
-                message: "user logged in successfully",
+                message: "User logged in successfully",
                 _token: token,
             });
         }
 
         !userAccount
-            ? next(createHttpError(404, { message: "email not registered" }))
+            ? next(createHttpError(404, { message: "Email not registered" }))
             : null;
         !secretCompare(password, userAccount.password)
             ? next(createHttpError(401, { message: "Wrong password" }))
@@ -306,7 +311,7 @@ const sendResetPassword = async (req, res, next) => {
             unique: randomUUID(),
             note: "skyfly1ResetPassword",
         };
-        const urlResetPassword = `http://localhost:2000/api/v1/auth/verified?secret=${
+        const urlResetPassword = `http://localhost:2000/api/v1/auth/resetPassword?secret=${
             dataUrl.secret
         }&data=${dataUrl.data}&key=${dataUrl.key}&unique=${
             dataUrl.unique + dataUrl.note
@@ -378,6 +383,87 @@ const resetPassword = async (req, res, next) => {
     }
 };
 
+const handleLoginGoogle = async (req, res, next) => {
+    try {
+        const {code} = req.query
+        const {tokens} = await oauth2Client.getToken(code)
+
+        oauth2Client.setCredentials(tokens)
+        
+        const oauth2 = google.oauth2({
+            auth: oauth2Client,
+            version: 'v2'
+        })
+
+        const {data} = await oauth2.userinfo.get()
+
+        // error handler
+        !data 
+            ? next(createHttpError(404, {status: false})) 
+            : null
+
+        let userAccount = await prisma.Oauth.findUnique({
+            where: {
+                email: data.email   
+            },
+            include: {
+                user: true
+            }
+        })
+
+        if(!userAccount){
+            await prisma.Oauth.create({
+                data: {
+                    id: randomUUID(),
+                    email: data.email,
+                    user: {
+                        create:{
+                            id: randomUUID(),
+                            name:data.name,
+                            role: "BUYER"
+                        }
+                    }
+                }
+            })
+
+            userAccount = await prisma.Oauth.findUnique({
+                where: {
+                    email: data.email   
+                },
+                include: {
+                    user: true
+                }
+            })
+        }
+
+        const payload = {
+            name: userAccount.user.name,
+            email: userAccount.email,
+            phoneNumber: userAccount?.user.phoneNumber
+        }
+
+        const token = jwt.sign(
+            payload, 
+            process.env.JWT_SECRET, 
+            {
+                expiresIn: process.env.JWT_EXPIRED
+            }
+        )
+
+        res.status(200).json({
+            data: payload,
+            _token: token
+        })
+    } catch (error) {
+        next(createHttpError(500, {error: error.message}))
+    }
+    
+}
+
+const redirectAuthorization = (req, res) => {
+    res.redirect(authorizationUrl)
+}
+
 module.exports = {
     handleRegister,
     handleLogin,
@@ -385,4 +471,6 @@ module.exports = {
     resendOTP,
     sendResetPassword,
     resetPassword,
+    handleLoginGoogle,
+    redirectAuthorization
 };

@@ -38,6 +38,7 @@ model User {
     tickets     Ticket?
     sessions    Session?
     Auth        Auth?
+    Oauth       Oauth?
 }
 
 model Session {
@@ -103,4 +104,11 @@ model Auth {
     otpToken   String
     isVerified Boolean @default(false)
     user       User?   @relation(fields: [userId], references: [id])
+}
+
+model Oauth {
+    id     String  @id @default(cuid())
+    userId String? @unique
+    email  String  @unique
+    user   User?   @relation(fields: [userId], references: [id])
 }
