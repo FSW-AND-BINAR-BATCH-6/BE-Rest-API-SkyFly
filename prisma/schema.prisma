@@ -84,14 +84,14 @@ model FlightSeat {
 model Ticket {
   id            String     @id @default(cuid())
   code          String     @unique
-  flightId      String
-  flight        Flight     @relation(fields: [flightId], references: [id])
-  customerId    String
-  customer      User       @relation(fields: [customerId], references: [id])
-  seatId        String     @unique
-  seat          FlightSeat @relation(fields: [seatId], references: [id])
+  flightId      String?
+  flight        Flight?     @relation(fields: [flightId], references: [id])
+  customerId    String?
+  customer      User?       @relation(fields: [customerId], references: [id])
+  seatId        String?     @unique
+  seat          FlightSeat? @relation(fields: [seatId], references: [id])
   bookingDate   DateTime
-  price         BigInt
+  price         Float
   status        StatusTicket
   tokenMidtrans String?
 }
