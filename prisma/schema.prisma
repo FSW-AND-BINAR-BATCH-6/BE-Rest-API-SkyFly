@@ -5,93 +5,102 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
 }
 
 enum RoleUser {
-  CUSTOMER
-  ADMIN
+    CUSTOMER
+    ADMIN
 }
 
 enum TypeSeat {
-  ECONOMY
-  BUSINESS
-  FIRST
+    ECONOMY
+    BUSINESS
+    FIRST
 }
 
 enum StatusTicket {
-  PENDING
-  SUCCESS
-  FAILED
+    PENDING
+    SUCCESS
+    FAILED
 }
 
 model User {
-  id         String   @id @default(cuid())
-  name       String
-  email      String   @unique
-  password   String
-  passport   String?
-  role       RoleUser
-  tickets    Ticket[]
-  sessions   Session[]
+    id          String   @id @default(cuid())
+    name        String
+    phoneNumber String?
+    role        RoleUser
+    tickets     Ticket?
+    sessions    Session?
+    Auth        Auth?
 }
 
 model Session {
-  id        String   @id
-  userId    String
-  expiresAt DateTime
-  user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
+    id        String   @id
+    userId    String   @unique
+    expiresAt DateTime
+    user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
 }
 
 model Airplane {
-  id         String   @id @default(cuid())
-  code       String   @default("ABC-123")
-  name       String
-  image      String
-  flight     Flight[]
+    id     String   @id @default(cuid())
+    code   String   @default("ABC-123")
+    name   String
+    image  String
+    flight Flight[]
 }
 
 model Flight {
-  id                    String    @id @default(cuid())
-  planeId               String
-  plane                 Airplane  @relation(fields: [planeId], references: [id])
-  departureDate         DateTime
-  departureCity         String
-  departureCityCode     String
-  arrivalDate           DateTime
-  destinationCity       String
-  destinationCityCode   String
-  price                 Int
-  seats                 FlightSeat[]
-  tickets               Ticket[]
+    id                  String       @id @default(cuid())
+    planeId             String
+    plane               Airplane     @relation(fields: [planeId], references: [id])
+    departureDate       DateTime
+    departureCity       String
+    departureCityCode   String
+    arrivalDate         DateTime
+    destinationCity     String
+    destinationCityCode String
+    price               Int
+    seats               FlightSeat[]
+    tickets             Ticket[]
 }
 
 model FlightSeat {
-  id          String   @id @default(cuid())
-  flightId    String
-  flight      Flight   @relation(fields: [flightId], references: [id])
-  seatNumber  String
-  isBooked    Boolean? @default(false)
-  type        TypeSeat
-  tickets     Ticket?
+    id         String   @id @default(cuid())
+    flightId   String
+    flight     Flight   @relation(fields: [flightId], references: [id])
+    seatNumber String
+    isBooked   Boolean? @default(false)
+    type       TypeSeat
+    tickets    Ticket?
 }
 
 model Ticket {
-  id            String     @id @default(cuid())
-  code          String     @unique
-  flightId      String?
-  flight        Flight?     @relation(fields: [flightId], references: [id])
-  customerId    String?
-  customer      User?       @relation(fields: [customerId], references: [id])
-  seatId        String?     @unique
-  seat          FlightSeat? @relation(fields: [seatId], references: [id])
-  bookingDate   DateTime
-  price         Float
-  status        StatusTicket
-  tokenMidtrans String?
+    id            String       @id @default(cuid())
+    code          String       @unique
+    flightId      String?
+    flight        Flight?       @relation(fields: [flightId], references: [id])
+    customerId    String?       @unique
+    customer      User?         @relation(fields: [customerId], references: [id])
+    seatId        String?       @unique
+    seat          FlightSeat?   @relation(fields: [seatId], references: [id])
+    bookingDate   DateTime
+    price         Float
+    status        StatusTicket
+    tokenMidtrans String?
+}
+
+model Auth {
+    id         String  @id @default(cuid())
+    userId     String? @unique
+    email      String  @unique
+    password   String
+    otpToken   String
+    isVerified Boolean @default(false)
+    user       User?   @relation(fields: [userId], references: [id])
 }
