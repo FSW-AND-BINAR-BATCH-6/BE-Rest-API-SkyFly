@@ -111,7 +111,7 @@ const handleLogin = async (req, res, next) => {
         }
 
         !userAccount
-            ? next(createHttpError(404, { message: "Email not register" }))
+            ? next(createHttpError(404, { message: "email not registered" }))
             : null;
         !bcrypt.compareSync(data.password, userAccount.password)
             ? next(createHttpError(401, { message: "Wrong password" }))
@@ -151,7 +151,7 @@ const resendOTP = async (req, res, next) => {
         if (foundUser.isVerified) {
             return next(
                 createHttpError(403, {
-                    message: "User email verification is done",
+                    message: "User email has been verified",
                 })
             );
         }
@@ -245,4 +245,109 @@ const verifyOTP = async (req, res, next) => {
     }
 };
 
-module.exports = { handleRegister, handleLogin, verifyOTP, resendOTP };
+const sendResetPassword = async (req, res, next) => {
+    try {
+        const saltRounds = parseInt(process.env.SALT);
+        const { email } = req.body;
+
+        const foundUser = await prisma.auth.findUnique({
+            where: {
+                email,
+            },
+            include: {
+                user: true,
+            },
+        });
+
+        if (!foundUser) {
+            return next(
+                createHttpError(404, {
+                    message:
+                        "User is not found and reset password link is invalid",
+                })
+            );
+        }
+
+        const urlResetPassword = `http://localhost:2000/api/v1/auth/resetPassword?secret=${bcrypt.hashSync(
+            email,
+            saltRounds
+        )}&data=${email}&key=${foundUser.id}&unique=${
+            foundUser.userId
+        }skyfly1-resetPassword`;
+
+        const html = await nodeMailer.getHtml("emailPasswordReset.ejs", {
+            email,
+            urlResetPassword,
+        });
+
+        nodeMailer.sendEmail(
+            email,
+            "Reset Password | SkyFly Team 01 Jago",
+            html
+        );
+
+        res.status(200).json({
+            status: true,
+            message:
+                "Reset password link has been sent, please check your email",
+        });
+    } catch (error) {
+        next(createHttpError(500, { message: error.message }));
+    }
+};
+
+const resetPassword = async (req, res, next) => {
+    try {
+        const { secret, data, key, unique } = req.query;
+        const { password, confirmPassword } = req.body;
+
+        const saltRounds = parseInt(process.env.SALT);
+        const hashedPassword = bcrypt.hashSync(password, saltRounds);
+
+        if (!bcrypt.compareSync(data, secret)) {
+            return next(
+                createHttpError(401, {
+                    message: "You does not have an access to be here",
+                })
+            );
+        }
+
+        const foundUser = await prisma.auth.findUnique({
+            where: {
+                email: data,
+            },
+            include: {
+                user: true,
+            },
+        });
+
+        if (!foundUser) {
+            return next(createHttpError(404, { message: "User is not found" }));
+        }
+
+        await prisma.auth.update({
+            where: {
+                id: foundUser.id,
+            },
+            data: {
+                password: hashedPassword,
+            },
+        });
+
+        res.status(200).json({
+            status: true,
+            message: "user password updated successfully",
+        });
+    } catch (error) {
+        next(createHttpError(500, { message: error.message }));
+    }
+};
+
+module.exports = {
+    handleRegister,
+    handleLogin,
+    verifyOTP,
+    resendOTP,
+    sendResetPassword,
+    resetPassword,
+};

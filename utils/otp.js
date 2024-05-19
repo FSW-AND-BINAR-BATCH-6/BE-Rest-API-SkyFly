@@ -20,7 +20,15 @@ const validateTOTP = (tokenOtp) => {
     });
 };
 
+const getSeconds = () => {
+    let seconds =
+        (totp.period * (1 - ((Date.now() / 1000 / totp.period) % 1))) | 0;
+
+    return seconds;
+};
+
 module.exports = {
     generateTOTP,
     validateTOTP,
+    getSeconds,
 };

@@ -6,17 +6,24 @@ const {
     handleLogin,
     verifyOTP,
     resendOTP,
+    sendResetPassword,
+    resetPassword,
 } = require("../controllers/auth");
 const {
     RegisterSchema,
     LoginSchema,
     OTPSchema,
+    PasswordSchema,
 } = require("../utils/joiValidation");
 
 router.post("/register", validator(RegisterSchema), handleRegister);
 router.post("/login", validator(LoginSchema), handleLogin);
-router.post("/verified", validator(OTPSchema), verifyOTP);
+
+router.put("/verified", validator(OTPSchema), verifyOTP);
 router.post("/verified/resend-otp", resendOTP);
-// router.get('/verified', Validator(otpSchema), verifyOtp); // get otp verification page
+
+router.post("/forgetPassword", sendResetPassword);
+
+router.put("/resetPassword", validator(PasswordSchema), resetPassword);
 
 module.exports = router;
