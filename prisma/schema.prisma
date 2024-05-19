@@ -14,7 +14,7 @@ datasource db {
 }
 
 enum RoleUser {
-    CUSTOMER
+    BUYER
     ADMIN
 }
 

@@ -1,34 +1,32 @@
-const { PrismaClient } = require("@prisma/client");
-const { randomUUID } = require("crypto");
-const { generateTOTP, validateTOTP } = require("../utils/otp");
-
-const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const createHttpError = require("http-errors");
 const nodeMailer = require("../lib/nodeMailer");
+
+const { PrismaClient } = require("@prisma/client");
+const { randomUUID } = require("crypto");
+const { generateTOTP, validateTOTP } = require("../utils/otp");
+const { secretCompare, secretHash } = require("../lib/secretHash");
 
 const prisma = new PrismaClient();
 
 const handleRegister = async (req, res, next) => {
     try {
-        const data = req.body;
+        const { name, phoneNumber, password, email } = req.body;
 
-        const saltRounds = parseInt(process.env.SALT);
-        const hashedPassword = bcrypt.hashSync(data.password, saltRounds);
-
+        const hashedPassword = secretHash(password);
         const OTPToken = generateTOTP();
 
         try {
             const userauthData = await prisma.user.create({
                 data: {
                     id: randomUUID(),
-                    name: data.name,
-                    phoneNumber: data.phoneNumber,
-                    role: "CUSTOMER",
+                    name: name,
+                    phoneNumber: phoneNumber,
+                    role: "BUYER",
                     Auth: {
                         create: {
                             id: randomUUID(),
-                            email: data.email,
+                            email: email,
                             password: hashedPassword,
                             otpToken: OTPToken,
                             isVerified: false,
@@ -37,21 +35,27 @@ const handleRegister = async (req, res, next) => {
                 },
             });
 
-            const urlTokenVerification = `http://localhost:2000/api/v1/auth/verified?secret=${bcrypt.hashSync(
-                userauthData.id,
-                saltRounds
-            )}&data=${data.email}&key=${userauthData.id}&unique=${
-                userauthData.phoneNumber
-            }skyfly1`;
+            const dataUrl = {
+                key: userauthData.id,
+                data: email,
+                secret: secretHash(userauthData.id),
+                unique: randomUUID(),
+                note: "skyfly1Verification",
+            };
+            const urlTokenVerification = `http://localhost:2000/api/v1/auth/verified?secret=${
+                dataUrl.secret
+            }&data=${dataUrl.data}&key=${dataUrl.key}&unique=${
+                dataUrl.unique + dataUrl.note
+            }`;
 
             const html = await nodeMailer.getHtml("verifyOtp.ejs", {
-                email: data.email,
+                email: email,
                 OTPToken,
                 urlTokenVerification,
             });
 
             nodeMailer.sendEmail(
-                data.email,
+                email,
                 "Email Activation | SkyFly Team 01 Jago",
                 html
             );
@@ -61,36 +65,43 @@ const handleRegister = async (req, res, next) => {
                 message:
                     "Verification token has been sent, please check your email",
                 data: {
-                    name: data.name,
-                    email: data.email,
-                    phoneNumber: data.phoneNumber,
+                    name: name,
+                    email: email,
+                    phoneNumber: phoneNumber,
+                    role: userauthData.role,
                 },
             });
         } catch (error) {
-            next(createHttpError(409, { message: "Email has already taken" }));
+            console.log(error.message);
+            next(
+                createHttpError(409, {
+                    message: "Email has already been taken",
+                })
+            );
         }
     } catch (error) {
-        next(createHttpError(500, { message: error.message }));
+        next(
+            createHttpError(500, {
+                message: error.message,
+            })
+        );
     }
 };
 
 const handleLogin = async (req, res, next) => {
     try {
-        const data = req.body;
+        const { email, password } = req.body;
 
         const userAccount = await prisma.auth.findUnique({
             where: {
-                email: data.email,
+                email,
             },
             include: {
                 user: true,
             },
         });
 
-        if (
-            userAccount &&
-            bcrypt.compareSync(data.password, userAccount.password)
-        ) {
+        if (userAccount && secretCompare(password, userAccount.password)) {
             const token = jwt.sign(
                 {
                     id: userAccount.user.id,
@@ -113,7 +124,7 @@ const handleLogin = async (req, res, next) => {
         !userAccount
             ? next(createHttpError(404, { message: "email not registered" }))
             : null;
-        !bcrypt.compareSync(data.password, userAccount.password)
+        !secretCompare(password, userAccount.password)
             ? next(createHttpError(401, { message: "Wrong password" }))
             : null;
     } catch (error) {
@@ -125,9 +136,7 @@ const resendOTP = async (req, res, next) => {
     try {
         const { secret, data, key, unique } = req.query;
 
-        const saltRounds = parseInt(process.env.SALT);
-
-        if (!bcrypt.compareSync(key, secret)) {
+        if (!secretCompare(key, secret)) {
             return next(
                 createHttpError(401, {
                     message: "You does not have an access to be here",
@@ -158,19 +167,28 @@ const resendOTP = async (req, res, next) => {
 
         const OTPToken = generateTOTP();
 
-        await prisma.auth.update(
-            {
-                where: { email: data },
+        await prisma.auth.update({
+            where: {
+                email: data,
             },
-            {
+            data: {
                 otpToken: OTPToken,
-            }
-        );
+            },
+        });
 
-        const urlTokenVerification = `http://localhost:2000/api/v1/auth/verified?secret=${bcrypt.hashSync(
+        const dataUrl = {
             key,
-            saltRounds
-        )}&data=${data}&key=${key}&unique=${unique}skyfly1-resendOTP`;
+            data,
+            secret: secretHash(key),
+            unique: randomUUID(),
+            note: "skyfly1ResendOTP",
+        };
+
+        const urlTokenVerification = `http://localhost:2000/api/v1/auth/verified?secret=${
+            dataUrl.secret
+        }&data=${dataUrl.data}&key=${dataUrl.key}&unique=${
+            dataUrl.unique + dataUrl.note
+        }`;
 
         const html = await nodeMailer.getHtml("verifyOtp.ejs", {
             email: data,
@@ -180,7 +198,7 @@ const resendOTP = async (req, res, next) => {
 
         nodeMailer.sendEmail(
             data,
-            "Email Activation | SkyFly Team 01 Jago",
+            "Re-send Email Activation | SkyFly Team 01 Jago",
             html
         );
 
@@ -195,10 +213,10 @@ const resendOTP = async (req, res, next) => {
 
 const verifyOTP = async (req, res, next) => {
     try {
-        const { secret, data, key, unique } = req.query;
+        const { secret, data, key } = req.query;
         const { otp } = req.body;
 
-        if (!bcrypt.compareSync(key, secret)) {
+        if (!secretCompare(key, secret)) {
             return next(
                 createHttpError(401, {
                     message: "You does not have an access to be here",
@@ -219,11 +237,25 @@ const verifyOTP = async (req, res, next) => {
             return next(createHttpError(404, { message: "User is not found" }));
         }
 
+        if (foundUser.isVerified) {
+            return next(
+                createHttpError(403, {
+                    message: "User email has been verified",
+                })
+            );
+        }
+
         let delta = validateTOTP(otp);
 
-        if (delta === null || delta === 0 || otp != foundUser.otpToken) {
+        // console.log("====================================");
+        // console.log(`delta: ${delta}`);
+        // console.log(`otp: ${otp}`);
+        // console.log(`user otp: ${foundUser.otpToken}`);
+        // console.log("====================================");
+
+        if (delta === null || otp != foundUser.otpToken) {
             return next(
-                createHttpError(422, { message: "Token OTP is invalid" })
+                createHttpError(422, { message: "OTP Token is invalid" })
             );
         }
 
@@ -247,7 +279,6 @@ const verifyOTP = async (req, res, next) => {
 
 const sendResetPassword = async (req, res, next) => {
     try {
-        const saltRounds = parseInt(process.env.SALT);
         const { email } = req.body;
 
         const foundUser = await prisma.auth.findUnique({
@@ -268,12 +299,18 @@ const sendResetPassword = async (req, res, next) => {
             );
         }
 
-        const urlResetPassword = `http://localhost:2000/api/v1/auth/resetPassword?secret=${bcrypt.hashSync(
-            email,
-            saltRounds
-        )}&data=${email}&key=${foundUser.id}&unique=${
-            foundUser.userId
-        }skyfly1-resetPassword`;
+        const dataUrl = {
+            key: foundUser.id,
+            data: foundUser.email,
+            secret: secretHash(email),
+            unique: randomUUID(),
+            note: "skyfly1ResetPassword",
+        };
+        const urlResetPassword = `http://localhost:2000/api/v1/auth/verified?secret=${
+            dataUrl.secret
+        }&data=${dataUrl.data}&key=${dataUrl.key}&unique=${
+            dataUrl.unique + dataUrl.note
+        }`;
 
         const html = await nodeMailer.getHtml("emailPasswordReset.ejs", {
             email,
@@ -298,13 +335,11 @@ const sendResetPassword = async (req, res, next) => {
 
 const resetPassword = async (req, res, next) => {
     try {
-        const { secret, data, key, unique } = req.query;
-        const { password, confirmPassword } = req.body;
+        const { secret, data } = req.query;
+        const { password } = req.body;
+        const hashedPassword = secretHash(password);
 
-        const saltRounds = parseInt(process.env.SALT);
-        const hashedPassword = bcrypt.hashSync(password, saltRounds);
-
-        if (!bcrypt.compareSync(data, secret)) {
+        if (!secretCompare(data, secret)) {
             return next(
                 createHttpError(401, {
                     message: "You does not have an access to be here",
