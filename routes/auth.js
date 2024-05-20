@@ -9,7 +9,8 @@ const {
     sendResetPassword,
     resetPassword,
     handleLoginGoogle,
-    redirectAuthorization
+    redirectAuthorization,
+    checkData
 } = require("../controllers/auth");
 
 const {
@@ -33,4 +34,8 @@ router.post("/forgetPassword", sendResetPassword);
 
 router.put("/resetPassword", validator(PasswordSchema), resetPassword);
 
+
+// dummy route to check all user account
+
+router.get("/getalldata", checkData)
 module.exports = router;

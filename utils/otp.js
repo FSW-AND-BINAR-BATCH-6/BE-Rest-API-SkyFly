@@ -1,4 +1,6 @@
 const OTPAuth = require("otpauth");
+const nodeMailer = require("../lib/nodeMailer");
+
 
 const totp = new OTPAuth.TOTP({
     issuer: "ACME",
@@ -27,8 +29,30 @@ const getSeconds = () => {
     return seconds;
 };
 
+const generateOTPEmail = async (dataUrl, OTPToken, email) => {
+    const urlTokenVerification = `http://localhost:2000/api/v1/auth/verified?secret=${
+        dataUrl.secret
+            }&data=${dataUrl.data}&key=${dataUrl.key}&unique=${
+                dataUrl.unique + dataUrl.note
+            }`;
+
+    console.log(urlTokenVerification)
+    const html = await nodeMailer.getHtml("verifyOtp.ejs", {
+        email: email,
+        OTPToken,
+        urlTokenVerification,
+    });
+
+    nodeMailer.sendEmail(
+        email,
+        "Email Activation | SkyFly Team 01 Jago",
+        html
+    );
+}
+
 module.exports = {
     generateTOTP,
     validateTOTP,
     getSeconds,
+    generateOTPEmail
 };

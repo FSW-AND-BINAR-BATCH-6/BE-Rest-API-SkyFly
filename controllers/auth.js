@@ -4,7 +4,7 @@ const nodeMailer = require("../lib/nodeMailer");
 
 const { PrismaClient } = require("@prisma/client");
 const { randomUUID } = require("crypto");
-const { generateTOTP, validateTOTP } = require("../utils/otp");
+const { generateTOTP, validateTOTP, generateOTPEmail } = require("../utils/otp");
 const { secretCompare, secretHash } = require("../lib/secretHash");
 
 const {authorizationUrl, oauth2Client} = require("../lib/googleOauth2");
@@ -327,7 +327,7 @@ const sendResetPassword = async (req, res, next) => {
             "Reset Password | SkyFly Team 01 Jago",
             html
         );
-
+        console.log(urlResetPassword)
         res.status(200).json({
             status: true,
             message:
@@ -385,55 +385,72 @@ const resetPassword = async (req, res, next) => {
 
 const handleLoginGoogle = async (req, res, next) => {
     try {
-        const {code} = req.query
-        const {tokens} = await oauth2Client.getToken(code)
+        // generate token
+        const { code } = req.query
+        const { tokens } = await oauth2Client.getToken(code);
 
-        oauth2Client.setCredentials(tokens)
-        
+        oauth2Client.setCredentials(tokens);
+
         const oauth2 = google.oauth2({
             auth: oauth2Client,
             version: 'v2'
         })
+        console.log("sebelum1")
 
         const {data} = await oauth2.userinfo.get()
 
-        // error handler
-        !data 
-            ? next(createHttpError(404, {status: false})) 
-            : null
+        console.log(data)
+        !data
+            ? next(createHttpError(404, {status: false}))
+            :null
 
-        let userAccount = await prisma.Oauth.findUnique({
+        console.log(data)
+        console.log("sebelum")
+        let userAccount = await prisma.Auth.findUnique({
             where: {
-                email: data.email   
+                email: data.email
             },
             include: {
                 user: true
             }
         })
 
+        console.log("habis find")
+
         if(!userAccount){
-            await prisma.Oauth.create({
+            const hashedPassword = secretHash(data.id);
+            console.log("masuk akun kosong")
+            const OTPToken = generateTOTP()
+            userAccount = await prisma.Auth.create({
                 data: {
                     id: randomUUID(),
-                    email: data.email,
-                    user: {
-                        create:{
-                            id: randomUUID(),
-                            name:data.name,
-                            role: "BUYER"
+                        email: data.email,
+                        password: hashedPassword,
+                        otpToken: OTPToken,
+                        isVerified: false,
+                        user: {
+                            create: {
+                                id: randomUUID(),
+                                name: data.name,
+                                role: "BUYER",
+                            }
                         }
-                    }
                 }
             })
+        }
 
-            userAccount = await prisma.Oauth.findUnique({
-                where: {
-                    email: data.email   
-                },
-                include: {
-                    user: true
-                }
-            })
+        if(!userAccount.isVerified){
+            console.log("masuk isVerified")
+            const OTPToken = generateTOTP()
+            
+            const dataUrl = {
+                key: userAccount.id,
+                data: data.email,
+                secret: secretHash(userAccount.id),
+                unique: randomUUID(),
+                note: "skyfly1Verification",
+            };
+            await generateOTPEmail(dataUrl, OTPToken, data.email)
         }
 
         const payload = {
@@ -449,21 +466,33 @@ const handleLoginGoogle = async (req, res, next) => {
                 expiresIn: process.env.JWT_EXPIRED
             }
         )
-
+ 
         res.status(200).json({
             data: payload,
             _token: token
         })
+
     } catch (error) {
-        next(createHttpError(500, {error: error.message}))
+        next(createHttpError(500, { message: error.message }));
     }
-    
 }
 
 const redirectAuthorization = (req, res) => {
     res.redirect(authorizationUrl)
 }
 
+// dummy route to check all email
+
+const checkData = async (req, res, next) => {
+    try {
+        const data = await prisma.Auth.findMany()
+        res.status(200).json({
+            data
+        })
+    } catch (error) {
+        next(createHttpError(500, {error: error.message}))
+    }
+}
 module.exports = {
     handleRegister,
     handleLogin,
@@ -472,5 +501,6 @@ module.exports = {
     sendResetPassword,
     resetPassword,
     handleLoginGoogle,
-    redirectAuthorization
+    redirectAuthorization,
+    checkData
 };
