@@ -38,7 +38,6 @@ model User {
     tickets     Ticket?
     sessions    Session?
     Auth        Auth?
-    Oauth       Oauth?
 }
 
 model Session {
@@ -97,18 +96,12 @@ model Ticket {
 }
 
 model Auth {
-    id         String  @id @default(cuid())
-    userId     String? @unique
-    email      String  @unique
-    password   String
-    otpToken   String
-    isVerified Boolean @default(false)
-    user       User?   @relation(fields: [userId], references: [id])
-}
-
-model Oauth {
-    id     String  @id @default(cuid())
-    userId String? @unique
-    email  String  @unique
-    user   User?   @relation(fields: [userId], references: [id])
+    id          String  @id @default(cuid())
+    userId      String? @unique
+    email       String  @unique
+    password    String
+    otpToken    String?
+    secretToken String?
+    isVerified  Boolean @default(false)
+    user        User?   @relation(fields: [userId], references: [id])
 }

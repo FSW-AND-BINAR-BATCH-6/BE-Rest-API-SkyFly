@@ -1,6 +1,9 @@
 const OTPAuth = require("otpauth");
 const nodeMailer = require("../lib/nodeMailer");
+const jwt = require("jsonwebtoken");
 
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
 
 const totp = new OTPAuth.TOTP({
     issuer: "ACME",
@@ -28,32 +31,38 @@ const getSeconds = () => {
     return seconds;
 };
 
-const generateOTPEmail = async (dataUrl, OTPToken, email, type) => {
-    const urlTokenVerification = `http://localhost:${process.env.PORT}/api/v1/auth/${type}?secret=${
-        dataUrl.secret
-            }&data=${dataUrl.data}&key=${dataUrl.key}&unique=${
-                dataUrl.unique + dataUrl.note
-            }`;
+const generateSecretEmail = async (dataUrl, type, template) => {
+    const payload = jwt.verify(dataUrl.token, process.env.JWT_SIGNATURE_KEY);
 
-    console.log(urlTokenVerification)
-    const html = await nodeMailer.getHtml("verifyOtp.ejs", {
-        email: email,
-        OTPToken,
+    await prisma.auth.update({
+        where: {
+            email: payload.email,
+        },
+        data: {
+            secretToken: payload.token,
+        },
+    });
+
+    const urlTokenVerification = `http://localhost:${process.env.PORT}/api/v1/auth/${type}?token=${dataUrl.token}`;
+
+    const html = await nodeMailer.getHtml(template, {
+        email: payload.email,
+        OTPToken: payload.otp,
         urlTokenVerification,
     });
 
     nodeMailer.sendEmail(
-        email,
-        "Email Activation | SkyFly Team 01 Jago",
+        payload.email,
+        `${payload.emailTitle} | SkyFly Team 01 Jago`,
         html
     );
 
-    return urlTokenVerification
-}
+    return urlTokenVerification;
+};
 
 module.exports = {
     generateTOTP,
     validateTOTP,
     getSeconds,
-    generateOTPEmail
+    generateSecretEmail,
 };

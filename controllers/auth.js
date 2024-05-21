@@ -1,12 +1,17 @@
 const createHttpError = require("http-errors");
 const { PrismaClient } = require("@prisma/client");
 const { randomUUID } = require("crypto");
+const jwt = require("jsonwebtoken");
 
-const { generateTOTP, validateTOTP, generateOTPEmail } = require("../utils/otp");
+const {
+    generateTOTP,
+    validateTOTP,
+    generateSecretEmail,
+} = require("../utils/otp");
 const { secretCompare, secretHash } = require("../utils/hashSalt");
-const {generateJWT} = require("../utils/jwtGenerate")
+const { generateJWT } = require("../utils/jwtGenerate");
 
-const {authorizationUrl, oauth2Client} = require("../lib/googleOauth2");
+const { authorizationUrl, oauth2Client } = require("../lib/googleOauth2");
 const { google } = require("googleapis");
 
 const prisma = new PrismaClient();
@@ -18,54 +23,66 @@ const handleRegister = async (req, res, next) => {
         const hashedPassword = secretHash(password);
         const OTPToken = generateTOTP();
 
-        try {
-            const userauthData = await prisma.user.create({
-                data: {
-                    id: randomUUID(),
-                    name: name,
-                    phoneNumber: phoneNumber,
-                    role: "BUYER",
-                    Auth: {
-                        create: {
-                            id: randomUUID(),
-                            email: email,
-                            password: hashedPassword,
-                            otpToken: OTPToken,
-                            isVerified: false,
-                        },
-                    },
-                },
-            });
+        const payload = {
+            registerId: randomUUID(),
+            email: email,
+            otp: OTPToken,
+            emailTitle: "Email Activation",
+        };
 
-            const dataUrl = {
-                key: userauthData.id,
-                data: email,
-                secret: secretHash(userauthData.id),
-                unique: randomUUID(),
-                note: "skyfly1Verification",
-            };
+        const dataUrl = {
+            token: generateJWT(payload),
+        };
 
-            await generateOTPEmail(dataUrl, OTPToken, email, "verified")
+        const checkEmail = await prisma.auth.findUnique({
+            where: {
+                email: email,
+            },
+            include: {
+                user: true,
+            },
+        });
 
-            res.status(200).json({
-                status: true,
-                message:
-                    "Verification token has been sent, please check your email",
-                data: {
-                    name: name,
-                    email: email,
-                    phoneNumber: phoneNumber,
-                    role: userauthData.role,
-                },
-            });
-        } catch (error) {
-            console.log(error.message);
-            next(
+        if (checkEmail) {
+            return next(
                 createHttpError(409, {
                     message: "Email has already been taken",
                 })
             );
         }
+
+        const userauthData = await prisma.user.create({
+            data: {
+                id: randomUUID(),
+                name: name,
+                phoneNumber: phoneNumber,
+                role: "BUYER",
+                Auth: {
+                    create: {
+                        id: randomUUID(),
+                        email: email,
+                        password: hashedPassword,
+                        otpToken: OTPToken,
+                        isVerified: false,
+                        secretToken: dataUrl.token,
+                    },
+                },
+            },
+        });
+
+        await generateSecretEmail(dataUrl, "verified", "verifyOtp.ejs");
+
+        res.status(200).json({
+            status: true,
+            message:
+                "Verification token has been sent, please check your email",
+            data: {
+                name: name,
+                email: email,
+                phoneNumber: phoneNumber,
+                role: userauthData.role,
+            },
+        });
     } catch (error) {
         next(
             createHttpError(500, {
@@ -88,15 +105,23 @@ const handleLogin = async (req, res, next) => {
             },
         });
 
+        if (!userAccount.isVerified) {
+            return next(
+                createHttpError(401, {
+                    message: "Email has not been activated",
+                })
+            );
+        }
+
         const payload = {
             id: userAccount.user.id,
             name: userAccount.user.name,
             email: userAccount.email,
             phoneNumber: userAccount.user.phoneNumber,
-        }
+        };
 
         if (userAccount && secretCompare(password, userAccount.password)) {
-            const token = generateJWT(payload)
+            const token = generateJWT(payload);
 
             res.status(200).json({
                 message: "User logged in successfully",
@@ -117,24 +142,21 @@ const handleLogin = async (req, res, next) => {
 
 const resendOTP = async (req, res, next) => {
     try {
-        const { secret, data, key, unique } = req.query;
-
-        if (!secretCompare(key, secret)) {
-            return next(
-                createHttpError(401, {
-                    message: "You does not have an access to be here",
-                })
-            );
-        }
+        const { token } = req.query;
+        const payload = jwt.verify(token, process.env.JWT_SIGNATURE_KEY);
 
         const foundUser = await prisma.auth.findUnique({
             where: {
-                email: data,
+                email: payload.email,
             },
             include: {
                 user: true,
             },
         });
+
+        if (token !== foundUser.secretToken || token === "" || token === null) {
+            return next(createHttpError(404, { message: "Token is invalid" }));
+        }
 
         if (!foundUser) {
             return next(createHttpError(404, { message: "User is not found" }));
@@ -149,42 +171,29 @@ const resendOTP = async (req, res, next) => {
         }
 
         const OTPToken = generateTOTP();
+        const newPayload = {
+            registerId: randomUUID(),
+            userId: foundUser.id,
+            email: foundUser.email,
+            otp: OTPToken,
+            emailTitle: "Resend Email Activation",
+        };
+
+        const dataUrl = {
+            token: generateJWT(newPayload),
+        };
 
         await prisma.auth.update({
             where: {
-                email: data,
+                email: payload.email,
             },
             data: {
                 otpToken: OTPToken,
+                secretToken: dataUrl.token,
             },
         });
 
-        const dataUrl = {
-            key,
-            data,
-            secret: secretHash(key),
-            unique: randomUUID(),
-            note: "skyfly1ResendOTP",
-        };
-
-        await generateOTPEmail(dataUrl, OTPToken, data, "verified")
-        // const urlTokenVerification = `http://localhost:2000/api/v1/auth/verified?secret=${
-        //     dataUrl.secret
-        // }&data=${dataUrl.data}&key=${dataUrl.key}&unique=${
-        //     dataUrl.unique + dataUrl.note
-        // }`;
-
-        // const html = await nodeMailer.getHtml("verifyOtp.ejs", {
-        //     email: data,
-        //     OTPToken,
-        //     urlTokenVerification,
-        // });
-
-        // nodeMailer.sendEmail(
-        //     data,
-        //     "Re-send Email Activation | SkyFly Team 01 Jago",
-        //     html
-        // );
+        await generateSecretEmail(dataUrl, "verified", "verifyOtp.ejs");
 
         res.status(201).json({
             status: true,
@@ -197,25 +206,23 @@ const resendOTP = async (req, res, next) => {
 
 const verifyOTP = async (req, res, next) => {
     try {
-        const { secret, data, key } = req.query;
+        const { token } = req.query;
         const { otp } = req.body;
 
-        if (!secretCompare(key, secret)) {
-            return next(
-                createHttpError(401, {
-                    message: "You does not have an access to be here",
-                })
-            );
-        }
+        const payload = jwt.verify(token, process.env.JWT_SIGNATURE_KEY);
 
         const foundUser = await prisma.auth.findUnique({
             where: {
-                email: data,
+                email: payload.email,
             },
             include: {
                 user: true,
             },
         });
+
+        if (token !== foundUser.secretToken || token === "" || token === null) {
+            return next(createHttpError(404, { message: "Token is invalid" }));
+        }
 
         if (!foundUser) {
             return next(createHttpError(404, { message: "User is not found" }));
@@ -231,12 +238,6 @@ const verifyOTP = async (req, res, next) => {
 
         let delta = validateTOTP(otp);
 
-        // console.log("====================================");
-        // console.log(`delta: ${delta}`);
-        // console.log(`otp: ${otp}`);
-        // console.log(`user otp: ${foundUser.otpToken}`);
-        // console.log("====================================");
-
         if (delta === null || otp != foundUser.otpToken) {
             return next(
                 createHttpError(422, { message: "OTP Token is invalid" })
@@ -249,8 +250,8 @@ const verifyOTP = async (req, res, next) => {
             },
             data: {
                 isVerified: true,
-                otpToken: null
-
+                secretToken: null,
+                otpToken: null,
             },
         });
 
@@ -279,40 +280,36 @@ const sendResetPassword = async (req, res, next) => {
         if (!foundUser) {
             return next(
                 createHttpError(404, {
-                    message:
-                        "User is not found and reset password link is invalid",
+                    message: "User is not found",
                 })
             );
         }
 
-        const dataUrl = {
-            key: foundUser.id,
-            data: foundUser.email,
-            secret: secretHash(email),
-            unique: randomUUID(),
-            note: "skyfly1ResetPassword",
+        const payload = {
+            registerId: randomUUID(),
+            email: email,
+            emailTitle: "Reset Password",
         };
 
-        await generateOTPEmail(dataUrl, null, email, "resetPassword")
+        const dataUrl = {
+            token: generateJWT(payload),
+        };
 
-        // const urlResetPassword = `http://localhost:2000/api/v1/auth/resetPassword?secret=${
-        //     dataUrl.secret
-        // }&data=${dataUrl.data}&key=${dataUrl.key}&unique=${
-        //     dataUrl.unique + dataUrl.note
-        // }`;
+        await prisma.auth.update({
+            where: {
+                email: payload.email,
+            },
+            data: {
+                secretToken: dataUrl.token,
+            },
+        });
 
-        // const html = await nodeMailer.getHtml("emailPasswordReset.ejs", {
-        //     email,
-        //     urlResetPassword,
-        // });
+        await generateSecretEmail(
+            dataUrl,
+            "resetPassword",
+            "resetPassword.ejs"
+        );
 
-        // nodeMailer.sendEmail(
-        //     email,
-        //     "Reset Password | SkyFly Team 01 Jago",
-        //     html
-        // );
-
-        console.log(urlResetPassword)
         res.status(200).json({
             status: true,
             message:
@@ -325,26 +322,24 @@ const sendResetPassword = async (req, res, next) => {
 
 const resetPassword = async (req, res, next) => {
     try {
-        const { secret, data } = req.query;
+        const { token } = req.query;
         const { password } = req.body;
-        const hashedPassword = secretHash(password);
 
-        if (!secretCompare(data, secret)) {
-            return next(
-                createHttpError(401, {
-                    message: "You does not have an access to be here",
-                })
-            );
-        }
+        const payload = jwt.verify(token, process.env.JWT_SIGNATURE_KEY);
+        const hashedPassword = secretHash(password);
 
         const foundUser = await prisma.auth.findUnique({
             where: {
-                email: data,
+                email: payload.email,
             },
             include: {
                 user: true,
             },
         });
+
+        if (token !== foundUser.secretToken || token === "" || token === null) {
+            return next(createHttpError(422, { message: "Token is invalid" }));
+        }
 
         if (!foundUser) {
             return next(createHttpError(404, { message: "User is not found" }));
@@ -356,6 +351,7 @@ const resetPassword = async (req, res, next) => {
             },
             data: {
                 password: hashedPassword,
+                secretToken: null,
             },
         });
 
@@ -371,112 +367,161 @@ const resetPassword = async (req, res, next) => {
 const handleLoginGoogle = async (req, res, next) => {
     try {
         // generate token
-        const { code } = req.query
+        const { code } = req.query;
         const { tokens } = await oauth2Client.getToken(code);
 
         oauth2Client.setCredentials(tokens);
 
         const oauth2 = google.oauth2({
             auth: oauth2Client,
-            version: 'v2'
-        })
-        console.log("sebelum1")
+            version: "v2",
+        });
 
-        const {data} = await oauth2.userinfo.get()
+        const { data } = await oauth2.userinfo.get();
 
-        console.log(data)
-        if(!data) return next(createHttpError(404, {status: false}))
+        if (!data) {
+            return next(createHttpError(404, { message: "Account Not Found" }));
+        }
 
-        console.log(data)
-        console.log("sebelum")
-        let userAccount = await prisma.Auth.findUnique({
+        const checkEmail = await prisma.auth.findUnique({
             where: {
-                email: data.email
+                email: data.email,
             },
             include: {
-                user: true
-            }
-        })
+                user: true,
+            },
+        });
 
-        console.log("habis find")
-
-        if(!userAccount){
-            const hashedPassword = secretHash(data.id);
-            console.log("masuk akun kosong")
-            const OTPToken = generateTOTP()
-            userAccount = await prisma.Auth.create({
-                data: {
-                    id: randomUUID(),
-                        email: data.email,
-                        password: hashedPassword,
-                        otpToken: OTPToken,
-                        isVerified: false,
-                        user: {
-                            create: {
-                                id: randomUUID(),
-                                name: data.name,
-                                role: "BUYER",
-                            }
-                        }
-                }
-            })
+        if (checkEmail) {
+            return next(
+                createHttpError(409, {
+                    message: "Email has already been taken",
+                })
+            );
         }
 
-        if(!userAccount.isVerified){
-            console.log("masuk isVerified")
-            const OTPToken = generateTOTP()
-            
-            const dataUrl = {
-                key: userAccount.id,
-                data: data.email,
-                secret: secretHash(userAccount.id),
-                unique: randomUUID(),
-                note: "skyfly1Verification",
-            };
-            // send otp to user email
-            const OTPUrl = await generateOTPEmail(dataUrl, OTPToken, data.email, "verified")
-            return res.status(200).json({
-                status: true,
-                OTPUrl
-            })
-        }
+        const hashedPassword = secretHash(data.id);
+        console.log("=====================================================");
+        console.log(`Password google login: ${data.id}`);
+        console.log("=====================================================");
+
+        const OTPToken = generateTOTP();
 
         const payload = {
-            name: userAccount.user.name,
-            email: userAccount.email,
-            phoneNumber: userAccount?.user.phoneNumber
-        }
+            registerId: randomUUID(),
+            email: data.email,
+            otp: OTPToken,
+            emailTitle: "Email Activation",
+        };
 
-        const token = generateJWT(payload)
- 
-        res.status(200).json({
+        const dataUrl = {
+            token: generateJWT(payload),
+        };
+
+        await prisma.auth.create({
+            data: {
+                id: randomUUID(),
+                email: data.email,
+                password: hashedPassword,
+                otpToken: OTPToken,
+                isVerified: false,
+                secretToken: dataUrl.token,
+                user: {
+                    create: {
+                        id: randomUUID(),
+                        name: data.name,
+                        role: "BUYER",
+                    },
+                },
+            },
+        });
+
+        await generateSecretEmail(dataUrl, "verified", "verifyOtp.ejs");
+
+        return res.status(200).json({
             status: true,
-            data: payload,
-            _token: token
-        })
-
+            message:
+                "Verification token has been sent, please check your email",
+        });
     } catch (error) {
         next(createHttpError(500, { message: error.message }));
     }
-}
+};
 
 const redirectAuthorization = (req, res) => {
-    res.redirect(authorizationUrl)
-}
+    res.redirect(authorizationUrl);
+};
 
 // dummy route to check all email
 
-const checkData = async (req, res, next) => {
+const getUsers = async (req, res, next) => {
     try {
-        const data = await prisma.Auth.findMany()
+        const search = req.query.search || "";
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const offset = (page - 1) * limit;
+
+        const users = await prisma.user.findMany({
+            select: {
+                id: true,
+                name: true,
+                role: true,
+                phoneNumber: true,
+                Auth: {
+                    select: {
+                        id: true,
+                        email: true,
+                        isVerified: true,
+                    },
+                },
+            },
+            orderBy: {
+                name: "asc",
+            },
+            skip: offset,
+            take: limit,
+        });
+
+        const count = await prisma.user.count({
+            where: {
+                name: {
+                    contains: search,
+                },
+            },
+        });
+
         res.status(200).json({
             status: true,
-            data
-        })
+            totalItems: count,
+            pagination: {
+                totalPages: Math.ceil(count / limit),
+                currentPage: page,
+                pageItems: users.length,
+                nextPage: page < Math.ceil(count / limit) ? page + 1 : null,
+                prevPage: page > 1 ? page - 1 : null,
+            },
+            data: users.length !== 0 ? users : "empty product data",
+        });
     } catch (error) {
-        next(createHttpError(500, {error: error.message}))
+        next(createHttpError(500, { error: error.message }));
     }
-}
+};
+
+const getUserLoggedIn = async (req, res, next) => {
+    try {
+        const user = req.user;
+        if (!user)
+            return next(createHttpError(401, { message: "Unauthenticated" }));
+
+        res.status(200).json({
+            status: true,
+            data: user,
+        });
+    } catch (err) {
+        next(createHttpError(500, { message: err.message }));
+    }
+};
+
 module.exports = {
     handleRegister,
     handleLogin,
@@ -486,5 +531,6 @@ module.exports = {
     resetPassword,
     handleLoginGoogle,
     redirectAuthorization,
-    checkData
+    getUsers,
+    getUserLoggedIn,
 };
