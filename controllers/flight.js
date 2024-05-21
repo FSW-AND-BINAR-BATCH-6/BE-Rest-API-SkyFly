@@ -54,7 +54,7 @@ const createFlight = async (req, res) => {
     arrivalDate,
     destinationCity,
     destinationCityCode,
-    price
+    price,
   } = req.body;
 
   const id = uuidv4();
@@ -67,14 +67,7 @@ const createFlight = async (req, res) => {
     if (!planeExists) {
       return res.status(400).json({
         status: false,
-        message: "Invalid planeId. Plane does not exist.",
-      });
-    }
-
-    if (isNaN(Date.parse(departureDate)) || isNaN(Date.parse(arrivalDate))) {
-      return res.status(400).json({
-        status: false,
-        message: 'Invalid date format. Use ISO 8601 format for dates "YYYY-MM-DD HH:mm:ss". e.g 2024-07-10 15:00:00',
+        message: 'Invalid planeId. Plane does not exist.',
       });
     }
 
@@ -88,13 +81,14 @@ const createFlight = async (req, res) => {
         arrivalDate: new Date(arrivalDate),
         destinationCity,
         destinationCityCode,
-        price
+        price,
       },
     });
+    
 
     res.status(200).json({
       status: true,
-      message: "Flight created successfully",
+      message: 'Flight created successfully',
       data: newFlight,
     });
   } catch (err) {
