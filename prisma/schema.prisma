@@ -14,7 +14,7 @@ datasource db {
 }
 
 enum RoleUser {
-    CUSTOMER
+    BUYER
     ADMIN
 }
 
@@ -96,11 +96,12 @@ model Ticket {
 }
 
 model Auth {
-    id         String  @id @default(cuid())
-    userId     String? @unique
-    email      String  @unique
-    password   String
-    otpToken   String
-    isVerified Boolean @default(false)
-    user       User?   @relation(fields: [userId], references: [id])
+    id          String  @id @default(cuid())
+    userId      String? @unique
+    email       String  @unique
+    password    String
+    otpToken    String?
+    secretToken String?
+    isVerified  Boolean @default(false)
+    user        User?   @relation(fields: [userId], references: [id])
 }
