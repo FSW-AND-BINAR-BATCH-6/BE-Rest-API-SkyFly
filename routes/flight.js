@@ -1,4 +1,5 @@
 const express = require("express");
+const validator = require("../lib/validator");
 
 const router = express.Router();
 
@@ -10,13 +11,15 @@ const {
     updateFlight
 } = require('../controllers/flight');
 
+const { createFlightSchema, updateFlightSchema } = require('../utils/joiValidation');
+
 router.route("/")
     .get(getAllFlight)
-    .post(createFlight);
+    .post(validator(createFlightSchema), createFlight);
 
 router.route("/:id")
     .get(getFlightById)
-    .put(updateFlight)
+    .put(validator(updateFlightSchema), updateFlight)
     .delete(removeFlight);
-    
+
 module.exports = router
