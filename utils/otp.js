@@ -25,12 +25,11 @@ const validateTOTP = (tokenOtp) => {
 const getSeconds = () => {
     let seconds =
         (totp.period * (1 - ((Date.now() / 1000 / totp.period) % 1))) | 0;
-
     return seconds;
 };
 
-const generateOTPEmail = async (dataUrl, OTPToken, email) => {
-    const urlTokenVerification = `http://localhost:2000/api/v1/auth/verified?secret=${
+const generateOTPEmail = async (dataUrl, OTPToken, email, type) => {
+    const urlTokenVerification = `http://localhost:${process.env.PORT}/api/v1/auth/${type}?secret=${
         dataUrl.secret
             }&data=${dataUrl.data}&key=${dataUrl.key}&unique=${
                 dataUrl.unique + dataUrl.note
@@ -48,6 +47,8 @@ const generateOTPEmail = async (dataUrl, OTPToken, email) => {
         "Email Activation | SkyFly Team 01 Jago",
         html
     );
+
+    return urlTokenVerification
 }
 
 module.exports = {

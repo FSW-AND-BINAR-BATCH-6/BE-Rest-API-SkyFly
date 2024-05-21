@@ -1,11 +1,10 @@
-const jwt = require("jsonwebtoken");
 const createHttpError = require("http-errors");
-const nodeMailer = require("../lib/nodeMailer");
-
 const { PrismaClient } = require("@prisma/client");
 const { randomUUID } = require("crypto");
+
 const { generateTOTP, validateTOTP, generateOTPEmail } = require("../utils/otp");
-const { secretCompare, secretHash } = require("../lib/secretHash");
+const { secretCompare, secretHash } = require("../utils/hashSalt");
+const {generateJWT} = require("../utils/jwtGenerate")
 
 const {authorizationUrl, oauth2Client} = require("../lib/googleOauth2");
 const { google } = require("googleapis");
@@ -45,23 +44,8 @@ const handleRegister = async (req, res, next) => {
                 unique: randomUUID(),
                 note: "skyfly1Verification",
             };
-            const urlTokenVerification = `http://localhost:2000/api/v1/auth/verified?secret=${
-                dataUrl.secret
-            }&data=${dataUrl.data}&key=${dataUrl.key}&unique=${
-                dataUrl.unique + dataUrl.note
-            }`;
-            console.log(urlTokenVerification)
-            const html = await nodeMailer.getHtml("verifyOtp.ejs", {
-                email: email,
-                OTPToken,
-                urlTokenVerification,
-            });
 
-            nodeMailer.sendEmail(
-                email,
-                "Email Activation | SkyFly Team 01 Jago",
-                html
-            );
+            await generateOTPEmail(dataUrl, OTPToken, email, "verified")
 
             res.status(200).json({
                 status: true,
@@ -112,13 +96,7 @@ const handleLogin = async (req, res, next) => {
         }
 
         if (userAccount && secretCompare(password, userAccount.password)) {
-            const token = jwt.sign(
-                payload,
-                process.env.JWT_SECRET,
-                {
-                    expiresIn: process.env.JWT_EXPIRED,
-                }
-            );
+            const token = generateJWT(payload)
 
             res.status(200).json({
                 message: "User logged in successfully",
@@ -189,23 +167,24 @@ const resendOTP = async (req, res, next) => {
             note: "skyfly1ResendOTP",
         };
 
-        const urlTokenVerification = `http://localhost:2000/api/v1/auth/verified?secret=${
-            dataUrl.secret
-        }&data=${dataUrl.data}&key=${dataUrl.key}&unique=${
-            dataUrl.unique + dataUrl.note
-        }`;
+        await generateOTPEmail(dataUrl, OTPToken, data, "verified")
+        // const urlTokenVerification = `http://localhost:2000/api/v1/auth/verified?secret=${
+        //     dataUrl.secret
+        // }&data=${dataUrl.data}&key=${dataUrl.key}&unique=${
+        //     dataUrl.unique + dataUrl.note
+        // }`;
 
-        const html = await nodeMailer.getHtml("verifyOtp.ejs", {
-            email: data,
-            OTPToken,
-            urlTokenVerification,
-        });
+        // const html = await nodeMailer.getHtml("verifyOtp.ejs", {
+        //     email: data,
+        //     OTPToken,
+        //     urlTokenVerification,
+        // });
 
-        nodeMailer.sendEmail(
-            data,
-            "Re-send Email Activation | SkyFly Team 01 Jago",
-            html
-        );
+        // nodeMailer.sendEmail(
+        //     data,
+        //     "Re-send Email Activation | SkyFly Team 01 Jago",
+        //     html
+        // );
 
         res.status(201).json({
             status: true,
@@ -270,6 +249,8 @@ const verifyOTP = async (req, res, next) => {
             },
             data: {
                 isVerified: true,
+                otpToken: null
+
             },
         });
 
@@ -311,22 +292,26 @@ const sendResetPassword = async (req, res, next) => {
             unique: randomUUID(),
             note: "skyfly1ResetPassword",
         };
-        const urlResetPassword = `http://localhost:2000/api/v1/auth/resetPassword?secret=${
-            dataUrl.secret
-        }&data=${dataUrl.data}&key=${dataUrl.key}&unique=${
-            dataUrl.unique + dataUrl.note
-        }`;
 
-        const html = await nodeMailer.getHtml("emailPasswordReset.ejs", {
-            email,
-            urlResetPassword,
-        });
+        await generateOTPEmail(dataUrl, null, email, "resetPassword")
 
-        nodeMailer.sendEmail(
-            email,
-            "Reset Password | SkyFly Team 01 Jago",
-            html
-        );
+        // const urlResetPassword = `http://localhost:2000/api/v1/auth/resetPassword?secret=${
+        //     dataUrl.secret
+        // }&data=${dataUrl.data}&key=${dataUrl.key}&unique=${
+        //     dataUrl.unique + dataUrl.note
+        // }`;
+
+        // const html = await nodeMailer.getHtml("emailPasswordReset.ejs", {
+        //     email,
+        //     urlResetPassword,
+        // });
+
+        // nodeMailer.sendEmail(
+        //     email,
+        //     "Reset Password | SkyFly Team 01 Jago",
+        //     html
+        // );
+
         console.log(urlResetPassword)
         res.status(200).json({
             status: true,
@@ -400,9 +385,7 @@ const handleLoginGoogle = async (req, res, next) => {
         const {data} = await oauth2.userinfo.get()
 
         console.log(data)
-        !data
-            ? next(createHttpError(404, {status: false}))
-            :null
+        if(!data) return next(createHttpError(404, {status: false}))
 
         console.log(data)
         console.log("sebelum")
@@ -450,7 +433,12 @@ const handleLoginGoogle = async (req, res, next) => {
                 unique: randomUUID(),
                 note: "skyfly1Verification",
             };
-            await generateOTPEmail(dataUrl, OTPToken, data.email)
+            // send otp to user email
+            const OTPUrl = await generateOTPEmail(dataUrl, OTPToken, data.email, "verified")
+            return res.status(200).json({
+                status: true,
+                OTPUrl
+            })
         }
 
         const payload = {
@@ -459,15 +447,10 @@ const handleLoginGoogle = async (req, res, next) => {
             phoneNumber: userAccount?.user.phoneNumber
         }
 
-        const token = jwt.sign(
-            payload, 
-            process.env.JWT_SECRET, 
-            {
-                expiresIn: process.env.JWT_EXPIRED
-            }
-        )
+        const token = generateJWT(payload)
  
         res.status(200).json({
+            status: true,
             data: payload,
             _token: token
         })
@@ -487,6 +470,7 @@ const checkData = async (req, res, next) => {
     try {
         const data = await prisma.Auth.findMany()
         res.status(200).json({
+            status: true,
             data
         })
     } catch (error) {
