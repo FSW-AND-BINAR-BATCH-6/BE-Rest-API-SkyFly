@@ -14,6 +14,7 @@ async function main() {
         "Maya",
         "Ferdinan",
         "Zenith",
+        "imamGanteng"
     ];
 
     await Promise.all(
