@@ -1,0 +1,2310 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "team01-api-Skyfly Express-rest API Swagger Documentation",
+    "description": "Development For Final Project Binar FSW1 Team1 Fullstack Dashboard for a library designed to manage library data and a library website utilizing, Express.js as the backend and Postgress as the Database Management System (DBMS). Github: [TEAM1-API-SKYFLY](https://github.com/orgs/FSW-AND-BINAR-BATCH-6/repositories)",
+    "version": "1.0.0",
+    "license": {
+      "name": "ISC",
+      "url": "https://spdx.org/licenses/ISC.html"
+    },
+    "contact": {
+      "name": "team1-FSW1",
+      "url": "https://github.com/orgs/FSW-AND-BINAR-BATCH-6/repositories"
+    }
+  },
+  "tags": [
+    {
+      "name": "Auths",
+      "description": "this is the API for AUTHS resources"
+    },
+    {
+      "name": "Airplanes",
+      "description": "this is the API for AIRPLANES resources"
+    },
+    {
+      "name": "Flights",
+      "description": "this is the API for FLIGHTS resources"
+    },
+    {
+      "name": "Flight Seats",
+      "description": "this is the API for FLIGHT SEATS resources"
+    },
+    {
+      "name": "Tickets",
+      "description": "this is the API for TICKETS resources"
+    },
+    {
+      "name": "Users",
+      "description": "this is the API for USERS resources"
+    }
+  ],
+  "servers": [
+    {
+      "url": "http://localhost:3000/api/v1"
+    }
+  ],
+  "paths": {
+    "/airplane": {
+      "get": {
+        "tags": ["Airplanes"],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Return result HIT API get all airplanes data",
+        "description": "This is an API for getting all airplanes data",
+        "responses": {
+          "200": {
+            "description": "Success getting all airplanes data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "all airplane data retrieved successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "example": {
+                          "airplanes": [
+                              {
+                                  "id": "clw9abc650000enqweyz697md",
+                                  "code": "1",
+                                  "name": "pappapap",
+                                  "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/airplanes/1715866000111.png"
+                              },
+                              {
+                                  "id": "clwaeh22b0000uzbjstxii4b7",
+                                  "code": "2",
+                                  "name": "JawAir",
+                                  "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/airplanes/1715933451194.png"
+                              },
+                              {
+                                  "id": "clwaehve10001uzbjgbq8hg44",
+                                  "code": "3",
+                                  "name": "SundAir",
+                                  "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/airplanes/1715933489881.png"
+                              }
+                          ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Airplanes"],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Return result HIT API create airplane",
+        "description": "This is an API for creating airplane data",
+        "requestBody": {
+          "description": "This is a request body for create new airplane",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "integer",
+                    "example": 4
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "BatakAir"
+                  },
+                  "image": {
+                    "type": "http",
+                    "example": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/airplanes/1715935002439.png"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success create new airplane data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "example": {
+                          "airplanes": {
+                              "id": "clwafg1pu000111ghakckyuuf",
+                              "code": "4",
+                              "name": "BatakAir",
+                              "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/airplanes/1715935084484.png"
+                          }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/airplane/{id}": {
+      "get": {
+        "tags": ["Airplanes"],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Return result HIT API get airplane by id",
+        "description": "This is an API for getting airplane data based on Id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "clwaeh22b0000uzbjstxii4b7"
+            },
+            "description": "Airplane ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success getting airplane data based on Id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "message" : {
+                      "type": "string",
+                      "example": "airplane data retrieved successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "example": {
+                          "airplane": {
+                              "id": "clwaeh22b0000uzbjstxii4b7",
+                              "code": "2",
+                              "name": "JawAir",
+                              "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/airplanes/1715933451194.png"
+                          }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Airplanes"],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Return result HIT API update airplane by Id",
+        "description": "This is an API for updatting airplane data based on Id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "clwafg1pu000111ghakckyuuf"
+            },
+            "description": "Airplane ID"
+          }
+        ],
+        "requestBody": {
+          "description": "This is a request body for update airplane",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "integer",
+                    "example": 5
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "AirBatak"
+                  },
+                  "image": {
+                    "type": "http",
+                    "example": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/airplanes/1715935625171.png"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success editting transaction data based on Id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "example": {
+                          "airplane": {
+                              "id": "clwafg1pu000111ghakckyuuf",
+                              "code": "5",
+                              "name": "AirBatak",
+                              "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/airplanes/1715935625171.png"
+                          }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Airplanes"],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Return result HIT API delete airplane by Id",
+        "description": "This is an API for deletting airplane data based on Id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "clwafg1pu000111ghakckyuuf"
+            },
+            "description": "Airplane ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success deletting airplane data based on Id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "airplane deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/flight": {
+      "get": {
+        "tags": ["Flights"],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Return result HIT API get all flights data",
+        "description": "This is an API for getting all flights data",
+        "responses": {
+          "200": {
+            "description": "Success getting all flights data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "all flight data retrieved successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "example": {
+                          "flights": [
+                              {
+                                  "id": "clw9abc650000enqweyz697md",
+                                  "code": "1",
+                                  "name": "pappapap",
+                                  "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/flights/1715866000111.png"
+                              },
+                              {
+                                  "id": "clwaeh22b0000uzbjstxii4b7",
+                                  "code": "2",
+                                  "name": "JawAir",
+                                  "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/flights/1715933451194.png"
+                              },
+                              {
+                                  "id": "clwaehve10001uzbjgbq8hg44",
+                                  "code": "3",
+                                  "name": "SundAir",
+                                  "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/flights/1715933489881.png"
+                              }
+                          ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Flights"],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Return result HIT API create flight",
+        "description": "This is an API for creating flight data",
+        "requestBody": {
+          "description": "This is a request body for create new flight",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "integer",
+                    "example": 4
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "BatakAir"
+                  },
+                  "image": {
+                    "type": "http",
+                    "example": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/flights/1715935002439.png"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success create new flight data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "example": {
+                          "flights": {
+                              "id": "clwafg1pu000111ghakckyuuf",
+                              "code": "4",
+                              "name": "BatakAir",
+                              "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/flights/1715935084484.png"
+                          }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/flight/{id}": {
+      "get": {
+        "tags": ["Flights"],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Return result HIT API get flight by id",
+        "description": "This is an API for getting flight data based on Id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "clwaeh22b0000uzbjstxii4b7"
+            },
+            "description": "Flight ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success getting flight data based on Id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "message" : {
+                      "type": "string",
+                      "example": "flight data retrieved successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "example": {
+                          "flight": {
+                              "id": "clwaeh22b0000uzbjstxii4b7",
+                              "code": "2",
+                              "name": "JawAir",
+                              "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/flights/1715933451194.png"
+                          }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Flights"],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Return result HIT API update flight by Id",
+        "description": "This is an API for updatting flight data based on Id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "clwafg1pu000111ghakckyuuf"
+            },
+            "description": "flight ID"
+          }
+        ],
+        "requestBody": {
+          "description": "This is a request body for update flight",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "integer",
+                    "example": 5
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "AirBatak"
+                  },
+                  "image": {
+                    "type": "http",
+                    "example": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/flights/1715935625171.png"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success editting transaction data based on Id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "example": {
+                          "flight": {
+                              "id": "clwafg1pu000111ghakckyuuf",
+                              "code": "5",
+                              "name": "AirBatak",
+                              "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/flights/1715935625171.png"
+                          }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Flights"],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Return result HIT API delete flight by Id",
+        "description": "This is an API for deletting flight data based on Id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "clwafg1pu000111ghakckyuuf"
+            },
+            "description": "flight ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success deletting flight data based on Id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "flight deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/flight-seat": {
+      "get": {
+        "tags": ["Flight Seats"],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Return result HIT API get all flight-seats data",
+        "description": "This is an API for getting all flight-seats data",
+        "responses": {
+          "200": {
+            "description": "Success getting all flight-seats data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "all flight-seat data retrieved successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "example": {
+                          "flight-seats": [
+                              {
+                                  "id": "clw9abc650000enqweyz697md",
+                                  "code": "1",
+                                  "name": "pappapap",
+                                  "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/flight-seats/1715866000111.png"
+                              },
+                              {
+                                  "id": "clwaeh22b0000uzbjstxii4b7",
+                                  "code": "2",
+                                  "name": "JawAir",
+                                  "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/flight-seats/1715933451194.png"
+                              },
+                              {
+                                  "id": "clwaehve10001uzbjgbq8hg44",
+                                  "code": "3",
+                                  "name": "SundAir",
+                                  "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/flight-seats/1715933489881.png"
+                              }
+                          ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Flight Seats"],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Return result HIT API create flight-seat",
+        "description": "This is an API for creating flight-seat data",
+        "requestBody": {
+          "description": "This is a request body for create new flight-seat",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "integer",
+                    "example": 4
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "BatakAir"
+                  },
+                  "image": {
+                    "type": "http",
+                    "example": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/flight-seats/1715935002439.png"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success create new flight-seat data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "example": {
+                          "flight-seats": {
+                              "id": "clwafg1pu000111ghakckyuuf",
+                              "code": "4",
+                              "name": "BatakAir",
+                              "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/flight-seats/1715935084484.png"
+                          }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/flight-seat/{id}": {
+      "get": {
+        "tags": ["Flight Seats"],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Return result HIT API get flight-seat by id",
+        "description": "This is an API for getting flight-seat data based on Id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "clwaeh22b0000uzbjstxii4b7"
+            },
+            "description": "Flight-seat ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success getting flight-seat data based on Id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "message" : {
+                      "type": "string",
+                      "example": "flight-seat data retrieved successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "example": {
+                          "flight-seat": {
+                              "id": "clwaeh22b0000uzbjstxii4b7",
+                              "code": "2",
+                              "name": "JawAir",
+                              "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/flight-seats/1715933451194.png"
+                          }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Flight Seats"],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Return result HIT API update flight-seat by Id",
+        "description": "This is an API for updatting flight-seat data based on Id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "clwafg1pu000111ghakckyuuf"
+            },
+            "description": "Flight-seat ID"
+          }
+        ],
+        "requestBody": {
+          "description": "This is a request body for update flight-seat",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "integer",
+                    "example": 5
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "AirBatak"
+                  },
+                  "image": {
+                    "type": "http",
+                    "example": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/flight-seats/1715935625171.png"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success editting transaction data based on Id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "example": {
+                          "flight-seat": {
+                              "id": "clwafg1pu000111ghakckyuuf",
+                              "code": "5",
+                              "name": "AirBatak",
+                              "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/flight-seats/1715935625171.png"
+                          }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Flight Seats"],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Return result HIT API delete flight-seat by Id",
+        "description": "This is an API for deletting flight-seat data based on Id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "clwafg1pu000111ghakckyuuf"
+            },
+            "description": "Flight-seat ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success deletting flight-seat data based on Id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "flight-seat deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/ticket": {
+      "get": {
+        "tags": ["Tickets"],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Return result HIT API get all tickets data",
+        "description": "This is an API for getting all tickets data",
+        "responses": {
+          "200": {
+            "description": "Success getting all tickets data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "all ticket data retrieved successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "example": {
+                          "tickets": [
+                              {
+                                  "id": "clw9abc650000enqweyz697md",
+                                  "code": "1",
+                                  "name": "pappapap",
+                                  "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/tickets/1715866000111.png"
+                              },
+                              {
+                                  "id": "clwaeh22b0000uzbjstxii4b7",
+                                  "code": "2",
+                                  "name": "JawAir",
+                                  "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/tickets/1715933451194.png"
+                              },
+                              {
+                                  "id": "clwaehve10001uzbjgbq8hg44",
+                                  "code": "3",
+                                  "name": "SundAir",
+                                  "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/tickets/1715933489881.png"
+                              }
+                          ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Tickets"],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Return result HIT API create ticket",
+        "description": "This is an API for creating ticket data",
+        "requestBody": {
+          "description": "This is a request body for create new ticket",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "integer",
+                    "example": 4
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "BatakAir"
+                  },
+                  "image": {
+                    "type": "http",
+                    "example": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/tickets/1715935002439.png"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success create new ticket data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "example": {
+                          "tickets": {
+                              "id": "clwafg1pu000111ghakckyuuf",
+                              "code": "4",
+                              "name": "BatakAir",
+                              "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/tickets/1715935084484.png"
+                          }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/ticket/{id}": {
+      "get": {
+        "tags": ["Tickets"],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Return result HIT API get ticket by id",
+        "description": "This is an API for getting ticket data based on Id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "clwaeh22b0000uzbjstxii4b7"
+            },
+            "description": "Ticket ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success getting ticket data based on Id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "message" : {
+                      "type": "string",
+                      "example": "ticket data retrieved successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "example": {
+                          "ticket": {
+                              "id": "clwaeh22b0000uzbjstxii4b7",
+                              "code": "2",
+                              "name": "JawAir",
+                              "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/tickets/1715933451194.png"
+                          }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Tickets"],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Return result HIT API update ticket by Id",
+        "description": "This is an API for updatting ticket data based on Id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "clwafg1pu000111ghakckyuuf"
+            },
+            "description": "Ticket ID"
+          }
+        ],
+        "requestBody": {
+          "description": "This is a request body for update ticket",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "integer",
+                    "example": 5
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "AirBatak"
+                  },
+                  "image": {
+                    "type": "http",
+                    "example": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/tickets/1715935625171.png"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success editting transaction data based on Id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "example": {
+                          "ticket": {
+                              "id": "clwafg1pu000111ghakckyuuf",
+                              "code": "5",
+                              "name": "AirBatak",
+                              "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/tickets/1715935625171.png"
+                          }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Tickets"],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Return result HIT API delete ticket by Id",
+        "description": "This is an API for deletting ticket data based on Id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "clwafg1pu000111ghakckyuuf"
+            },
+            "description": "Ticket ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success deletting ticket data based on Id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "ticket deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/user": {
+      "get": {
+        "tags": ["Users"],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Return result HIT API get all users data",
+        "description": "This is an API for getting all users data",
+        "responses": {
+          "200": {
+            "description": "Success getting all users data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "all user data retrieved successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "example": {
+                          "users": [
+                              {
+                                  "id": "clw9abc650000enqweyz697md",
+                                  "code": "1",
+                                  "name": "pappapap",
+                                  "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/users/1715866000111.png"
+                              },
+                              {
+                                  "id": "clwaeh22b0000uzbjstxii4b7",
+                                  "code": "2",
+                                  "name": "JawAir",
+                                  "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/users/1715933451194.png"
+                              },
+                              {
+                                  "id": "clwaehve10001uzbjgbq8hg44",
+                                  "code": "3",
+                                  "name": "SundAir",
+                                  "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/users/1715933489881.png"
+                              }
+                          ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Users"],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Return result HIT API create user",
+        "description": "This is an API for creating user data",
+        "requestBody": {
+          "description": "This is a request body for create new user",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "integer",
+                    "example": 4
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "BatakAir"
+                  },
+                  "image": {
+                    "type": "http",
+                    "example": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/users/1715935002439.png"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success create new user data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "example": {
+                          "users": {
+                              "id": "clwafg1pu000111ghakckyuuf",
+                              "code": "4",
+                              "name": "BatakAir",
+                              "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/users/1715935084484.png"
+                          }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/{id}": {
+      "get": {
+        "tags": ["Users"],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Return result HIT API get user by id",
+        "description": "This is an API for getting user data based on Id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "clwaeh22b0000uzbjstxii4b7"
+            },
+            "description": "User ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success getting user data based on Id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "message" : {
+                      "type": "string",
+                      "example": "user data retrieved successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "example": {
+                          "user": {
+                              "id": "clwaeh22b0000uzbjstxii4b7",
+                              "code": "2",
+                              "name": "JawAir",
+                              "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/users/1715933451194.png"
+                          }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Users"],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Return result HIT API update user by Id",
+        "description": "This is an API for updatting user data based on Id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "clwafg1pu000111ghakckyuuf"
+            },
+            "description": "User ID"
+          }
+        ],
+        "requestBody": {
+          "description": "This is a request body for update user",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "integer",
+                    "example": 5
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "AirBatak"
+                  },
+                  "image": {
+                    "type": "http",
+                    "example": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/users/1715935625171.png"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success editting transaction data based on Id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "example": {
+                          "user": {
+                              "id": "clwafg1pu000111ghakckyuuf",
+                              "code": "5",
+                              "name": "AirBatak",
+                              "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/users/1715935625171.png"
+                          }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Users"],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Return result HIT API delete user by Id",
+        "description": "This is an API for deletting user data based on Id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "clwafg1pu000111ghakckyuuf"
+            },
+            "description": "User ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success deletting user data based on Id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "user deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/auth/login": {
+      "post": {
+        "tags": ["Auths"],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Return result of user login API",
+        "description": "This API is for user login",
+        "requestBody": {
+          "description": "Request body for successful user login",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "skyflyproduction1@gmail.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "password"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "User logged in successfully"
+                    },
+                    "_token": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNsd2hoaThrMjAwMDYzMjFlaGJxdzQ5ZWUiLCJuYW1lIjoiQWxpY2UiLCJlbWFpbCI6ImFsaWNlQHRlc3QuY29tIiwicGhvbmVOdW1iZXIiOiI2MjgxMjM0NTY3ODkiLCJpYXQiOjE3MTYzNjE4ODgsImV4cCI6MTcxNjQ0ODI4OH0.a74iFFNbBH1WoYABtONscTY4-2LdD7qjtaGnBkEEA4Q"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Wrong password",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 401
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Wrong password"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Wrong email",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "email not registered"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Email invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 422
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "\"email\" must be a valid email"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "423": {
+            "description": "Email invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 423
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "\"email\" must be a valid email"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/auth/google": {
+      "get": {
+        "tags": ["Auths"],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Return result of user login API by google auth",
+        "description": "This API is for user login by google auth",
+        "requestBody": {
+          "description": "Request body for successful user login",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "skyflyproduction1@gmail.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "password"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "User logged in successfully"
+                    },
+                    "_token": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNsd2hoaThrMjAwMDYzMjFlaGJxdzQ5ZWUiLCJuYW1lIjoiQWxpY2UiLCJlbWFpbCI6ImFsaWNlQHRlc3QuY29tIiwicGhvbmVOdW1iZXIiOiI2MjgxMjM0NTY3ODkiLCJpYXQiOjE3MTYzNjE4ODgsImV4cCI6MTcxNjQ0ODI4OH0.a74iFFNbBH1WoYABtONscTY4-2LdD7qjtaGnBkEEA4Q"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Wrong password",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 401
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Wrong password"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Wrong email",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "email not registered"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Email invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 422
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "\"email\" must be a valid email"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "423": {
+            "description": "Email invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 423
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "\"email\" must be a valid email"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/auth/forgetPassword": {
+      "post": {
+        "tags": ["Auths"],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Return result of user forget password",
+        "description": "This API is for user forget password",
+        "requestBody": {
+          "description": "Request body for forget password",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "skyflyproduction1@gmail.com"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Sending link to email for reset password",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Reset password link has been sent, please check your email"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Wrong email",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "user is not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Email invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 422
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "\"email\" must be a valid email"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/auth/resetPassword": {
+      "post": {
+        "tags": ["Auths"],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Return result of user forget password",
+        "description": "This API is for user forget password",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZWdpc3RlcklkIjoiMTc0OTQ1ODMtMjM4MC00NWEzLThkMzYtOTQyYzY3MDA5YzMzIiwiZW1haWwiOiJ2aWVyeTE1MTAyMDAyQGdtYWlsLmNvbSIsImVtYWlsVGl0bGUiOiJSZXNldCBQYXNzd29yZCIsImlhdCI6MTcxNjMxMjAwNiwiZXhwIjoxNzE2Mzk4NDA2fQ.pRvJ_UYt-1B5aTwZDslTTLpITjCgPRJldjS5l_VlaYk"
+            },
+            "description": "token"
+          }
+        ],
+        "requestBody": {
+          "description": "Request body for reset password",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "password": {
+                    "type": "string",
+                    "example": "password"
+                  },
+                  "confirmPassword": {
+                    "type": "string",
+                    "example": "passwordbaru"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Reset password",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "user password updated successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 422
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "\"email\" must be a valid email"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/auth/register": {
+      "post": {
+        "tags": ["Auths"],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Returns the result of the registration API",
+        "description": "This API is used for user registration.",
+        "requestBody": {
+          "description": "Request body for successful registration.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "skyfly"
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "skyflyproduction1@gmail.com"
+                  },
+                  "phoneNumber": {
+                    "type": "string",
+                    "example": "0909099091222"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "skyfly123"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful registration",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Verification token has been sent, please check your email"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                          "name" : {
+                            "type": "string",
+                            "example": "skyfly"
+                          },
+                          "email": {
+                            "type": "string",
+                            "example": "skyflyproduction1@gmail.com"
+                          },
+                          "phoneNumber": {
+                            "type": "string",
+                            "example": "0909099091222"
+                          },
+                          "role": {
+                            "type": "string",
+                            "example": "BUYER"
+                          }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Failed to register member",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "name, email, and password must be filled"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Email already registered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "Failed"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "email is already registered"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/{id}": {
+      "get": {
+        "tags": ["Auths"],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Return result HIT API get auth by id",
+        "description": "This is an API for getting auth data based on Id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "clwaeh22b0000uzbjstxii4b7"
+            },
+            "description": "Auth ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success getting auth data based on Id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "message" : {
+                      "type": "string",
+                      "example": "auth data retrieved successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "example": {
+                          "auth": {
+                              "id": "clwaeh22b0000uzbjstxii4b7",
+                              "code": "2",
+                              "name": "JawAir",
+                              "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/auths/1715933451194.png"
+                          }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Auths"],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Return result HIT API update auth by Id",
+        "description": "This is an API for updatting auth data based on Id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "clwafg1pu000111ghakckyuuf"
+            },
+            "description": "Auth ID"
+          }
+        ],
+        "requestBody": {
+          "description": "This is a request body for update auth",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "integer",
+                    "example": 5
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "AirBatak"
+                  },
+                  "image": {
+                    "type": "http",
+                    "example": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/auths/1715935625171.png"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success editting transaction data based on Id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "example": {
+                          "auth": {
+                              "id": "clwafg1pu000111ghakckyuuf",
+                              "code": "5",
+                              "name": "AirBatak",
+                              "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/auths/1715935625171.png"
+                          }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Auths"],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Return result HIT API delete auth by Id",
+        "description": "This is an API for deletting auth data based on Id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "clwafg1pu000111ghakckyuuf"
+            },
+            "description": "Auth ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success deletting auth data based on Id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "auth deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerToken": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}
