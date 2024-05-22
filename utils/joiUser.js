@@ -15,4 +15,4 @@ const userUpdateSchema = Joi.object({
     role: Joi.string().required(),
 });
 
-module.exports = { };
+module.exports = { userSchema, userUpdateSchema};

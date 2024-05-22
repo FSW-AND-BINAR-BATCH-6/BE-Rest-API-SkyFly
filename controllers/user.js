@@ -1,8 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
-const bcrypt = require("bcrypt");
 const createHttpError = require("http-errors");
 const { randomUUID } = require("crypto");
-const user = require('../controllers/user');
 const prisma = new PrismaClient();
 
 
@@ -16,6 +14,16 @@ const getAllUsers = async (req, res, next) => {
                 name: true,
                 phoneNumber: true,
                 role: true,
+                Auth: {
+                    select: {
+                        id: true,
+                        email: true,
+                        isVerified: true,
+                    },
+                },
+            },
+            orderBy: {
+                name: "asc",
             },
         });
 
@@ -32,6 +40,20 @@ const getAllUsers = async (req, res, next) => {
 const getUserById = async (req, res, next) => {
     try {
         const user = await prisma.user.findUnique({
+            select: {
+                id: true,
+                name: true,
+                role: true,
+                phoneNumber: true,
+                Auth: {
+                    select: {
+                        id: true,
+                        email: true,
+                        isVerified: true,
+                    },
+                },
+            },
+
             where: { id: req.params.id },
         });
 
@@ -39,12 +61,7 @@ const getUserById = async (req, res, next) => {
             res.status(200).json({
                 status: true,
                 message: "User data retrieved successfully",
-                data: {
-                    id: user.id,
-                    name: user.name,
-                    phoneNumber: user.phoneNumber,
-                    role: user.role,
-                },
+                data: user,
             });
         } else {
             next(createHttpError(404, { message: "Id Not Found" }));
@@ -55,14 +72,14 @@ const getUserById = async (req, res, next) => {
 };
 
 const createUser = async (req, res, next) => {
-    
+console.log(randomUUID());
     const data = req.body;
 
     try {
 
         const newUser = await prisma.user.create({
             data: {
-                id: randomUUID, // Include this line if you are passing id in the request body
+                id: randomUUID(), 
                 name: data.name,
                 phoneNumber: data.phoneNumber,
                 role: data.role,
@@ -86,8 +103,9 @@ const createUser = async (req, res, next) => {
 
 
 const updateUser = async (req, res, next) => {
-    
-    const { name, phoneNumber, role } = value;
+
+    // const { name, phoneNumber, role } = value;
+    const data = req.body;
 
     try {
         const user = await prisma.user.findUnique({
@@ -99,13 +117,13 @@ const updateUser = async (req, res, next) => {
         }
 
         // Check if the new name already exists for a different user
-        
+
         const updatedUser = await prisma.user.update({
             where: { id: req.params.id },
             data: {
-                name,
-                phoneNumber,
-                role,
+                name: data.name,
+                phoneNumber: data.phoneNumber,
+                role: data.role,
             },
         });
 
