@@ -7,7 +7,7 @@ const getAllAirplane = async (req, res) => {
   try {
     const airplane = await prisma.airplane.findMany();
     res.status(200).json({
-      status: "success",
+      status: true,
       message: "all airplane data retrieved successfully",
       data: {
         "airplanes":airplane
@@ -24,7 +24,7 @@ const getAirplaneById = async (req, res) => {
       where: { id: req.params.id },
     });
     res.status(200).json({
-      status: "success",
+      status: true,
       message: "airplane data retrieved successfully",
       data: {
         "airplane": airplane
@@ -50,7 +50,7 @@ const createAirplane = async (req, res) => {
       },
     });
     res.status(200).json({
-      status: "success",
+      status: true,
       message: "airplane created successfully",
       data: {
         "airplanes": newAirplane
@@ -85,7 +85,7 @@ const updateAirplane = async (req, res) => {
       },
     });
     res.status(200).json({
-      status: "success",
+      status: true,
       message: "airplane updated successfully",
       data: {
         "airplane": updatedAirplane
@@ -102,7 +102,7 @@ const deleteAirplane = async (req, res) => {
       where: { id: req.params.id },
     });
     res.status(200).json({
-      status: "success",
+      status: true,
       message: "airplane deleted successfully",
     });
   } catch (err) {
