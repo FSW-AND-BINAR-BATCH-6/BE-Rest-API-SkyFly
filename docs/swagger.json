@@ -1652,7 +1652,7 @@
             }
           },
           "423": {
-            "description": "Email invalid",
+            "description": "Password invalid",
             "content": {
               "application/json": {
                 "schema": {
@@ -1664,7 +1664,7 @@
                     },
                     "message": {
                       "type": "string",
-                      "example": "\"email\" must be a valid email"
+                      "example": "\"password\" length must be at least 8 characters long"
                     }
                   }
                 }
@@ -1674,7 +1674,6 @@
         }
       }
     },
-
     "/auth/google": {
       "get": {
         "tags": ["Auths"],
@@ -1787,7 +1786,7 @@
             }
           },
           "423": {
-            "description": "Email invalid",
+            "description": "Password invalid",
             "content": {
               "application/json": {
                 "schema": {
@@ -1799,7 +1798,7 @@
                     },
                     "message": {
                       "type": "string",
-                      "example": "\"email\" must be a valid email"
+                      "example": "\"password\" length must be at least 8 characters long"
                     }
                   }
                 }
@@ -1809,7 +1808,6 @@
         }
       }
     },
-
     "/auth/forgetPassword": {
       "post": {
         "tags": ["Auths"],
@@ -1900,9 +1898,8 @@
         }
       }
     },
-
     "/auth/resetPassword": {
-      "post": {
+      "put": {
         "tags": ["Auths"],
         "security": [
           {
@@ -1977,7 +1974,7 @@
                     },
                     "message": {
                       "type": "string",
-                      "example": "\"email\" must be a valid email"
+                      "example": "Token is invalid"
                     }
                   }
                 }
@@ -1987,7 +1984,6 @@
         }
       }
     },
-
     "/auth/register": {
       "post": {
         "tags": ["Auths"],
@@ -2117,35 +2113,9 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/auth/{id}": {
-      "get": {
-        "tags": ["Auths"],
-        "security": [
-          {
-            "bearerToken": []
-          }
-        ],
-        "summary": "Return result HIT API get auth by id",
-        "description": "This is an API for getting auth data based on Id",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "clwaeh22b0000uzbjstxii4b7"
-            },
-            "description": "Auth ID"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success getting auth data based on Id",
+          },
+          "422": {
+            "description": "Field error",
             "content": {
               "application/json": {
                 "schema": {
@@ -2153,30 +2123,26 @@
                   "properties": {
                     "status": {
                       "type": "string",
-                      "example": true
-                    },
-                    "message" : {
-                      "type": "string",
-                      "example": "auth data retrieved successfully"
+                      "example": 422
                     },
                     "data": {
                       "type": "object",
-                      "example": {
-                          "auth": {
-                              "id": "clwaeh22b0000uzbjstxii4b7",
-                              "code": "2",
-                              "name": "JawAir",
-                              "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/auths/1715933451194.png"
-                          }
+                      "properties": {
+                        "message": {
+                          "type": "string",
+                          "example": "\"email\" is required"
+                        }
                       }
                     }
                   }
                 }
               }
             }
-          }
+          } 
         }
-      },
+      }
+    },
+    "/auth/verified": {
       "put": {
         "tags": ["Auths"],
         "security": [
@@ -2184,38 +2150,30 @@
             "bearerToken": []
           }
         ],
-        "summary": "Return result HIT API update auth by Id",
-        "description": "This is an API for updatting auth data based on Id",
+        "summary": "Return result of otp verification",
+        "description": "This API is for otp verification",
         "parameters": [
           {
-            "name": "id",
+            "name": "token",
             "in": "path",
             "required": true,
             "schema": {
               "type": "string",
-              "example": "clwafg1pu000111ghakckyuuf"
+              "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZWdpc3RlcklkIjoiMTc0OTQ1ODMtMjM4MC00NWEzLThkMzYtOTQyYzY3MDA5YzMzIiwiZW1haWwiOiJ2aWVyeTE1MTAyMDAyQGdtYWlsLmNvbSIsImVtYWlsVGl0bGUiOiJSZXNldCBQYXNzd29yZCIsImlhdCI6MTcxNjMxMjAwNiwiZXhwIjoxNzE2Mzk4NDA2fQ.pRvJ_UYt-1B5aTwZDslTTLpITjCgPRJldjS5l_VlaYk"
             },
-            "description": "Auth ID"
+            "description": "token"
           }
         ],
         "requestBody": {
-          "description": "This is a request body for update auth",
+          "description": "Request body for otp verification",
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
                 "properties": {
-                  "code": {
-                    "type": "integer",
-                    "example": 5
-                  },
-                  "name": {
+                  "otp": {
                     "type": "string",
-                    "example": "AirBatak"
-                  },
-                  "image": {
-                    "type": "http",
-                    "example": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/auths/1715935625171.png"
+                    "example": "808987"
                   }
                 }
               }
@@ -2224,58 +2182,7 @@
         },
         "responses": {
           "200": {
-            "description": "Success editting transaction data based on Id",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "status": {
-                      "type": "string",
-                      "example": true
-                    },
-                    "data": {
-                      "type": "object",
-                      "example": {
-                          "auth": {
-                              "id": "clwafg1pu000111ghakckyuuf",
-                              "code": "5",
-                              "name": "AirBatak",
-                              "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/auths/1715935625171.png"
-                          }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": ["Auths"],
-        "security": [
-          {
-            "bearerToken": []
-          }
-        ],
-        "summary": "Return result HIT API delete auth by Id",
-        "description": "This is an API for deletting auth data based on Id",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "clwafg1pu000111ghakckyuuf"
-            },
-            "description": "Auth ID"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success deletting auth data based on Id",
+            "description": "Reset password",
             "content": {
               "application/json": {
                 "schema": {
@@ -2287,7 +2194,275 @@
                     },
                     "message": {
                       "type": "string",
-                      "example": "auth deleted successfully"
+                      "example": "user email verified successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Token invalid",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Token is invalid"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Invalid otp token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 422
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "OTP Token is invalid"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Invalid token by system",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 500
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "invalid token"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/verified/resend-otp": {
+      "post": {
+        "tags": ["Auths"],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Return result of resend otp",
+        "description": "This API is for resend otp",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZWdpc3RlcklkIjoiMTc0OTQ1ODMtMjM4MC00NWEzLThkMzYtOTQyYzY3MDA5YzMzIiwiZW1haWwiOiJ2aWVyeTE1MTAyMDAyQGdtYWlsLmNvbSIsImVtYWlsVGl0bGUiOiJSZXNldCBQYXNzd29yZCIsImlhdCI6MTcxNjMxMjAwNiwiZXhwIjoxNzE2Mzk4NDA2fQ.pRvJ_UYt-1B5aTwZDslTTLpITjCgPRJldjS5l_VlaYk"
+            },
+            "description": "token"
+          }
+        ],
+        "requestBody": {
+          "description": "Request body for resend otp",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "skyflyproduction1@gmail.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "password"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "resending the otp",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "otp resended"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Email has been verified",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 403
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "User email has been verified"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Login failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 400
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Wrong Password or user not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/": {
+      "get": {
+        "tags": ["Auths"],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Return result HIT API get all user",
+        "description": "This is an API for getting all user",
+        "responses": {
+          "200": {
+            "description": "Success getting all user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "totalItems" : {
+                      "type": "integer",
+                      "example": 1
+                    },
+                    "pagination" : {
+                      "type": "object",
+                      "example": {
+                        "totalPages": 1,
+                        "currentPage": 1,
+                        "pageItems": 1,
+                        "nextPage": null,
+                        "prevPage": null
+                      }
+                    },
+                    "data": {
+                      "type": "object",
+                      "example": {
+                            "id": "5648be31-0085-451b-894e-559ed24c13f6",
+                            "name": "skyfly",
+                            "role": "BUYER",
+                            "phoneNumber": "6289636883782",
+                            "Auth": {
+                              "id": "658b6dfe-19fb-4889-825d-54edde6d38d1",
+                              "email": "skyflyproduction1@gmail.com",
+                              "isVerified": true
+                            }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "tags": ["Auths"],
+        "security": [
+          {
+            "bearerToken": []
+          }
+        ],
+        "summary": "Return result HIT API get my data",
+        "description": "This is an API for getting my data",
+        "responses": {
+          "200": {
+            "description": "Success getting my data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "data": {
+                      "type": "object",
+                      "example": {
+                          "id": "5648be31-0085-451b-894e-559ed24c13f6",
+                          "name": "skyfly",
+                          "role": "BUYER",
+                          "phoneNumber": "62895638069206",
+                          "Auth": {
+                            "id": "658b6dfe-19fb-4889-825d-54edde6d38d1",
+                            "email": "skyflyproduction1@gmail.com",
+                            "isVerified": true
+                            }
+                      }
                     }
                   }
                 }
