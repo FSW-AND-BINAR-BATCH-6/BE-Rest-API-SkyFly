@@ -5,14 +5,62 @@ const prisma = new PrismaClient();
 
 const getAllFlight = async (req, res) => {
   try {
-    const flight = await prisma.flight.findMany();
+    const { page = 1, limit = 10, search } = req.query;
+    const skip = (page - 1) * limit;
+    const take = parseInt(limit);
+
+    let filters = {};
+
+    if (search) {
+      const decodedSearch = decodeURIComponent(search);
+      const searchTerms = decodedSearch.split("%20").map(term => term.toLowerCase());
+      console.log(decodedSearch);
+      console.log(searchTerms);
+      filters = {
+        AND: []
+      };
+
+      searchTerms.forEach(term => {
+        const isDate = !isNaN(Date.parse(term));
+        if (isDate) {
+          const searchDate = new Date(term);
+          filters.AND.push({ departureDate: { gte: searchDate, lt: new Date(searchDate.getTime() + 24 * 60 * 60 * 1000) } });
+        } else {
+          filters.AND.push({
+            OR: [
+              { departureCity: { contains: term, mode: 'insensitive' } },
+              { destinationCity: { contains: term, mode: 'insensitive' } },
+              { departureCityCode: { contains: term.toUpperCase(), mode: 'insensitive' } },
+              { destinationCityCode: { contains: term.toUpperCase(), mode: 'insensitive' } }
+            ]
+          });
+        }
+      });
+    }
+
+    const flight = await prisma.flight.findMany({
+      where: filters,
+      skip,
+      take,
+    });
+
+    const total = await prisma.flight.count({
+      where: filters,
+    });
+
     res.status(200).json({
       status: true,
-      message: "all flight data retrieved successfully",
+      message: "All flight data retrieved successfully",
       data: flight,
+      pageInfo: {
+        total,
+        page: parseInt(page),
+        limit: take,
+        totalPages: Math.ceil(total / take),
+      },
     });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
@@ -90,7 +138,6 @@ const createFlight = async (req, res) => {
       },
     });
 
-
     res.status(200).json({
       status: true,
       message: 'Flight created successfully',
@@ -151,7 +198,7 @@ const updateFlight = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
-}
+};
 
 const removeFlight = async (req, res) => {
   try {
@@ -172,12 +219,12 @@ const removeFlight = async (req, res) => {
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
-}
+};
 
 module.exports = {
   getAllFlight,
   getFlightById,
   createFlight,
   removeFlight,
-  updateFlight
+  updateFlight,
 };
