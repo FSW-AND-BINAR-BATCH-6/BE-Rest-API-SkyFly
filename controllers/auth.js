@@ -1,15 +1,12 @@
+const jwt = require("jsonwebtoken");
 const createHttpError = require("http-errors");
 const { PrismaClient } = require("@prisma/client");
 const { randomUUID } = require("crypto");
-const jwt = require("jsonwebtoken");
 
-const {
-    generateTOTP,
-    validateTOTP,
-    generateSecretEmail,
-} = require("../utils/otp");
+const { generateTOTP, validateTOTP } = require("../utils/otp");
 const { secretCompare, secretHash } = require("../utils/hashSalt");
 const { generateJWT } = require("../utils/jwtGenerate");
+const { generateSecretEmail } = require("../utils/emailHandler");
 
 const { authorizationUrl, oauth2Client } = require("../lib/googleOauth2");
 const { google } = require("googleapis");
@@ -20,9 +17,11 @@ const handleRegister = async (req, res, next) => {
     try {
         const { name, phoneNumber, password, email } = req.body;
 
+        // generate secret data
         const hashedPassword = secretHash(password);
         const OTPToken = generateTOTP();
 
+        // data token for verification
         const payload = {
             registerId: randomUUID(),
             email: email,
@@ -30,10 +29,13 @@ const handleRegister = async (req, res, next) => {
             emailTitle: "Email Activation",
         };
 
+        // data sent via email
         const dataUrl = {
+            // create jwt token for verification token
             token: generateJWT(payload),
         };
 
+        // check email is unvailable
         const checkEmail = await prisma.auth.findUnique({
             where: {
                 email: email,
@@ -51,6 +53,7 @@ const handleRegister = async (req, res, next) => {
             );
         }
 
+        // insert data to db
         const userauthData = await prisma.user.create({
             data: {
                 id: randomUUID(),
@@ -70,6 +73,7 @@ const handleRegister = async (req, res, next) => {
             },
         });
 
+        // sending email
         await generateSecretEmail(dataUrl, "verified", "verifyOtp.ejs");
 
         res.status(200).json({
@@ -96,6 +100,7 @@ const handleLogin = async (req, res, next) => {
     try {
         const { email, password } = req.body;
 
+        // get user data
         const userAccount = await prisma.auth.findUnique({
             where: {
                 email,
@@ -104,7 +109,9 @@ const handleLogin = async (req, res, next) => {
                 user: true,
             },
         });
+        console.log("masuk");
 
+        // check email is unverified
         if (!userAccount.isVerified) {
             return next(
                 createHttpError(401, {
@@ -113,6 +120,7 @@ const handleLogin = async (req, res, next) => {
             );
         }
 
+        // create data user logged in
         const payload = {
             id: userAccount.user.id,
             name: userAccount.user.name,
@@ -120,7 +128,9 @@ const handleLogin = async (req, res, next) => {
             phoneNumber: userAccount.user.phoneNumber,
         };
 
+        // check password
         if (userAccount && secretCompare(password, userAccount.password)) {
+            // create jwt token
             const token = generateJWT(payload);
 
             res.status(200).json({
@@ -129,6 +139,7 @@ const handleLogin = async (req, res, next) => {
             });
         }
 
+        // check matching input value
         !userAccount
             ? next(createHttpError(404, { message: "Email not registered" }))
             : null;
@@ -143,8 +154,10 @@ const handleLogin = async (req, res, next) => {
 const resendOTP = async (req, res, next) => {
     try {
         const { token } = req.query;
+        // verify jwt token
         const payload = jwt.verify(token, process.env.JWT_SIGNATURE_KEY);
 
+        // get user data
         const foundUser = await prisma.auth.findUnique({
             where: {
                 email: payload.email,
@@ -154,10 +167,12 @@ const resendOTP = async (req, res, next) => {
             },
         });
 
+        // check matching token with user secretToken
         if (token !== foundUser.secretToken || token === "" || token === null) {
             return next(createHttpError(404, { message: "Token is invalid" }));
         }
 
+        // check user is exist
         if (!foundUser) {
             return next(createHttpError(404, { message: "User is not found" }));
         }
@@ -170,6 +185,7 @@ const resendOTP = async (req, res, next) => {
             );
         }
 
+        // generate secret data
         const OTPToken = generateTOTP();
         const newPayload = {
             registerId: randomUUID(),
@@ -179,10 +195,12 @@ const resendOTP = async (req, res, next) => {
             emailTitle: "Resend Email Activation",
         };
 
+        // generate sent data via email
         const dataUrl = {
             token: generateJWT(newPayload),
         };
 
+        // update otp & secretToken user
         await prisma.auth.update({
             where: {
                 email: payload.email,
@@ -193,6 +211,7 @@ const resendOTP = async (req, res, next) => {
             },
         });
 
+        // sending email
         await generateSecretEmail(dataUrl, "verified", "verifyOtp.ejs");
 
         res.status(201).json({
@@ -209,8 +228,10 @@ const verifyOTP = async (req, res, next) => {
         const { token } = req.query;
         const { otp } = req.body;
 
+        // decoded data token
         const payload = jwt.verify(token, process.env.JWT_SIGNATURE_KEY);
 
+        // find user
         const foundUser = await prisma.auth.findUnique({
             where: {
                 email: payload.email,
@@ -220,6 +241,7 @@ const verifyOTP = async (req, res, next) => {
             },
         });
 
+        // check matching token with user secret token
         if (token !== foundUser.secretToken || token === "" || token === null) {
             return next(createHttpError(404, { message: "Token is invalid" }));
         }
@@ -228,6 +250,7 @@ const verifyOTP = async (req, res, next) => {
             return next(createHttpError(404, { message: "User is not found" }));
         }
 
+        // check is verified
         if (foundUser.isVerified) {
             return next(
                 createHttpError(403, {
@@ -236,6 +259,7 @@ const verifyOTP = async (req, res, next) => {
             );
         }
 
+        // check token otp status
         let delta = validateTOTP(otp);
 
         if (delta === null || otp != foundUser.otpToken) {
@@ -244,6 +268,7 @@ const verifyOTP = async (req, res, next) => {
             );
         }
 
+        // update user verified & set value secret data to null
         await prisma.auth.update({
             where: {
                 id: foundUser.id,
