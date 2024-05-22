@@ -5,6 +5,15 @@ const swaggerDocument = require("../docs/swagger.json")
 router.use("/api-docs", swaggerUI.serve)
 router.use("/api-docs", swaggerUI.setup(swaggerDocument))
 
+app.use(
+	'/documentation',
+	swaggerUI.serve,
+	swaggerUI.setup(swaggerDocument, {
+		customCssUrl: 'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css',
+		customJs: ['https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-bundle.js', 'https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui-standalone-preset.js'],
+	})
+);
+
 const airplane = require('./airplane');
 const user = require('./user')
 
