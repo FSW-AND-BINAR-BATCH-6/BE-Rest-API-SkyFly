@@ -70,21 +70,26 @@ const createFlight = async (req, res) => {
         message: 'Invalid planeId. Plane does not exist.',
       });
     }
+    const departureDateTime = new Date(departureDate);
+    const arrivalDateTime = new Date(arrivalDate);
+
+    const departureDateTimeInJakarta = new Date(departureDateTime.getTime() + 7 * 60 * 60 * 1000).toISOString();
+    const arrivalDateTimeInJakarta = new Date(arrivalDateTime.getTime() + 7 * 60 * 60 * 1000).toISOString();
 
     const newFlight = await prisma.flight.create({
       data: {
         id,
         planeId,
-        departureDate: new Date(departureDate),
+        departureDate: departureDateTimeInJakarta,
         departureCity,
         departureCityCode,
-        arrivalDate: new Date(arrivalDate),
+        arrivalDate: arrivalDateTimeInJakarta,
         destinationCity,
         destinationCityCode,
         price,
       },
     });
-    
+
 
     res.status(200).json({
       status: true,
