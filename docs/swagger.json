@@ -1269,28 +1269,141 @@
                     },
                     "data": {
                       "type": "object",
-                      "example": {
-                          "users": [
-                              {
-                                  "id": "clw9abc650000enqweyz697md",
-                                  "code": "1",
-                                  "name": "pappapap",
-                                  "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/users/1715866000111.png"
-                              },
-                              {
-                                  "id": "clwaeh22b0000uzbjstxii4b7",
-                                  "code": "2",
-                                  "name": "JawAir",
-                                  "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/users/1715933451194.png"
-                              },
-                              {
-                                  "id": "clwaehve10001uzbjgbq8hg44",
-                                  "code": "3",
-                                  "name": "SundAir",
-                                  "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/users/1715933489881.png"
+                      "example": [
+                          
+                            {
+                              "id": "c4192567-defc-4376-ae59-3098857eca6b",
+                              "name": "agus",
+                              "phoneNumber": "0897463523",
+                              "role": "BUYER",
+                              "Auth": null
+                            },
+                            {
+                              "id": "641db720-370f-4a56-b8ac-fc993ceba92a",
+                              "name": "aldi",
+                              "phoneNumber": "0897463523",
+                              "role": "BUYER",
+                              "Auth": null
+                            },
+                            {
+                              "id": "clwhlya9r00081275mckql001",
+                              "name": "Alice",
+                              "phoneNumber": "628123456789",
+                              "role": "BUYER",
+                              "Auth": {
+                                "id": "clwhlya9r000912750qo8yqbt",
+                                "email": "alice@test.com",
+                                "isVerified": true
                               }
-                          ]
-                      }
+                            },
+                            {
+                              "id": "clwhlya9l00061275dbld3u3q",
+                              "name": "Anastasia",
+                              "phoneNumber": "628123456789",
+                              "role": "BUYER",
+                              "Auth": {
+                                "id": "clwhlya9l00071275ncvg0kej",
+                                "email": "anastasia@test.com",
+                                "isVerified": true
+                              }
+                            },
+                            {
+                              "id": "57852bdc-7288-4864-9cff-1e488449b67a",
+                              "name": "budi",
+                              "phoneNumber": "0897463523",
+                              "role": "BUYER",
+                              "Auth": null
+                            },
+                            {
+                              "id": "clwhlyaab000d1275hmyq6v3i",
+                              "name": "Ferdinan",
+                              "phoneNumber": "628123456789",
+                              "role": "BUYER",
+                              "Auth": {
+                                "id": "clwhlyaab000g12758ylcpcvm",
+                                "email": "ferdinan@test.com",
+                                "isVerified": true
+                              }
+                            },
+                            {
+                              "id": "clwhlyaab000e1275534c0gld",
+                              "name": "imamGanteng",
+                              "phoneNumber": "628123456789",
+                              "role": "BUYER",
+                              "Auth": {
+                                "id": "clwhlyaab000h1275etikmf2f",
+                                "email": "imamganteng@test.com",
+                                "isVerified": true
+                              }
+                            },
+                            {
+                              "id": "clwhlya9h00021275ntpf7h1j",
+                              "name": "Len",
+                              "phoneNumber": "628123456789",
+                              "role": "BUYER",
+                              "Auth": {
+                                "id": "clwhlya9h00041275bfbxdgt1",
+                                "email": "len@test.com",
+                                "isVerified": true
+                              }
+                            },
+                            {
+                              "id": "clwhlyaab000c1275bsgsuqi5",
+                              "name": "Maya",
+                              "phoneNumber": "628123456789",
+                              "role": "BUYER",
+                              "Auth": {
+                                "id": "clwhlyaab000f1275nuz1gi8p",
+                                "email": "maya@test.com",
+                                "isVerified": true
+                              }
+                            },
+                            {
+                              "id": "clwhlyaai000i127585omnxqz",
+                              "name": "Ren",
+                              "phoneNumber": "628123456789",
+                              "role": "BUYER",
+                              "Auth": {
+                                "id": "clwhlyaai000j1275lfx6c7ol",
+                                "email": "ren@test.com",
+                                "isVerified": true
+                              }
+                            },
+                            {
+                              "id": "clwhlya9h000312757uksicir",
+                              "name": "Togenashi",
+                              "phoneNumber": "628123456789",
+                              "role": "BUYER",
+                              "Auth": {
+                                "id": "clwhlya9h00051275peutyzws",
+                                "email": "togenashi@test.com",
+                                "isVerified": true
+                              }
+                            },
+                            {
+                              "id": "clwhlya7k00001275n0g9bpez",
+                              "name": "user",
+                              "phoneNumber": "628123456789",
+                              "role": "BUYER",
+                              "Auth": {
+                                "id": "clwhlya7o00011275cd1qdlst",
+                                "email": "user@test.com",
+                                "isVerified": true
+                              }
+                            },
+                            {
+                              "id": "clwhlyaa0000a12755oa6h8yl",
+                              "name": "Zenith",
+                              "phoneNumber": "628123456789",
+                              "role": "BUYER",
+                              "Auth": {
+                                "id": "clwhlyaa0000b1275l8o3zuhq",
+                                "email": "zenith@test.com",
+                                "isVerified": true
+                              }
+                            }
+                        
+                      ]
                     }
                   }
                 }
@@ -1315,17 +1428,17 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "code": {
-                    "type": "integer",
-                    "example": 4
-                  },
                   "name": {
                     "type": "string",
-                    "example": "BatakAir"
+                    "example": "skyflyproduction"
                   },
-                  "image": {
-                    "type": "http",
-                    "example": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/users/1715935002439.png"
+                  "phoneNumber": {
+                    "type": "string",
+                    "example": "08123456789"
+                  },
+                  "role": {
+                    "type": "string",
+                    "example": "BUYER"
                   }
                 }
               }
@@ -1344,16 +1457,58 @@
                       "type": "string",
                       "example": true
                     },
+                    "message" :{
+                      "type": "string",
+                      "example": "user created successfully"
+                    },
                     "data": {
                       "type": "object",
                       "example": {
-                          "users": {
-                              "id": "clwafg1pu000111ghakckyuuf",
-                              "code": "4",
-                              "name": "BatakAir",
-                              "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/users/1715935084484.png"
-                          }
+                        "id": "641db720-370f-4a56-b8ac-fc993ceba92a",
+                        "name": "skyflyproduction",
+                        "phoneNumber": "08123456789",
+                        "role": "BUYER"
                       }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Field error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 422
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "\"name\" is required"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "System Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 500
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "\nInvalid `prisma.user.create()` invocation in\nC:\\Users\\ASUS\\Documents\\Kuliah\\Semester 6\\final-project\\BE-Rest-API-SkyFly\\controllers\\user.js:80:43\n\n  77 \n  78 try {\n  79 \n→ 80     const newUser = await prisma.user.create({\n           data: {\n             id: \"1430fdf4-b13b-487c-addc-9ad1e7a16734\",\n             name: \"skyflyproduction\",\n             phoneNumber: undefined,\n             role: \"ADMI\"\n                   ~~~~~~\n           }\n         })\n\nInvalid value for argument `role`. Expected RoleUser."
                     }
                   }
                 }
@@ -1380,7 +1535,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "example": "clwaeh22b0000uzbjstxii4b7"
+              "example": "clwhhi8j80002321eziy4dntm"
             },
             "description": "User ID"
           }
@@ -1404,13 +1559,36 @@
                     "data": {
                       "type": "object",
                       "example": {
-                          "user": {
-                              "id": "clwaeh22b0000uzbjstxii4b7",
-                              "code": "2",
-                              "name": "JawAir",
-                              "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/users/1715933451194.png"
-                          }
+                        "id": "clwhhi8j80002321eziy4dntm",
+                        "name": "Alice",
+                        "role": "BUYER",
+                        "phoneNumber": "628123456789",
+                        "Auth": {
+                          "id": "clwhlya9r000912750qo8yqbt",
+                          "email": "alice@test.com",
+                          "isVerified": true
+                        }
                       }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ID not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Id Not Found"
                     }
                   }
                 }
@@ -1435,7 +1613,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "example": "clwafg1pu000111ghakckyuuf"
+              "example": "clwhhi8j80002321eziy4dntm"
             },
             "description": "User ID"
           }
@@ -1447,17 +1625,17 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "code": {
-                    "type": "integer",
-                    "example": 5
-                  },
                   "name": {
                     "type": "string",
-                    "example": "AirBatak"
+                    "example": "skyflyproductionbest"
                   },
-                  "image": {
-                    "type": "http",
-                    "example": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/users/1715935625171.png"
+                  "phoneNumber": {
+                    "type": "string",
+                    "example": "0897654321"
+                  },
+                  "role": {
+                    "type": "string",
+                    "example": "BUYER"
                   }
                 }
               }
@@ -1466,7 +1644,7 @@
         },
         "responses": {
           "200": {
-            "description": "Success editting transaction data based on Id",
+            "description": "Success editting user data based on Id",
             "content": {
               "application/json": {
                 "schema": {
@@ -1476,16 +1654,38 @@
                       "type": "string",
                       "example": true
                     },
+                    "message":{
+                      "type": "string",
+                      "example": "User updated successfully"
+                    },
                     "data": {
                       "type": "object",
                       "example": {
-                          "user": {
-                              "id": "clwafg1pu000111ghakckyuuf",
-                              "code": "5",
-                              "name": "AirBatak",
-                              "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/users/1715935625171.png"
-                          }
+                        "id": "641db720-370f-4a56-b8ac-fc993ceba92a",
+                        "name": "skyflyproductionbest",
+                        "phoneNumber": "0897654321",
+                        "role": "BUYER"
                       }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ID not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Id Not Found"
                     }
                   }
                 }
@@ -1510,7 +1710,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "example": "clwafg1pu000111ghakckyuuf"
+              "example": "clwhhi8j80002321eziy4dntm"
             },
             "description": "User ID"
           }
@@ -1530,6 +1730,26 @@
                     "message": {
                       "type": "string",
                       "example": "user deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "ID not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Id Not Found"
                     }
                   }
                 }
