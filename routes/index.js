@@ -2,12 +2,10 @@ const router = require("express").Router();
 const swaggerUI = require("swagger-ui-express");
 const swaggerDocument = require("../docs/swagger.json");
 
-router.use("/api-docs", swaggerUI.serve);
-router.use("/api-docs", swaggerUI.setup(swaggerDocument));
-
-router.use("/api-docs", swaggerUI.serve);
+router.get("/documentation.json", (req, res) => res.send(swaggerDocument));
 router.use(
     "/api-docs",
+    swaggerUI.serve,
     swaggerUI.setup(swaggerDocument, {
         customCssUrl:
             "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/4.15.5/swagger-ui.min.css",
