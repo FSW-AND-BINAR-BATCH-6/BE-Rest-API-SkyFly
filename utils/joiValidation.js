@@ -34,10 +34,26 @@ const forgetPasswordSchema = Joi.object({
         .required(),
 });
 
+// user
+const userSchema = Joi.object({
+    name: Joi.string().required(),
+    phoneNumber: Joi.string().optional(),
+    role: Joi.string().required(),
+});
+
+const userUpdateSchema = Joi.object({
+    id: Joi.string(),
+    name: Joi.string(),
+    phoneNumber: Joi.string().optional(),
+    role: Joi.string().required(),
+});
+
 module.exports = {
     LoginSchema,
     RegisterSchema,
     OTPSchema,
     PasswordSchema,
     forgetPasswordSchema,
+    userSchema,
+    userUpdateSchema,
 };
