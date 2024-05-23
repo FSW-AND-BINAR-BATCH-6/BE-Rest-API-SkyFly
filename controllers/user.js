@@ -8,7 +8,18 @@ const prisma = new PrismaClient();
 
 const getAllUsers = async (req, res, next) => {
     try {
-        const user = await prisma.user.findMany({
+        const search = req.query.search || "";
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const offset = (page - 1) * limit;
+
+        const users = await prisma.user.findMany({
+            where: {
+                name: {
+                    contains: search,
+                    mode: "insensitive", // Optional: to make the search case insensitive
+                },
+            },
             select: {
                 id: true,
                 name: true,
@@ -25,17 +36,37 @@ const getAllUsers = async (req, res, next) => {
             orderBy: {
                 name: "asc",
             },
+            skip: offset,
+            take: limit,
+        });
+
+        const count = await prisma.user.count({
+            where: {
+                name: {
+                    contains: search,
+                    mode: "insensitive", // Optional: to make the search case insensitive
+                },
+            },
         });
 
         res.status(200).json({
             status: true,
             message: "All user data retrieved successfully",
-            data: user,
+            totalItems: count,
+            pagination: {
+                totalPages: Math.ceil(count / limit),
+                currentPage: page,
+                pageItems: users.length,
+                nextPage: page < Math.ceil(count / limit) ? page + 1 : null,
+                prevPage: page > 1 ? page - 1 : null,
+            },
+            data: users.length !== 0 ? users : "No user data found",
         });
     } catch (error) {
         next(createHttpError(500, { message: error.message }));
     }
 };
+
 
 const getUserById = async (req, res, next) => {
     try {
