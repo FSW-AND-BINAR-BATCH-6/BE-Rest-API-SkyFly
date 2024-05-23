@@ -362,6 +362,15 @@ const resetPassword = async (req, res, next) => {
             },
         });
 
+        // check email is unverified
+        if (!foundUser.isVerified) {
+            return next(
+                createHttpError(401, {
+                    message: "Email has not been activated",
+                })
+            );
+        }
+
         if (token !== foundUser.secretToken || token === "" || token === null) {
             return next(createHttpError(422, { message: "Token is invalid" }));
         }
