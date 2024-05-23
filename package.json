@@ -10,7 +10,7 @@
         "db-push": "npx prisma db push",
         "migrate": "npx prisma migrate dev",
         "migrate-refresh": "npx prisma migrate reset",
-        "vercel-build": "npx prisma generate && npx prisma migrate dev",
+        "vercel-build": "npx prisma generate && npx prisma migrate deploy",
         "db-seed": "node ./prisma/seeder/seederUser"
     },
     "keywords": [],
