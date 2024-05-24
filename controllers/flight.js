@@ -48,21 +48,27 @@ const getAllFlight = async (req, res) => {
       where: filters,
     });
 
+    const totalPages = Math.ceil(total / take);
+    const currentPage = parseInt(page);
+
     res.status(200).json({
       status: true,
       message: "All flight data retrieved successfully",
-      data: flight,
-      pageInfo: {
-        total,
-        page: parseInt(page),
-        limit: take,
-        totalPages: Math.ceil(total / take),
+      totalItems: total,
+      pagination: {
+        totalPages: totalPages,
+        currentPage: currentPage,
+        pageItems: flight.length,
+        nextPage: currentPage < totalPages ? currentPage + 1 : null,
+        prevPage: currentPage > 1 ? currentPage - 1 : null,
       },
+      data: flight.length !== 0 ? flight : "No flight data found",
     });
   } catch (err) {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 const getFlightById = async (req, res) => {
   try {
