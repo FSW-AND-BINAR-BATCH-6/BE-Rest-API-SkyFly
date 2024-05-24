@@ -46,7 +46,8 @@ const userUpdateSchema = Joi.object({
     id: Joi.string(),
     name: Joi.string(),
     phoneNumber: Joi.string().optional(),
-    role: Joi.string().required("BUYER"),// Set default value for role
+    familyName: Joi.string().required(),
+    role: Joi.forbidden(), // Ensure role is not allowed in request body
 });
 
 module.exports = {

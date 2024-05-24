@@ -35,7 +35,7 @@ model User {
     name        String
     phoneNumber String?
     familyName  String? // Optional family name
-    role        RoleUser  
+    role        RoleUser   @default(BUYER) // Default value for role
     tickets     Ticket?
     sessions    Session?
     Auth        Auth?
