@@ -1,6 +1,6 @@
 const express = require("express");
 const validator = require("../lib/validator");
-
+// const checkRole = require("../middlewares/checkrole");
 const router = express.Router();
 
 const {
