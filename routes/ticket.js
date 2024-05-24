@@ -1,21 +1,19 @@
-routes;
-
 const express = require("express");
 const validator = require("../lib/validator");
 
 const router = express.Router();
 
 const {
-  getAllTicket,
-  getTicketById,
-  createTicket,
-  updateTicket,
-  deleteTicket,
+    getAllTicket,
+    getTicketById,
+    createTicket,
+    updateTicket,
+    deleteTicket,
 } = require("../controllers/ticket");
 
 const {
-  TicketSchema,
-  UpdateTicketSchema,
+    TicketSchema,
+    UpdateTicketSchema,
 } = require("../utils/ticketJoiValidation");
 
 router.get("/", getAllTicket);
