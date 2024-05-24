@@ -171,6 +171,18 @@ const updateFlight = async (req, res) => {
         message: "Flight not found",
       });
     }
+    if (planeId) {
+      const plane = await prisma.airplane.findUnique({
+        where: { id: planeId },
+      });
+
+      if (!plane) {
+        return res.status(404).json({
+          status: false,
+          message: "Plane or planeId not found",
+        });
+      }
+    }
 
     const updatedFlight = await prisma.flight.update({
       where: { id: req.params.id },
@@ -202,19 +214,24 @@ const updateFlight = async (req, res) => {
 
 const removeFlight = async (req, res) => {
   try {
-    const flight = await prisma.flight.delete({
+    const flight = await prisma.flight.findUnique({
       where: { id: req.params.id },
     });
+
     if (!flight) {
       return res.status(404).json({
         status: false,
         message: "Flight not found",
       });
     }
+
+    await prisma.flight.delete({
+      where: { id: req.params.id },
+    });
+
     res.status(200).json({
       status: true,
       message: "Flight deleted successfully",
-      data: flight,
     });
   } catch (err) {
     res.status(500).json({ message: err.message });

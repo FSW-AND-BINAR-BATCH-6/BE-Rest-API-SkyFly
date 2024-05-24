@@ -3,6 +3,8 @@ const multer = require("multer");
 
 const router = express.Router();
 
+// const airplaneController = require("../controllers/airplane")
+
 const {
   getAllAirplane,
   getAirplaneById,
@@ -14,10 +16,16 @@ const {
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-router.get("/", getAllAirplane);
-router.get("/:id", getAirplaneById);
-router.post("/", upload.single("image"), createAirplane);
-router.put("/:id", upload.single("image"), updateAirplane);
-router.delete("/:id", deleteAirplane);
+
+
+router.route("/")
+  .get(getAllAirplane)
+  .post(upload.single("image"), createAirplane);
+
+router.route("/:id")
+  .get(getAirplaneById)
+  .put(upload.single("image"), updateAirplane)
+  .delete(deleteAirplane);
+
 
 module.exports = router;
