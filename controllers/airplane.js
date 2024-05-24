@@ -9,7 +9,9 @@ const getAllAirplane = async (req, res) => {
     res.status(200).json({
       status: true,
       message: "all airplane data retrieved successfully",
-      data: airplane,
+      data: {
+        "airplanes":airplane
+      },
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -24,7 +26,9 @@ const getAirplaneById = async (req, res) => {
     res.status(200).json({
       status: true,
       message: "airplane data retrieved successfully",
-      data: airplane,
+      data: {
+        "airplane": airplane
+      },
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -48,7 +52,9 @@ const createAirplane = async (req, res) => {
     res.status(200).json({
       status: true,
       message: "airplane created successfully",
-      data: newAirplane,
+      data: {
+        "airplanes": newAirplane
+      },
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -81,7 +87,9 @@ const updateAirplane = async (req, res) => {
     res.status(200).json({
       status: true,
       message: "airplane updated successfully",
-      data: updatedAirplane,
+      data: {
+        "airplane": updatedAirplane
+      },
     });
   } catch (err) {
     res.status(400).json({ message: err.message });

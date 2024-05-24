@@ -34,6 +34,21 @@ const forgetPasswordSchema = Joi.object({
         .required(),
 });
 
+// user
+const userCreateSchema = Joi.object({
+    name: Joi.string().required(),
+    phoneNumber: Joi.string().optional(),
+    familyName: Joi.string().required(),
+    role: Joi.string().default("BUYER"),// Set default value for role
+});
+
+const userUpdateSchema = Joi.object({
+    id: Joi.string(),
+    name: Joi.string(),
+    phoneNumber: Joi.string().optional(),
+    role: Joi.string().required("BUYER"),// Set default value for role
+});
+
 // flight
 const createFlightSchema = Joi.object({
     planeId: Joi.string().required(),
@@ -73,4 +88,6 @@ module.exports = {
     updateFlightSchema,
     PasswordSchema,
     forgetPasswordSchema,
+    userCreateSchema,
+    userUpdateSchema,
 };
