@@ -24,6 +24,7 @@ const getAllUsers = async (req, res, next) => {
                 id: true,
                 name: true,
                 phoneNumber: true,
+                familyName: true,
                 role: true,
                 Auth: {
                     select: {
@@ -74,8 +75,9 @@ const getUserById = async (req, res, next) => {
             select: {
                 id: true,
                 name: true,
-                role: true,
                 phoneNumber: true,
+                familyName: true,
+                role: true,
                 Auth: {
                     select: {
                         id: true,
@@ -113,7 +115,8 @@ console.log(randomUUID());
                 id: randomUUID(), 
                 name: data.name,
                 phoneNumber: data.phoneNumber,
-                role: data.role,
+                familyName: data.familyName,
+                role: data.role || "BUYER", // Default value for role
             },
         });
 
@@ -124,6 +127,7 @@ console.log(randomUUID());
                 id: newUser.id,
                 name: newUser.name,
                 phoneNumber: newUser.phoneNumber,
+                familyName: newUser.familyName,
                 role: newUser.role,
             },
         });
@@ -154,7 +158,8 @@ const updateUser = async (req, res, next) => {
             data: {
                 name: data.name,
                 phoneNumber: data.phoneNumber,
-                role: data.role,
+                familyName: data.familyName,
+                role: data.role || "BUYER", // Ensures role is 'BUYER' if not provided
             },
         });
 
@@ -165,6 +170,7 @@ const updateUser = async (req, res, next) => {
                 id: updatedUser.id,
                 name: updatedUser.name,
                 phoneNumber: updatedUser.phoneNumber,
+                familyName: updatedUser.familyName,
                 role: updatedUser.role,
             },
         });
