@@ -35,7 +35,7 @@ model User {
     name        String
     familyName  String?
     phoneNumber String?
-    role        RoleUser   @default(BUYER) // Default value for role
+    role        RoleUser     @default(BUYER) // Default value for role
     tickets     Ticket?
     sessions    Session?
     Auth        Auth[]
@@ -58,18 +58,18 @@ model Airline {
 }
 
 model Flight {
-    id                  String       @id @default(cuid())
-    planeId             String
-    plane               Airline      @relation(fields: [planeId], references: [id])
-    departureDate       DateTime
-    departureCity       String
-    departureCityCode   String
-    arrivalDate         DateTime
-    destinationCity     String
-    destinationCityCode String
-    price               Int
-    seats               FlightSeat[]
-    tickets             Ticket[]
+    id                   String       @id @default(cuid())
+    planeId              String
+    plane                Airline      @relation(fields: [planeId], references: [id])
+    departureDate        DateTime
+    departureAirportId   String
+    departureAirport     Airport      @relation("DepartureAirport", fields: [departureAirportId], references: [id])
+    arrivalDate          DateTime
+    destinationAirportId String
+    destinationAirport   Airport      @relation("DestinationAirport", fields: [destinationAirportId], references: [id])
+    price                Int
+    seats                FlightSeat[]
+    tickets              Ticket[]
 }
 
 model FlightSeat {
@@ -83,12 +83,12 @@ model FlightSeat {
 }
 
 model Ticket {
-    id          String      @id @default(cuid())
-    code        String      @unique
+    id          String     @id @default(cuid())
+    code        String     @unique
     flightId    String
     flight      Flight     @relation(fields: [flightId], references: [id])
-    customerId  String?      @unique
-    customer    User?        @relation(fields: [customerId], references: [id])
+    customerId  String?    @unique
+    customer    User?      @relation(fields: [customerId], references: [id])
     seatId      String     @unique
     seat        FlightSeat @relation(fields: [seatId], references: [id])
     bookingDate DateTime
@@ -107,11 +107,13 @@ model Auth {
 }
 
 model Airport {
-    id      String @id @default(cuid())
-    name    String
-    code    String @unique
-    country String
-    city    String
+    id                 String   @id @default(cuid())
+    name               String
+    code               String   @unique
+    country            String
+    city               String
+    departureFlights   Flight[] @relation("DepartureAirport")
+    destinationFlights Flight[] @relation("DestinationAirport")
 }
 
 model Transaction {
