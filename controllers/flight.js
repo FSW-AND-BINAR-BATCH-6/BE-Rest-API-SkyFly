@@ -113,6 +113,7 @@ const createFlight = async (req, res) => {
     departureAirportId,
     arrivalDate,
     destinationAirportId,
+    capacity,
     price,
   } = req.body;
 
@@ -166,7 +167,8 @@ const createFlight = async (req, res) => {
         departureAirportId,
         arrivalDate: arrivalDateTimeConvert,
         destinationAirportId,
-        price,
+        capacity,
+        price
       },
       include: {
         departureAirport: true,
@@ -191,6 +193,7 @@ const updateFlight = async (req, res) => {
     departureAirportId,
     arrivalDate,
     destinationAirportId,
+    capacity,
     price
   } = req.body;
 
@@ -253,6 +256,7 @@ const updateFlight = async (req, res) => {
         departureAirportId,
         arrivalDate: new Date(arrivalDate),
         destinationAirportId,
+        capacity,
         price
       },
       include: {
