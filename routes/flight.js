@@ -1,8 +1,25 @@
 const express = require("express");
+const validator = require("../lib/validator");
+// const checkRole = require("../middlewares/checkrole");
 const router = express.Router();
-const FlightController = require("../controllers/flight");
 
-router.get("/:flightId", FlightController.getFlightById);
-router.post("/", FlightController.createFlight);
+const {
+    getAllFlight,
+    getFlightById,
+    createFlight,
+    removeFlight,
+    updateFlight
+} = require('../controllers/flight');
 
-module.exports = router;
+const { createFlightSchema, updateFlightSchema } = require('../utils/joiValidation');
+
+router.route("/")
+    .get(getAllFlight)
+    .post(validator(createFlightSchema), createFlight);
+
+router.route("/:id")
+    .get(getFlightById)
+    .put(validator(updateFlightSchema), updateFlight)
+    .delete(removeFlight);
+
+module.exports = router
