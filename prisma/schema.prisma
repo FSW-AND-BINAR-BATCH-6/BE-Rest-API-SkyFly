@@ -31,14 +31,15 @@ enum StatusTicket {
 }
 
 model User {
-    id          String   @id @default(cuid())
+    id          String       @id @default(cuid())
     name        String
+    familyName  String?
     phoneNumber String?
-    familyName  String? // Optional family name
-    role        RoleUser  
+    role        RoleUser
     tickets     Ticket?
     sessions    Session?
-    Auth        Auth?
+    Auth        Auth[]
+    transaction Transaction?
 }
 
 model Session {
@@ -48,7 +49,7 @@ model Session {
     user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
 }
 
-model Airplane {
+model Airline {
     id     String   @id @default(cuid())
     code   String   @default("ABC-123")
     name   String
@@ -59,7 +60,7 @@ model Airplane {
 model Flight {
     id                  String       @id @default(cuid())
     planeId             String
-    plane               Airplane     @relation(fields: [planeId], references: [id])
+    plane               Airline      @relation(fields: [planeId], references: [id])
     departureDate       DateTime
     departureCity       String
     departureCityCode   String
@@ -78,22 +79,20 @@ model FlightSeat {
     seatNumber String
     isBooked   Boolean? @default(false)
     type       TypeSeat
-    tickets    Ticket?
+    tickets    Ticket[]
 }
 
 model Ticket {
-    id            String       @id @default(cuid())
-    code          String       @unique
-    flightId      String
-    flight        Flight       @relation(fields: [flightId], references: [id])
-    customerId    String       @unique
-    customer      User         @relation(fields: [customerId], references: [id])
-    seatId        String       @unique
-    seat          FlightSeat   @relation(fields: [seatId], references: [id])
-    bookingDate   DateTime
-    price         BigInt
-    status        StatusTicket
-    tokenMidtrans String?
+    id          String      @id @default(cuid())
+    code        String      @unique
+    flightId    String
+    flight      Flight     @relation(fields: [flightId], references: [id])
+    customerId  String?      @unique
+    customer    User?        @relation(fields: [customerId], references: [id])
+    seatId      String     @unique
+    seat        FlightSeat @relation(fields: [seatId], references: [id])
+    bookingDate DateTime
+    price       BigInt
 }
 
 model Auth {
@@ -105,4 +104,35 @@ model Auth {
     secretToken String?
     isVerified  Boolean @default(false)
     user        User?   @relation(fields: [userId], references: [id])
+}
+
+model Airport {
+    id      String @id @default(cuid())
+    name    String
+    code    String @unique
+    country String
+    city    String
+}
+
+model Transaction {
+    id                String              @id @default(cuid())
+    userId            String?             @unique
+    totalPrice        Int
+    status            StatusTicket
+    tokenMidtrans     String
+    user              User?               @relation(fields: [userId], references: [id])
+    TransactionDetail TransactionDetail[]
+}
+
+model TransactionDetail {
+    id             String       @id @default(cuid())
+    transactionId  String
+    name           String
+    familyName     String
+    dob            DateTime
+    citizenship    String
+    passport       String
+    issuingCountry String
+    validityPeriod DateTime
+    transaction    Transaction? @relation(fields: [transactionId], references: [id])
 }
