@@ -159,7 +159,7 @@ const updateUser = async (req, res, next) => {
                 name: data.name,
                 phoneNumber: data.phoneNumber,
                 familyName: data.familyName,
-                role: data.role || "BUYER", // Ensures role is 'BUYER' if not provided
+                role: "BUYER", // Ensures role is always 'BUYER'
             },
         });
 
