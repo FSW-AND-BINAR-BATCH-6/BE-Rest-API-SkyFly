@@ -13,8 +13,6 @@ app.set('views', __dirname + '/views');
 app.use(cors());
 app.use(express.json());
 app.use(logger(MORGAN_FORMAT));
-app.use(express.urlencoded({ extended: true }));
-
 
 app.use(router);
 
