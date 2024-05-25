@@ -20,14 +20,14 @@ const getAllAirports = async (req, res, next) => {
         res.status(200).json({
           status: true,
           message: "all Airport data retrieved successfully",
-          data: getAirports.length !== 0 ? getAirports : "Empty",
           pagination: {
             totalPage: Math.ceil(count/limit),
             currentPage: page,
             pageItems: getAirports.length,
             nextPage: page < Math.ceil(count/limit) ? page + 1 : null,
             prevPage: page > 1 ? page - 1 : null
-          }
+          },
+          data: getAirports.length !== 0 ? getAirports : "Empty",
         });
       } catch (err) {
         res.status(500).json({ message: err.message });
