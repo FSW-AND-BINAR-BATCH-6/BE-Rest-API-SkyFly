@@ -14,6 +14,5 @@ const auth = require("./auth");
 router.use("/api/v1/airplane", airplane);
 router.use("/api/v1/ticket", ticket);
 router.use("/api/v1/auth", auth);
-router.use("/api/v1/user", user);
 
 module.exports = router;
