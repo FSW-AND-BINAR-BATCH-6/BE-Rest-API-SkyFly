@@ -1,31 +1,30 @@
 const { PrismaClient } = require("@prisma/client");
-const { uploadFile } = require("../lib/supabase");
 const {randomUUID} = require("crypto");
 const createHttpError = require("http-errors")
 
 const prisma = new PrismaClient();
 
-const getAllAirplane = async (req, res, next) => {
+const getAllAirports = async (req, res, next) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const offset = (page - 1) * limit
 
-        const getAirplane = await prisma.airplane.findMany({
+        const getAirports = await prisma.airport.findMany({
             skip: offset,
             take: limit
         });
 
-        const count = await prisma.airplane.count()
+        const count = await prisma.airport.count()
 
         res.status(200).json({
           status: true,
-          message: "all airplane data retrieved successfully",
-          data: getAirplane.length !== 0 ? getAirplane : "Empty",
+          message: "all Airport data retrieved successfully",
+          data: getAirports.length !== 0 ? getAirports : "Empty",
           pagination: {
             totalPage: Math.ceil(count/limit),
             currentPage: page,
-            pageItems: getAirplane.length,
+            pageItems: getAirports.length,
             nextPage: page < Math.ceil(count/limit) ? page + 1 : null,
             prevPage: page > 1 ? page - 1 : null
           }
@@ -35,88 +34,81 @@ const getAllAirplane = async (req, res, next) => {
       }
 }
 
-const getAirplaneById = async (req, res, next) => {
+const getAirportById = async (req, res, next) => {
     const id = req.params.id
     try {
-        const getAirplane = await prisma.airplane.findUnique({
+        const getAirport = await prisma.airport.findUnique({
             where: {
                 id: id
             }
         })    
 
-        if(!getAirplane) return next(createHttpError(404, {message: "Airplane not found"}))
+        if(!getAirport) return next(createHttpError(404, {message: "Airport not found"}))
+
         res.status(200).json({
             status: true,
-            message: "all airplane data retrieved successfully",
-            data: getAirplane
+            message: "all Airports data retrieved successfully",
+            data: getAirport
         })
     } catch (error) {
         next(createHttpError(500, {message: error.message}))
     }
 }
 
-const createNewAirplane = async (req, res, next) => {
-    const {name, code} = req.body;
+const createNewAirport = async (req, res, next) => {
+    const {name, code, country, city} = req.body;
     console.log(req.body)
-    const file = req.file;
 
     try {
-        let imageUrl
-        if(file){
-            imageUrl = await uploadFile(file)
-        }
-
-        const newAirplane = await prisma.airplane.create({
+        const newAirport = await prisma.airport.create({
             data: {
                 id: randomUUID(),
                 name: name,
                 code: code,
-                image: imageUrl
+                country: country,
+                city: city
             }
         })
 
         res.status(201).json({
             status: true,
-            message: "Airplane created successfully",
-            data: newAirplane
+            message: "Airport created successfully",
+            data: newAirport
         })
+
     } catch (error) {
         next(createHttpError(500, {message: error.message}))
     }
 }
 
-const updateAirplane = async (req, res, next) => {
-    const {name, code} = req.body;
+const updateAirport = async (req, res, next) => {
+    const {name, code, country, city} = req.body;
     
-    const file = req.file;
-
     try {
-        const getAirplane = await prisma.airplane.findUnique({
+        const getAirport = await prisma.airport.findUnique({
             where: {
                 id: req.params.id
             }
         })
 
-        let file = getAirplane.image
-        if(file) imageUrl = await uploadFile(file)
-
-        if(!getAirplane) return next(createHttpError(404, {message: "Airplane not found"}))
+        if(!getAirport) return next(createHttpError(404, {message: "Airport not found"}))
         
-        const updateAirPlane = await prisma.airplane.update({
+        const updateAirport = await prisma.airport.update({
             where: {
                 id: req.params.id
             },
             data:{
                 code,
                 name,
-                image: imageUrl
+                country,
+                city
             }
         });
 
         res.status(201).json({
             status: true,
-            message:  "Airplane updated successfully",
-            data: updateAirPlane
+            message:  "Airport updated successfully",
+            data: updateAirport
         })
 
     } catch (error) {
@@ -124,17 +116,17 @@ const updateAirplane = async (req, res, next) => {
     }
 }
 
-const deleteAirplane = async (req, res, next) => {
+const deleteAirport = async (req, res, next) => {
     try {
-        const getAirplane = await prisma.airplane.findFirst({
+        const getAirport = await prisma.airport.findFirst({
             where: {
                 id: req.params.id
             }
         })
 
-        if(!getAirplane) return next(createHttpError(404, {message: "Airplane not found"}))
+        if(!getAirport) return next(createHttpError(404, {message: "Airport not found"}))
         
-        await prisma.airplane.delete({
+        await prisma.airport.delete({
             where: {
                 id: req.params.id
             }
@@ -142,7 +134,7 @@ const deleteAirplane = async (req, res, next) => {
         
         res.status(200).json({
             status: true,
-            message: "Airplane deleted successfully"
+            message: "Airport deleted successfully"
         })
     } catch (error) {
         next(createHttpError(500, {message: error.message}))
@@ -150,9 +142,9 @@ const deleteAirplane = async (req, res, next) => {
 }
 
 module.exports = {
-    createNewAirplane,
-    updateAirplane,
-    getAllAirplane,
-    deleteAirplane,
-    getAirplaneById
+    createNewAirport,
+    updateAirport,
+    getAllAirports,
+    deleteAirport,
+    getAirportById
 }
