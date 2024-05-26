@@ -27,6 +27,6 @@ router
     .put(updateFlightSeat)
     .delete(deleteFlightSeat);
 
-router.route("/book/:id").post(bookFlightSeat);
+router.route("/book/:id").put(bookFlightSeat);
 
 module.exports = router;
