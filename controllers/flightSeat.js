@@ -203,10 +203,20 @@ const deleteFlightSeat = async (req, res) => {
     const { id } = req.params;
 
     try {
-        const flightSeat = await prisma.flightSeat.delete({
+        const flightSeat = await prisma.flightSeat.findUnique({
             where: { id },
         });
 
+        if (!flightSeat) {
+            return res.status(404).json({ message: "FlightSeat not found." });
+        }
+
+        // Delete the flight seat
+        await prisma.flightSeat.delete({
+            where: { id },
+        });
+
+        // Increment the flight capacity
         await prisma.flight.update({
             where: { id: flightSeat.flightId },
             data: { capacity: { increment: 1 } },
