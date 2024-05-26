@@ -35,17 +35,19 @@ const forgetPasswordSchema = Joi.object({
 });
 
 // user
-const userSchema = Joi.object({
+const userCreateSchema = Joi.object({
     name: Joi.string().required(),
     phoneNumber: Joi.string().optional(),
-    role: Joi.string().required(),
+    familyName: Joi.string().required(),
+    role: Joi.string().default("BUYER"),// Set default value for role
 });
 
 const userUpdateSchema = Joi.object({
     id: Joi.string(),
     name: Joi.string(),
     phoneNumber: Joi.string().optional(),
-    role: Joi.string().required(),
+    familyName: Joi.string().required(),
+    role: Joi.forbidden(), // Ensure role is not allowed in request body
 });
 
 module.exports = {
@@ -54,6 +56,6 @@ module.exports = {
     OTPSchema,
     PasswordSchema,
     forgetPasswordSchema,
-    userSchema,
+    userCreateSchema,
     userUpdateSchema,
 };
