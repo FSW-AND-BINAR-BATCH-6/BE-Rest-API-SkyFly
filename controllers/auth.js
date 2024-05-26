@@ -484,6 +484,7 @@ const handleLoginGoogle = async (req, res, next) => {
             status: true,
             message:
                 "Verification token has been sent, please check your email",
+            _token: dataUrl.token,
         });
     } catch (error) {
         next(createHttpError(500, { message: error.message }));
