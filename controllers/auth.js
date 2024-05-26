@@ -80,12 +80,7 @@ const handleRegister = async (req, res, next) => {
             status: true,
             message:
                 "Verification token has been sent, please check your email",
-            data: {
-                name: name,
-                email: email,
-                phoneNumber: phoneNumber,
-                role: userauthData.role,
-            },
+            _token: dataUrl.token,
         });
     } catch (error) {
         next(
@@ -225,6 +220,7 @@ const resendOTP = async (req, res, next) => {
         res.status(201).json({
             status: true,
             message: "Verification link has been sent, please check your email",
+            _token: dataUrl.token,
         });
     } catch (error) {
         next(createHttpError(500, { message: error.message }));
