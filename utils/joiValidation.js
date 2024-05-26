@@ -62,6 +62,7 @@ const createFlightSchema = Joi.object({
     }),
     destinationAirportId: Joi.string().required(),
     price: Joi.number().required(),
+    capacity: Joi.number().required(),
 });
 
 const updateFlightSchema = Joi.object({
@@ -77,6 +78,13 @@ const updateFlightSchema = Joi.object({
     price: Joi.number().required(),
 });
 
+// flightSeat
+const createFlightSeatSchema = Joi.object({
+    flightId: Joi.string().required(),
+    seatNumber: Joi.string().required(),
+    type: Joi.string().valid("ECONOMY", "BUSINESS", "FIRST").required(),
+});
+
 module.exports = {
     LoginSchema,
     RegisterSchema,
@@ -87,4 +95,5 @@ module.exports = {
     forgetPasswordSchema,
     userCreateSchema,
     userUpdateSchema,
+    createFlightSeatSchema,
 };
