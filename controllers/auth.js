@@ -272,7 +272,7 @@ const verifyOTP = async (req, res, next) => {
 
         if (delta === null || otp != foundUser.otpToken) {
             return next(
-                createHttpError(422, { message: "OTP Token is invalid" })
+                createHttpError(422, { message: "OTP Token is expired" })
             );
         }
 
