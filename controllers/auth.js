@@ -109,6 +109,14 @@ const handleLogin = async (req, res, next) => {
                 user: true,
             },
         });
+
+        if (!userAccount) {
+            return next(
+                createHttpError(404, {
+                    message: "User is not found",
+                })
+            );
+        }
         console.log("masuk");
 
         // check email is unverified
@@ -414,7 +422,11 @@ const handleLoginGoogle = async (req, res, next) => {
         const { data } = await oauth2.userinfo.get();
 
         if (!data) {
-            return next(createHttpError(404, { message: "Account Not Found" }));
+            return next(
+                createHttpError(404, {
+                    message: "Account Not Found",
+                })
+            );
         }
 
         const checkEmail = await prisma.auth.findUnique({
