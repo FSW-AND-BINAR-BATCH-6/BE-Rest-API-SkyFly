@@ -80,12 +80,7 @@ const handleRegister = async (req, res, next) => {
             status: true,
             message:
                 "Verification token has been sent, please check your email",
-            data: {
-                name: name,
-                email: email,
-                phoneNumber: phoneNumber,
-                role: userauthData.role,
-            },
+            _token: dataUrl.token,
         });
     } catch (error) {
         next(
@@ -109,6 +104,14 @@ const handleLogin = async (req, res, next) => {
                 user: true,
             },
         });
+
+        if (!userAccount) {
+            return next(
+                createHttpError(404, {
+                    message: "User is not found",
+                })
+            );
+        }
         console.log("masuk");
 
         // check email is unverified
@@ -217,6 +220,7 @@ const resendOTP = async (req, res, next) => {
         res.status(201).json({
             status: true,
             message: "Verification link has been sent, please check your email",
+            _token: dataUrl.token,
         });
     } catch (error) {
         next(createHttpError(500, { message: error.message }));
@@ -264,7 +268,7 @@ const verifyOTP = async (req, res, next) => {
 
         if (delta === null || otp != foundUser.otpToken) {
             return next(
-                createHttpError(422, { message: "OTP Token is invalid" })
+                createHttpError(422, { message: "OTP Token is expired" })
             );
         }
 
@@ -414,7 +418,11 @@ const handleLoginGoogle = async (req, res, next) => {
         const { data } = await oauth2.userinfo.get();
 
         if (!data) {
-            return next(createHttpError(404, { message: "Account Not Found" }));
+            return next(
+                createHttpError(404, {
+                    message: "Account Not Found",
+                })
+            );
         }
 
         const checkEmail = await prisma.auth.findUnique({
