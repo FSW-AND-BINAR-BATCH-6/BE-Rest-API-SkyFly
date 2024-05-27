@@ -85,8 +85,8 @@ model Ticket {
     code          String       @unique 
     flightId      String?
     flight        Flight?       @relation(fields: [flightId], references: [id])
-    customerId    String?       @unique
-    customer      User?         @relation(fields: [customerId], references: [id])
+    userId    String?       @unique
+    user      User?         @relation(fields: [userId], references: [id])
     seatId        String?       @unique
     seat          FlightSeat?   @relation(fields: [seatId], references: [id])
     bookingDate   DateTime
