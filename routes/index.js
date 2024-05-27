@@ -2,6 +2,11 @@ const router = require("express").Router();
 const swaggerUI = require("swagger-ui-express");
 const swaggerDocument = require("../docs/swagger.json");
 
+const airplane = require("./airplane");
+const auth = require("./auth");
+const user = require("./user");
+const transactionRoute = require("./transaction");
+
 router.get("/documentation.json", (req, res) => res.send(swaggerDocument));
 router.use(
     "/api-docs",
@@ -15,10 +20,6 @@ router.use(
         ],
     })
 );
-router.get("/documentation.json", (req, res) => res.send(swaggerDocument));
-
-const airplane = require("./airplane");
-const user = require("./user");
 
 router.get("/api/v1", (req, res, next) => {
     res.status(200).json({
@@ -26,10 +27,10 @@ router.get("/api/v1", (req, res, next) => {
         message: "Welcome to API skyfly",
     });
 });
-const auth = require("./auth");
 
 router.use("/api/v1/airplane", airplane);
 router.use("/api/v1/auth", auth);
 router.use("/api/v1/user", user);
+router.use("/api/v1/transactions", transactionRoute);
 
 module.exports = router;
