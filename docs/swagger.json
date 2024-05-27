@@ -643,7 +643,7 @@
       }
     },
 
-    "/flight-seat": {
+    "/flightSeat": {
       "get": {
         "tags": ["Flight Seats"],
         "security": [
@@ -667,32 +667,61 @@
                     },
                     "message": {
                       "type": "string",
-                      "example": "all flight-seat data retrieved successfully"
+                      "example": "Available flight seats data retrieved successfully"
+                    },
+                    "totalItems": {
+                      "type": "integer",
+                      "example": 12
+                    },
+                    "pagination" :{
+                      "type": "object",
+                      "example" : {
+                        "totalPages": 3,
+                        "currentPage": 1,
+                        "pageItems": 5,
+                        "nextPage": 2,
+                        "prevPage": null
+                      }
                     },
                     "data": {
                       "type": "object",
-                      "example": {
-                          "flight-seats": [
-                              {
-                                  "id": "clw9abc650000enqweyz697md",
-                                  "code": "1",
-                                  "name": "pappapap",
-                                  "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/flight-seats/1715866000111.png"
-                              },
-                              {
-                                  "id": "clwaeh22b0000uzbjstxii4b7",
-                                  "code": "2",
-                                  "name": "JawAir",
-                                  "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/flight-seats/1715933451194.png"
-                              },
-                              {
-                                  "id": "clwaehve10001uzbjgbq8hg44",
-                                  "code": "3",
-                                  "name": "SundAir",
-                                  "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/flight-seats/1715933489881.png"
-                              }
-                          ]
-                      }
+                      "example": [
+                        {
+                          "id": "02420c4a-9444-462e-b23c-727a3c36ebe0",
+                          "flightId": "63c1eb31-14f0-4069-b5f1-487572f3c886",
+                          "seatNumber": "14A",
+                          "isBooked": false,
+                          "type": "ECONOMY"
+                        },
+                        {
+                          "id": "05e38121-82b9-4f0d-a278-d4571e9ae806",
+                          "flightId": "63c1eb31-14f0-4069-b5f1-487572f3c886",
+                          "seatNumber": "4A",
+                          "isBooked": false,
+                          "type": "BUSINESS"
+                        },
+                        {
+                          "id": "1d22d31e-422a-4c8e-b58a-a12149b0e1db",
+                          "flightId": "63c1eb31-14f0-4069-b5f1-487572f3c886",
+                          "seatNumber": "11A",
+                          "isBooked": false,
+                          "type": "ECONOMY"
+                        },
+                        {
+                          "id": "31c78c30-d28a-4bfe-97d4-45fbb03a1576",
+                          "flightId": "63c1eb31-14f0-4069-b5f1-487572f3c886",
+                          "seatNumber": "16A",
+                          "isBooked": false,
+                          "type": "ECONOMY"
+                        },
+                        {
+                          "id": "67a46b20-d63c-401a-b609-957d29ebc878",
+                          "flightId": "63c1eb31-14f0-4069-b5f1-487572f3c886",
+                          "seatNumber": "6A",
+                          "isBooked": false,
+                          "type": "BUSINESS"
+                        }
+                      ]
                     }
                   }
                 }
@@ -717,17 +746,17 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "code": {
-                    "type": "integer",
-                    "example": 4
-                  },
-                  "name": {
+                  "flightId": {
                     "type": "string",
-                    "example": "BatakAir"
+                    "example": "63c1eb31-14f0-4069-b5f1-487572f3c886"
                   },
-                  "image": {
-                    "type": "http",
-                    "example": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/flight-seats/1715935002439.png"
+                  "seatNumber": {
+                    "type": "string",
+                    "example": "6A"
+                  },
+                  "type": {
+                    "type": "string",
+                    "example": "BUSINESS"
                   }
                 }
               }
@@ -749,12 +778,11 @@
                     "data": {
                       "type": "object",
                       "example": {
-                          "flight-seats": {
-                              "id": "clwafg1pu000111ghakckyuuf",
-                              "code": "4",
-                              "name": "BatakAir",
-                              "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/flight-seats/1715935084484.png"
-                          }
+                        "id": "67a46b20-d63c-401a-b609-957d29ebc878",
+                        "flightId": "63c1eb31-14f0-4069-b5f1-487572f3c886",
+                        "seatNumber": "6A",
+                        "isBooked": false,
+                        "type": "BUSINESS"
                       }
                     }
                   }
@@ -765,7 +793,7 @@
         }
       }
     },
-    "/flight-seat/{id}": {
+    "/flightSeat/{id}": {
       "get": {
         "tags": ["Flight Seats"],
         "security": [
@@ -775,18 +803,6 @@
         ],
         "summary": "Return result HIT API get flight-seat by id",
         "description": "This is an API for getting flight-seat data based on Id",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "clwaeh22b0000uzbjstxii4b7"
-            },
-            "description": "Flight-seat ID"
-          }
-        ],
         "responses": {
           "200": {
             "description": "Success getting flight-seat data based on Id",
@@ -801,18 +817,111 @@
                     },
                     "message" : {
                       "type": "string",
-                      "example": "flight-seat data retrieved successfully"
+                      "example": "All flight seats data retrieved successfully"
+                    },
+                    "totalItems":{
+                      "type": "integer",
+                      "example": 13
+                    },
+                    "pagination":{
+                      "type": "object",
+                      "example": {
+                        "totalPages": 3,
+                        "currentPage": 1,
+                        "pageItems": 5,
+                        "nextPage": 2,
+                        "prevPage": null
+                      }
                     },
                     "data": {
                       "type": "object",
-                      "example": {
-                          "flight-seat": {
-                              "id": "clwaeh22b0000uzbjstxii4b7",
-                              "code": "2",
-                              "name": "JawAir",
-                              "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/flight-seats/1715933451194.png"
+                      "example": [
+                        {
+                          "id": "02420c4a-9444-462e-b23c-727a3c36ebe0",
+                          "flightId": "63c1eb31-14f0-4069-b5f1-487572f3c886",
+                          "seatNumber": "14A",
+                          "isBooked": false,
+                          "type": "ECONOMY",
+                          "flight": {
+                            "id": "63c1eb31-14f0-4069-b5f1-487572f3c886",
+                            "planeId": "af5ac02d-0a93-4c8f-b05c-2b3ed5006009",
+                            "departureDate": "2024-05-20T11:00:30.000Z",
+                            "departureAirportId": "1fefba20-23d4-4a8b-848b-77a2bf5f6012",
+                            "arrivalDate": "2024-05-21T12:45:00.000Z",
+                            "destinationAirportId": "1fefba20-23d4-4a8b-848b-77a2bf5f6012",
+                            "capacity": 59,
+                            "price": 350
                           }
-                      }
+                        },
+                        {
+                          "id": "05e38121-82b9-4f0d-a278-d4571e9ae806",
+                          "flightId": "63c1eb31-14f0-4069-b5f1-487572f3c886",
+                          "seatNumber": "4A",
+                          "isBooked": false,
+                          "type": "BUSINESS",
+                          "flight": {
+                            "id": "63c1eb31-14f0-4069-b5f1-487572f3c886",
+                            "planeId": "af5ac02d-0a93-4c8f-b05c-2b3ed5006009",
+                            "departureDate": "2024-05-20T11:00:30.000Z",
+                            "departureAirportId": "1fefba20-23d4-4a8b-848b-77a2bf5f6012",
+                            "arrivalDate": "2024-05-21T12:45:00.000Z",
+                            "destinationAirportId": "1fefba20-23d4-4a8b-848b-77a2bf5f6012",
+                            "capacity": 59,
+                            "price": 350
+                          }
+                        },
+                        {
+                          "id": "1d22d31e-422a-4c8e-b58a-a12149b0e1db",
+                          "flightId": "63c1eb31-14f0-4069-b5f1-487572f3c886",
+                          "seatNumber": "11A",
+                          "isBooked": false,
+                          "type": "ECONOMY",
+                          "flight": {
+                            "id": "63c1eb31-14f0-4069-b5f1-487572f3c886",
+                            "planeId": "af5ac02d-0a93-4c8f-b05c-2b3ed5006009",
+                            "departureDate": "2024-05-20T11:00:30.000Z",
+                            "departureAirportId": "1fefba20-23d4-4a8b-848b-77a2bf5f6012",
+                            "arrivalDate": "2024-05-21T12:45:00.000Z",
+                            "destinationAirportId": "1fefba20-23d4-4a8b-848b-77a2bf5f6012",
+                            "capacity": 59,
+                            "price": 350
+                          }
+                        },
+                        {
+                          "id": "2280cc43-b453-4f2d-98ae-007335d843c8",
+                          "flightId": "63c1eb31-14f0-4069-b5f1-487572f3c886",
+                          "seatNumber": "12A",
+                          "isBooked": true,
+                          "type": "ECONOMY",
+                          "flight": {
+                            "id": "63c1eb31-14f0-4069-b5f1-487572f3c886",
+                            "planeId": "af5ac02d-0a93-4c8f-b05c-2b3ed5006009",
+                            "departureDate": "2024-05-20T11:00:30.000Z",
+                            "departureAirportId": "1fefba20-23d4-4a8b-848b-77a2bf5f6012",
+                            "arrivalDate": "2024-05-21T12:45:00.000Z",
+                            "destinationAirportId": "1fefba20-23d4-4a8b-848b-77a2bf5f6012",
+                            "capacity": 59,
+                            "price": 350
+                          }
+                        },
+                        {
+                          "id": "31c78c30-d28a-4bfe-97d4-45fbb03a1576",
+                          "flightId": "63c1eb31-14f0-4069-b5f1-487572f3c886",
+                          "seatNumber": "16A",
+                          "isBooked": false,
+                          "type": "ECONOMY",
+                          "flight": {
+                            "id": "63c1eb31-14f0-4069-b5f1-487572f3c886",
+                            "planeId": "af5ac02d-0a93-4c8f-b05c-2b3ed5006009",
+                            "departureDate": "2024-05-20T11:00:30.000Z",
+                            "departureAirportId": "1fefba20-23d4-4a8b-848b-77a2bf5f6012",
+                            "arrivalDate": "2024-05-21T12:45:00.000Z",
+                            "destinationAirportId": "1fefba20-23d4-4a8b-848b-77a2bf5f6012",
+                            "capacity": 59,
+                            "price": 350
+                          }
+                        }
+                      ]
                     }
                   }
                 }
@@ -828,47 +937,11 @@
             "bearerToken": []
           }
         ],
-        "summary": "Return result HIT API update flight-seat by Id",
-        "description": "This is an API for updatting flight-seat data based on Id",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "clwafg1pu000111ghakckyuuf"
-            },
-            "description": "Flight-seat ID"
-          }
-        ],
-        "requestBody": {
-          "description": "This is a request body for update flight-seat",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "code": {
-                    "type": "integer",
-                    "example": 5
-                  },
-                  "name": {
-                    "type": "string",
-                    "example": "AirBatak"
-                  },
-                  "image": {
-                    "type": "http",
-                    "example": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/flight-seats/1715935625171.png"
-                  }
-                }
-              }
-            }
-          }
-        },
+        "summary": "Return result HIT API for booking seat by flight seat's id",
+        "description": "This is an API for booking seat by flight seat's id",
         "responses": {
           "200": {
-            "description": "Success editting transaction data based on Id",
+            "description": "Success booking seat by flight seat's id",
             "content": {
               "application/json": {
                 "schema": {
@@ -878,15 +951,18 @@
                       "type": "string",
                       "example": true
                     },
-                    "data": {
+                    "message": {
+                      "type": "string",
+                      "example": "Flight seat booked successfully"
+                    },
+                    "bookedFlightSeat": {
                       "type": "object",
                       "example": {
-                          "flight-seat": {
-                              "id": "clwafg1pu000111ghakckyuuf",
-                              "code": "5",
-                              "name": "AirBatak",
-                              "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/flight-seats/1715935625171.png"
-                          }
+                        "id": "02420c4a-9444-462e-b23c-727a3c36ebe0",
+                        "flightId": "63c1eb31-14f0-4069-b5f1-487572f3c886",
+                        "seatNumber": "14A",
+                        "isBooked": true,
+                        "type": "ECONOMY"
                       }
                     }
                   }
@@ -905,18 +981,6 @@
         ],
         "summary": "Return result HIT API delete flight-seat by Id",
         "description": "This is an API for deletting flight-seat data based on Id",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "clwafg1pu000111ghakckyuuf"
-            },
-            "description": "Flight-seat ID"
-          }
-        ],
         "responses": {
           "200": {
             "description": "Success deletting flight-seat data based on Id",
@@ -931,7 +995,7 @@
                     },
                     "message": {
                       "type": "string",
-                      "example": "flight-seat deleted successfully"
+                      "example": "flight seat deleted successfully"
                     }
                   }
                 }
