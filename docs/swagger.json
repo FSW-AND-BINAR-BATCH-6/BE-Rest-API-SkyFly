@@ -35,13 +35,17 @@
       "description": "this is the API for TICKETS resources"
     },
     {
+      "name": "Transactions",
+      "description": "this is the API for TRANSACTIONS resources"
+    },
+    {
       "name": "Users",
       "description": "this is the API for USERS resources"
     }
   ],
   "servers": [
     {
-      "url": "http://localhost:3000/api/v1"
+      "url": "https://backend-skyfly-c1.vercel.app/api-docs/"
     }
   ],
   "paths": {
@@ -1016,6 +1020,18 @@
         ],
         "summary": "Return result HIT API get all tickets data",
         "description": "This is an API for getting all tickets data",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "path",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 3
+            },
+            "description": "Page Number"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success getting all tickets data",
@@ -1023,40 +1039,93 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "properties": {
+                  "example": {
                     "status": {
                       "type": "string",
                       "example": true
                     },
-                    "message": {
-                      "type": "string",
-                      "example": "all ticket data retrieved successfully"
+                    "totalItems":{
+                      "type": "integer",
+                      "example": 2
+                    },
+                    "pagination":{
+                      "type": "object",
+                      "example": {
+                        "totalPages": 1,
+                        "currentPage": 1,
+                        "pageItems": 2,
+                        "nextPage": null,
+                        "prevPage": null
+                      }
                     },
                     "data": {
                       "type": "object",
-                      "example": {
-                          "tickets": [
-                              {
-                                  "id": "clw9abc650000enqweyz697md",
-                                  "code": "1",
-                                  "name": "pappapap",
-                                  "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/tickets/1715866000111.png"
-                              },
-                              {
-                                  "id": "clwaeh22b0000uzbjstxii4b7",
-                                  "code": "2",
-                                  "name": "JawAir",
-                                  "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/tickets/1715933451194.png"
-                              },
-                              {
-                                  "id": "clwaehve10001uzbjgbq8hg44",
-                                  "code": "3",
-                                  "name": "SundAir",
-                                  "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/tickets/1715933489881.png"
-                              }
-                          ]
-                      }
+                      "example": [
+                        {
+                          "id": "1",
+                          "code": "AAB111",
+                          "bookingDate": "2024-05-26T23:00:00.000Z",
+                          "price": 4000000,
+                          "flight": {
+                            "id": "1",
+                            "departureDate": "1970-01-01T00:00:00.000Z",
+                            "departureCity": "LA",
+                            "arrivalDate": "1970-01-02T00:00:00.000Z",
+                            "destinationCity": "PARIS\n"
+                          },
+                          "user": {
+                            "id": "1",
+                            "name": "VLAST",
+                            "phoneNumber": "0180829729"
+                          },
+                          "seat": {
+                            "id": "1",
+                            "seatNumber": "D12",
+                            "type": "ECONOMY"
+                          }
+                        },
+                        {
+                          "id": "2",
+                          "code": "VAIWIH",
+                          "bookingDate": "2025-01-01T00:00:00.000Z",
+                          "price": 300000,
+                          "flight": {
+                            "id": "2",
+                            "departureDate": "2025-01-01T00:00:00.000Z",
+                            "departureCity": "LA",
+                            "arrivalDate": "2025-01-02T00:00:00.000Z",
+                            "destinationCity": "FLORIDA"
+                          },
+                          "user": {
+                            "id": "2",
+                            "name": "VIPER",
+                            "phoneNumber": "0982827222"
+                          },
+                          "seat": {
+                            "id": "2",
+                            "seatNumber": "A19",
+                            "type": "BUSINESS"
+                          }
+                        }
+                      ]
                     }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "status": false,
+                    "code": 404,
+                    "method": "GET",
+                    "url": "/api/v1/ticket1",
+                    "message": "Not Found!"
                   }
                 }
               }
@@ -1080,17 +1149,25 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "code": {
+                  "flightId": {
                     "type": "integer",
-                    "example": 4
+                    "example": 3
                   },
-                  "name": {
+                  "userId": {
+                    "type": "integer",
+                    "example": 3
+                  },
+                  "seatId": {
+                    "type": "integer",
+                    "example": 3
+                  },
+                  "bookingDate": {
                     "type": "string",
-                    "example": "BatakAir"
+                    "example": "2024-06-02T14:00:00.000Z"
                   },
-                  "image": {
-                    "type": "http",
-                    "example": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/tickets/1715935002439.png"
+                  "price": {
+                    "type": "integer",
+                    "example": 30000000
                   }
                 }
               }
@@ -1109,16 +1186,85 @@
                       "type": "string",
                       "example": true
                     },
+                    "message":{
+                      "type": "string",
+                      "example": "Ticket created successfully"
+                    },
                     "data": {
                       "type": "object",
                       "example": {
-                          "tickets": {
-                              "id": "clwafg1pu000111ghakckyuuf",
-                              "code": "4",
-                              "name": "BatakAir",
-                              "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/tickets/1715935084484.png"
-                          }
+                        "id": "clwotc87t0001y6reltm4f7yo",
+                        "code": "UZLTTX",
+                        "flightId": "3",
+                        "userId": "3",
+                        "seatId": "3",
+                        "bookingDate": "2024-06-02T21:00:00.000Z",
+                        "price": 30000000,
+                        "flight": {
+                          "id": "3",
+                          "planeId": "3",
+                          "departureDate": "1970-01-01T00:00:00.000Z",
+                          "departureCity": "New York City",
+                          "departureCityCode": "NYC",
+                          "arrivalDate": "2024-05-28T10:00:00.000Z",
+                          "destinationCity": "ALASKA",
+                          "destinationCityCode": "ALS",
+                          "price": 300
+                        },
+                        "user": {
+                          "id": "3",
+                          "name": "BUDI",
+                          "phoneNumber": "0102898299",
+                          "role": "CUSTOMER"
+                        },
+                        "seat": {
+                          "id": "3",
+                          "flightId": "3",
+                          "seatNumber": "F12",
+                          "isBooked": false,
+                          "type": "ECONOMY"
+                        }
                       }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Flight not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 404
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Flight not found"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Required error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "integer",
+                      "example": 422
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "\"price\" is required"
                     }
                   }
                 }
@@ -1138,18 +1284,6 @@
         ],
         "summary": "Return result HIT API get ticket by id",
         "description": "This is an API for getting ticket data based on Id",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "clwaeh22b0000uzbjstxii4b7"
-            },
-            "description": "Ticket ID"
-          }
-        ],
         "responses": {
           "200": {
             "description": "Success getting ticket data based on Id",
@@ -1158,25 +1292,86 @@
                 "schema": {
                   "type": "object",
                   "properties": {
-                    "status": {
-                      "type": "string",
-                      "example": true
-                    },
-                    "message" : {
-                      "type": "string",
-                      "example": "ticket data retrieved successfully"
-                    },
-                    "data": {
-                      "type": "object",
-                      "example": {
-                          "ticket": {
-                              "id": "clwaeh22b0000uzbjstxii4b7",
-                              "code": "2",
-                              "name": "JawAir",
-                              "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/tickets/1715933451194.png"
+                      "status": {
+                          "type": "boolean",
+                          "example": true
+                      },
+                      "message": {
+                          "type": "string",
+                          "example": "Ticket data retrieved successfully"
+                      },
+                      "data": {
+                          "type": "object",
+                          "properties": {
+                              "id": {
+                                  "type": "string",
+                                  "example": "1"
+                              },
+                              "code": {
+                                  "type": "string",
+                                  "example": "AAB111"
+                              },
+                              "flightId": {
+                                  "type": "string",
+                                  "example": "1"
+                              },
+                              "userId": {
+                                  "type": "string",
+                                  "example": "1"
+                              },
+                              "seatId": {
+                                  "type": "string",
+                                  "example" : "1"
+                              },
+                              "bookingDate": {
+                                  "type": "string",
+                                  "example": "2024-05-26T23:00:00.000Z"
+                              },
+                              "price": {
+                                  "type": "integer",
+                                  "example": 4000000
+                              },
+                              "flight": {
+                                  "type": "object",
+                                  "example": {
+                                      "id": "1",
+                                      "departureDate": "1970-01-01T00:00:00.000Z",
+                                      "departureCity": "LA",
+                                      "arrivalDate": "1970-01-02T00:00:00.000Z",
+                                      "destinationCity": "PARIS\n"
+                                  }
+                              },
+                              "user": {
+                                  "type": "object",
+                                  "example": {
+                                    "id": "1",
+                                    "name": "VLAST"
+                                  }
+                              },
+                              "seat": {
+                                  "type": "object",
+                                  "example": {
+                                    "id": "1",
+                                    "seatNumber": "D12",
+                                    "type": "ECONOMY"
+                                  }
+                              }
                           }
                       }
-                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "status": 404,
+                    "message": "Ticket not found"
                   }
                 }
               }
@@ -1193,18 +1388,6 @@
         ],
         "summary": "Return result HIT API update ticket by Id",
         "description": "This is an API for updatting ticket data based on Id",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "clwafg1pu000111ghakckyuuf"
-            },
-            "description": "Ticket ID"
-          }
-        ],
         "requestBody": {
           "description": "This is a request body for update ticket",
           "content": {
@@ -1212,17 +1395,9 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "code": {
-                    "type": "integer",
-                    "example": 5
-                  },
-                  "name": {
+                  "bookingDate": {
                     "type": "string",
-                    "example": "AirBatak"
-                  },
-                  "image": {
-                    "type": "http",
-                    "example": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/tickets/1715935625171.png"
+                    "example": "2024-05-27T19:00:00.000Z"
                   }
                 }
               }
@@ -1231,27 +1406,103 @@
         },
         "responses": {
           "200": {
-            "description": "Success editting transaction data based on Id",
+            "description": "Success editting ticket data based on Id",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object",
                   "properties": {
                     "status": {
-                      "type": "string",
+                      "type": "boolean",
                       "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "Ticket updated successfully"
                     },
                     "data": {
                       "type": "object",
-                      "example": {
-                          "ticket": {
-                              "id": "clwafg1pu000111ghakckyuuf",
-                              "code": "5",
-                              "name": "AirBatak",
-                              "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/tickets/1715935625171.png"
-                          }
-                      }
+                      "example" : {
+                        "id": {
+                          "type": "integer",
+                          "example" : 1
+                        },
+                        "code":{
+                          "type": "string",
+                          "example": "BA-001"
+                        },
+                        "flightId": {
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "userId":{
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "seatId":{
+                          "type": "integer",
+                          "example": 1
+                        },
+                        "bookingDate": {
+                          "type": "string",
+                          "example":"2024-05-27T19:00:00.000Z"
+                        },
+                        "price": {
+                          "type": "integer",
+                          "example": 4000000
+                        },
+                        "flight":{
+                          "type": "object",
+                          "example":
+                            {
+                              "id": "1",
+                              "planeId": "1",
+                              "departureDate": "1970-01-01T00:00:00.000Z",
+                              "departureCity": "LA GALAXY",
+                              "departureCityCode": "LA",
+                              "arrivalDate": "1970-01-02T00:00:00.000Z",
+                              "destinationCity": "PARIS\n",
+                              "destinationCityCode": "PAR",
+                              "price": 3500000
+                            }
+                          },
+                            "user": {
+                              "type": "object",
+                              "example": 
+                              {
+                                "id": "1",
+                                "name": "VLAST",
+                                "phoneNumber": "0180829729",
+                                "role": "CUSTOMER"
+                              }
+                            }, 
+                            "seat": {
+                              "type": "object",
+                              "example": 
+                              {
+                                "id": "1",
+                                "flightId": "1",
+                                "seatNumber": "D12",
+                                "isBooked": false,
+                                "type": "ECONOMY"
+                              }
+                        } 
+                      }                    
                     }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "status": 404,
+                    "message": "Ticket not found"
                   }
                 }
               }
@@ -1289,13 +1540,27 @@
                   "type": "object",
                   "properties": {
                     "status": {
-                      "type": "string",
+                      "type": "boolean",
                       "example": true
                     },
                     "message": {
                       "type": "string",
                       "example": "ticket deleted successfully"
                     }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "status": 404,
+                    "message": "Ticket not found"
                   }
                 }
               }
