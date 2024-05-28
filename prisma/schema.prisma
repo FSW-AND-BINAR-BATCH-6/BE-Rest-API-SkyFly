@@ -31,21 +31,25 @@ enum StatusTicket {
 }
 
 model User {
-    id          String   @id @default(cuid())
-    name        String
-    phoneNumber String?
-    familyName  String? // Optional family name
-    role        RoleUser   @default(BUYER) // Default value for role
-    tickets     Ticket?
-    sessions    Session?
-    Auth        Auth?
+    id                String              @id @default(cuid())
+    name              String
+    phoneNumber       String?
+    familyName        String? // Optional family name
+    role              RoleUser            @default(BUYER) // Default value for role
+    tickets           Ticket?
+    auth              Auth?
+    ticketTransaction TicketTransaction[]
 }
 
-model Session {
-    id        String   @id
-    userId    String   @unique
-    expiresAt DateTime
-    user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
+model Auth {
+    id          String  @id @default(cuid())
+    userId      String? @unique
+    email       String  @unique
+    password    String
+    otpToken    String?
+    secretToken String?
+    isVerified  Boolean @default(false)
+    user        User?   @relation(fields: [userId], references: [id])
 }
 
 model Airplane {
@@ -66,7 +70,7 @@ model Flight {
     arrivalDate         DateTime
     destinationCity     String
     destinationCityCode String
-    price               Int
+    price               Float
     seats               FlightSeat[]
     tickets             Ticket[]
 }
@@ -82,27 +86,41 @@ model FlightSeat {
 }
 
 model Ticket {
-    id            String       @id @default(cuid())
-    code          String       @unique
-    flightId      String
-    flight        Flight       @relation(fields: [flightId], references: [id])
-    customerId    String       @unique
-    customer      User         @relation(fields: [customerId], references: [id])
-    seatId        String       @unique
-    seat          FlightSeat   @relation(fields: [seatId], references: [id])
-    bookingDate   DateTime
-    price         BigInt
-    status        StatusTicket
-    tokenMidtrans String?
+    id                      String                    @id @default(cuid())
+    code                    String                    @unique
+    flightId                String?
+    flight                  Flight?                   @relation(fields: [flightId], references: [id])
+    userId                  String?                   @unique
+    user                    User?                     @relation(fields: [userId], references: [id])
+    seatId                  String?                   @unique
+    seat                    FlightSeat?               @relation(fields: [seatId], references: [id])
+    bookingDate             DateTime
+    price                   Float
+    ticketTransactionDetail TicketTransactionDetail[]
 }
 
-model Auth {
-    id          String  @id @default(cuid())
-    userId      String? @unique
-    email       String  @unique
-    password    String
-    otpToken    String?
-    secretToken String?
-    isVerified  Boolean @default(false)
-    user        User?   @relation(fields: [userId], references: [id])
+model TicketTransaction {
+    id                 String                    @id @default(cuid())
+    orderId            String                    @unique
+    totalPrice         Float
+    status             String
+    User               User?                     @relation(fields: [userId], references: [id])
+    userId             String?
+    Transaction_Detail TicketTransactionDetail[]
+}
+
+model TicketTransactionDetail {
+    id             String            @id @default(cuid())
+    transactionId  String
+    transaction    TicketTransaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+    ticketId       String?
+    Ticket         Ticket?           @relation(fields: [ticketId], references: [id])
+    price          Float
+    name           String
+    familyName     String
+    dob            DateTime
+    citizenship    String
+    passport       String
+    issuingCountry String
+    validityPeriod DateTime
 }

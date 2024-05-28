@@ -19,6 +19,12 @@ const dataItemDetail = async (data) => {
             price: 1000,
             quantity: 1,
         },
+        {
+            id: randomUUID(),
+            name: "Ticket Air Asia Premium",
+            price: 2000,
+            quantity: 2,
+        },
     ];
 
     return item_details;

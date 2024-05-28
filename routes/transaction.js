@@ -16,10 +16,10 @@ router.use((req, res, next) => {
     next();
 });
 
-router.get("/status", getTransaction);
+router.get("/status/:orderId", getTransaction);
 router.post("/bank", bankTransfer);
 router.post("/creditcard", creditCard);
 router.post("/gopay", gopay);
-router.put("/status", updateTransaction);
+router.put("/status/:orderId", updateTransaction);
 
 module.exports = router;
