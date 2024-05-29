@@ -17,7 +17,7 @@ const generateSecretEmail = async (dataUrl, type, template) => {
         },
     });
 
-    const urlTokenVerification = `http://localhost:${process.env.PORT}/api/v1/auth/${type}?token=${dataUrl.token}`;
+    const urlTokenVerification = `${process.env.BASE_URL}/auth/${type}?token=${dataUrl.token}`;
 
     const html = await nodeMailer.getHtml(template, {
         email: payload.email,

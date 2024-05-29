@@ -16,7 +16,35 @@ const getAllTicket = async (req, res, next) => {
                 id: true,
                 code: true,
                 bookingDate: true,
-                price: true,
+                flight: {
+                    select: {
+                        id: true,
+                        departureDate: true,
+                        departureCity: true,
+                        arrivalDate: true,
+                        destinationCity: true,
+                        price: true,
+                    },
+                },
+                user: {
+                    select: {
+                        id: true,
+                        name: true,
+                        phoneNumber: true,
+                    },
+                },
+                seat: {
+                    select: {
+                        id: true,
+                        seatNumber: true,
+                        type: true,
+                    },
+                },
+            },
+            where: {
+                code: {
+                    contains: search,
+                },
             },
             orderBy: {
                 id: "asc",
@@ -54,7 +82,32 @@ const getTicketById = async (req, res, next) => {
     try {
         const ticket = await prisma.ticket.findUnique({
             where: { id: req.params.id },
+            include: {
+                flight: {
+                    select: {
+                        id: true,
+                        departureDate: true,
+                        departureCity: true,
+                        arrivalDate: true,
+                        destinationCity: true,
+                    },
+                },
+                user: {
+                    select: {
+                        id: true,
+                        name: true,
+                    },
+                },
+                seat: {
+                    select: {
+                        id: true,
+                        seatNumber: true,
+                        type: true,
+                    },
+                },
+            },
         });
+
         if (!ticket) {
             return next(createHttpError(404, { message: "Ticket not found" }));
         }
@@ -69,15 +122,9 @@ const getTicketById = async (req, res, next) => {
 };
 
 const createTicket = async (req, res, next) => {
-    const { code, flightId, customerId, seatId, bookingDate, price } = req.body;
+    const { flightId, userId, seatId, bookingDate } = req.body;
 
-    // Generate RealTime
-    const BookingDateTime = new Date(bookingDate);
-    const RealTime = new Date(
-        BookingDateTime.getTime() + 7 * 60 * 60 * 1000
-    ).toISOString();
-
-    //Generate RandomCode
+    // Generate RandomCode
     const generateRandomCode = (length) => {
         const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         let result = "";
@@ -90,16 +137,58 @@ const createTicket = async (req, res, next) => {
 
     const codeRandom = generateRandomCode(6);
     try {
+        // Check if the flight exists
+        const flight = await prisma.flight.findUnique({
+            where: { id: flightId },
+        });
+        if (!flight) {
+            return next(createHttpError(404, { message: "Flight not found" }));
+        }
+
+        // Check if the USER exists
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+        });
+        if (!user) {
+            return next(createHttpError(404, { message: "User not found" }));
+        }
+
+        // Check if the seat exists and is not booked
+        const seat = await prisma.flightSeat.findUnique({
+            where: { id: seatId },
+        });
+        if (!seat) {
+            return next(createHttpError(404, { message: "Seat not found" }));
+        }
+        if (seat.isBooked) {
+            return next(
+                createHttpError(400, { message: "Seat is already booked" })
+            );
+        }
+
+        // Create the new ticket
         const newTicket = await prisma.ticket.create({
             data: {
                 code: codeRandom,
                 flightId,
-                customerId,
+                userId,
                 seatId,
-                bookingDate: RealTime,
-                price,
+                bookingDate,
+            },
+
+            include: {
+                flight: true,
+                user: true,
+                seat: true,
             },
         });
+
+        // Mark the seat as booked
+        await prisma.flightSeat.update({
+            where: { id: seatId },
+            data: { isBooked: true },
+        });
+
         res.status(201).json({
             status: true,
             message: "Ticket created successfully",
@@ -111,13 +200,7 @@ const createTicket = async (req, res, next) => {
 };
 
 const updateTicket = async (req, res, next) => {
-    const { code, flightId, customerId, seatId, bookingDate, price } = req.body;
-
-    const BookingDateTime = new Date(bookingDate);
-
-    const RealTime = new Date(
-        BookingDateTime.getTime() + 7 * 60 * 60 * 1000
-    ).toISOString();
+    const { code, flightId, userId, seatId, bookingDate } = req.body;
 
     try {
         const ticket = await prisma.ticket.findUnique({
@@ -133,10 +216,14 @@ const updateTicket = async (req, res, next) => {
             data: {
                 code,
                 flightId,
-                customerId,
+                userId,
                 seatId,
-                bookingDate: RealTime,
-                price,
+                bookingDate,
+            },
+            include: {
+                flight: true,
+                user: true,
+                seat: true,
             },
         });
         res.status(200).json({
