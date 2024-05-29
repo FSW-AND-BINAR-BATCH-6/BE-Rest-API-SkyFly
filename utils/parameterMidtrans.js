@@ -2,10 +2,10 @@ const { randomUUID } = require("crypto");
 
 const dataCustomerDetail = async (data) => {
     const customer_details = {
-        first_name: "harry potter", // req.body.fullname
-        last_name: "potter", // req.body.familyName
-        phone: "628123456789", // req.body.phoneNumber
-        email: "customer@mail.com",
+        first_name: data.fullName, // req.body.fullname
+        last_name: data.familyName, // req.body.familyName
+        phone: data.phoneNumber, // req.body.phoneNumber
+        email: data.email,
     };
 
     return customer_details;
@@ -15,15 +15,23 @@ const dataItemDetail = async (data) => {
     const item_details = [
         {
             id: randomUUID(),
-            name: "Ticket Air Asia",
-            price: 1000,
-            quantity: 1,
+            name: `${data.first_title} ${data.first_fullName}`,
+            familyName: data.first_familyName,
+            ticketId: data.first_ticketId,
+            citizenship: data.first_citizenship,
+            issuingCountry: data.first_issuingCountry,
+            price: data.first_price,
+            quantity: data.first_quantity,
         },
         {
             id: randomUUID(),
-            name: "Ticket Air Asia Premium",
-            price: 2000,
-            quantity: 2,
+            name: `${data.second_title} ${data.second_fullName}`,
+            familyName: data.second_familyName,
+            ticketId: data.second_ticketId,
+            citizenship: data.second_citizenship,
+            issuingCountry: data.second_issuingCountry,
+            price: data.second_price,
+            quantity: data.second_quantity,
         },
     ];
 

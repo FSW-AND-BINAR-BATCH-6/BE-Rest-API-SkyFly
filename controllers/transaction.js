@@ -93,6 +93,14 @@ const updateTransaction = async (req, res, next) => {
             );
         }
 
+        if (transaction.transaction_status === "expire") {
+            return next(
+                createHttpError(410, {
+                    message: "Transaction is expired",
+                })
+            );
+        }
+
         if (
             transaction.transaction_status !== "pending" ||
             transaction.transaction_status !== "PENDING"
@@ -122,6 +130,14 @@ const updateTransaction = async (req, res, next) => {
 const bankTransfer = async (req, res, next) => {
     try {
         let { bank, payment_type } = req.body;
+        let { ticketId } = req.query;
+
+        req.body.first_ticketId = ticketId;
+        req.body.second_ticketId = ticketId;
+        console.log(req.body);
+
+        const dataCustomer = await dataCustomerDetail(req.body);
+        const dataItem = await dataItemDetail(req.body);
 
         if (bank) {
             payment_type = "bank_transfer";
@@ -145,9 +161,6 @@ const bankTransfer = async (req, res, next) => {
 
         const allowedPaymentTypes = ["bank_transfer", "echannel", "permata"];
         let parameter;
-
-        const dataCustomer = await dataCustomerDetail(req.query);
-        const dataItem = await dataItemDetail(req.query);
 
         if (!allowedPaymentTypes.includes(payment_type)) {
             return next(
@@ -221,21 +234,25 @@ const bankTransfer = async (req, res, next) => {
                     },
                 });
 
-                const transactionDetail =
-                    await tx.ticketTransactionDetail.create({
-                        data: {
-                            id: randomUUID(),
-                            transactionId: transaction.id,
-                            price: parseFloat(dataItem[0].price),
-                            name: "John Doe",
-                            familyName: "Doe",
-                            dob: new Date().toISOString(),
-                            citizenship: "Indonesia",
-                            passport: randomUUID(),
-                            issuingCountry: "Indonesia",
-                            validityPeriod: new Date().toISOString(),
-                        },
-                    });
+                await Promise.all(
+                    dataItem.map(async (dataItem) => {
+                        await tx.ticketTransactionDetail.create({
+                            data: {
+                                id: randomUUID(),
+                                transactionId: transaction.id,
+                                price: parseFloat(dataItem.price),
+                                ticketId: dataItem.ticketId,
+                                name: dataItem.name,
+                                familyName: dataItem.familyName,
+                                dob: new Date().toISOString(),
+                                citizenship: dataItem.citizenship,
+                                passport: randomUUID(),
+                                issuingCountry: dataItem.issuingCountry,
+                                validityPeriod: new Date().toISOString(),
+                            },
+                        });
+                    })
+                );
 
                 res.status(201).json({
                     status: true,

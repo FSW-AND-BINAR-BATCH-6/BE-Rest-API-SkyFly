@@ -86,17 +86,17 @@ model FlightSeat {
 }
 
 model Ticket {
-    id                      String                    @id @default(cuid())
-    code                    String                    @unique
+    id                      String                   @id @default(cuid())
+    code                    String                   @unique
     flightId                String?
-    flight                  Flight?                   @relation(fields: [flightId], references: [id])
-    userId                  String?                   @unique
-    user                    User?                     @relation(fields: [userId], references: [id])
-    seatId                  String?                   @unique
-    seat                    FlightSeat?               @relation(fields: [seatId], references: [id])
+    flight                  Flight?                  @relation(fields: [flightId], references: [id])
+    userId                  String?                  @unique
+    user                    User?                    @relation(fields: [userId], references: [id])
+    seatId                  String?                  @unique
+    seat                    FlightSeat?              @relation(fields: [seatId], references: [id])
     bookingDate             DateTime
     price                   Float
-    ticketTransactionDetail TicketTransactionDetail[]
+    ticketTransactionDetail TicketTransactionDetail?
 }
 
 model TicketTransaction {
@@ -113,8 +113,8 @@ model TicketTransactionDetail {
     id             String            @id @default(cuid())
     transactionId  String
     transaction    TicketTransaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
-    ticketId       String?
-    Ticket         Ticket?           @relation(fields: [ticketId], references: [id])
+    ticketId       String            @unique
+    Ticket         Ticket            @relation(fields: [ticketId], references: [id])
     price          Float
     name           String
     familyName     String
