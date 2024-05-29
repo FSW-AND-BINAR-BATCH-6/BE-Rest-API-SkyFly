@@ -45,7 +45,12 @@
   ],
   "servers": [
     {
-      "url": "https://backend-skyfly-c1.vercel.app/api-docs/"
+      "url": "http://localhost:3000/api/v1",
+      "description": "localhost"
+    },
+    {
+      "url": "https://backend-skyfly-c1.vercel.app/api/v1",
+      "description": "deployment"
     }
   ],
   "paths": {
@@ -351,9 +356,26 @@
     "/flight": {
       "get": {
         "tags": ["Flights"],
-        "security": [
+        "parameters" :[
           {
-            "bearerToken": []
+            "name": "search",
+            "in": "path",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "new york"
+            },
+            "description": "Search place"
+          },
+          {
+            "name": "page",
+            "in":"path",
+            "required":false,
+            "schema":{
+              "type":"integer",
+              "example":2
+            },
+            "description": "Page Number"
           }
         ],
         "summary": "Return result HIT API get all flights data",
@@ -374,30 +396,70 @@
                       "type": "string",
                       "example": "all flight data retrieved successfully"
                     },
+                    "totalItems":{
+                      "type":"integer",
+                      "example": 2
+                    },
+                    "pagination":{
+                      "type":"object",
+                      "example": {
+                        "totalPages": 1,
+                        "currentPage": 1,
+                        "pageItems": 2,
+                        "nextPage": null,
+                        "prevPage": null
+                      }
+                    },
                     "data": {
                       "type": "object",
-                      "example": {
-                          "flights": [
-                              {
-                                  "id": "clw9abc650000enqweyz697md",
-                                  "code": "1",
-                                  "name": "pappapap",
-                                  "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/flights/1715866000111.png"
-                              },
-                              {
-                                  "id": "clwaeh22b0000uzbjstxii4b7",
-                                  "code": "2",
-                                  "name": "JawAir",
-                                  "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/flights/1715933451194.png"
-                              },
-                              {
-                                  "id": "clwaehve10001uzbjgbq8hg44",
-                                  "code": "3",
-                                  "name": "SundAir",
-                                  "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/flights/1715933489881.png"
-                              }
-                          ]
-                      }
+                      "example": [
+                        {
+                          "id": "413f96a6-164d-4725-9137-c7b2ffefb7c2",
+                          "planeId": "30c490e4-bf07-4844-ac33-f52bc46a6c2d",
+                          "departureDate": "2024-05-20T03:00:30.000Z",
+                          "departureAirportId": "5c3bcb6f-e43a-438a-804a-e3a9bf15e3fe",
+                          "arrivalDate": "2024-05-21T04:45:00.000Z",
+                          "destinationAirportId": "aa8eae43-f60c-435c-b787-b8525e406249",
+                          "price": 350,
+                          "departureAirport": {
+                            "id": "5c3bcb6f-e43a-438a-804a-e3a9bf15e3fe",
+                            "name": "Juanda International Airport",
+                            "code": "SUB",
+                            "country": "Indonesia",
+                            "city": "Surabaya"
+                          },
+                          "destinationAirport": {
+                            "id": "aa8eae43-f60c-435c-b787-b8525e406249",
+                            "name": "Soekarno-Hatta International Airport",
+                            "code": "CGK",
+                            "country": "Indonesia",
+                            "city": "Jakarta"
+                          }
+                        },
+                        {
+                          "id": "a264b66a-e8af-4d22-9ffb-febc34c0c149",
+                          "planeId": "30c490e4-bf07-4844-ac33-f52bc46a6c2d",
+                          "departureDate": "2024-05-20T10:00:30.000Z",
+                          "departureAirportId": "ad910a4f-4e16-45b4-abd3-a06201e66559",
+                          "arrivalDate": "2024-05-21T11:45:00.000Z",
+                          "destinationAirportId": "aa8eae43-f60c-435c-b787-b8525e406249",
+                          "price": 350,
+                          "departureAirport": {
+                            "id": "ad910a4f-4e16-45b4-abd3-a06201e66559",
+                            "name": "Toronto Pearson International Airport",
+                            "code": "YYZ",
+                            "country": "Canada",
+                            "city": "Toronto"
+                          },
+                          "destinationAirport": {
+                            "id": "aa8eae43-f60c-435c-b787-b8525e406249",
+                            "name": "Soekarno-Hatta International Airport",
+                            "code": "CGK",
+                            "country": "Indonesia",
+                            "city": "Jakarta"
+                          }
+                        }
+                      ]
                     }
                   }
                 }
@@ -422,17 +484,29 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "code": {
-                    "type": "integer",
-                    "example": 4
-                  },
-                  "name": {
+                  "planeId": {
                     "type": "string",
-                    "example": "BatakAir"
+                    "example": "30c490e4-bf07-4844-ac33-f52bc46a6c2d"
                   },
-                  "image": {
-                    "type": "http",
-                    "example": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/flights/1715935002439.png"
+                  "departureDate": {
+                    "type": "string",
+                    "example": "2024-05-20 10:00:30"
+                  },
+                  "departureAirportId": {
+                    "type": "string",
+                    "example": "ad910a4f-4e16-45b4-abd3-a06201e66559"
+                  },
+                  "arrivalDate": {
+                    "type": "string",
+                    "example": "2024-05-21 11:45:00"
+                  },
+                  "destinationAirportId": {
+                    "type": "string",
+                    "example": "aa8eae43-f60c-435c-b787-b8525e406249"
+                  },
+                  "price": {
+                    "type": "integer",
+                    "example": 350
                   }
                 }
               }
@@ -451,15 +525,34 @@
                       "type": "string",
                       "example": true
                     },
+                    "message": {
+                      "type": "string",
+                      "example": "Flight created successfully"
+                    },
                     "data": {
                       "type": "object",
                       "example": {
-                          "flights": {
-                              "id": "clwafg1pu000111ghakckyuuf",
-                              "code": "4",
-                              "name": "BatakAir",
-                              "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/flights/1715935084484.png"
-                          }
+                        "id": "a264b66a-e8af-4d22-9ffb-febc34c0c149",
+                        "planeId": "30c490e4-bf07-4844-ac33-f52bc46a6c2d",
+                        "departureDate": "2024-05-20T10:00:30.000Z",
+                        "departureAirportId": "ad910a4f-4e16-45b4-abd3-a06201e66559",
+                        "arrivalDate": "2024-05-21T11:45:00.000Z",
+                        "destinationAirportId": "aa8eae43-f60c-435c-b787-b8525e406249",
+                        "price": 350,
+                        "departureAirport": {
+                          "id": "ad910a4f-4e16-45b4-abd3-a06201e66559",
+                          "name": "Toronto Pearson International Airport",
+                          "code": "YYZ",
+                          "country": "Canada",
+                          "city": "Toronto"
+                        },
+                        "destinationAirport": {
+                          "id": "aa8eae43-f60c-435c-b787-b8525e406249",
+                          "name": "Soekarno-Hatta International Airport",
+                          "code": "CGK",
+                          "country": "Indonesia",
+                          "city": "Jakarta"
+                        }
                       }
                     }
                   }
@@ -480,18 +573,6 @@
         ],
         "summary": "Return result HIT API get flight by id",
         "description": "This is an API for getting flight data based on Id",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "example": "clwaeh22b0000uzbjstxii4b7"
-            },
-            "description": "Flight ID"
-          }
-        ],
         "responses": {
           "200": {
             "description": "Success getting flight data based on Id",
@@ -511,12 +592,33 @@
                     "data": {
                       "type": "object",
                       "example": {
-                          "flight": {
-                              "id": "clwaeh22b0000uzbjstxii4b7",
-                              "code": "2",
-                              "name": "JawAir",
-                              "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/flights/1715933451194.png"
-                          }
+                        "id": "413f96a6-164d-4725-9137-c7b2ffefb7c2",
+                        "planeId": "30c490e4-bf07-4844-ac33-f52bc46a6c2d",
+                        "departureDate": "2024-05-20T03:00:30.000Z",
+                        "departureAirportId": "5c3bcb6f-e43a-438a-804a-e3a9bf15e3fe",
+                        "arrivalDate": "2024-05-21T04:45:00.000Z",
+                        "destinationAirportId": "aa8eae43-f60c-435c-b787-b8525e406249",
+                        "price": 350,
+                        "departureAirport": {
+                          "id": "5c3bcb6f-e43a-438a-804a-e3a9bf15e3fe",
+                          "name": "Juanda International Airport",
+                          "code": "SUB",
+                          "country": "Indonesia",
+                          "city": "Surabaya"
+                        },
+                        "destinationAirport": {
+                          "id": "aa8eae43-f60c-435c-b787-b8525e406249",
+                          "name": "Soekarno-Hatta International Airport",
+                          "code": "CGK",
+                          "country": "Indonesia",
+                          "city": "Jakarta"
+                        },
+                        "airplane": {
+                          "id": "30c490e4-bf07-4844-ac33-f52bc46a6c2d",
+                          "code": "ABC-12",
+                          "name": "Garuda",
+                          "image": "https://qdetodfuvaidjkygantp.supabase.co//storage/v1/object/public/skyfly/public/airplanes/1716604504758.png"
+                        }
                       }
                     }
                   }
