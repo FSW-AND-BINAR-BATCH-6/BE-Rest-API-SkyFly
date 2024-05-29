@@ -1,52 +1,92 @@
 const { PrismaClient } = require("@prisma/client");
-const bcrypt = require("bcrypt");
 const createHttpError = require("http-errors");
-const Joi = require("joi");
-const user = require('../controllers/user');
-
-
+const { randomUUID } = require("crypto");
 const prisma = new PrismaClient();
 
-// Skema validasi dengan Joi
-const userSchema = Joi.object({
-    name: Joi.string().required(),
-    phoneNumber: Joi.string().optional(),
-    role: Joi.string().required(),
-});
 
-
-const userUpdateSchema = Joi.object({
-    id: Joi.string(),
-    name: Joi.string(),
-    phoneNumber: Joi.string().optional(),
-    role: Joi.string().required(),
-});
 
 
 const getAllUsers = async (req, res, next) => {
     try {
-        const user = await prisma.user.findMany({
+        const search = req.query.search || "";
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const offset = (page - 1) * limit;
+
+        const users = await prisma.user.findMany({
+            where: {
+                name: {
+                    contains: search,
+                    mode: "insensitive", // Optional: to make the search case insensitive
+                },
+            },
             select: {
                 id: true,
                 name: true,
                 phoneNumber: true,
+                familyName: true,
                 role: true,
+                auth: {
+                    select: {
+                        id: true,
+                        email: true,
+                        isVerified: true,
+                    },
+                },
+            },
+            orderBy: {
+                name: "asc",
+            },
+            skip: offset,
+            take: limit,
+        });
+
+        const count = await prisma.user.count({
+            where: {
+                name: {
+                    contains: search,
+                    mode: "insensitive", // Optional: to make the search case insensitive
+                },
             },
         });
 
         res.status(200).json({
             status: true,
             message: "All user data retrieved successfully",
-            data: user,
+            totalItems: count,
+            pagination: {
+                totalPages: Math.ceil(count / limit),
+                currentPage: page,
+                pageItems: users.length,
+                nextPage: page < Math.ceil(count / limit) ? page + 1 : null,
+                prevPage: page > 1 ? page - 1 : null,
+            },
+            data: users.length !== 0 ? users : "No user data found",
         });
     } catch (error) {
         next(createHttpError(500, { message: error.message }));
     }
 };
 
+
 const getUserById = async (req, res, next) => {
     try {
         const user = await prisma.user.findUnique({
+            select: {
+                id: true,
+                name: true,
+                phoneNumber: true,
+                familyName: true,
+                role: true,
+                auth: {
+                    select: {
+                        id: true,
+                        email: true,
+                        isVerified: true,
+                    },
+                },
+            },
+
             where: { id: req.params.id },
         });
 
@@ -54,12 +94,7 @@ const getUserById = async (req, res, next) => {
             res.status(200).json({
                 status: true,
                 message: "User data retrieved successfully",
-                data: {
-                    id: user.id,
-                    name: user.name,
-                    phoneNumber: user.phoneNumber,
-                    role: user.role,
-                },
+                data: user,
             });
         } else {
             next(createHttpError(404, { message: "Id Not Found" }));
@@ -70,38 +105,30 @@ const getUserById = async (req, res, next) => {
 };
 
 const createUser = async (req, res, next) => {
-    const { error, value } = userSchema.validate(req.body);
-    if (error) return next(createHttpError(400, { message: error.details[0].message }));
-
-    const { id, name, phoneNumber, role } = value;
+console.log(randomUUID());
+    const data = req.body;
 
     try {
-        // Check if name already exists
-        const existingUserByName = await prisma.user.findFirst({
-            where: { name: name },
-        });
-
-        if (existingUserByName) {
-            return next(createHttpError(400, { message: "Username already exists" }));
-        }
 
         const newUser = await prisma.user.create({
             data: {
-                id: req.body.id, // Include this line if you are passing id in the request body
-                name,
-                phoneNumber,
-                role,
+                id: randomUUID(), 
+                name: data.name,
+                phoneNumber: data.phoneNumber,
+                familyName: data.familyName,
+                role: data.role || "BUYER", // Default value for role
             },
         });
 
-        res.status(200).json({
+        res.status(201).json({
             status: true,
             message: "User created successfully",
             data: {
                 id: newUser.id,
-                name,
-                phoneNumber,
-                role,
+                name: newUser.name,
+                phoneNumber: newUser.phoneNumber,
+                familyName: newUser.familyName,
+                role: newUser.role,
             },
         });
     } catch (err) {
@@ -111,10 +138,9 @@ const createUser = async (req, res, next) => {
 
 
 const updateUser = async (req, res, next) => {
-    const { error, value } = userUpdateSchema.validate(req.body);
-    if (error) return next(createHttpError(400, { message: error.details[0].message }));
 
-    const { name, phoneNumber, role } = value;
+    // const { name, phoneNumber, role } = value;
+    const data = req.body;
 
     try {
         const user = await prisma.user.findUnique({
@@ -126,37 +152,25 @@ const updateUser = async (req, res, next) => {
         }
 
         // Check if the new name already exists for a different user
-        if (name) {
-            const existingUserByName = await prisma.user.findFirst({
-                where: {
-                    name: name,
-                    NOT: {
-                        id: req.params.id,
-                    },
-                },
-            });
-
-            if (existingUserByName) {
-                return next(createHttpError(400, { message: "Username already exists" }));
-            }
-        }
 
         const updatedUser = await prisma.user.update({
             where: { id: req.params.id },
             data: {
-                name,
-                phoneNumber,
-                role,
+                name: data.name,
+                phoneNumber: data.phoneNumber,
+                familyName: data.familyName,
+                role: "BUYER", // Ensures role is always 'BUYER'
             },
         });
 
-        res.status(200).json({
+        res.status(201).json({
             status: true,
             message: "User updated successfully",
             data: {
                 id: updatedUser.id,
                 name: updatedUser.name,
                 phoneNumber: updatedUser.phoneNumber,
+                familyName: updatedUser.familyName,
                 role: updatedUser.role,
             },
         });

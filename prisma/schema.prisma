@@ -14,7 +14,7 @@ datasource db {
 }
 
 enum RoleUser {
-    CUSTOMER
+    BUYER
     ADMIN
 }
 
@@ -31,23 +31,28 @@ enum StatusTicket {
 }
 
 model User {
-    id          String   @id @default(cuid())
-    name        String
-    phoneNumber String?
-    role        RoleUser
-    tickets     Ticket?
-    sessions    Session?
-    Auth        Auth?
+    id                String              @id @default(cuid())
+    name              String
+    phoneNumber       String?
+    familyName        String? // Optional family name
+    role              RoleUser            @default(BUYER) // Default value for role
+    tickets           Ticket?
+    auth              Auth?
+    ticketTransaction TicketTransaction[]
 }
 
-model Session {
-    id        String   @id
-    userId    String   @unique
-    expiresAt DateTime
-    user      User     @relation(references: [id], fields: [userId], onDelete: Cascade)
+model Auth {
+    id          String  @id @default(cuid())
+    userId      String? @unique
+    email       String  @unique
+    password    String
+    otpToken    String?
+    secretToken String?
+    isVerified  Boolean @default(false)
+    user        User?   @relation(fields: [userId], references: [id])
 }
 
-model Airplane {
+model Airline {
     id     String   @id @default(cuid())
     code   String   @default("ABC-123")
     name   String
@@ -55,19 +60,31 @@ model Airplane {
     flight Flight[]
 }
 
+model Airport {
+    id                 String   @id @default(cuid())
+    name               String
+    code               String   @unique
+    country            String
+    city               String
+    departureFlights   Flight[] @relation("DepartureAirport")
+    destinationFlights Flight[] @relation("DestinationAirport")
+}
+
 model Flight {
-    id                  String       @id @default(cuid())
-    planeId             String
-    plane               Airplane     @relation(fields: [planeId], references: [id])
-    departureDate       DateTime
-    departureCity       String
-    departureCityCode   String
-    arrivalDate         DateTime
-    destinationCity     String
-    destinationCityCode String
-    price               Int
-    seats               FlightSeat[]
-    tickets             Ticket[]
+    id                      String                   @id @default(cuid())
+    planeId                 String
+    plane                   Airline                  @relation(fields: [planeId], references: [id])
+    departureDate           DateTime
+    departureAirportId      String
+    departureAirport        Airport                  @relation("DepartureAirport", fields: [departureAirportId], references: [id])
+    arrivalDate             DateTime
+    destinationAirportId    String
+    destinationAirport      Airport                  @relation("DestinationAirport", fields: [destinationAirportId], references: [id])
+    capacity                Int
+    price                   Int
+    seats                   FlightSeat[]
+    tickets                 Ticket[]
+    ticketTransactionDetail TicketTransactionDetail?
 }
 
 model FlightSeat {
@@ -77,30 +94,43 @@ model FlightSeat {
     seatNumber String
     isBooked   Boolean? @default(false)
     type       TypeSeat
-    tickets    Ticket?
+    tickets    Ticket[]
 }
 
 model Ticket {
     id            String       @id @default(cuid())
-    code          String       @unique
-    flightId      String
-    flight        Flight       @relation(fields: [flightId], references: [id])
-    customerId    String       @unique
-    customer      User         @relation(fields: [customerId], references: [id])
-    seatId        String       @unique
-    seat          FlightSeat   @relation(fields: [seatId], references: [id])
+    code          String       @unique 
+    flightId      String?
+    flight        Flight?       @relation(fields: [flightId], references: [id])
+    userId    String?       @unique
+    user      User?         @relation(fields: [userId], references: [id])
+    seatId        String?       @unique
+    seat          FlightSeat?   @relation(fields: [seatId], references: [id])
     bookingDate   DateTime
-    price         BigInt
-    status        StatusTicket
-    tokenMidtrans String?
 }
 
-model Auth {
-    id         String  @id @default(cuid())
-    userId     String? @unique
-    email      String  @unique
-    password   String
-    otpToken   String
-    isVerified Boolean @default(false)
-    user       User?   @relation(fields: [userId], references: [id])
+model TicketTransaction {
+    id                 String                    @id @default(cuid())
+    orderId            String                    @unique
+    totalPrice         Float
+    status             String
+    User               User?                     @relation(fields: [userId], references: [id])
+    userId             String?
+    Transaction_Detail TicketTransactionDetail[]
+}
+
+model TicketTransactionDetail {
+    id             String            @id @default(cuid())
+    transactionId  String
+    transaction    TicketTransaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+    price          Float
+    name           String
+    familyName     String
+    dob            DateTime
+    citizenship    String
+    passport       String
+    issuingCountry String
+    validityPeriod DateTime
+    flightId       String            @unique
+    flight         Flight?           @relation(fields: [flightId], references: [id])
 }
