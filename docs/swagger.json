@@ -45,12 +45,12 @@
   ],
   "servers": [
     {
-      "url": "http://localhost:3000/api/v1",
-      "description": "localhost"
-    },
-    {
       "url": "https://backend-skyfly-c1.vercel.app/api/v1",
       "description": "deployment"
+    },
+    {
+      "url": "http://localhost:3000/api/v1",
+      "description": "localhost"
     }
   ],
   "paths": {
