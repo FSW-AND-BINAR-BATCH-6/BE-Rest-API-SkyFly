@@ -203,6 +203,7 @@ async function main() {
             arrivalDate: new Date("2024-06-01T12:00:00Z"),
             destinationCity: "Bali",
             destinationCityCode: "DPS",
+            capacity: 72,
             price: 1500000,
         },
         {
@@ -213,6 +214,7 @@ async function main() {
             arrivalDate: new Date("2024-06-02T13:00:00Z"),
             destinationCity: "Surabaya",
             destinationCityCode: "SUB",
+            capacity: 72,
             price: 1200000,
         },
         {
@@ -223,6 +225,7 @@ async function main() {
             arrivalDate: new Date("2024-06-03T14:00:00Z"),
             destinationCity: "Medan",
             destinationCityCode: "KNO",
+            capacity: 72,
             price: 1300000,
         },
         {
@@ -233,6 +236,7 @@ async function main() {
             arrivalDate: new Date("2024-06-04T15:00:00Z"),
             destinationCity: "Makassar",
             destinationCityCode: "UPG",
+            capacity: 72,
             price: 1400000,
         },
         {
@@ -243,6 +247,7 @@ async function main() {
             arrivalDate: new Date("2024-06-05T16:00:00Z"),
             destinationCity: "Semarang",
             destinationCityCode: "SRG",
+            capacity: 72,
             price: 1100000,
         },
         {
@@ -253,6 +258,7 @@ async function main() {
             arrivalDate: new Date("2024-06-06T17:00:00Z"),
             destinationCity: "Bandung",
             destinationCityCode: "BDO",
+            capacity: 72,
             price: 1000000,
         },
         {
@@ -263,6 +269,7 @@ async function main() {
             arrivalDate: new Date("2024-06-07T18:00:00Z"),
             destinationCity: "Yogyakarta",
             destinationCityCode: "JOG",
+            capacity: 72,
             price: 1150000,
         },
         {
@@ -273,6 +280,7 @@ async function main() {
             arrivalDate: new Date("2024-06-08T19:00:00Z"),
             destinationCity: "Balikpapan",
             destinationCityCode: "BPN",
+            capacity: 72,
             price: 1250000,
         },
         {
@@ -283,6 +291,7 @@ async function main() {
             arrivalDate: new Date("2024-06-09T20:00:00Z"),
             destinationCity: "Pekanbaru",
             destinationCityCode: "PKU",
+            capacity: 72,
             price: 1350000,
         },
         {
@@ -293,6 +302,7 @@ async function main() {
             arrivalDate: new Date("2024-06-10T21:00:00Z"),
             destinationCity: "Padang",
             destinationCityCode: "PDG",
+            capacity: 72,
             price: 1450000,
         },
     ];
@@ -300,7 +310,7 @@ async function main() {
     const flightSeats = [];
 
     const seatRows = 12;
-    const seatLetters = ['A', 'B', 'C', 'D'];
+    const seatLetters = ['A', 'B', 'C', 'D', 'E', 'F'];
 
     for (let i = 1; i <= seatRows; i++) {
         for (let letter of seatLetters) {
@@ -357,11 +367,10 @@ async function main() {
                     data: {
                         planeId: plane.id,
                         departureDate: flight.departureDate,
-                        departureCity: departureAirport.city,
-                        departureCityCode: departureAirport.code,
+                        departureAirportId: departureAirport.id,
                         arrivalDate: flight.arrivalDate,
-                        destinationCity: destinationAirport.city,
-                        destinationCityCode: destinationAirport.code,
+                        destinationAirportId: destinationAirport.id,
+                        capacity: flight.capacity,
                         price: flight.price,
                     },
                 });

@@ -11,7 +11,7 @@
         "migrate": "npx prisma migrate dev",
         "migrate-refresh": "npx prisma migrate reset",
         "vercel-build": "npx prisma generate && npx prisma migrate deploy",
-        "db-seed": "node ./prisma/seeder/seederUser"
+        "db-seed": "node ./prisma/seeder/seeder"
     },
     "keywords": [],
     "author": "Yoga Andhika Rafi Viery Faris Naufal Lowis Falah",
@@ -21,6 +21,7 @@
         "nodemon": "^3.1.0"
     },
     "dependencies": {
+        "@joi/date": "^2.1.1",
         "@prisma/client": "^5.13.0",
         "@supabase/supabase-js": "^2.43.2",
         "bcrypt": "^5.1.1",
