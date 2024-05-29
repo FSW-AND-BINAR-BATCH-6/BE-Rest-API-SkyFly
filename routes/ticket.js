@@ -1,8 +1,4 @@
-const express = require("express");
-const validator = require("../lib/validator");
-
-const router = express.Router();
-
+const router = require("express").Router();
 const {
     getAllTicket,
     getTicketById,
@@ -10,16 +6,14 @@ const {
     updateTicket,
     deleteTicket,
 } = require("../controllers/ticket");
+const validator = require("../lib/validator");
+const { TicketSchema, UpdateTicketSchema } = require("../utils/joiValidation");
 
-const {
-    TicketSchema,
-    UpdateTicketSchema,
-} = require("../utils/ticketJoiValidation");
-
-router.get("/", getAllTicket);
-router.get("/:id", getTicketById);
-router.post("/", validator(TicketSchema), createTicket);
-router.put("/:id", validator(UpdateTicketSchema), updateTicket);
-router.delete("/:id", deleteTicket);
+router.route("/").get(getAllTicket).post(validator(TicketSchema), createTicket);
+router
+    .route("/:id")
+    .get(getTicketById)
+    .put(validator(UpdateTicketSchema), updateTicket)
+    .delete(deleteTicket);
 
 module.exports = router;

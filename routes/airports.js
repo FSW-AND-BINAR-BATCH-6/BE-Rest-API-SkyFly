@@ -1,26 +1,25 @@
-const express = require("express");
-const multer = require("multer");
-
-const router = express.Router();
-const validator = require("../lib/validator")
-
+const router = require("express").Router();
+const validator = require("../lib/validator");
 const {
     createNewAirport,
     updateAirport,
     getAllAirports,
     deleteAirport,
-    getAirportById
-} = require("../controllers/airport")
-
+    getAirportById,
+} = require("../controllers/airport");
 const {
     createAirportSchema,
-    updateAirportSchema
-} = require("../utils/airplanJoi")
+    updateAirportSchema,
+} = require("../utils/joiValidation");
 
-router.get("/", getAllAirports);
-router.get("/:id", getAirportById);
-router.post("/", validator(createAirportSchema), createNewAirport)
-router.put("/:id", validator(updateAirportSchema), updateAirport);
-router.delete("/:id", deleteAirport)
+router
+    .route("/")
+    .get(getAllAirports)
+    .post(validator(createAirportSchema), createNewAirport);
+router
+    .route("/:id")
+    .get(getAirportById)
+    .put(validator(updateAirportSchema), updateAirport)
+    .delete(deleteAirport);
 
 module.exports = router;
