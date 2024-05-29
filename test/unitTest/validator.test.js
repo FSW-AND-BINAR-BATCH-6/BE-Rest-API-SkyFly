@@ -36,14 +36,14 @@ describe("Auth input Validation", () => {
     describe("Login Input", () => {
         const loginTests = [
             {
-                description: "Valid input for login",
+                description: "Valid input",
                 schema: LoginSchema,
                 inputData: { email: "test@mail.com", password: "password" },
                 expectedOutcome: { success: true },
             },
             {
                 description:
-                    "Invalid input for login, password must be at least 8 characters",
+                    "Invalid input, password must be at least 8 characters",
                 schema: LoginSchema,
                 inputData: { email: "test@mail.ses", password: "1235" },
                 expectedOutcome: {
@@ -54,7 +54,7 @@ describe("Auth input Validation", () => {
                 },
             },
             {
-                description: "Invalid input for login, invalid email",
+                description: "Invalid input, invalid email",
                 schema: LoginSchema,
                 inputData: {
                     email: "test@mail.xixixixi",
@@ -110,7 +110,7 @@ describe("Auth input Validation", () => {
                 description: "Failed Input, invalid email tlds",
                 schema: RegisterSchema,
                 inputData: {
-                    name: "Abdul Rohim",
+                    name: "abdul rohim",
                     email: "test@gmail.123",
                     phoneNumber: "081268356723",
                     password: "123456780",
@@ -151,6 +151,21 @@ describe("Auth input Validation", () => {
                     success: false,
                     status: 422,
                     message: '"password" must be a string',
+                },
+            },
+            {
+                description: "Invalid Input, name fails to match the required pattern:",
+                schema: RegisterSchema,
+                inputData: {
+                    email: "test@gmail.com",
+                    name: "abdul Rohim*123",
+                    phoneNumber: "0897654352632",
+                    password: "123456780",
+                },
+                expectedOutcome: {
+                    success: false,
+                    status: 422,
+                    message: `"name" with value "abdul Rohim*123" fails to match the required pattern: /^(?!\\s*$)[a-zA-Z\\s]+$/`,
                 },
             },
         ];
@@ -361,6 +376,21 @@ describe("User Input Validation", () => {
                         '"phoneNumber" length must be less than or equal to 13 characters long',
                 },
             },
+            {
+                description: "Invalid Input, familyName fails to match the required pattern",
+                schema: userCreateSchema,
+                inputData: {
+                    name: "Benito",
+                    phoneNumber: "089213267523",
+                    familyName: "Mussolini*123",
+                },
+                expectedOutcome: {
+                    success: false,
+                    status: 422,
+                    message:
+                    `"familyName" with value "Mussolini*123" fails to match the required pattern: /^(?!\\s*$)[a-zA-Z\\s]+$/`,
+                },
+            },
         ];
 
         createUserTests.forEach((test) => {
@@ -386,7 +416,7 @@ describe("User Input Validation", () => {
                 },
                 expectedOutcome: {
                     success: true,
-                }
+                },
             },
             {
                 description: "Invalid Input, forbidden input at role",
@@ -417,8 +447,22 @@ describe("User Input Validation", () => {
                     status: 422,
                     message: '"phoneNumber" must be a string',
                 },
+            },
+            {
+                description: "Invalid Input, name fails to match the required pattern",
+                schema: userUpdateSchema,
+                inputData: {
+                    name: "Benito*",
+                    phoneNumber: "089213267523",
+                    familyName: "Mussolini",
+                },
+                expectedOutcome: {
+                    success: false,
+                    status: 422,
+                    message:
+                    `"name" with value "Benito*" fails to match the required pattern: /^(?!\\s*$)[a-zA-Z\\s]+$/`,
+                },
             }
-           
         ];
 
         updateUserTests.forEach((test) => {

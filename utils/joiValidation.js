@@ -4,14 +4,26 @@ const Joi = require("joi");
 const LoginSchema = Joi.object({
     password: Joi.string().min(8).max(50).required(),
     email: Joi.string()
-        .email({ minDomainSegments: 2, maxDomainSegments:3, tlds: { allow: ["com", "net", "id"] } })
+        .email({
+            minDomainSegments: 2,
+            maxDomainSegments: 3,
+            tlds: { allow: ["com", "net", "id"] },
+        })
         .required(),
 });
 
 const RegisterSchema = Joi.object({
-    name: Joi.string().min(3).max(30).required(),
+    name: Joi.string()
+        .min(3)
+        .max(30)
+        .regex(/^(?!\s*$)[a-zA-Z\s]+$/) //will allow user to input only alphabet and won't accept if there is only blank space
+        .required(), 
     email: Joi.string()
-        .email({ minDomainSegments: 2, maxDomainSegments:3, tlds: { allow: ["com", "net", "id"] } })
+        .email({
+            minDomainSegments: 2,
+            maxDomainSegments: 3,
+            tlds: { allow: ["com", "net", "id"] },
+        })
         .required(),
     phoneNumber: Joi.string().min(11).max(13).required(),
     password: Joi.string().min(8).max(20).required(),
@@ -30,23 +42,27 @@ const OTPSchema = Joi.object({
 
 const forgetPasswordSchema = Joi.object({
     email: Joi.string()
-        .email({ minDomainSegments: 2, maxDomainSegments:3, tlds: { allow: ["com", "net", "id"] } })
+        .email({
+            minDomainSegments: 2,
+            maxDomainSegments: 3,
+            tlds: { allow: ["com", "net", "id"] },
+        })
         .required(),
 });
 
 // user
 const userCreateSchema = Joi.object({
-    name: Joi.string().required(),
+    name: Joi.string().regex(/^(?!\s*$)[a-zA-Z\s]+$/).required(),
     phoneNumber: Joi.string().min(11).max(13).optional(),
-    familyName: Joi.string().required(),
-    role: Joi.string().valid('BUYER', 'ADMIN').default("BUYER"),// Set default value for role
+    familyName: Joi.string().regex(/^(?!\s*$)[a-zA-Z\s]+$/).required(),
+    role: Joi.string().valid("BUYER", "ADMIN").default("BUYER"), // Set default value for role
 });
 
 const userUpdateSchema = Joi.object({
     id: Joi.string(),
-    name: Joi.string(),
+    name: Joi.string().regex(/^(?!\s*$)[a-zA-Z\s]+$/),
     phoneNumber: Joi.string().optional(),
-    familyName: Joi.string().required(),
+    familyName: Joi.string().regex(/^(?!\s*$)[a-zA-Z\s]+$/).required(),
     role: Joi.forbidden(), // Ensure role is not allowed in request body
 });
 
