@@ -1,11 +1,10 @@
 const { PrismaClient } = require("@prisma/client");
-const { v4: uuidv4 } = require('uuid');
 
 const prisma = new PrismaClient();
 
 const getAllFlight = async (req, res) => {
   try {
-    const { page = 1, limit = 10, search } = req.query;
+    const { page = 1, limit = 10, search, minPrice, maxPrice } = req.query;
     const skip = (page - 1) * limit;
     const take = parseInt(limit);
 
@@ -36,6 +35,16 @@ const getAllFlight = async (req, res) => {
           });
         }
       });
+    }
+
+    if (minPrice || maxPrice) {
+      filters.AND = filters.AND || [];
+      if (minPrice) {
+        filters.AND.push({ price: { gte: parseFloat(minPrice) } });
+      }
+      if (maxPrice) {
+        filters.AND.push({ price: { lte: parseFloat(maxPrice) } });
+      }
     }
 
     const flights = await prisma.flight.findMany({
@@ -116,7 +125,6 @@ const createFlight = async (req, res) => {
     price,
   } = req.body;
 
-  const id = uuidv4();
 
   try {
     const planeExists = await prisma.airline.findUnique({
@@ -160,7 +168,6 @@ const createFlight = async (req, res) => {
 
     const newFlight = await prisma.flight.create({
       data: {
-        id,
         planeId,
         departureDate: departureDateTimeConvert,
         departureAirportId,
