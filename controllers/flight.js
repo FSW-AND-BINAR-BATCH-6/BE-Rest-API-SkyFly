@@ -13,8 +13,6 @@ const getAllFlight = async (req, res) => {
     if (search) {
       const decodedSearch = decodeURIComponent(search);
       const searchTerms = decodedSearch.split("%20").map(term => term.toLowerCase());
-      console.log(decodedSearch);
-      console.log(searchTerms);
       filters = {
         AND: []
       };
@@ -53,6 +51,7 @@ const getAllFlight = async (req, res) => {
       take,
       include: {
         departureAirport: true,
+        transitAirport: true,
         destinationAirport: true,
       },
     });
@@ -63,6 +62,41 @@ const getAllFlight = async (req, res) => {
 
     const totalPages = Math.ceil(total / take);
     const currentPage = parseInt(page);
+
+    const formattedFlights = flights.map(flight => ({
+      id: flight.id,
+      planeId: flight.planeId,
+      departureDate: flight.departureDate,
+      departureAirport: {
+        id: flight.departureAirport.id,
+        name: flight.departureAirport.name,
+        code: flight.departureAirport.code,
+        country: flight.departureAirport.country,
+        city: flight.departureAirport.city,
+      },
+      arrivalDate: flight.arrivalDate,
+      destinationAirport: {
+        id: flight.destinationAirport.id,
+        name: flight.destinationAirport.name,
+        code: flight.destinationAirport.code,
+        country: flight.destinationAirport.country,
+        city: flight.destinationAirport.city,
+      },
+      transit: flight.transitAirport ? {
+        arrivalDate: flight.transitArrivalDate,
+        departureDate: flight.transitDepartureDate,
+        transitAirport: {
+          id: flight.transitAirport.id,
+          name: flight.transitAirport.name,
+          code: flight.transitAirport.code,
+          country: flight.transitAirport.country,
+          city: flight.transitAirport.city,
+        },
+      } : null,
+      capacity: flight.capacity,
+      price: flight.price,
+      facilities: flight.facilities,
+    }));
 
     res.status(200).json({
       status: true,
@@ -75,12 +109,13 @@ const getAllFlight = async (req, res) => {
         nextPage: currentPage < totalPages ? currentPage + 1 : null,
         prevPage: currentPage > 1 ? currentPage - 1 : null,
       },
-      data: flights.length !== 0 ? flights : "No flight data found",
+      data: formattedFlights.length !== 0 ? formattedFlights : "No flight data found",
     });
   } catch (err) {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
 
 const getFlightById = async (req, res) => {
   try {
@@ -88,6 +123,7 @@ const getFlightById = async (req, res) => {
       where: { id: req.params.id },
       include: {
         departureAirport: true,
+        transitAirport: true,
         destinationAirport: true,
       },
     });
@@ -99,16 +135,45 @@ const getFlightById = async (req, res) => {
       });
     }
 
-    const airplane = await prisma.airline.findUnique({
-      where: { id: flight.planeId },
-    });
-
-    const flightWithAirplane = { ...flight, airplane };
+    const formattedFlight = {
+      id: flight.id,
+      planeId: flight.planeId,
+      departureDate: flight.departureDate,
+      departureAirport: {
+        id: flight.departureAirport.id,
+        name: flight.departureAirport.name,
+        code: flight.departureAirport.code,
+        country: flight.departureAirport.country,
+        city: flight.departureAirport.city,
+      },
+      transit: flight.transitAirport ? {
+        arrivalDate: flight.transitArrivalDate,
+        departureDate: flight.transitDepartureDate,
+        transitAirport: {
+          id: flight.transitAirport.id,
+          name: flight.transitAirport.name,
+          code: flight.transitAirport.code,
+          country: flight.transitAirport.country,
+          city: flight.transitAirport.city,
+        },
+      } : null,
+      arrivalDate: flight.arrivalDate,
+      destinationAirport: {
+        id: flight.destinationAirport.id,
+        name: flight.destinationAirport.name,
+        code: flight.destinationAirport.code,
+        country: flight.destinationAirport.country,
+        city: flight.destinationAirport.city,
+      },
+      capacity: flight.capacity,
+      price: flight.price,
+      facilities: flight.facilities,
+    };
 
     res.status(200).json({
       status: true,
       message: "Flight data retrieved successfully",
-      data: flightWithAirplane,
+      data: formattedFlight,
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -120,65 +185,44 @@ const createFlight = async (req, res) => {
     planeId,
     departureDate,
     departureAirportId,
+    transitArrivalDate,
+    transitDepartureDate,
+    transitAirportId,
     arrivalDate,
     destinationAirportId,
     capacity,
     price,
+    facilities
   } = req.body;
 
+  const departureDateTime = new Date(departureDate);
+  const arrivalDateTime = new Date(arrivalDate);
+  const transitArrivalDateTime = new Date(transitArrivalDate)
+  const transitDepartureDateTime = new Date(transitDepartureDate)
+
+  const departureDateTimeConvert = new Date(departureDateTime.getTime() + 7 * 60 * 60 * 1000).toISOString();
+  const arrivalDateTimeConvert = new Date(arrivalDateTime.getTime() + 7 * 60 * 60 * 1000).toISOString();
+  const transitArrivalDateTimeConvert = new Date(transitArrivalDateTime.getTime() + 7 * 60 * 60 * 1000).toISOString();
+  const transitDepartureDateTimeConvert = new Date(transitDepartureDateTime.getTime() + 7 * 60 * 60 * 1000).toISOString();
 
   try {
-    const planeExists = await prisma.airline.findUnique({
-      where: { id: planeId },
-    });
-
-    if (!planeExists) {
-      return res.status(400).json({
-        status: false,
-        message: 'Invalid planeId. Plane does not exist.',
-      });
-    }
-
-    const departureAirportExists = await prisma.airport.findUnique({
-      where: { id: departureAirportId },
-    });
-
-    if (!departureAirportExists) {
-      return res.status(400).json({
-        status: false,
-        message: 'Invalid departureAirportId. Airport does not exist.',
-      });
-    }
-
-    const destinationAirportExists = await prisma.airport.findUnique({
-      where: { id: destinationAirportId },
-    });
-
-    if (!destinationAirportExists) {
-      return res.status(400).json({
-        status: false,
-        message: 'Invalid destinationAirportId. Airport does not exist.',
-      });
-    }
-
-    const departureDateTime = new Date(departureDate);
-    const arrivalDateTime = new Date(arrivalDate);
-
-    const departureDateTimeConvert = new Date(departureDateTime.getTime() + 7 * 60 * 60 * 1000).toISOString();
-    const arrivalDateTimeConvert = new Date(arrivalDateTime.getTime() + 7 * 60 * 60 * 1000).toISOString();
-
     const newFlight = await prisma.flight.create({
       data: {
         planeId,
         departureDate: departureDateTimeConvert,
         departureAirportId,
+        transitArrivalDate: transitArrivalDateTimeConvert,
+        transitDepartureDate: transitDepartureDateTimeConvert,
+        transitAirportId,
         arrivalDate: arrivalDateTimeConvert,
         destinationAirportId,
         capacity,
-        price
+        price,
+        facilities
       },
       include: {
         departureAirport: true,
+        transitAirport: true,
         destinationAirport: true,
       }
     });
@@ -201,8 +245,22 @@ const updateFlight = async (req, res) => {
     arrivalDate,
     destinationAirportId,
     capacity,
-    price
+    price,
+    facilities,
+    transitArrivalDate,
+    transitDepartureDate,
+    transitAirportId
   } = req.body;
+
+  const departureDateTime = new Date(departureDate);
+  const arrivalDateTime = new Date(arrivalDate);
+  const transitArrivalDateTime = new Date(transitArrivalDate);
+  const transitDepartureDateTime = new Date(transitDepartureDate);
+
+  const departureDateTimeConvert = new Date(departureDateTime.getTime() + 7 * 60 * 60 * 1000).toISOString();
+  const arrivalDateTimeConvert = new Date(arrivalDateTime.getTime() + 7 * 60 * 60 * 1000).toISOString();
+  const transitArrivalDateTimeConvert = new Date(transitArrivalDateTime.getTime() + 7 * 60 * 60 * 1000).toISOString();
+  const transitDepartureDateTimeConvert = new Date(transitDepartureDateTime.getTime() + 7 * 60 * 60 * 1000).toISOString();
 
   try {
     const flight = await prisma.flight.findUnique({
@@ -214,88 +272,68 @@ const updateFlight = async (req, res) => {
         status: false,
         message: "Flight not found",
       });
-    }
-
-    if (planeId) {
-      const plane = await prisma.airline.findUnique({
-        where: { id: planeId },
-      });
-
-      if (!plane) {
-        return res.status(404).json({
-          status: false,
-          message: "Plane or planeId not found",
-        });
-      }
-    }
-
-    if (departureAirportId) {
-      const departureAirport = await prisma.airport.findUnique({
-        where: { id: departureAirportId },
-      });
-
-      if (!departureAirport) {
-        return res.status(404).json({
-          status: false,
-          message: "Departure airport not found",
-        });
-      }
-    }
-
-    if (destinationAirportId) {
-      const destinationAirport = await prisma.airport.findUnique({
-        where: { id: destinationAirportId },
-      });
-
-      if (!destinationAirport) {
-        return res.status(404).json({
-          status: false,
-          message: "Destination airport not found",
-        });
-      }
     }
 
     const updatedFlight = await prisma.flight.update({
       where: { id: req.params.id },
       data: {
         planeId,
-        departureDate: new Date(departureDate),
+        departureDate: departureDateTimeConvert,
         departureAirportId,
-        arrivalDate: new Date(arrivalDate),
+        transitArrivalDate: transitArrivalDateTimeConvert,
+        transitDepartureDate: transitDepartureDateTimeConvert,
+        transitAirportId,
+        arrivalDate: arrivalDateTimeConvert,
         destinationAirportId,
         capacity,
-        price
+        price,
+        facilities
       },
       include: {
         departureAirport: true,
+        transitAirport: true,
         destinationAirport: true,
-      },
+      }
     });
 
     res.status(200).json({
       status: true,
-      message: "Flight updated successfully",
+      message: 'Flight updated successfully',
       data: {
         beforeUpdate: flight,
         afterUpdate: updatedFlight,
       },
     });
-
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
 };
 
+
 const removeFlight = async (req, res) => {
   try {
     const flight = await prisma.flight.findUnique({
       where: { id: req.params.id },
+      include: {
+        seats: true, 
+        tickets: true, 
+      },
     });
 
     if (!flight) {
       return res.status(404).json({
         status: false,
         message: "Flight not found",
+      });
+    }
+
+    if (flight.seats.length > 0 || flight.tickets.length > 0) {
+      await prisma.ticket.deleteMany({
+        where: { flightId: req.params.id },
+      });
+
+      await prisma.flightSeat.deleteMany({
+        where: { flightId: req.params.id },
       });
     }
 
@@ -312,7 +350,6 @@ const removeFlight = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-
 
 module.exports = {
   getAllFlight,

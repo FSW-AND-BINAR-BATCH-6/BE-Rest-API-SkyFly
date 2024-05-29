@@ -31,10 +31,12 @@ enum StatusTicket {
 }
 
 enum StatusFlightSeat {
-  AVAILABLE
-  BOOKED
-  OCCUPIED
+    AVAILABLE
+    BOOKED
+    OCCUPIED
 }
+
+
 
 model User {
     id          String       @id @default(cuid())
@@ -73,10 +75,15 @@ model Flight {
     arrivalDate          DateTime
     destinationAirportId String
     destinationAirport   Airport      @relation("DestinationAirport", fields: [destinationAirportId], references: [id])
+    transitAirportId     String?
+    transitAirport       Airport?     @relation("TransitAirport", fields: [transitAirportId], references: [id])
+    transitArrivalDate   DateTime?
+    transitDepartureDate DateTime?
     capacity             Int
     price                Int
     seats                FlightSeat[]
     tickets              Ticket[]
+    facilities           String?
 }
 
 model FlightSeat {
@@ -86,7 +93,7 @@ model FlightSeat {
     seatNumber String
     isBooked   Boolean? @default(false)
     type       TypeSeat
-    tickets    Ticket[]
+    tickets    Ticket?
 }
 
 model Ticket {
@@ -121,6 +128,7 @@ model Airport {
     city               String
     departureFlights   Flight[] @relation("DepartureAirport")
     destinationFlights Flight[] @relation("DestinationAirport")
+    transitFlights     Flight[] @relation("TransitAirport")
 }
 
 model Transaction {

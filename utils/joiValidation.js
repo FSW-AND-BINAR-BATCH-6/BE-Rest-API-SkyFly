@@ -57,25 +57,42 @@ const createFlightSchema = Joi.object({
         'date.format': '"departureDate" must be in ISO format, eg: 2024-01-07 09:30:00',
     }),
     departureAirportId: Joi.string().required(),
+    transitArrivalDate: Joi.date().iso().messages({
+        'date.format': '"transitArrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
+    }),
+    transitDepartureDate: Joi.date().iso().messages({
+        'date.format': '"transitDepartureDate" must be in ISO format, eg: 2024-01-07 09:30:00',
+    }),
     arrivalDate: Joi.date().iso().required().messages({
         'date.format': '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
     }),
+    transitAirportId: Joi.string(),
     destinationAirportId: Joi.string().required(),
     price: Joi.number().required(),
     capacity: Joi.number().required(),
+    facilities: Joi.string()
 });
 
 const updateFlightSchema = Joi.object({
     planeId: Joi.string().required(),
     departureDate: Joi.date().iso().required().messages({
-        'date.format': '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
+        'date.format': '"departureDate" must be in ISO format, eg: 2024-01-07 09:30:00',
     }),
     departureAirportId: Joi.string().required(),
+    transitArrivalDate: Joi.date().iso().messages({
+        'date.format': '"transitArrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
+    }),
+    transitDepartureDate: Joi.date().iso().messages({
+        'date.format': '"transitDepartureDate" must be in ISO format, eg: 2024-01-07 09:30:00',
+    }),
     arrivalDate: Joi.date().iso().required().messages({
         'date.format': '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
     }),
+    transitAirportId: Joi.string(),
     destinationAirportId: Joi.string().required(),
     price: Joi.number().required(),
+    capacity: Joi.number().required(),
+    facilities: Joi.string()
 });
 
 // flightSeat
@@ -88,8 +105,8 @@ const createFlightSeatSchema = Joi.object({
 module.exports = {
     LoginSchema,
     RegisterSchema,
-    OTPSchema, 
-    createFlightSchema, 
+    OTPSchema,
+    createFlightSchema,
     updateFlightSchema,
     PasswordSchema,
     forgetPasswordSchema,
