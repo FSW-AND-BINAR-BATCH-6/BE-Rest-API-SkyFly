@@ -50,12 +50,50 @@ const userUpdateSchema = Joi.object({
     role: Joi.forbidden(), // Ensure role is not allowed in request body
 });
 
+// flight
+const createFlightSchema = Joi.object({
+    planeId: Joi.string().required(),
+    departureDate: Joi.date().iso().required().messages({
+        'date.format': '"departureDate" must be in ISO format, eg: 2024-01-07 09:30:00',
+    }),
+    departureAirportId: Joi.string().required(),
+    arrivalDate: Joi.date().iso().required().messages({
+        'date.format': '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
+    }),
+    destinationAirportId: Joi.string().required(),
+    price: Joi.number().required(),
+    capacity: Joi.number().required(),
+});
+
+const updateFlightSchema = Joi.object({
+    planeId: Joi.string().required(),
+    departureDate: Joi.date().iso().required().messages({
+        'date.format': '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
+    }),
+    departureAirportId: Joi.string().required(),
+    arrivalDate: Joi.date().iso().required().messages({
+        'date.format': '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
+    }),
+    destinationAirportId: Joi.string().required(),
+    price: Joi.number().required(),
+});
+
+// flightSeat
+const createFlightSeatSchema = Joi.object({
+    flightId: Joi.string().required(),
+    seatNumber: Joi.string().required(),
+    type: Joi.string().valid("ECONOMY", "BUSINESS", "FIRST").required(),
+});
+
 module.exports = {
     LoginSchema,
     RegisterSchema,
-    OTPSchema,
+    OTPSchema, 
+    createFlightSchema, 
+    updateFlightSchema,
     PasswordSchema,
     forgetPasswordSchema,
     userCreateSchema,
     userUpdateSchema,
+    createFlightSeatSchema,
 };
