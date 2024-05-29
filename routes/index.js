@@ -9,6 +9,7 @@ const transactionRoute = require("./transaction");
 const flight = require("./flight");
 const airport = require("./airports");
 const flightSeat = require("./flightSeat");
+const ticket = require("./ticket");
 
 router.get("/documentation.json", (req, res) => res.send(swaggerDocument));
 router.use(
@@ -38,5 +39,6 @@ router.use("/api/v1/airport", airport);
 router.use("/api/v1/flight", flight);
 router.use("/api/v1/auth", auth);
 router.use("/api/v1/flightSeat", flightSeat);
+router.use("/api/v1/ticket", ticket);
 
 module.exports = router;
