@@ -54,13 +54,13 @@ const handleRegister = async (req, res, next) => {
         }
 
         // insert data to db
-        const userauthData = await prisma.user.create({
+        await prisma.user.create({
             data: {
                 id: randomUUID(),
                 name: name,
                 phoneNumber: phoneNumber,
-                role: "BUYER",
-                Auth: {
+                role: "ADMIN",
+                auth: {
                     create: {
                         id: randomUUID(),
                         email: email,
@@ -137,6 +137,7 @@ const handleLogin = async (req, res, next) => {
             const token = generateJWT(payload);
 
             res.status(200).json({
+                status: true,
                 message: "User logged in successfully",
                 _token: token,
             });
@@ -416,52 +417,30 @@ const handleLoginGoogle = async (req, res, next) => {
             );
         }
 
-        const checkEmail = await prisma.auth.findUnique({
-            where: {
-                email: data.email,
-            },
-            include: {
-                user: true,
-            },
-        });
-
-        if (checkEmail) {
-            return next(
-                createHttpError(409, {
-                    message: "Email has already been taken",
-                })
-            );
-        }
-
         const hashedPassword = secretHash(data.id);
         console.log("=====================================================");
         console.log(`Password google login: ${data.id}`);
         console.log("=====================================================");
 
-        const OTPToken = generateTOTP();
-
-        const payload = {
-            registerId: randomUUID(),
-            email: data.email,
-            otp: OTPToken,
-            emailTitle: "Email Activation",
-        };
-
-        const dataUrl = {
-            token: generateJWT(payload),
-        };
-
-        await prisma.auth.create({
-            data: {
+        await prisma.auth.upsert({
+            where: {
+                email: data.email,
+            },
+            update: {
+                isVerified: true,
+                secretToken: null,
+                otpToken: null,
+            },
+            create: {
                 id: randomUUID(),
                 email: data.email,
                 password: hashedPassword,
-                otpToken: OTPToken,
-                isVerified: false,
-                secretToken: dataUrl.token,
+                otpToken: null,
+                isVerified: true,
+                secretToken: null,
                 user: {
                     create: {
-                        id: randomUUID(),
+                        id: data.id,
                         name: data.name,
                         role: "BUYER",
                     },
@@ -469,13 +448,18 @@ const handleLoginGoogle = async (req, res, next) => {
             },
         });
 
-        await generateSecretEmail(dataUrl, "verified", "verifyOtp.ejs");
+        const payload = {
+            id: data.id,
+            name: data.name,
+            email: data.email,
+        };
+
+        const token = generateJWT(payload);
 
         return res.status(200).json({
             status: true,
-            message:
-                "Verification token has been sent, please check your email",
-            _token: dataUrl.token,
+            message: "User logged in successfully",
+            _token: token,
         });
     } catch (error) {
         next(createHttpError(500, { message: error.message }));
