@@ -16,7 +16,6 @@ const getAllTicket = async (req, res, next) => {
                 id: true,
                 code: true,
                 bookingDate: true,
-                price: true,
                 flight: {
                     select: {
                         id: true,
@@ -24,6 +23,7 @@ const getAllTicket = async (req, res, next) => {
                         departureCity: true,
                         arrivalDate: true,
                         destinationCity: true,
+                        price: true,
                     },
                 },
                 user: {
@@ -122,7 +122,7 @@ const getTicketById = async (req, res, next) => {
 };
 
 const createTicket = async (req, res, next) => {
-    const { flightId, userId, seatId, bookingDate, price } = req.body;
+    const { flightId, userId, seatId, bookingDate } = req.body;
 
     // Generate RandomCode
     const generateRandomCode = (length) => {
@@ -174,7 +174,6 @@ const createTicket = async (req, res, next) => {
                 userId,
                 seatId,
                 bookingDate,
-                price,
             },
 
             include: {
@@ -201,7 +200,7 @@ const createTicket = async (req, res, next) => {
 };
 
 const updateTicket = async (req, res, next) => {
-    const { code, flightId, userId, seatId, bookingDate, price } = req.body;
+    const { code, flightId, userId, seatId, bookingDate } = req.body;
 
     try {
         const ticket = await prisma.ticket.findUnique({
@@ -220,7 +219,6 @@ const updateTicket = async (req, res, next) => {
                 userId,
                 seatId,
                 bookingDate,
-                price,
             },
             include: {
                 flight: true,
