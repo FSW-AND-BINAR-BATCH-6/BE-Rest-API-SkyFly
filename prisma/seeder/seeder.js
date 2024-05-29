@@ -1,21 +1,24 @@
 const { PrismaClient } = require("@prisma/client");
 const { secretHash } = require("../../utils/hashSalt");
-const {randomUUID} = require("crypto");
+const { randomUUID } = require("crypto");
 
 const prisma = new PrismaClient();
 
 async function main() {
     // Seeder data
     const accountAuthData = [
-        "user",
-        "Alice",
-        "Anastasia",
-        "Ren",
-        "Len",
-        "Togenashi",
-        "Maya",
-        "Ferdinan",
-        "Zenith",
+        "Faris",
+        "Viery",
+        "Andhika",
+        "Falah",
+        "Naufal",
+        "Yoga",
+        "Rafi",
+        "Lowis",
+        "Komang",
+        "Ihsan",
+        "Bella",
+        "Yusuf",
     ];
 
     const airports = [
@@ -310,14 +313,14 @@ async function main() {
     const flightSeats = [];
 
     const seatRows = 12;
-    const seatLetters = ['A', 'B', 'C', 'D', 'E', 'F'];
+    const seatLetters = ["A", "B", "C", "D", "E", "F"];
 
     for (let i = 1; i <= seatRows; i++) {
         for (let letter of seatLetters) {
             flightSeats.push({
                 seatNumber: `${i}${letter}`,
                 isBooked: false,
-                type: 'ECONOMY'
+                type: "ECONOMY",
             });
         }
     }
@@ -328,7 +331,7 @@ async function main() {
 
     const airlinesMap = await prisma.airline.findMany();
     const airportsMap = await prisma.airport.findMany();
- 
+
     // create user, auth
     await Promise.all(
         accountAuthData.map((name) =>
@@ -336,8 +339,9 @@ async function main() {
                 data: {
                     name: name,
                     role: "BUYER",
+                    familyName: "Family",
                     phoneNumber: "628123456789",
-                    Auth: {
+                    auth: {
                         create: {
                             email: `${name.toLowerCase()}@test.com`,
                             password: secretHash("password"),
@@ -379,7 +383,7 @@ async function main() {
     );
 
     const flightData = await prisma.flight.findMany();
-    
+
     await Promise.all(
         flightData.map(async (flight) => {
             await Promise.all(
@@ -394,7 +398,9 @@ async function main() {
                                 create: {
                                     code: randomUUID(),
                                     flightId: flight.id,
-                                    bookingDate: new Date('2024-06-01T10:00:00Z'),
+                                    bookingDate: new Date(
+                                        "2024-06-01T10:00:00Z"
+                                    ),
                                     price: 1500000n,
                                 },
                             },
@@ -404,8 +410,6 @@ async function main() {
             );
         })
     );
-
-    
 }
 
 main()
