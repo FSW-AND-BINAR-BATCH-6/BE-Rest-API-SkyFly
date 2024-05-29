@@ -12,8 +12,9 @@
         "migrate-refresh": "npx prisma migrate reset",
         "vercel-build": "npx prisma generate && npx prisma migrate deploy",
         "db-seed": "node ./prisma/seeder/seeder",
-        "test": "jest --coverage"
+        "test": "jest --collectCoverage"
     },
+    
     "keywords": [],
     "author": "Yoga Andhika Rafi Viery Faris Naufal Lowis Falah",
     "license": "ISC",

@@ -5,11 +5,18 @@ const validator = require("../../lib/validator");
 const {
     LoginSchema,
     RegisterSchema,
-    OTPSchema,
+    OTPSchema, 
+    createFlightSchema, 
+    updateFlightSchema,
     PasswordSchema,
     forgetPasswordSchema,
     userCreateSchema,
     userUpdateSchema,
+    createFlightSeatSchema,
+    createAirlineSchema,
+    updateAirlineSchema,
+    createAirportSchema,
+    updateAirportSchema,
 } = require("../../utils/joiValidation");
 
 const runValidationTest = async (schema, inputData, expectedOutcome) => {
@@ -475,4 +482,175 @@ describe("User Input Validation", () => {
             });
         });
     });
+
+    describe("Flight Input", () => {
+        const FlightInputTest = [
+            {
+                description: "Success Input",
+                schema: createFlightSchema,
+                inputData: {
+                    planeId: "123456",
+                    departureDate: "2024-01-07 09:30:00",
+                    departureAirportId: "2143091",
+                    arrivalDate: "2024-01-07 12:30:00",
+                    destinationAirportId: "2243091",
+                    price: 2000000,
+                    capacity: 72
+                },
+                expectedOutcome: {
+                    success: true
+                }
+            },
+            {
+                description: "Invalid Input, there are letter in field planeId",
+                schema: createFlightSchema,
+                inputData: {
+                    planeId: "1234as56",
+                    departureDate: "2024-01-07 09:30:00",
+                    departureAirportId: "2143091",
+                    arrivalDate: "2024-01-07 12:30:00",
+                    destinationAirportId: "2243091",
+                    price: 2000000,
+                    capacity: 72
+                },
+                expectedOutcome: {
+                    success: false,
+                    status: 422,
+                    message: '"planeId" with value "1234as56" fails to match the required pattern: /^\\d+$/'
+                }
+            },
+            {
+                description: "Invalid Input, wrong date format",
+                schema: createFlightSchema,
+                inputData: {
+                    planeId: "123456",
+                    departureDate: "20240107",
+                    departureAirportId: "2143091",
+                    arrivalDate: "2024-01-07 12:30:00",
+                    destinationAirportId: "2243091",
+                    price: 2000000,
+                    capacity: 72
+                },
+                expectedOutcome: {
+                    success: false,
+                    status: 422,
+                    message: `"departureDate" must be in ISO format, eg: 2024-01-07 09:30:00`
+                }
+            },
+            {
+                description: "Invalid Input, capacity must has less than 850",
+                schema: createFlightSchema,
+                inputData: {
+                    planeId: "123456",
+                    departureDate: "2024-01-07 09:30:00",
+                    departureAirportId: "2143091",
+                    arrivalDate: "2024-01-07 12:30:00",
+                    destinationAirportId: "2243091",
+                    price: 2000000,
+                    capacity: 950
+                },
+                expectedOutcome: {
+                    success: false,
+                    status: 422,
+                    message: `"capacity" must be less than or equal to 850`
+                }
+            }
+
+
+        ]
+
+        FlightInputTest.forEach((test) => {
+            it(test.description, async () => {
+                await runValidationTest(
+                    test.schema,
+                    test.inputData,
+                    test.expectedOutcome
+                )
+            })
+        })
+    })
+
+    describe("UpdateFlight Input", () => {
+        const updateFlightInputTest = [
+            {
+                description: "Success Input",
+                schema: updateFlightSchema,
+                inputData: {
+                    departureDate: "2024-01-07 09:30:00",
+                    arrivalDate: "2024-01-07 12:30:00",
+                    price: 2000000,
+                    capacity: 72
+                },
+                expectedOutcome: {
+                    success: true
+                }
+            },
+            {
+                description: "Invalid Input, there are letter in field planeId",
+                schema: updateFlightSchema,
+                inputData: {
+                    planeId: "1234as56",
+                    departureDate: "2024-01-07 09:30:00",
+                    departureAirportId: "2143091",
+                    arrivalDate: "2024-01-07 12:30:00",
+                    destinationAirportId: "2243091",
+                    price: 2000000,
+                    capacity: 72
+                },
+                expectedOutcome: {
+                    success: false,
+                    status: 422,
+                    message: '"planeId" with value "1234as56" fails to match the required pattern: /^\\d+$/'
+                }
+            },
+            {
+                description: "Invalid Input, wrong date format",
+                schema: updateFlightSchema,
+                inputData: {
+                    planeId: "123456",
+                    departureDate: "20240107",  
+                    departureAirportId: "2143091",
+                    arrivalDate: "2024-01-07 12:30:00",
+                    destinationAirportId: "2243091",
+                    price: 2000000,
+                    capacity: 72
+                },
+                expectedOutcome: {
+                    success: false,
+                    status: 422,
+                    message: `"departureDate" must be in ISO format, eg: 2024-01-07 09:30:00`
+                }
+            },
+            {
+                description: "Invalid Input, capacity must has more or equal than 2",
+                schema: updateFlightSchema,
+                inputData: {
+                    planeId: "123456",
+                    departureDate: "2024-01-07 09:30:00",
+                    departureAirportId: "2143091",
+                    arrivalDate: "2024-01-07 12:30:00",
+                    destinationAirportId: "2243091",
+                    price: 2000000,
+                    capacity: 1
+                },
+                expectedOutcome: {
+                    success: false,
+                    status: 422,
+                    message: `"capacity" must be greater than or equal to 2`
+                }
+            }
+
+
+        ]
+
+        updateFlightInputTest.forEach((test) => {
+            it(test.description, async () => {
+                await runValidationTest(
+                    test.schema,
+                    test.inputData,
+                    test.expectedOutcome
+                )
+            })
+        })
+    })
 });

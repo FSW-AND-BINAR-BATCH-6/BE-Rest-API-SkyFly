@@ -13,17 +13,17 @@ const {
 } = require("../controllers/airline");
 
 const {
-  createAirplaneSchema,
-  updateAirplaneSchema
-} = require("../utils/airplanJoi")
+  createAirlineSchema,
+  updateAirlineSchema
+} = require("../utils/joiValidation")
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
 router.get("/", getAllAirline);
 router.get("/:id", getAirlineById);
-router.post("/", upload.single("image"), validator(createAirplaneSchema), createNewAirline);
-router.put("/:id", upload.single("image"), validator(updateAirplaneSchema), updateAirline);
+router.post("/", upload.single("image"), validator(createAirlineSchema), createNewAirline);
+router.put("/:id", upload.single("image"), validator(updateAirlineSchema), updateAirline);
 router.delete("/:id", deleteAirline);
 
 module.exports = router;

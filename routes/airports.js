@@ -15,7 +15,7 @@ const {
 const {
     createAirportSchema,
     updateAirportSchema
-} = require("../utils/airplanJoi")
+} = require("../utils/joiValidation")
 
 router.get("/", getAllAirports);
 router.get("/:id", getAirportById);
