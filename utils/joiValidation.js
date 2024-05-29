@@ -39,7 +39,7 @@ const userCreateSchema = Joi.object({
     name: Joi.string().required(),
     phoneNumber: Joi.string().optional(),
     familyName: Joi.string().required(),
-    role: Joi.string().default("BUYER"),// Set default value for role
+    role: Joi.string().default("BUYER"), // Set default value for role
 });
 
 const userUpdateSchema = Joi.object({
@@ -54,11 +54,13 @@ const userUpdateSchema = Joi.object({
 const createFlightSchema = Joi.object({
     planeId: Joi.string().required(),
     departureDate: Joi.date().iso().required().messages({
-        'date.format': '"departureDate" must be in ISO format, eg: 2024-01-07 09:30:00',
+        "date.format":
+            '"departureDate" must be in ISO format, eg: 2024-01-07 09:30:00',
     }),
     departureAirportId: Joi.string().required(),
     arrivalDate: Joi.date().iso().required().messages({
-        'date.format': '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
+        "date.format":
+            '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
     }),
     destinationAirportId: Joi.string().required(),
     price: Joi.number().required(),
@@ -68,11 +70,13 @@ const createFlightSchema = Joi.object({
 const updateFlightSchema = Joi.object({
     planeId: Joi.string().required(),
     departureDate: Joi.date().iso().required().messages({
-        'date.format': '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
+        "date.format":
+            '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
     }),
     departureAirportId: Joi.string().required(),
     arrivalDate: Joi.date().iso().required().messages({
-        'date.format': '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
+        "date.format":
+            '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
     }),
     destinationAirportId: Joi.string().required(),
     price: Joi.number().required(),
@@ -84,16 +88,21 @@ const createFlightSeatSchema = Joi.object({
     seatNumber: Joi.string().required(),
     type: Joi.string().valid("ECONOMY", "BUSINESS", "FIRST").required(),
 });
+const updateFlightSeatSchema = Joi.object({
+    seatNumber: Joi.string().required(),
+    type: Joi.string().valid("ECONOMY", "BUSINESS", "FIRST").required(),
+});
 
 module.exports = {
     LoginSchema,
     RegisterSchema,
-    OTPSchema, 
-    createFlightSchema, 
+    OTPSchema,
+    createFlightSchema,
     updateFlightSchema,
     PasswordSchema,
     forgetPasswordSchema,
     userCreateSchema,
     userUpdateSchema,
     createFlightSeatSchema,
+    updateFlightSeatSchema,
 };

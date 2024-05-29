@@ -12,7 +12,10 @@ const {
     bookFlightSeat,
 } = require("../controllers/flightSeat");
 
-const { createFlightSeatSchema } = require("../utils/joiValidation");
+const {
+    createFlightSeatSchema,
+    updateFlightSeatSchema,
+} = require("../utils/joiValidation");
 
 router
     .route("/")
@@ -24,7 +27,7 @@ router.route("/available/:flightId").get(getAvailableFlightSeats);
 router
     .route("/:id")
     .get(getFlightSeatById)
-    .put(updateFlightSeat)
+    .put(validator(updateFlightSeatSchema), updateFlightSeat)
     .delete(deleteFlightSeat);
 
 router.route("/book/:id").put(bookFlightSeat);
