@@ -30,7 +30,7 @@ const RegisterSchema = Joi.object({
 });
 
 const PasswordSchema = Joi.object({
-    password: Joi.string().min(8).max(20).required(),
+    password: Joi.string().min(8).max(30).required(),
     confirmPassword: Joi.any().valid(Joi.ref("password")).required().messages({
         "any.only": "Confirm password does not match password",
     }),
@@ -111,51 +111,6 @@ const updateFlightSchema = Joi.object({
     destinationAirportId: Joi.string().regex(/^\d+$/),
     price: Joi.number().optional(),
     capacity: Joi.number().min(2).max(850).optional(),
-});
-
-// airplane
-const createAirplaneSchema = Joi.object({
-    name: Joi.string()
-        .min(6)
-        .max(30)
-        .pattern(/^[A-Za-z\s]+$/)
-        .required(),
-    code: Joi.string().min(5).max(6).required(),
-});
-
-const updateAirplaneSchema = Joi.object({
-    name: Joi.string()
-        .min(6)
-        .max(30)
-        .pattern(/^[A-Za-z\s]+$/),
-    code: Joi.string().min(5).max(6),
-});
-
-const createAirportSchema = Joi.object({
-    name: Joi.string().min(2).max(70).required(),
-    code: Joi.string().min(3).max(3).required(),
-    country: Joi.string()
-        .pattern(/^[A-Za-z\s]+$/)
-        .required(),
-    city: Joi.string()
-        .pattern(/^[A-Za-z\s]+$/)
-        .required(),
-});
-
-const updateAirportSchema = Joi.object({
-    name: Joi.string()
-        .min(2)
-        .max(70)
-        .pattern(/^[A-Za-z\s]+$/),
-    code: Joi.string().min(3).max(3),
-    country: Joi.string()
-        .min(3)
-        .max(25)
-        .pattern(/^[A-Za-z\s]+$/),
-    city: Joi.string()
-        .min(3)
-        .max(40)
-        .pattern(/^[A-Za-z\s]+$/),
 });
 
 //ticket
@@ -240,8 +195,8 @@ module.exports = {
     userCreateSchema,
     userUpdateSchema,
     createFlightSeatSchema,
-    createAirplaneSchema,
-    updateAirplaneSchema,
+    createAirlineSchema,
+    updateAirlineSchema,
     createAirportSchema,
     updateAirportSchema,
     TicketSchema,

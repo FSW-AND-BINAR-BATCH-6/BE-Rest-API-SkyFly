@@ -22,13 +22,13 @@ router
     .get(getAllAirline)
     .post(
         upload.single("image"),
-        validator(createAirplaneSchema),
+        validator(createAirlineSchema),
         createNewAirline
     );
 router
     .route("/:id")
     .get(getAirlineById)
-    .put(upload.single("image"), validator(updateAirplaneSchema), updateAirline)
+    .put(upload.single("image"), validator(updateAirlineSchema), updateAirline)
     .delete(deleteAirline);
 
 module.exports = router;
