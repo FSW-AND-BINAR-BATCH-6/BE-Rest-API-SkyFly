@@ -400,7 +400,6 @@ async function main() {
                                     bookingDate: new Date(
                                         "2024-06-01T10:00:00Z"
                                     ),
-                                    price: 1500000.0,
                                     flight: {
                                         connect: { id: flight.id },
                                     },
