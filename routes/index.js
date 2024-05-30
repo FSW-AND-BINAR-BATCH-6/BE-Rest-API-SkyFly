@@ -2,7 +2,7 @@ const router = require("express").Router();
 const swaggerUI = require("swagger-ui-express");
 const swaggerDocument = require("../docs/swagger.json");
 
-const airplane = require("./airline");
+const airline = require("./airline");
 const auth = require("./auth");
 const user = require("./user");
 const transactionRoute = require("./transaction");
@@ -32,13 +32,13 @@ router.get("/api/v1", (req, res, next) => {
     });
 });
 
-router.use("/api/v1/airplane", airplane);
-router.use("/api/v1/user", user);
+router.use("/api/v1/airlines", airline);
+router.use("/api/v1/users", user);
 router.use("/api/v1/transactions", transactionRoute);
-router.use("/api/v1/airport", airport);
-router.use("/api/v1/flight", flight);
+router.use("/api/v1/airports", airport);
+router.use("/api/v1/flights", flight);
 router.use("/api/v1/auth", auth);
-router.use("/api/v1/flightSeat", flightSeat);
-router.use("/api/v1/ticket", ticket);
+router.use("/api/v1/flightSeats", flightSeat);
+router.use("/api/v1/tickets", ticket);
 
 module.exports = router;

@@ -1,29 +1,34 @@
-const express = require("express");
+const router = require("express").Router();
 const multer = require("multer");
 
-const router = express.Router();
-const validator = require("../lib/validator")
-
 const {
-  createNewAirline,
+    createNewAirline,
     updateAirline,
     getAllAirline,
     deleteAirline,
-    getAirlineById
+    getAirlineById,
 } = require("../controllers/airline");
-
+const validator = require("../lib/validator");
 const {
-  createAirplaneSchema,
-  updateAirplaneSchema
-} = require("../utils/airplanJoi")
+  createAirlineSchema,
+  updateAirlineSchema
+} = require("../utils/joiValidation")
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-router.get("/", getAllAirline);
-router.get("/:id", getAirlineById);
-router.post("/", upload.single("image"), validator(createAirplaneSchema), createNewAirline);
-router.put("/:id", upload.single("image"), validator(updateAirplaneSchema), updateAirline);
-router.delete("/:id", deleteAirline);
+router
+    .route("/")
+    .get(getAllAirline)
+    .post(
+        upload.single("image"),
+        validator(createAirlineSchema),
+        createNewAirline
+    );
+router
+    .route("/:id")
+    .get(getAirlineById)
+    .put(upload.single("image"), validator(updateAirlineSchema), updateAirline)
+    .delete(deleteAirline);
 
 module.exports = router;
