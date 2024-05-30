@@ -63,7 +63,7 @@
   ],
   "paths": {
 
-    "/airplane": {
+    "/airlines": {
       "get": {
         "tags": ["Airlines"],
         "summary": "Return result HIT API get all airlines data",
@@ -86,27 +86,77 @@
                     },
                     "data": {
                       "type": "object",
+                      "example": [
+                        {
+                          "id": "239b8080-e92c-40a1-8525-190e93d04a67",
+                          "code": "FW",
+                          "name": "Graff Zeppeline",
+                          "image": "https://placehold.co/600x400"
+                        },
+                        {
+                          "id": "43276466-02aa-45ef-83c5-8edcbe763e08",
+                          "code": "GZ",
+                          "name": "Graff Zeppeline",
+                          "image": "https://placehold.co/600x400"
+                        },
+                        {
+                          "id": "clwsogve2000ka8mj0h1tjsny",
+                          "code": "GA",
+                          "name": "Garuda Indonesia",
+                          "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/1716536772224.png"
+                        },
+                        {
+                          "id": "clwsogve5000la8mjc1lb144l",
+                          "code": "SJ",
+                          "name": "Sriwijaya Air",
+                          "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/1716536772224.png"
+                        },
+                        {
+                          "id": "clwsogve7000ma8mj5h4eghgc",
+                          "code": "QG",
+                          "name": "Citilink",
+                          "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/1716536772224.png"
+                        },
+                        {
+                          "id": "clwsogve8000na8mjwfq777yk",
+                          "code": "JT",
+                          "name": "Lion Air",
+                          "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/1716536772224.png"
+                        },
+                        {
+                          "id": "clwsogvea000oa8mjl5xsoks6",
+                          "code": "ID",
+                          "name": "Batik Air",
+                          "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/1716536772224.png"
+                        },
+                        {
+                          "id": "clwsogveb000pa8mj6g6daxuu",
+                          "code": "IN",
+                          "name": "Nam Air",
+                          "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/1716536772224.png"
+                        },
+                        {
+                          "id": "clwsogved000qa8mj82gvrmx3",
+                          "code": "IW",
+                          "name": "Wings Air",
+                          "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/1716536772224.png"
+                        },
+                        {
+                          "id": "clwsogvee000ra8mjzn0o75oa",
+                          "code": "KD",
+                          "name": "Kalimantan Airlines",
+                          "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/1716536772224.png"
+                        }
+                      ]
+                    },
+                    "pagination":{
+                      "type": "object",
                       "example": {
-                          "airplanes": [
-                              {
-                                  "id": "clw9abc650000enqweyz697md",
-                                  "code": "ABC-12",
-                                  "name": "Garuda",
-                                  "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/airplanes/1715866000111.png"
-                              },
-                              {
-                                  "id": "clwaeh22b0000uzbjstxii4b7",
-                                  "code": "BCD-10",
-                                  "name": "JawAir",
-                                  "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/airplanes/1715933451194.png"
-                              },
-                              {
-                                  "id": "clwaehve10001uzbjgbq8hg44",
-                                  "code": "BBA-07",
-                                  "name": "SundAir",
-                                  "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/airplanes/1715933489881.png"
-                              }
-                          ]
+                        "totalPage": 2,
+                        "currentPage": 1,
+                        "pageItems": 10,
+                        "nextPage": 2,
+                        "prevPage": null
                       }
                     }
                   }
@@ -129,11 +179,11 @@
                 "properties": {
                   "code": {
                     "type": "string",
-                    "example": "GHT-23"
+                    "example": "GZ"
                   },
                   "name": {
                     "type": "string",
-                    "example": "BatakAir"
+                    "example": "Graff Zeppeline"
                   }
                 }
               }
@@ -159,11 +209,10 @@
                     "data": {
                       "type": "object",
                       "example": {
-                          "airplanes": {
-                            "id": "fc24212b-205f-413a-a07a-98c7b9f9365c",
-                            "code": "GHT-12",
-                            "name": "BatakAir",
-                            "image": "https://placehold.co/600x400"                          }
+                        "id": "43276466-02aa-45ef-83c5-8edcbe763e08",
+                        "code": "GZ",
+                        "name": "Graff Zeppeline",
+                        "image": "https://placehold.co/600x400"
                       }
                     }
                   }
@@ -174,7 +223,7 @@
         }
       }
     },
-    "/airplane/{id}": {
+    "/airlines/{id}": {
       "get": {
         "tags": ["Airlines"],
         "summary": "Return result HIT API get airline by id",
@@ -186,7 +235,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "example": "fc24212b-205f-413a-a07a-98c7b9f9365c"
+              "example": "239b8080-e92c-40a1-8525-190e93d04a67"
             },
             "description": "Airline ID"
           }
@@ -210,9 +259,9 @@
                     "data": {
                       "type": "object",
                       "example": {
-                        "id": "fc24212b-205f-413a-a07a-98c7b9f9365c",
-                        "code": "GHT-12",
-                        "name": "BatakAir",
+                        "id": "239b8080-e92c-40a1-8525-190e93d04a67",
+                        "code": "FW",
+                        "name": "Graff Zeppeline",
                         "image": "https://placehold.co/600x400"
                       }
                     }
@@ -234,7 +283,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "example": "fc24212b-205f-413a-a07a-98c7b9f9365c"
+              "example": "239b8080-e92c-40a1-8525-190e93d04a67"
             },
             "description": "Airline ID"
           }
@@ -248,11 +297,7 @@
                 "properties": {
                   "code": {
                     "type": "string",
-                    "example": "GHH-10"
-                  },
-                  "name": {
-                    "type": "string",
-                    "example": "AirBatak"
+                    "example": "FW"
                   }
                 }
               }
@@ -278,9 +323,9 @@
                     "data": {
                       "type": "object",
                       "example": {
-                        "id": "fc24212b-205f-413a-a07a-98c7b9f9365c",
-                        "code": "GHH-10",
-                        "name": "AirBatak",
+                        "id": "239b8080-e92c-40a1-8525-190e93d04a67",
+                        "code": "FW",
+                        "name": "Graff Zeppeline",
                         "image": "https://placehold.co/600x400"
                       }
                     }
@@ -302,7 +347,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "example": "fc24212b-205f-413a-a07a-98c7b9f9365c"
+              "example": "239b8080-e92c-40a1-8525-190e93d04a67"
             },
             "description": "Airline ID"
           }
@@ -322,6 +367,345 @@
                     "message": {
                       "type": "string",
                       "example": "airline deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/airports": {
+      "get": {
+        "tags": ["Airports"],
+        "summary": "Return result HIT API get all airports data",
+        "description": "This is an API for getting all airports data",
+        "responses": {
+          "200": {
+            "description": "Success getting all airports data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "all airports data retrieved successfully"
+                    },
+                    "totalItems":{
+                      "type": "integer",
+                      "example":20
+                    },
+                    "pagination":{
+                      "type": "object",
+                      "example": {
+                        "totalPage": 2,
+                        "currentPage": 1,
+                        "pageItems": 10,
+                        "nextPage": 2,
+                        "prevPage": null
+                      }
+                    },
+                    "data": {
+                      "type": "object",
+                      "example": [
+                        {
+                          "id": "clwsogvch0000a8mjkpg46ier",
+                          "name": "Soekarno-Hatta International Airport",
+                          "code": "CGK",
+                          "country": "Indonesia",
+                          "city": "Jakarta"
+                        },
+                        {
+                          "id": "clwsogvcp0001a8mjsiyaac9p",
+                          "name": "Ngurah Rai International Airport",
+                          "code": "DPS",
+                          "country": "Indonesia",
+                          "city": "Denpasar"
+                        },
+                        {
+                          "id": "clwsogvcr0002a8mjipuphcsb",
+                          "name": "Juanda International Airport",
+                          "code": "SUB",
+                          "country": "Indonesia",
+                          "city": "Surabaya"
+                        },
+                        {
+                          "id": "clwsogvct0003a8mjruv4c6kj",
+                          "name": "Kuala Namu International Airport",
+                          "code": "KNO",
+                          "country": "Indonesia",
+                          "city": "Medan"
+                        },
+                        {
+                          "id": "clwsogvcv0004a8mjw89nzggc",
+                          "name": "Sultan Hasanuddin International Airport",
+                          "code": "UPG",
+                          "country": "Indonesia",
+                          "city": "Makassar"
+                        },
+                        {
+                          "id": "clwsogvcx0005a8mjzc3t9k9y",
+                          "name": "Ahmad Yani International Airport",
+                          "code": "SRG",
+                          "country": "Indonesia",
+                          "city": "Semarang"
+                        },
+                        {
+                          "id": "clwsogvd00006a8mjxg8ll1cn",
+                          "name": "Husein Sastranegara International Airport",
+                          "code": "BDO",
+                          "country": "Indonesia",
+                          "city": "Bandung"
+                        },
+                        {
+                          "id": "clwsogvd40007a8mjl5yu2023",
+                          "name": "Adisutjipto International Airport",
+                          "code": "JOG",
+                          "country": "Indonesia",
+                          "city": "Yogyakarta"
+                        },
+                        {
+                          "id": "clwsogvdh0008a8mjy7xix1pw",
+                          "name": "Sepinggan International Airport",
+                          "code": "BPN",
+                          "country": "Indonesia",
+                          "city": "Balikpapan"
+                        },
+                        {
+                          "id": "clwsogvdj0009a8mj6hngjmse",
+                          "name": "Sultan Syarif Kasim II International Airport",
+                          "code": "PKU",
+                          "country": "Indonesia",
+                          "city": "Pekanbaru"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Airports"],
+        "summary": "Return result HIT API create airport",
+        "description": "This is an API for creating airport data",
+        "requestBody": {
+          "description": "This is a request body for create new airport",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "example": "AAP"
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "APT Pranoto"
+                  },
+                  "country":{
+                    "type": "string",
+                    "example": "Indonesia"
+                  },
+                  "city": {
+                    "type": "string",
+                    "example": "Samarinda"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success create new airport data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "message":{
+                      "type": "string",
+                      "example": "Airport created successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "example": {
+                        "id": "db423cc7-6342-4eb4-97c2-1e7c67d6455c",
+                        "name": "APT Pranoto",
+                        "code": "AAP",
+                        "country": "Indonesia",
+                        "city": "Samarinda"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/airports/{id}": {
+      "get": {
+        "tags": ["Airports"],
+        "summary": "Return result HIT API get airport by id",
+        "description": "This is an API for getting airport data based on Id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "db423cc7-6342-4eb4-97c2-1e7c67d6455c"
+            },
+            "description": "Airport ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success getting airport data based on Id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "message" : {
+                      "type": "string",
+                      "example": "airport data retrieved successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "example": {
+                        "id": "db423cc7-6342-4eb4-97c2-1e7c67d6455c",
+                        "name": "APT Pranoto",
+                        "code": "AAP",
+                        "country": "Indonesia",
+                        "city": "Samarinda"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Airports"],
+        "summary": "Return result HIT API update airport by Id",
+        "description": "This is an API for updatting airport data based on Id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "db423cc7-6342-4eb4-97c2-1e7c67d6455c"
+            },
+            "description": "Airport ID"
+          }
+        ],
+        "requestBody": {
+          "description": "This is a request body for update airport",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "Aji Pangeran Tumenggung Pranoto"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success editting airport data based on Id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "message":{
+                      "type":"string",
+                      "example":"Airport updated successfully"
+                    },
+                    "data": {
+                      "type": "object",
+                      "example": {
+                        "id": "db423cc7-6342-4eb4-97c2-1e7c67d6455c",
+                        "name": "Aji Pangeran Tumenggung Pranoto",
+                        "code": "AAP",
+                        "country": "Indonesia",
+                        "city": "Samarinda"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Airports"],
+        "summary": "Return result HIT API delete airport by Id",
+        "description": "This is an API for deletting airport data based on Id",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "df40ab7a-e0f9-4e85-bbe1-0e6c6da34303"
+            },
+            "description": "Airport ID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success deletting airplane data based on Id",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": true
+                    },
+                    "message": {
+                      "type": "string",
+                      "example": "airport deleted successfully"
                     }
                   }
                 }
