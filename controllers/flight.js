@@ -3,47 +3,69 @@ const createHttpError = require("http-errors");
 
 const prisma = new PrismaClient();
 
-const getAllFlight = async (req, res) => {
+const getAllFlight = async (req, res, next) => {
   try {
-    const { page = 1, limit = 10, search, minPrice, maxPrice } = req.query;
+    const { page = 1, limit = 10, search, minPrice, maxPrice, hasTransit, facilities } = req.query;
     const skip = (page - 1) * limit;
     const take = parseInt(limit);
 
-    let filters = {};
+    let filters = { AND: [] };
 
     if (search) {
       const decodedSearch = decodeURIComponent(search);
-      const searchTerms = decodedSearch.split("%20").map(term => term.toLowerCase());
-      filters = {
-        AND: []
-      };
+      const searchTerms = decodedSearch.split('%20').map(term => term.toLowerCase());
+
+      let departureFilters = [];
+      let arrivalFilters = [];
 
       searchTerms.forEach(term => {
         const isDate = !isNaN(Date.parse(term));
-        if (isDate) {
-          const searchDate = new Date(term);
-          filters.AND.push({ departureDate: { gte: searchDate, lt: new Date(searchDate.getTime() + 24 * 60 * 60 * 1000) } });
-        } else {
-          filters.AND.push({
+        if (!isDate) {
+          departureFilters.push({
             OR: [
               { departureAirport: { city: { contains: term, mode: 'insensitive' } } },
+              { departureAirport: { code: { contains: term.toUpperCase(), mode: 'insensitive' } } }
+            ]
+          });
+          arrivalFilters.push({
+            OR: [
               { destinationAirport: { city: { contains: term, mode: 'insensitive' } } },
-              { departureAirport: { code: { contains: term.toUpperCase(), mode: 'insensitive' } } },
               { destinationAirport: { code: { contains: term.toUpperCase(), mode: 'insensitive' } } }
             ]
           });
         }
       });
+
+      if (departureFilters.length > 0 || arrivalFilters.length > 0) {
+        filters.AND.push({
+          OR: [
+            { AND: departureFilters },
+            { AND: arrivalFilters }
+          ]
+        });
+      }
+    }
+
+    if (hasTransit && hasTransit === 'true') {
+      filters.AND.push({ transitAirport: { isNot: null } });
+    } else if (hasTransit && hasTransit === 'false') {
+      filters.AND.push({ transitAirport: null });
     }
 
     if (minPrice || maxPrice) {
-      filters.AND = filters.AND || [];
       if (minPrice) {
         filters.AND.push({ price: { gte: parseFloat(minPrice) } });
       }
       if (maxPrice) {
         filters.AND.push({ price: { lte: parseFloat(maxPrice) } });
       }
+    }
+
+    if (facilities) {
+      const facilityList = facilities.split(',');
+      facilityList.forEach(facility => {
+        filters.AND.push({ facilities: { contains: facility.trim() } });
+      });
     }
 
     const flights = await prisma.flight.findMany({
@@ -57,10 +79,7 @@ const getAllFlight = async (req, res) => {
       },
     });
 
-    const total = await prisma.flight.count({
-      where: filters,
-    });
-
+    const total = await prisma.flight.count({ where: filters });
     const totalPages = Math.ceil(total / take);
     const currentPage = parseInt(page);
 
@@ -113,12 +132,18 @@ const getAllFlight = async (req, res) => {
       data: formattedFlights.length !== 0 ? formattedFlights : "No flight data found",
     });
   } catch (error) {
-    next(createHttpError(500, { message: error.message }));
+    if (error.code === 'P2025') {
+      res.status(404).json({
+        status: false,
+        message: "No flights found with transit.",
+      });
+    } else {
+      next(createHttpError(500, { message: error.message }));
+    }
   }
 };
 
-
-const getFlightById = async (req, res) => {
+const getFlightById = async (req, res, next) => {
   try {
     const flight = await prisma.flight.findUnique({
       where: { id: req.params.id },
@@ -181,7 +206,7 @@ const getFlightById = async (req, res) => {
   }
 };
 
-const createFlight = async (req, res) => {
+const createFlight = async (req, res, next) => {
   const {
     planeId,
     departureDate,
@@ -238,7 +263,7 @@ const createFlight = async (req, res) => {
   }
 };
 
-const updateFlight = async (req, res) => {
+const updateFlight = async (req, res, next) => {
   const {
     planeId,
     departureDate,
@@ -311,7 +336,7 @@ const updateFlight = async (req, res) => {
 };
 
 
-const removeFlight = async (req, res) => {
+const removeFlight = async (req, res, next) => {
   try {
     const flight = await prisma.flight.findUnique({
       where: { id: req.params.id },
