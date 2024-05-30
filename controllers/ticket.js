@@ -20,9 +20,9 @@ const getAllTicket = async (req, res, next) => {
                     select: {
                         id: true,
                         departureDate: true,
-                        departureCity: true,
+                        departureAirport: true,
                         arrivalDate: true,
-                        destinationCity: true,
+                        destinationAirport: true,
                         price: true,
                     },
                 },
@@ -87,9 +87,9 @@ const getTicketById = async (req, res, next) => {
                     select: {
                         id: true,
                         departureDate: true,
-                        departureCity: true,
+                        departureAirport: true,
                         arrivalDate: true,
-                        destinationCity: true,
+                        destinationAirport: true,
                         price: true,
                     },
                 },
