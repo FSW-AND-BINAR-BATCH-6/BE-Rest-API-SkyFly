@@ -63,7 +63,11 @@ const getAllFlightSeats = async (req, res) => {
                     : "No flight seats data found",
         });
     } catch (err) {
-        res.status(500).json({ message: "Internal server error" });
+        next(
+            createHttpError(500, {
+                message: err.message,
+            })
+        );
     }
 };
 
@@ -110,7 +114,11 @@ const getAvailableFlightSeats = async (req, res) => {
                     : "No available flight seats data found",
         });
     } catch (err) {
-        res.status(500).json({ message: "Internal server error" });
+        next(
+            createHttpError(500, {
+                message: err.message,
+            })
+        );
     }
 };
 
@@ -128,13 +136,16 @@ const getFlightSeatById = async (req, res) => {
 
         res.status(200).json(flightSeat);
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        next(
+            createHttpError(500, {
+                message: err.message,
+            })
+        );
     }
 };
 
-const createFlightSeat = async (req, res) => {
+const createFlightSeat = async (req, res, next) => {
     try {
-        // Validate request body against schema
         const { createFlightSeatSchema } = require("../utils/joiValidation");
         const { error } = createFlightSeatSchema.validate(req.body);
         if (error) {
@@ -159,6 +170,19 @@ const createFlightSeat = async (req, res) => {
                 .json({ message: "No available capacity for this flight." });
         }
 
+        const existingSeat = await prisma.flightSeat.findFirst({
+            where: {
+                flightId,
+                seatNumber,
+            },
+        });
+
+        if (existingSeat) {
+            return res.status(400).json({
+                message: "Seat number already exists for this flight.",
+            });
+        }
+
         const newFlightSeat = await prisma.flightSeat.create({
             data: {
                 id: uuidv4(),
@@ -174,15 +198,32 @@ const createFlightSeat = async (req, res) => {
             data: { capacity: flight.capacity - 1 },
         });
 
-        res.status(201).json(newFlightSeat);
+        res.status(201).json({
+            message: "Flight seat created successfully",
+            status: true,
+            data: newFlightSeat,
+        });
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        next(createHttpError(500, { message: err.message }));
     }
 };
 
-const updateFlightSeat = async (req, res) => {
+module.exports = { createFlightSeat };
+
+const updateFlightSeat = async (req, res, next) => {
     const { id } = req.params;
     const { seatNumber, type } = req.body;
+
+    console.log("Request Params:", id);
+    console.log("Request Body:", req.body);
+
+    // Validate request body against schema
+    const { updateFlightSeatSchema } = require("../utils/joiValidation");
+    const { error } = updateFlightSeatSchema.validate(req.body);
+    if (error) {
+        console.log("Validation Error:", error.details[0].message);
+        return res.status(400).json({ message: error.details[0].message });
+    }
 
     try {
         const updatedFlightSeat = await prisma.flightSeat.update({
@@ -193,9 +234,20 @@ const updateFlightSeat = async (req, res) => {
             },
         });
 
-        res.status(200).json(updatedFlightSeat);
+        console.log("Updated Flight Seat:", updatedFlightSeat);
+
+        res.status(200).json({
+            message: "Flight seat updated successfully",
+            status: true,
+            data: updatedFlightSeat,
+        });
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        console.error("Update Error:", err); // Log the error for debugging purposes
+        next(
+            createHttpError(500, {
+                message: err.message, // Use err.message to get the actual error message
+            })
+        );
     }
 };
 
@@ -224,7 +276,11 @@ const deleteFlightSeat = async (req, res) => {
 
         res.status(200).json({ message: "Flight seat deleted successfully" });
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        next(
+            createHttpError(500, {
+                message: err.message,
+            })
+        );
     }
 };
 
@@ -252,11 +308,16 @@ const bookFlightSeat = async (req, res) => {
         });
 
         res.status(200).json({
+            status: true,
             message: "Flight seat booked successfully",
             bookedFlightSeat,
         });
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        next(
+            createHttpError(500, {
+                message: err.message,
+            })
+        );
     }
 };
 
