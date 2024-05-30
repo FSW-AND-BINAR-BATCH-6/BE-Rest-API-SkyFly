@@ -1,4 +1,4 @@
-const Joi = require("joi");
+const Joi = require("joi").extend(require("@joi/date"));
 
 // auth
 const LoginSchema = Joi.object({
@@ -39,7 +39,7 @@ const userCreateSchema = Joi.object({
     name: Joi.string().required(),
     phoneNumber: Joi.string().optional(),
     familyName: Joi.string().required(),
-    role: Joi.string().default("BUYER"),// Set default value for role
+    role: Joi.string().default("BUYER"), // Set default value for role
 });
 
 const userUpdateSchema = Joi.object({
@@ -54,7 +54,8 @@ const userUpdateSchema = Joi.object({
 const createFlightSchema = Joi.object({
     planeId: Joi.string().required(),
     departureDate: Joi.date().iso().required().messages({
-        'date.format': '"departureDate" must be in ISO format, eg: 2024-01-07 09:30:00',
+        "date.format":
+            '"departureDate" must be in ISO format, eg: 2024-01-07 09:30:00',
     }),
     departureAirportId: Joi.string().required(),
     transitArrivalDate: Joi.date().iso().messages({
@@ -64,7 +65,8 @@ const createFlightSchema = Joi.object({
         'date.format': '"transitDepartureDate" must be in ISO format, eg: 2024-01-07 09:30:00',
     }),
     arrivalDate: Joi.date().iso().required().messages({
-        'date.format': '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
+        "date.format":
+            '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
     }),
     transitAirportId: Joi.string(),
     destinationAirportId: Joi.string().required(),
@@ -86,7 +88,8 @@ const updateFlightSchema = Joi.object({
         'date.format': '"transitDepartureDate" must be in ISO format, eg: 2024-01-07 09:30:00',
     }),
     arrivalDate: Joi.date().iso().required().messages({
-        'date.format': '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
+        "date.format":
+            '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
     }),
     transitAirportId: Joi.string(),
     destinationAirportId: Joi.string().required(),
@@ -113,4 +116,10 @@ module.exports = {
     userCreateSchema,
     userUpdateSchema,
     createFlightSeatSchema,
+    createAirplaneSchema,
+    updateAirplaneSchema,
+    createAirportSchema,
+    updateAirportSchema,
+    TicketSchema,
+    UpdateTicketSchema,
 };

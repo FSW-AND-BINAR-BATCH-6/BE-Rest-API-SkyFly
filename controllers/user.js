@@ -26,7 +26,7 @@ const getAllUsers = async (req, res, next) => {
                 phoneNumber: true,
                 familyName: true,
                 role: true,
-                Auth: {
+                auth: {
                     select: {
                         id: true,
                         email: true,
@@ -78,7 +78,7 @@ const getUserById = async (req, res, next) => {
                 phoneNumber: true,
                 familyName: true,
                 role: true,
-                Auth: {
+                auth: {
                     select: {
                         id: true,
                         email: true,
