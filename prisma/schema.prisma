@@ -30,6 +30,12 @@ enum StatusTicket {
     FAILED
 }
 
+enum StatusFlightSeat {
+    AVAILABLE
+    BOOKED
+    OCCUPIED
+}
+
 model User {
     id                String              @id @default(cuid())
     name              String
@@ -68,6 +74,7 @@ model Airport {
     city               String
     departureFlights   Flight[] @relation("DepartureAirport")
     destinationFlights Flight[] @relation("DestinationAirport")
+    transitFlights     Flight[] @relation("TransitAirport")
 }
 
 model Flight {
@@ -80,6 +87,10 @@ model Flight {
     arrivalDate             DateTime
     destinationAirportId    String
     destinationAirport      Airport                   @relation("DestinationAirport", fields: [destinationAirportId], references: [id])
+    transitAirportId        String?
+    transitAirport          Airport?                  @relation("TransitAirport", fields: [transitAirportId], references: [id])
+    transitArrivalDate      DateTime?
+    transitDepartureDate    DateTime?
     capacity                Int
     price                   Int
     seats                   FlightSeat[]
