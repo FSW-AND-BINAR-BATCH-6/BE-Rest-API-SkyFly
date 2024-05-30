@@ -15,12 +15,12 @@
     },
     "tags": [
         {
-            "name": "Auths",
+            "name": "Auth",
             "description": "this is the API for AUTHS resources"
         },
         {
-            "name": "Airplanes",
-            "description": "this is the API for AIRPLANES resources"
+            "name": "Airlines",
+            "description": "this is the API for AIRLINES resources"
         },
         {
             "name": "Flights",
@@ -49,24 +49,24 @@
             "description": "deployment"
         },
         {
-            "url": "http://localhost:3000/api/v1",
+            "url": "http://localhost:2000/api/v1",
             "description": "localhost"
         }
     ],
     "paths": {
-        "/airplane": {
+        "/airlines": {
             "get": {
-                "tags": ["Airplanes"],
+                "tags": ["Airlines"],
                 "security": [
                     {
                         "bearerToken": []
                     }
                 ],
-                "summary": "Return result HIT API get all airplanes data",
-                "description": "This is an API for getting all airplanes data",
+                "summary": "Return result HIT API get all airlines data",
+                "description": "This is an API for getting all airlines data",
                 "responses": {
                     "200": {
-                        "description": "Success getting all airplanes data",
+                        "description": "Success getting all airlines data",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -78,29 +78,29 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "all airplane data retrieved successfully"
+                                            "example": "all airlines data retrieved successfully"
                                         },
                                         "data": {
                                             "type": "object",
                                             "example": {
-                                                "airplanes": [
+                                                "airlines": [
                                                     {
                                                         "id": "clw9abc650000enqweyz697md",
                                                         "code": "1",
                                                         "name": "pappapap",
-                                                        "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/airplanes/1715866000111.png"
+                                                        "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/airlines/1715866000111.png"
                                                     },
                                                     {
                                                         "id": "clwaeh22b0000uzbjstxii4b7",
                                                         "code": "2",
                                                         "name": "JawAir",
-                                                        "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/airplanes/1715933451194.png"
+                                                        "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/airlines/1715933451194.png"
                                                     },
                                                     {
                                                         "id": "clwaehve10001uzbjgbq8hg44",
                                                         "code": "3",
                                                         "name": "SundAir",
-                                                        "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/airplanes/1715933489881.png"
+                                                        "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/airlines/1715933489881.png"
                                                     }
                                                 ]
                                             }
@@ -113,16 +113,16 @@
                 }
             },
             "post": {
-                "tags": ["Airplanes"],
+                "tags": ["Airlines"],
                 "security": [
                     {
                         "bearerToken": []
                     }
                 ],
-                "summary": "Return result HIT API create airplane",
-                "description": "This is an API for creating airplane data",
+                "summary": "Return result HIT API create airlines",
+                "description": "This is an API for creating airlines data",
                 "requestBody": {
-                    "description": "This is a request body for create new airplane",
+                    "description": "This is a request body for create new airlines",
                     "content": {
                         "application/json": {
                             "schema": {
@@ -138,7 +138,7 @@
                                     },
                                     "image": {
                                         "type": "http",
-                                        "example": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/airplanes/1715935002439.png"
+                                        "example": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/airlines/1715935002439.png"
                                     }
                                 }
                             }
@@ -147,7 +147,7 @@
                 },
                 "responses": {
                     "200": {
-                        "description": "Success create new airplane data",
+                        "description": "Success create new airlines data",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -160,11 +160,11 @@
                                         "data": {
                                             "type": "object",
                                             "example": {
-                                                "airplanes": {
+                                                "airlines": {
                                                     "id": "clwafg1pu000111ghakckyuuf",
                                                     "code": "4",
                                                     "name": "BatakAir",
-                                                    "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/airplanes/1715935084484.png"
+                                                    "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/airlines/1715935084484.png"
                                                 }
                                             }
                                         }
@@ -176,16 +176,16 @@
                 }
             }
         },
-        "/airplane/{id}": {
+        "/airlines/{id}": {
             "get": {
-                "tags": ["Airplanes"],
+                "tags": ["Airlines"],
                 "security": [
                     {
                         "bearerToken": []
                     }
                 ],
-                "summary": "Return result HIT API get airplane by id",
-                "description": "This is an API for getting airplane data based on Id",
+                "summary": "Return result HIT API get airlines by id",
+                "description": "This is an API for getting airlines data based on Id",
                 "parameters": [
                     {
                         "name": "id",
@@ -195,12 +195,12 @@
                             "type": "string",
                             "example": "clwaeh22b0000uzbjstxii4b7"
                         },
-                        "description": "Airplane ID"
+                        "description": "Airlines ID"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Success getting airplane data based on Id",
+                        "description": "Success getting airlines data based on Id",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -212,16 +212,16 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "airplane data retrieved successfully"
+                                            "example": "airlines data retrieved successfully"
                                         },
                                         "data": {
                                             "type": "object",
                                             "example": {
-                                                "airplane": {
+                                                "airlines": {
                                                     "id": "clwaeh22b0000uzbjstxii4b7",
                                                     "code": "2",
                                                     "name": "JawAir",
-                                                    "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/airplanes/1715933451194.png"
+                                                    "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/airlines/1715933451194.png"
                                                 }
                                             }
                                         }
@@ -233,14 +233,14 @@
                 }
             },
             "put": {
-                "tags": ["Airplanes"],
+                "tags": ["Airlines"],
                 "security": [
                     {
                         "bearerToken": []
                     }
                 ],
-                "summary": "Return result HIT API update airplane by Id",
-                "description": "This is an API for updatting airplane data based on Id",
+                "summary": "Return result HIT API update airlines by Id",
+                "description": "This is an API for updatting airlines data based on Id",
                 "parameters": [
                     {
                         "name": "id",
@@ -250,11 +250,11 @@
                             "type": "string",
                             "example": "clwafg1pu000111ghakckyuuf"
                         },
-                        "description": "Airplane ID"
+                        "description": "Airlines ID"
                     }
                 ],
                 "requestBody": {
-                    "description": "This is a request body for update airplane",
+                    "description": "This is a request body for update airlines",
                     "content": {
                         "application/json": {
                             "schema": {
@@ -270,7 +270,7 @@
                                     },
                                     "image": {
                                         "type": "http",
-                                        "example": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/airplanes/1715935625171.png"
+                                        "example": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/airlines/1715935625171.png"
                                     }
                                 }
                             }
@@ -292,11 +292,11 @@
                                         "data": {
                                             "type": "object",
                                             "example": {
-                                                "airplane": {
+                                                "airlines": {
                                                     "id": "clwafg1pu000111ghakckyuuf",
                                                     "code": "5",
                                                     "name": "AirBatak",
-                                                    "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/airplanes/1715935625171.png"
+                                                    "image": "https://kxiwazszaxpijzmcogpj.supabase.co//storage/v1/object/public/ImageUpload/public/airlines/1715935625171.png"
                                                 }
                                             }
                                         }
@@ -308,14 +308,14 @@
                 }
             },
             "delete": {
-                "tags": ["Airplanes"],
+                "tags": ["Airlines"],
                 "security": [
                     {
                         "bearerToken": []
                     }
                 ],
-                "summary": "Return result HIT API delete airplane by Id",
-                "description": "This is an API for deletting airplane data based on Id",
+                "summary": "Return result HIT API delete airlines by Id",
+                "description": "This is an API for deletting airlines data based on Id",
                 "parameters": [
                     {
                         "name": "id",
@@ -325,12 +325,12 @@
                             "type": "string",
                             "example": "clwafg1pu000111ghakckyuuf"
                         },
-                        "description": "Airplane ID"
+                        "description": "Airlines ID"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Success deletting airplane data based on Id",
+                        "description": "Success deletting airlines data based on Id",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -342,7 +342,7 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "airplane deleted successfully"
+                                            "example": "airlines deleted successfully"
                                         }
                                     }
                                 }
@@ -353,7 +353,7 @@
             }
         },
 
-        "/flight": {
+        "/flights": {
             "get": {
                 "tags": ["Flights"],
                 "parameters": [
@@ -563,7 +563,7 @@
                 }
             }
         },
-        "/flight/{id}": {
+        "/flights/{id}": {
             "get": {
                 "tags": ["Flights"],
                 "security": [
@@ -613,11 +613,11 @@
                                                     "country": "Indonesia",
                                                     "city": "Jakarta"
                                                 },
-                                                "airplane": {
+                                                "airlines": {
                                                     "id": "30c490e4-bf07-4844-ac33-f52bc46a6c2d",
                                                     "code": "ABC-12",
                                                     "name": "Garuda",
-                                                    "image": "https://qdetodfuvaidjkygantp.supabase.co//storage/v1/object/public/skyfly/public/airplanes/1716604504758.png"
+                                                    "image": "https://qdetodfuvaidjkygantp.supabase.co//storage/v1/object/public/skyfly/public/airlines/1716604504758.png"
                                                 }
                                             }
                                         }
@@ -749,7 +749,7 @@
             }
         },
 
-        "/flightSeat": {
+        "/flightSeats": {
             "get": {
                 "tags": ["Flight Seats"],
                 "security": [
@@ -899,7 +899,7 @@
                 }
             }
         },
-        "/flightSeat/{id}": {
+        "/flightSeats/{id}": {
             "get": {
                 "tags": ["Flight Seats"],
                 "security": [
@@ -1112,7 +1112,7 @@
             }
         },
 
-        "/ticket": {
+        "/tickets": {
             "get": {
                 "tags": ["Tickets"],
                 "security": [
@@ -1376,7 +1376,7 @@
                 }
             }
         },
-        "/ticket/{id}": {
+        "/tickets/{id}": {
             "get": {
                 "tags": ["Tickets"],
                 "security": [
@@ -1669,7 +1669,7 @@
             }
         },
 
-        "/user": {
+        "/users": {
             "get": {
                 "tags": ["Users"],
                 "security": [
@@ -1944,7 +1944,7 @@
                 }
             }
         },
-        "/user/{id}": {
+        "/users/{id}": {
             "get": {
                 "tags": ["Users"],
                 "security": [

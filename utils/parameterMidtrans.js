@@ -46,4 +46,8 @@ const totalPrice = async (itemDetails) => {
     return totalPrice;
 };
 
-module.exports = { dataCustomerDetail, dataItemDetail, totalPrice };
+module.exports = {
+    dataCustomerDetail,
+    dataItemDetail,
+    totalPrice,
+};
