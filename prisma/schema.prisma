@@ -106,7 +106,7 @@ model FlightSeat {
     seatNumber String
     isBooked   Boolean? @default(false)
     type       TypeSeat
-    tickets    Ticket?
+    tickets    Ticket[]
 }
 
 model Ticket {

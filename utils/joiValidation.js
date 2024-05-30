@@ -98,6 +98,66 @@ const updateFlightSchema = Joi.object({
     facilities: Joi.string()
 });
 
+// airplane
+const createAirplaneSchema = Joi.object({
+    name: Joi.string()
+        .min(6)
+        .max(30)
+        .pattern(/^[A-Za-z\s]+$/)
+        .required(),
+    code: Joi.string().min(5).max(6).required(),
+});
+
+const updateAirplaneSchema = Joi.object({
+    name: Joi.string()
+        .min(6)
+        .max(30)
+        .pattern(/^[A-Za-z\s]+$/),
+    code: Joi.string().min(5).max(6),
+});
+
+const createAirportSchema = Joi.object({
+    name: Joi.string().min(2).max(70).required(),
+    code: Joi.string().min(3).max(3).required(),
+    country: Joi.string()
+        .pattern(/^[A-Za-z\s]+$/)
+        .required(),
+    city: Joi.string()
+        .pattern(/^[A-Za-z\s]+$/)
+        .required(),
+});
+
+const updateAirportSchema = Joi.object({
+    name: Joi.string()
+        .min(2)
+        .max(70)
+        .pattern(/^[A-Za-z\s]+$/),
+    code: Joi.string().min(3).max(3),
+    country: Joi.string()
+        .min(3)
+        .max(25)
+        .pattern(/^[A-Za-z\s]+$/),
+    city: Joi.string()
+        .min(3)
+        .max(40)
+        .pattern(/^[A-Za-z\s]+$/),
+});
+
+//ticket
+const TicketSchema = Joi.object({
+    flightId: Joi.string().required(),
+    userId: Joi.string().required(),
+    seatId: Joi.string().required(),
+    bookingDate: Joi.date()
+        .required()
+        .greater(Date.now() - 24 * 60 * 60 * 1000),
+});
+
+const UpdateTicketSchema = Joi.object({
+    code: Joi.string(),
+    bookingDate: Joi.date().greater(Date.now() - 24 * 60 * 60 * 1000),
+});
+
 // flightSeat
 const createFlightSeatSchema = Joi.object({
     flightId: Joi.string().required(),

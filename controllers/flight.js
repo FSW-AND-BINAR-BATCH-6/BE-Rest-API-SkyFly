@@ -1,4 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
+const createHttpError = require("http-errors");
 
 const prisma = new PrismaClient();
 
@@ -74,14 +75,6 @@ const getAllFlight = async (req, res) => {
         country: flight.departureAirport.country,
         city: flight.departureAirport.city,
       },
-      arrivalDate: flight.arrivalDate,
-      destinationAirport: {
-        id: flight.destinationAirport.id,
-        name: flight.destinationAirport.name,
-        code: flight.destinationAirport.code,
-        country: flight.destinationAirport.country,
-        city: flight.destinationAirport.city,
-      },
       transit: flight.transitAirport ? {
         arrivalDate: flight.transitArrivalDate,
         departureDate: flight.transitDepartureDate,
@@ -93,6 +86,14 @@ const getAllFlight = async (req, res) => {
           city: flight.transitAirport.city,
         },
       } : null,
+      arrivalDate: flight.arrivalDate,
+      destinationAirport: {
+        id: flight.destinationAirport.id,
+        name: flight.destinationAirport.name,
+        code: flight.destinationAirport.code,
+        country: flight.destinationAirport.country,
+        city: flight.destinationAirport.city,
+      },
       capacity: flight.capacity,
       price: flight.price,
       facilities: flight.facilities,
@@ -111,8 +112,8 @@ const getAllFlight = async (req, res) => {
       },
       data: formattedFlights.length !== 0 ? formattedFlights : "No flight data found",
     });
-  } catch (err) {
-    res.status(500).json({ message: "Internal server error" });
+  } catch (error) {
+    next(createHttpError(500, { message: error.message }));
   }
 };
 
@@ -175,8 +176,8 @@ const getFlightById = async (req, res) => {
       message: "Flight data retrieved successfully",
       data: formattedFlight,
     });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+  } catch (error) {
+    next(createHttpError(500, { message: error.message }));
   }
 };
 
@@ -232,8 +233,8 @@ const createFlight = async (req, res) => {
       message: 'Flight created successfully',
       data: newFlight,
     });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+  } catch (error) {
+    next(createHttpError(500, { message: error.message }));
   }
 };
 
@@ -304,8 +305,8 @@ const updateFlight = async (req, res) => {
         afterUpdate: updatedFlight,
       },
     });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+  } catch (error) {
+    next(createHttpError(500, { message: error.message }));
   }
 };
 
@@ -315,8 +316,8 @@ const removeFlight = async (req, res) => {
     const flight = await prisma.flight.findUnique({
       where: { id: req.params.id },
       include: {
-        seats: true, 
-        tickets: true, 
+        seats: true,
+        tickets: true,
       },
     });
 
@@ -346,8 +347,8 @@ const removeFlight = async (req, res) => {
       message: "Flight deleted successfully",
       deletedData: deletedFlight,
     });
-  } catch (err) {
-    res.status(500).json({ message: err.message });
+  } catch (error) {
+    next(createHttpError(500, { message: error.message }));
   }
 };
 
