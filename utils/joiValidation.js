@@ -91,24 +91,32 @@ const createFlightSchema = Joi.object({
 
 const updateFlightSchema = Joi.object({
     planeId: Joi.string().regex(/^\d+$/),
-    departureDate: Joi.date().iso().required().messages({
-        "date.format":
-            '"departureDate" must be in ISO format, eg: 2024-01-07 09:30:00',
-    }).optional(),
+    departureDate: Joi.date()
+        .iso()
+        .required()
+        .messages({
+            "date.format":
+                '"departureDate" must be in ISO format, eg: 2024-01-07 09:30:00',
+        })
+        .optional(),
     departureAirportId: Joi.string().regex(/^\d+$/),
-    arrivalDate: Joi.date().iso().required().messages({
-        "date.format":
-            '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
-    }).optional(),
+    arrivalDate: Joi.date()
+        .iso()
+        .required()
+        .messages({
+            "date.format":
+                '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
+        })
+        .optional(),
     destinationAirportId: Joi.string().regex(/^\d+$/),
     price: Joi.number().optional(),
-    capacity: Joi.number().min(2).max(850).optional()
+    capacity: Joi.number().min(2).max(850).optional(),
 });
 
 // flightSeat
 const createFlightSeatSchema = Joi.object({
-    flightId: Joi.string().required(),
-    seatNumber: Joi.string().required(),
+    flightId: Joi.string().regex(/^\d+$/).required(),
+    seatNumber: Joi.string().min(2).max(4).required(),
     type: Joi.string().valid("ECONOMY", "BUSINESS", "FIRST").required(),
 });
 
@@ -116,29 +124,33 @@ const createFlightSeatSchema = Joi.object({
 const createAirlineSchema = Joi.object({
     name: Joi.string()
         .min(6)
-        .max(30)
-        .pattern(/^[A-Za-z\s]+$/)
+        .max(20)
+        .regex(/^(?!\s*$)[a-zA-Z\s]+$/)
         .required(),
-    code: Joi.string().min(5).max(6).required(),
+    code: Joi.string().min(2).max(2).required(),
 });
 
 const updateAirlineSchema = Joi.object({
     name: Joi.string()
         .min(6)
-        .max(30)
-        .pattern(/^[A-Za-z\s]+$/),
-    code: Joi.string().min(5).max(6),
+        .max(20)
+        .regex(/^(?!\s*$)[a-zA-Z\s]+$/),
+    code: Joi.string().min(2).max(2),
 });
 
 // Airport
 const createAirportSchema = Joi.object({
-    name: Joi.string().min(2).max(70).required(),
+    name: Joi.string()
+        .min(2)
+        .max(70)
+        .regex(/^(?!\s*$)[a-zA-Z\s]+$/)
+        .required(),
     code: Joi.string().min(3).max(3).required(),
     country: Joi.string()
-        .pattern(/^[A-Za-z\s]+$/)
+        .regex(/^(?!\s*$)[a-zA-Z\s]+$/)
         .required(),
     city: Joi.string()
-        .pattern(/^[A-Za-z\s]+$/)
+        .regex(/^(?!\s*$)[a-zA-Z\s]+$/)
         .required(),
 });
 
@@ -146,16 +158,16 @@ const updateAirportSchema = Joi.object({
     name: Joi.string()
         .min(2)
         .max(70)
-        .pattern(/^[A-Za-z\s]+$/),
+        .regex(/^(?!\s*$)[a-zA-Z\s]+$/),
     code: Joi.string().min(3).max(3),
     country: Joi.string()
         .min(3)
         .max(25)
-        .pattern(/^[A-Za-z\s]+$/),
+        .regex(/^(?!\s*$)[a-zA-Z\s]+$/),
     city: Joi.string()
         .min(3)
         .max(40)
-        .pattern(/^[A-Za-z\s]+$/),
+        .regex(/^(?!\s*$)[a-zA-Z\s]+$/),
 });
 module.exports = {
     LoginSchema,
