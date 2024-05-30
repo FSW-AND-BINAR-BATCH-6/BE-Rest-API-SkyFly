@@ -90,6 +90,7 @@ const getTicketById = async (req, res, next) => {
                         departureCity: true,
                         arrivalDate: true,
                         destinationCity: true,
+                        price: true,
                     },
                 },
                 user: {
