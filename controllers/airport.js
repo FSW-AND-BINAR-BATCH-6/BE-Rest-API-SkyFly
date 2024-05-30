@@ -1,6 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const { randomUUID } = require("crypto");
-const createHttpError = require("http-errors")
+const createHttpError = require("http-errors");
 
 const prisma = new PrismaClient();
 
@@ -31,7 +31,7 @@ const getAllAirports = async (req, res, next) => {
             data: getAirports.length !== 0 ? getAirports : "Empty",
         });
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        next(createHttpError(500, {message: err.message}));
     }
 }
 
