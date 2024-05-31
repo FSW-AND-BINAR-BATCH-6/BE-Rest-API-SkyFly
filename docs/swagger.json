@@ -1695,6 +1695,46 @@
               "example": 5
             },
             "description": "Limit Page"
+          },
+          {
+            "name": "minPrice",
+            "in":"query",
+            "required":false,
+            "schema":{
+              "type":"integer",
+              "example": 5
+            },
+            "description": "Min Price"
+          },
+          {
+            "name": "maxPrice",
+            "in":"query",
+            "required":false,
+            "schema":{
+              "type":"integer",
+              "example": 5
+            },
+            "description": "Max Price"
+          },
+          {
+            "name": "hasTransit",
+            "in":"query",
+            "required":false,
+            "schema":{
+              "type":"boolean",
+              "example": ""
+            },
+            "description": "Transit"
+          },
+          {
+            "name": "facilities",
+            "in":"query",
+            "required":false,
+            "schema":{
+              "type":"string",
+              "example": ""
+            },
+            "description": "Facilities"
           }
         ],
         "summary": "Return result HIT API get all flights data",
