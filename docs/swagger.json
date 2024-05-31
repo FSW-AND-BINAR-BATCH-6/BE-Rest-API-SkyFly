@@ -68,6 +68,28 @@
         "tags": ["Airlines"],
         "summary": "Return result HIT API get all airlines data",
         "description": "This is an API for getting all airlines data",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            },
+            "description": "Page Number"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 5
+            },
+            "description": "Limit Page"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success getting all airlines data",
@@ -83,6 +105,16 @@
                     "message": {
                       "type": "string",
                       "example": "all airlines data retrieved successfully"
+                    },
+                    "pagination":{
+                      "type": "object",
+                      "example": {
+                        "totalPage": 2,
+                        "currentPage": 1,
+                        "pageItems": 10,
+                        "nextPage": 2,
+                        "prevPage": null
+                      }
                     },
                     "data": {
                       "type": "object",
@@ -148,16 +180,6 @@
                           "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/1716536772224.png"
                         }
                       ]
-                    },
-                    "pagination":{
-                      "type": "object",
-                      "example": {
-                        "totalPage": 2,
-                        "currentPage": 1,
-                        "pageItems": 10,
-                        "nextPage": 2,
-                        "prevPage": null
-                      }
                     }
                   }
                 }
@@ -382,6 +404,28 @@
         "tags": ["Airports"],
         "summary": "Return result HIT API get all airports data",
         "description": "This is an API for getting all airports data",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            },
+            "description": "Page Number"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "example": 5
+            },
+            "description": "Limit Page"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success getting all airports data",
@@ -740,6 +784,16 @@
               "example":1
             },
             "description": "Page Number"
+          },
+          {
+            "name": "limit",
+            "in":"query",
+            "required":false,
+            "schema":{
+              "type":"integer",
+              "example": 5
+            },
+            "description": "Limit Page"
           }
         ],
         "summary": "Return result HIT API get all flights data",
@@ -762,15 +816,15 @@
                     },
                     "totalItems":{
                       "type":"integer",
-                      "example": 2
+                      "example": 9
                     },
                     "pagination":{
                       "type":"object",
                       "example": {
-                        "totalPages": 1,
+                        "totalPages": 2,
                         "currentPage": 1,
-                        "pageItems": 2,
-                        "nextPage": null,
+                        "pageItems": 5,
+                        "nextPage": 2,
                         "prevPage": null
                       }
                     },
@@ -778,50 +832,124 @@
                       "type": "object",
                       "example": [
                         {
-                          "id": "413f96a6-164d-4725-9137-c7b2ffefb7c2",
-                          "planeId": "30c490e4-bf07-4844-ac33-f52bc46a6c2d",
-                          "departureDate": "2024-05-20T03:00:30.000Z",
-                          "departureAirportId": "5c3bcb6f-e43a-438a-804a-e3a9bf15e3fe",
-                          "arrivalDate": "2024-05-21T04:45:00.000Z",
-                          "destinationAirportId": "aa8eae43-f60c-435c-b787-b8525e406249",
-                          "price": 350,
+                          "id": "clwte48ff001m1108rwz025zc",
+                          "planeId": "clwte46f9000l1108gkx3j7hg",
+                          "departureDate": "2024-06-03T10:00:00.000Z",
                           "departureAirport": {
-                            "id": "5c3bcb6f-e43a-438a-804a-e3a9bf15e3fe",
+                            "id": "clwte46b7000011085wol5fht",
+                            "name": "Soekarno-Hatta International Airport",
+                            "code": "CGK",
+                            "country": "Indonesia",
+                            "city": "Jakarta"
+                          },
+                          "transit": null,
+                          "arrivalDate": "2024-06-03T14:00:00.000Z",
+                          "destinationAirport": {
+                            "id": "clwte46b700031108iu82baof",
+                            "name": "Kuala Namu International Airport",
+                            "code": "KNO",
+                            "country": "Indonesia",
+                            "city": "Medan"
+                          },
+                          "capacity": 72,
+                          "price": 1300000,
+                          "facilities": null
+                        },
+                        {
+                          "id": "clwte48ff001n11085j0p2kp3",
+                          "planeId": "clwte46f9000k1108xn2jpitl",
+                          "departureDate": "2024-06-01T08:00:00.000Z",
+                          "departureAirport": {
+                            "id": "clwte46b7000011085wol5fht",
+                            "name": "Soekarno-Hatta International Airport",
+                            "code": "CGK",
+                            "country": "Indonesia",
+                            "city": "Jakarta"
+                          },
+                          "transit": null,
+                          "arrivalDate": "2024-06-01T12:00:00.000Z",
+                          "destinationAirport": {
+                            "id": "clwte46b700011108s7xlpib3",
+                            "name": "Ngurah Rai International Airport",
+                            "code": "DPS",
+                            "country": "Indonesia",
+                            "city": "Denpasar"
+                          },
+                          "capacity": 72,
+                          "price": 1500000,
+                          "facilities": null
+                        },
+                        {
+                          "id": "clwte48ff001o11087wren5fg",
+                          "planeId": "clwte46f9000l1108gkx3j7hg",
+                          "departureDate": "2024-06-04T11:00:00.000Z",
+                          "departureAirport": {
+                            "id": "clwte46b7000011085wol5fht",
+                            "name": "Soekarno-Hatta International Airport",
+                            "code": "CGK",
+                            "country": "Indonesia",
+                            "city": "Jakarta"
+                          },
+                          "transit": null,
+                          "arrivalDate": "2024-06-04T15:00:00.000Z",
+                          "destinationAirport": {
+                            "id": "clwte46b700041108lli6r8mw",
+                            "name": "Sultan Hasanuddin International Airport",
+                            "code": "UPG",
+                            "country": "Indonesia",
+                            "city": "Makassar"
+                          },
+                          "capacity": 72,
+                          "price": 1400000,
+                          "facilities": null
+                        },
+                        {
+                          "id": "clwte48ff001p1108kq2cd8ss",
+                          "planeId": "clwte46f9000k1108xn2jpitl",
+                          "departureDate": "2024-06-02T09:00:00.000Z",
+                          "departureAirport": {
+                            "id": "clwte46b7000011085wol5fht",
+                            "name": "Soekarno-Hatta International Airport",
+                            "code": "CGK",
+                            "country": "Indonesia",
+                            "city": "Jakarta"
+                          },
+                          "transit": null,
+                          "arrivalDate": "2024-06-02T13:00:00.000Z",
+                          "destinationAirport": {
+                            "id": "clwte46b700021108mjnqfhpp",
                             "name": "Juanda International Airport",
                             "code": "SUB",
                             "country": "Indonesia",
                             "city": "Surabaya"
                           },
-                          "destinationAirport": {
-                            "id": "aa8eae43-f60c-435c-b787-b8525e406249",
-                            "name": "Soekarno-Hatta International Airport",
-                            "code": "CGK",
-                            "country": "Indonesia",
-                            "city": "Jakarta"
-                          }
+                          "capacity": 72,
+                          "price": 1200000,
+                          "facilities": null
                         },
                         {
-                          "id": "a264b66a-e8af-4d22-9ffb-febc34c0c149",
-                          "planeId": "30c490e4-bf07-4844-ac33-f52bc46a6c2d",
-                          "departureDate": "2024-05-20T10:00:30.000Z",
-                          "departureAirportId": "ad910a4f-4e16-45b4-abd3-a06201e66559",
-                          "arrivalDate": "2024-05-21T11:45:00.000Z",
-                          "destinationAirportId": "aa8eae43-f60c-435c-b787-b8525e406249",
-                          "price": 350,
+                          "id": "clwte48fi001r1108j9j8glwh",
+                          "planeId": "clwte46f9000m1108ix4gsg0e",
+                          "departureDate": "2024-06-05T12:00:00.000Z",
                           "departureAirport": {
-                            "id": "ad910a4f-4e16-45b4-abd3-a06201e66559",
-                            "name": "Toronto Pearson International Airport",
-                            "code": "YYZ",
-                            "country": "Canada",
-                            "city": "Toronto"
-                          },
-                          "destinationAirport": {
-                            "id": "aa8eae43-f60c-435c-b787-b8525e406249",
+                            "id": "clwte46b7000011085wol5fht",
                             "name": "Soekarno-Hatta International Airport",
                             "code": "CGK",
                             "country": "Indonesia",
                             "city": "Jakarta"
-                          }
+                          },
+                          "transit": null,
+                          "arrivalDate": "2024-06-05T16:00:00.000Z",
+                          "destinationAirport": {
+                            "id": "clwte46b700051108mej3a2uk",
+                            "name": "Ahmad Yani International Airport",
+                            "code": "SRG",
+                            "country": "Indonesia",
+                            "city": "Semarang"
+                          },
+                          "capacity": 72,
+                          "price": 1100000,
+                          "facilities": null
                         }
                       ]
                     }
@@ -1164,6 +1292,38 @@
         "tags": ["Flight Seats"],
         "summary": "Return result HIT API get all flight-seats data",
         "description": "This is an API for getting all flight-seats data",
+        "parameters" :[
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "ECONOMY"
+            },
+            "description": "Search Class"
+          },
+          {
+            "name": "page",
+            "in":"query",
+            "required":false,
+            "schema":{
+              "type":"integer",
+              "example":1
+            },
+            "description": "Page Number"
+          },
+          {
+            "name": "limit",
+            "in":"query",
+            "required":false,
+            "schema":{
+              "type":"integer",
+              "example": 5
+            },
+            "description": "Limit Page"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success getting all flight-seats data",
@@ -1538,16 +1698,36 @@
         "tags": ["Tickets"],
         "summary": "Return result HIT API get all tickets data",
         "description": "This is an API for getting all tickets data",
-        "parameters": [
+        "parameters" :[
           {
-            "name": "page",
+            "name": "search",
             "in": "query",
             "required": false,
             "schema": {
-              "type": "integer",
-              "example": 3
+              "type": "string",
+              "example": "84232417-b548-4e59-b22f-04f586057156"
+            },
+            "description": "Code Ticket"
+          },
+          {
+            "name": "page",
+            "in":"query",
+            "required":false,
+            "schema":{
+              "type":"integer",
+              "example":1
             },
             "description": "Page Number"
+          },
+          {
+            "name": "limit",
+            "in":"query",
+            "required":false,
+            "schema":{
+              "type":"integer",
+              "example": 5
+            },
+            "description": "Limit Page"
           }
         ],
         "responses": {
@@ -1564,15 +1744,15 @@
                     },
                     "totalItems":{
                       "type": "integer",
-                      "example": 2
+                      "example": 240
                     },
                     "pagination":{
                       "type": "object",
                       "example": {
-                        "totalPages": 1,
+                        "totalPages": 48,
                         "currentPage": 1,
-                        "pageItems": 2,
-                        "nextPage": null,
+                        "pageItems": 5,
+                        "nextPage": 2,
                         "prevPage": null
                       }
                     },
@@ -1580,49 +1760,158 @@
                       "type": "object",
                       "example": [
                         {
-                          "id": "1",
-                          "code": "AAB111",
-                          "bookingDate": "2024-05-26T23:00:00.000Z",
-                          "price": 4000000,
+                          "id": "clwte48oe00281108r7o74j3p",
+                          "code": "64ccdef1-2647-406d-8860-0e0a8ce44586",
+                          "bookingDate": "2024-06-01T10:00:00.000Z",
                           "flight": {
-                            "id": "1",
-                            "departureDate": "1970-01-01T00:00:00.000Z",
-                            "departureCity": "LA",
-                            "arrivalDate": "1970-01-02T00:00:00.000Z",
-                            "destinationCity": "PARIS\n"
+                            "id": "clwte48ff001p1108kq2cd8ss",
+                            "departureDate": "2024-06-02T09:00:00.000Z",
+                            "departureAirport": {
+                              "id": "clwte46b7000011085wol5fht",
+                              "name": "Soekarno-Hatta International Airport",
+                              "code": "CGK",
+                              "country": "Indonesia",
+                              "city": "Jakarta"
+                            },
+                            "arrivalDate": "2024-06-02T13:00:00.000Z",
+                            "destinationAirport": {
+                              "id": "clwte46b700021108mjnqfhpp",
+                              "name": "Juanda International Airport",
+                              "code": "SUB",
+                              "country": "Indonesia",
+                              "city": "Surabaya"
+                            },
+                            "price": 1200000
                           },
-                          "user": {
-                            "id": "1",
-                            "name": "VLAST",
-                            "phoneNumber": "0180829729"
-                          },
+                          "user": null,
                           "seat": {
-                            "id": "1",
-                            "seatNumber": "D12",
+                            "id": "clwte48oe002411086qgx3moi",
+                            "seatNumber": "1A",
                             "type": "ECONOMY"
                           }
                         },
                         {
-                          "id": "2",
-                          "code": "VAIWIH",
-                          "bookingDate": "2025-01-01T00:00:00.000Z",
-                          "price": 300000,
+                          "id": "clwte48oe00291108defspy04",
+                          "code": "84232417-b548-4e59-b22f-04f586057156",
+                          "bookingDate": "2024-06-01T10:00:00.000Z",
                           "flight": {
-                            "id": "2",
-                            "departureDate": "2025-01-01T00:00:00.000Z",
-                            "departureCity": "LA",
-                            "arrivalDate": "2025-01-02T00:00:00.000Z",
-                            "destinationCity": "FLORIDA"
+                            "id": "clwte48ff001p1108kq2cd8ss",
+                            "departureDate": "2024-06-02T09:00:00.000Z",
+                            "departureAirport": {
+                              "id": "clwte46b7000011085wol5fht",
+                              "name": "Soekarno-Hatta International Airport",
+                              "code": "CGK",
+                              "country": "Indonesia",
+                              "city": "Jakarta"
+                            },
+                            "arrivalDate": "2024-06-02T13:00:00.000Z",
+                            "destinationAirport": {
+                              "id": "clwte46b700021108mjnqfhpp",
+                              "name": "Juanda International Airport",
+                              "code": "SUB",
+                              "country": "Indonesia",
+                              "city": "Surabaya"
+                            },
+                            "price": 1200000
                           },
-                          "user": {
-                            "id": "2",
-                            "name": "VIPER",
-                            "phoneNumber": "0982827222"
-                          },
+                          "user": null,
                           "seat": {
-                            "id": "2",
-                            "seatNumber": "A19",
-                            "type": "BUSINESS"
+                            "id": "clwte48oe00251108ot4mt02v",
+                            "seatNumber": "1B",
+                            "type": "ECONOMY"
+                          }
+                        },
+                        {
+                          "id": "clwte48oe002a1108xbyhdi7w",
+                          "code": "453fe2d9-c906-4a45-ad34-77f37dc4e96d",
+                          "bookingDate": "2024-06-01T10:00:00.000Z",
+                          "flight": {
+                            "id": "clwte48ff001p1108kq2cd8ss",
+                            "departureDate": "2024-06-02T09:00:00.000Z",
+                            "departureAirport": {
+                              "id": "clwte46b7000011085wol5fht",
+                              "name": "Soekarno-Hatta International Airport",
+                              "code": "CGK",
+                              "country": "Indonesia",
+                              "city": "Jakarta"
+                            },
+                            "arrivalDate": "2024-06-02T13:00:00.000Z",
+                            "destinationAirport": {
+                              "id": "clwte46b700021108mjnqfhpp",
+                              "name": "Juanda International Airport",
+                              "code": "SUB",
+                              "country": "Indonesia",
+                              "city": "Surabaya"
+                            },
+                            "price": 1200000
+                          },
+                          "user": null,
+                          "seat": {
+                            "id": "clwte48oe00261108dvbkx6y9",
+                            "seatNumber": "1C",
+                            "type": "ECONOMY"
+                          }
+                        },
+                        {
+                          "id": "clwte48oe002b1108kq53joe4",
+                          "code": "b1503963-a608-4780-860c-1d20d78025c7",
+                          "bookingDate": "2024-06-01T10:00:00.000Z",
+                          "flight": {
+                            "id": "clwte48ff001p1108kq2cd8ss",
+                            "departureDate": "2024-06-02T09:00:00.000Z",
+                            "departureAirport": {
+                              "id": "clwte46b7000011085wol5fht",
+                              "name": "Soekarno-Hatta International Airport",
+                              "code": "CGK",
+                              "country": "Indonesia",
+                              "city": "Jakarta"
+                            },
+                            "arrivalDate": "2024-06-02T13:00:00.000Z",
+                            "destinationAirport": {
+                              "id": "clwte46b700021108mjnqfhpp",
+                              "name": "Juanda International Airport",
+                              "code": "SUB",
+                              "country": "Indonesia",
+                              "city": "Surabaya"
+                            },
+                            "price": 1200000
+                          },
+                          "user": null,
+                          "seat": {
+                            "id": "clwte48oe00271108ltek2c8l",
+                            "seatNumber": "1D",
+                            "type": "ECONOMY"
+                          }
+                        },
+                        {
+                          "id": "clwte48of002e1108z2r5q5qq",
+                          "code": "eae34b5f-5b88-4f62-848e-811ecfbc2e9d",
+                          "bookingDate": "2024-06-01T10:00:00.000Z",
+                          "flight": {
+                            "id": "clwte48ff001p1108kq2cd8ss",
+                            "departureDate": "2024-06-02T09:00:00.000Z",
+                            "departureAirport": {
+                              "id": "clwte46b7000011085wol5fht",
+                              "name": "Soekarno-Hatta International Airport",
+                              "code": "CGK",
+                              "country": "Indonesia",
+                              "city": "Jakarta"
+                            },
+                            "arrivalDate": "2024-06-02T13:00:00.000Z",
+                            "destinationAirport": {
+                              "id": "clwte46b700021108mjnqfhpp",
+                              "name": "Juanda International Airport",
+                              "code": "SUB",
+                              "country": "Indonesia",
+                              "city": "Surabaya"
+                            },
+                            "price": 1200000
+                          },
+                          "user": null,
+                          "seat": {
+                            "id": "clwte48of002d110878smid6r",
+                            "seatNumber": "1E",
+                            "type": "ECONOMY"
                           }
                         }
                       ]
@@ -2097,6 +2386,38 @@
         "tags": ["Users"],
         "summary": "Return result HIT API get all users data",
         "description": "This is an API for getting all users data",
+        "parameters" :[
+          {
+            "name": "search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "example": "84232417-b548-4e59-b22f-04f586057156"
+            },
+            "description": "User Name"
+          },
+          {
+            "name": "page",
+            "in":"query",
+            "required":false,
+            "schema":{
+              "type":"integer",
+              "example":1
+            },
+            "description": "Page Number"
+          },
+          {
+            "name": "limit",
+            "in":"query",
+            "required":false,
+            "schema":{
+              "type":"integer",
+              "example": 5
+            },
+            "description": "Limit Page"
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success getting all users data",
@@ -2113,142 +2434,83 @@
                       "type": "string",
                       "example": "all user data retrieved successfully"
                     },
+                    "totalItems":{
+                      "type": "integer",
+                      "example": 22
+                    },
+                    "pagination":{
+                      "type": "object",
+                      "example": {
+                        "totalPages": 5,
+                        "currentPage": 1,
+                        "pageItems": 5,
+                        "nextPage": 2,
+                        "prevPage": null
+                      }
+                    },
                     "data": {
                       "type": "object",
                       "example": [
-                          
-                            {
-                              "id": "c4192567-defc-4376-ae59-3098857eca6b",
-                              "name": "agus",
-                              "phoneNumber": "0897463523",
-                              "role": "BUYER",
-                              "Auth": null
-                            },
-                            {
-                              "id": "641db720-370f-4a56-b8ac-fc993ceba92a",
-                              "name": "aldi",
-                              "phoneNumber": "0897463523",
-                              "role": "BUYER",
-                              "Auth": null
-                            },
-                            {
-                              "id": "clwhlya9r00081275mckql001",
-                              "name": "Alice",
-                              "phoneNumber": "628123456789",
-                              "role": "BUYER",
-                              "Auth": {
-                                "id": "clwhlya9r000912750qo8yqbt",
-                                "email": "alice@test.com",
-                                "isVerified": true
-                              }
-                            },
-                            {
-                              "id": "clwhlya9l00061275dbld3u3q",
-                              "name": "Anastasia",
-                              "phoneNumber": "628123456789",
-                              "role": "BUYER",
-                              "Auth": {
-                                "id": "clwhlya9l00071275ncvg0kej",
-                                "email": "anastasia@test.com",
-                                "isVerified": true
-                              }
-                            },
-                            {
-                              "id": "57852bdc-7288-4864-9cff-1e488449b67a",
-                              "name": "budi",
-                              "phoneNumber": "0897463523",
-                              "role": "BUYER",
-                              "Auth": null
-                            },
-                            {
-                              "id": "clwhlyaab000d1275hmyq6v3i",
-                              "name": "Ferdinan",
-                              "phoneNumber": "628123456789",
-                              "role": "BUYER",
-                              "Auth": {
-                                "id": "clwhlyaab000g12758ylcpcvm",
-                                "email": "ferdinan@test.com",
-                                "isVerified": true
-                              }
-                            },
-                            {
-                              "id": "clwhlyaab000e1275534c0gld",
-                              "name": "imamGanteng",
-                              "phoneNumber": "628123456789",
-                              "role": "BUYER",
-                              "Auth": {
-                                "id": "clwhlyaab000h1275etikmf2f",
-                                "email": "imamganteng@test.com",
-                                "isVerified": true
-                              }
-                            },
-                            {
-                              "id": "clwhlya9h00021275ntpf7h1j",
-                              "name": "Len",
-                              "phoneNumber": "628123456789",
-                              "role": "BUYER",
-                              "Auth": {
-                                "id": "clwhlya9h00041275bfbxdgt1",
-                                "email": "len@test.com",
-                                "isVerified": true
-                              }
-                            },
-                            {
-                              "id": "clwhlyaab000c1275bsgsuqi5",
-                              "name": "Maya",
-                              "phoneNumber": "628123456789",
-                              "role": "BUYER",
-                              "Auth": {
-                                "id": "clwhlyaab000f1275nuz1gi8p",
-                                "email": "maya@test.com",
-                                "isVerified": true
-                              }
-                            },
-                            {
-                              "id": "clwhlyaai000i127585omnxqz",
-                              "name": "Ren",
-                              "phoneNumber": "628123456789",
-                              "role": "BUYER",
-                              "Auth": {
-                                "id": "clwhlyaai000j1275lfx6c7ol",
-                                "email": "ren@test.com",
-                                "isVerified": true
-                              }
-                            },
-                            {
-                              "id": "clwhlya9h000312757uksicir",
-                              "name": "Togenashi",
-                              "phoneNumber": "628123456789",
-                              "role": "BUYER",
-                              "Auth": {
-                                "id": "clwhlya9h00051275peutyzws",
-                                "email": "togenashi@test.com",
-                                "isVerified": true
-                              }
-                            },
-                            {
-                              "id": "clwhlya7k00001275n0g9bpez",
-                              "name": "user",
-                              "phoneNumber": "628123456789",
-                              "role": "BUYER",
-                              "Auth": {
-                                "id": "clwhlya7o00011275cd1qdlst",
-                                "email": "user@test.com",
-                                "isVerified": true
-                              }
-                            },
-                            {
-                              "id": "clwhlyaa0000a12755oa6h8yl",
-                              "name": "Zenith",
-                              "phoneNumber": "628123456789",
-                              "role": "BUYER",
-                              "Auth": {
-                                "id": "clwhlyaa0000b1275l8o3zuhq",
-                                "email": "zenith@test.com",
-                                "isVerified": true
-                              }
-                            }
-                        
+                        {
+                          "id": "clwte47zz000y1108cbsivgrj",
+                          "name": "Andhika",
+                          "phoneNumber": "628123456789",
+                          "familyName": "Family",
+                          "role": "BUYER",
+                          "auth": {
+                            "id": "clwte47zz000z1108cmm35526",
+                            "email": "andhika@test.com",
+                            "isVerified": true
+                          }
+                        },
+                        {
+                          "id": "clwte488g001e1108fp09kkpa",
+                          "name": "Bella",
+                          "phoneNumber": "628123456789",
+                          "familyName": "Family",
+                          "role": "BUYER",
+                          "auth": {
+                            "id": "clwte488g001f1108ni6t204i",
+                            "email": "bella@test.com",
+                            "isVerified": true
+                          }
+                        },
+                        {
+                          "id": "clwte480100121108f0boffxn",
+                          "name": "Falah",
+                          "phoneNumber": "628123456789",
+                          "familyName": "Family",
+                          "role": "BUYER",
+                          "auth": {
+                            "id": "clwte480100131108hpch57oi",
+                            "email": "falah@test.com",
+                            "isVerified": true
+                          }
+                        },
+                        {
+                          "id": "clwte47sa000u11086wh5x1qd",
+                          "name": "Faris",
+                          "phoneNumber": "628123456789",
+                          "familyName": "Family",
+                          "role": "BUYER",
+                          "auth": {
+                            "id": "clwte47sa000v110825uhtwtv",
+                            "email": "faris@test.com",
+                            "isVerified": true
+                          }
+                        },
+                        {
+                          "id": "clwte4889001c1108v1tuo242",
+                          "name": "Ihsan",
+                          "phoneNumber": "628123456789",
+                          "familyName": "Family",
+                          "role": "BUYER",
+                          "auth": {
+                            "id": "clwte4889001d1108adqgshni",
+                            "email": "ihsan@test.com",
+                            "isVerified": true
+                          }
+                        }
                       ]
                     }
                   }
