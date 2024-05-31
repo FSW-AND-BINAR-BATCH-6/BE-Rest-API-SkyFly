@@ -64,6 +64,7 @@ const getTransaction = async (req, res, next) => {
     }
 };
 
+//! on proggress
 const updateTransaction = async (req, res, next) => {
     try {
         const { orderId } = req.params;
@@ -130,11 +131,9 @@ const updateTransaction = async (req, res, next) => {
 const bankTransfer = async (req, res, next) => {
     try {
         let { bank, payment_type } = req.body;
-        let { ticketId } = req.query;
+        let { flightId } = req.query;
 
-        req.body.first_ticketId = ticketId;
-        req.body.second_ticketId = ticketId;
-        console.log(req.body);
+        req.body.flightId = flightId;
 
         const dataCustomer = await dataCustomerDetail(req.body);
         const dataItem = await dataItemDetail(req.body);
@@ -227,7 +226,7 @@ const bankTransfer = async (req, res, next) => {
 
                 const transaction = await tx.ticketTransaction.create({
                     data: {
-                        userId: "105469596566547305919",
+                        userId: "clwt39neg000u11bv775dxt07", // req.user.id (from user loggedIn)
                         orderId: response.order_id,
                         status: response.transaction_status,
                         totalPrice: parseFloat(response.gross_amount),
@@ -241,9 +240,9 @@ const bankTransfer = async (req, res, next) => {
                                 id: randomUUID(),
                                 transactionId: transaction.id,
                                 price: parseFloat(dataItem.price),
-                                ticketId: dataItem.ticketId,
                                 name: dataItem.name,
                                 familyName: dataItem.familyName,
+                                flightId: req.body.flightId,
                                 dob: new Date().toISOString(),
                                 citizenship: dataItem.citizenship,
                                 passport: randomUUID(),
@@ -254,7 +253,7 @@ const bankTransfer = async (req, res, next) => {
                     })
                 );
 
-                res.status(201).json({
+                res.status(200).json({
                     status: true,
                     message: "Bank VA created successfully",
                     data: {
@@ -284,20 +283,24 @@ const bankTransfer = async (req, res, next) => {
 
 const creditCard = async (req, res, next) => {
     try {
-        let { name } = req.query;
-        let CardParameter = {
-            card_number: "5264 2210 3887 4659",
-            card_exp_month: "02",
-            card_exp_year: "2025",
-            card_cvv: "123",
+        let { card_number, card_exp_month, card_exp_year, card_cvv } = req.body;
+        let { flightId } = req.query;
+
+        req.body.flightId = flightId;
+
+        const dataCustomer = await dataCustomerDetail(req.body);
+        const dataItem = await dataItemDetail(req.body);
+
+        let cardParameter = {
+            card_number,
+            card_exp_month,
+            card_exp_year,
+            card_cvv,
             client_key: coreApi.apiConfig.clientKey,
         };
 
-        const cardResponse = await coreApi.cardToken(CardParameter);
+        const cardResponse = await coreApi.cardToken(cardParameter);
         const cardToken = cardResponse.token_id;
-
-        const dataCustomer = await dataCustomerDetail(req.query);
-        const dataItem = await dataItemDetail(req.query);
 
         let parameter = {
             payment_type: "credit_card",
@@ -316,36 +319,65 @@ const creditCard = async (req, res, next) => {
             },
         };
 
-        const response = await coreApi.charge(parameter);
-        console.log(response);
+        try {
+            await prisma.$transaction(async (tx) => {
+                const response = await coreApi.charge(parameter);
 
-        await prisma.ticketTransaction.create({
-            data: {
-                name: name,
-                status: response.transaction_status,
-                totalPrice: parseFloat(response.gross_amount),
-                order_id: response.order_id,
-            },
-        });
+                const transaction = await tx.ticketTransaction.create({
+                    data: {
+                        userId: "clwt39neg000u11bv775dxt07", // req.user.id (from user loggedIn)
+                        orderId: response.order_id,
+                        status: response.transaction_status,
+                        totalPrice: parseFloat(response.gross_amount),
+                    },
+                });
 
-        res.status(201).json({
-            status: true,
-            message: "CC Token & Transaction successfully",
-            _token: cardToken,
-            data: {
-                payment_type: response.payment_type,
-                card_type: response.card_type,
-                transaction_id: response.transaction_id,
-                order_id: response.order_id,
-                gross_amount: response.gross_amount,
-                transaction_time: response.transaction_time,
-                transaction_status: response.transaction_status,
-                payment_status: response.fraud_status,
-                expiry_time: response.expiry_time,
-                redirect_url: response.redirect_url,
-                bank: response.bank,
-            },
-        });
+                await Promise.all(
+                    dataItem.map(async (dataItem) => {
+                        await tx.ticketTransactionDetail.create({
+                            data: {
+                                id: randomUUID(),
+                                transactionId: transaction.id,
+                                price: parseFloat(dataItem.price),
+                                name: dataItem.name,
+                                familyName: dataItem.familyName,
+                                flightId: req.body.flightId,
+                                dob: new Date().toISOString(),
+                                citizenship: dataItem.citizenship,
+                                passport: randomUUID(),
+                                issuingCountry: dataItem.issuingCountry,
+                                validityPeriod: new Date().toISOString(),
+                            },
+                        });
+                    })
+                );
+
+                res.status(200).json({
+                    status: true,
+                    message: "CC Token & Transaction successfully",
+                    _token: cardToken,
+                    data: {
+                        payment_type: response.payment_type,
+                        card_type: response.card_type,
+                        transaction_id: response.transaction_id,
+                        order_id: response.order_id,
+                        gross_amount: response.gross_amount,
+                        transaction_time: response.transaction_time,
+                        transaction_status: response.transaction_status,
+                        payment_status: response.fraud_status,
+                        expiry_time: response.expiry_time,
+                        redirect_url: response.redirect_url,
+                        bank: response.bank,
+                    },
+                });
+            });
+        } catch (error) {
+            return next(
+                createHttpError(422, {
+                    message: error.message,
+                })
+            );
+        }
     } catch (error) {
         next(
             createHttpError(500, {
@@ -357,9 +389,12 @@ const creditCard = async (req, res, next) => {
 
 const gopay = async (req, res, next) => {
     try {
-        let { name } = req.query;
-        const dataCustomer = await dataCustomerDetail(req.query);
-        const dataItem = await dataItemDetail(req.query);
+        let { flightId } = req.query;
+
+        req.body.flightId = flightId;
+
+        const dataCustomer = await dataCustomerDetail(req.body);
+        const dataItem = await dataItemDetail(req.body);
 
         let parameter = {
             payment_type: "gopay",
@@ -373,32 +408,62 @@ const gopay = async (req, res, next) => {
             },
         };
 
-        const response = await coreApi.charge(parameter);
+        try {
+            await prisma.$transaction(async (tx) => {
+                const response = await coreApi.charge(parameter);
 
-        await prisma.ticketTransaction.create({
-            data: {
-                name: name,
-                totalPrice: parseFloat(response.gross_amount),
-                status: response.transaction_status,
-                order_id: response.order_id,
-            },
-        });
+                const transaction = await tx.ticketTransaction.create({
+                    data: {
+                        userId: "clwt39neg000u11bv775dxt07", // req.user.id (from user loggedIn)
+                        orderId: response.order_id,
+                        status: response.transaction_status,
+                        totalPrice: parseFloat(response.gross_amount),
+                    },
+                });
 
-        res.status(201).json({
-            status: true,
-            message: "transaction created successfully",
-            data: {
-                payment_type: response.payment_type,
-                transaction_id: response.transaction_id,
-                order_id: response.order_id,
-                gross_amount: response.gross_amount,
-                transaction_time: response.transaction_time,
-                transaction_status: response.transaction_status,
-                payment_status: response.fraud_status,
-                expiry_time: response.expiry_time,
-                action: response.actions,
-            },
-        });
+                await Promise.all(
+                    dataItem.map(async (dataItem) => {
+                        await tx.ticketTransactionDetail.create({
+                            data: {
+                                id: randomUUID(),
+                                transactionId: transaction.id,
+                                price: parseFloat(dataItem.price),
+                                name: dataItem.name,
+                                familyName: dataItem.familyName,
+                                flightId: req.body.flightId,
+                                dob: new Date().toISOString(),
+                                citizenship: dataItem.citizenship,
+                                passport: randomUUID(),
+                                issuingCountry: dataItem.issuingCountry,
+                                validityPeriod: new Date().toISOString(),
+                            },
+                        });
+                    })
+                );
+
+                res.status(200).json({
+                    status: true,
+                    message: "Gopay transaction created successfully",
+                    data: {
+                        payment_type: response.payment_type,
+                        transaction_id: response.transaction_id,
+                        order_id: response.order_id,
+                        gross_amount: response.gross_amount,
+                        transaction_time: response.transaction_time,
+                        transaction_status: response.transaction_status,
+                        payment_status: response.fraud_status,
+                        expiry_time: response.expiry_time,
+                        action: response.actions,
+                    },
+                });
+            });
+        } catch (error) {
+            return next(
+                createHttpError(422, {
+                    message: error.message,
+                })
+            );
+        }
     } catch (error) {
         next(createHttpError(500, { message: error.message }));
     }

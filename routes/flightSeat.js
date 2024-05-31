@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const validator = require("../lib/validator");
 const {
     getAllFlightSeats,
     getAvailableFlightSeats,
@@ -8,8 +9,11 @@ const {
     deleteFlightSeat,
     bookFlightSeat,
 } = require("../controllers/flightSeat");
-const validator = require("../lib/validator");
-const { createFlightSeatSchema } = require("../utils/joiValidation");
+
+const {
+    createFlightSeatSchema,
+    updateFlightSeatSchema,
+} = require("../utils/joiValidation");
 
 router
     .route("/")
@@ -18,7 +22,7 @@ router
 router
     .route("/:id")
     .get(getFlightSeatById)
-    .put(updateFlightSeat)
+    .put(validator(updateFlightSeatSchema), updateFlightSeat)
     .delete(deleteFlightSeat);
 router.route("/book/:id").put(bookFlightSeat);
 router.route("/available/:flightId").get(getAvailableFlightSeats);

@@ -485,7 +485,7 @@ const getUsers = async (req, res, next) => {
                 name: true,
                 role: true,
                 phoneNumber: true,
-                Auth: {
+                auth: {
                     select: {
                         id: true,
                         email: true,

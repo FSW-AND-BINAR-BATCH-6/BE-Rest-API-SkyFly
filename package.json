@@ -14,7 +14,6 @@
         "db-seed": "node ./prisma/seeder/seeder",
         "test": "jest --collectCoverage"
     },
-    
     "keywords": [],
     "author": "Yoga Andhika Rafi Viery Faris Naufal Lowis Falah",
     "license": "ISC",

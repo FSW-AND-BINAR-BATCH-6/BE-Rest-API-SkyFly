@@ -74,43 +74,55 @@ const userUpdateSchema = Joi.object({
 
 // flight
 const createFlightSchema = Joi.object({
-    planeId: Joi.string().regex(/^\d+$/).required(), //will only accept number
+    planeId: Joi.string().required(), 
     departureDate: Joi.date().iso().required().messages({
         "date.format":
             '"departureDate" must be in ISO format, eg: 2024-01-07 09:30:00',
     }),
-    departureAirportId: Joi.string().regex(/^\d+$/).required(),
+    departureAirportId: Joi.string().required(),
     arrivalDate: Joi.date().iso().required().messages({
         "date.format":
             '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
     }),
-    destinationAirportId: Joi.string().regex(/^\d+$/).required(),
+    transitAirportId: Joi.string().required(),
+    transitArrivalDate: Joi.date().iso().required().messages({
+        "date.format":
+            '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
+    }),
+    transitDepartureDate: Joi.date().iso().required().messages({
+        "date.format":
+            '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
+    }),
+    destinationAirportId: Joi.string().required(),
     price: Joi.number().required(),
     capacity: Joi.number().min(2).max(850).required(),
+    facilities: Joi.string()
 });
 
 const updateFlightSchema = Joi.object({
-    planeId: Joi.string().regex(/^\d+$/),
-    departureDate: Joi.date()
-        .iso()
-        .required()
-        .messages({
-            "date.format":
-                '"departureDate" must be in ISO format, eg: 2024-01-07 09:30:00',
-        })
-        .optional(),
-    departureAirportId: Joi.string().regex(/^\d+$/),
-    arrivalDate: Joi.date()
-        .iso()
-        .required()
-        .messages({
-            "date.format":
-                '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
-        })
-        .optional(),
-    destinationAirportId: Joi.string().regex(/^\d+$/),
-    price: Joi.number().optional(),
-    capacity: Joi.number().min(2).max(850).optional(),
+    planeId: Joi.string().required(), 
+    departureDate: Joi.date().iso().required().messages({
+        "date.format":
+            '"departureDate" must be in ISO format, eg: 2024-01-07 09:30:00',
+    }),
+    departureAirportId: Joi.string().required(),
+    arrivalDate: Joi.date().iso().required().messages({
+        "date.format":
+            '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
+    }),
+    transitAirportId: Joi.string().required(),
+    transitArrivalDate: Joi.date().iso().required().messages({
+        "date.format":
+            '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
+    }),
+    transitDepartureDate: Joi.date().iso().required().messages({
+        "date.format":
+            '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
+    }),
+    destinationAirportId: Joi.string().required(),
+    price: Joi.number().required(),
+    capacity: Joi.number().min(2).max(850).required(),
+    facilities: Joi.string()
 });
 
 //ticket
