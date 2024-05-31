@@ -74,23 +74,23 @@ const userUpdateSchema = Joi.object({
 
 // flight
 const createFlightSchema = Joi.object({
-    planeId: Joi.string().regex(/^\d+$/).required(), //will only accept number
+    planeId: Joi.string().required(),
     departureDate: Joi.date().iso().required().messages({
         "date.format":
             '"departureDate" must be in ISO format, eg: 2024-01-07 09:30:00',
     }),
-    departureAirportId: Joi.string().regex(/^\d+$/).required(),
+    departureAirportId: Joi.string().required(),
     arrivalDate: Joi.date().iso().required().messages({
         "date.format":
             '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
     }),
-    destinationAirportId: Joi.string().regex(/^\d+$/).required(),
+    destinationAirportId: Joi.string().required(),
     price: Joi.number().required(),
     capacity: Joi.number().min(2).max(850).required(),
 });
 
 const updateFlightSchema = Joi.object({
-    planeId: Joi.string().regex(/^\d+$/),
+    planeId: Joi.string(),
     departureDate: Joi.date()
         .iso()
         .required()
@@ -99,7 +99,7 @@ const updateFlightSchema = Joi.object({
                 '"departureDate" must be in ISO format, eg: 2024-01-07 09:30:00',
         })
         .optional(),
-    departureAirportId: Joi.string().regex(/^\d+$/),
+    departureAirportId: Joi.string(),
     arrivalDate: Joi.date()
         .iso()
         .required()
@@ -108,7 +108,7 @@ const updateFlightSchema = Joi.object({
                 '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
         })
         .optional(),
-    destinationAirportId: Joi.string().regex(/^\d+$/),
+    destinationAirportId: Joi.string(),
     price: Joi.number().optional(),
     capacity: Joi.number().min(2).max(850).optional(),
 });
@@ -130,7 +130,7 @@ const UpdateTicketSchema = Joi.object({
 
 // flightSeat
 const createFlightSeatSchema = Joi.object({
-    flightId: Joi.string().regex(/^\d+$/).required(),
+    flightId: Joi.string().required(),
     seatNumber: Joi.string().min(2).max(4).required(),
     type: Joi.string().valid("ECONOMY", "BUSINESS", "FIRST").required(),
 });
