@@ -2887,6 +2887,10 @@
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "status":{
+                      "type": "boolean",
+                      "example": true
+                    },
                     "message": {
                       "type": "string",
                       "example": "User logged in successfully"
@@ -3016,6 +3020,10 @@
                 "schema": {
                   "type": "object",
                   "properties": {
+                    "status":{
+                      "type": "boolean",
+                      "example": true
+                    },
                     "message": {
                       "type": "string",
                       "example": "User logged in successfully"
