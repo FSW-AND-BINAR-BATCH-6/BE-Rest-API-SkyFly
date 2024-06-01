@@ -74,7 +74,7 @@ const userUpdateSchema = Joi.object({
 
 // flight
 const createFlightSchema = Joi.object({
-    planeId: Joi.string().required(), 
+    planeId: Joi.string().required(),
     departureDate: Joi.date().iso().required().messages({
         "date.format":
             '"departureDate" must be in ISO format, eg: 2024-01-07 09:30:00',
@@ -96,11 +96,11 @@ const createFlightSchema = Joi.object({
     destinationAirportId: Joi.string().required(),
     price: Joi.number().required(),
     capacity: Joi.number().min(2).max(850).required(),
-    facilities: Joi.string()
+    facilities: Joi.string(),
 });
 
 const updateFlightSchema = Joi.object({
-    planeId: Joi.string().required(), 
+    planeId: Joi.string().required(),
     departureDate: Joi.date().iso().required().messages({
         "date.format":
             '"departureDate" must be in ISO format, eg: 2024-01-07 09:30:00',
@@ -122,10 +122,10 @@ const updateFlightSchema = Joi.object({
     destinationAirportId: Joi.string().required(),
     price: Joi.number().required(),
     capacity: Joi.number().min(2).max(850).required(),
-    facilities: Joi.string()
+    facilities: Joi.string(),
 });
 
-//ticket
+// ticket
 const TicketSchema = Joi.object({
     flightId: Joi.string().required(),
     userId: Joi.string().required(),
@@ -196,6 +196,40 @@ const updateAirportSchema = Joi.object({
         .max(40)
         .regex(/^(?!\s*$)[a-zA-Z\s]+$/),
 });
+
+// transaction
+const createTransactionBank = Joi.object({
+    bank: Joi.string().required(),
+    fullname: Joi.string().required(),
+    familyName: Joi.string().required(),
+    phoneNumber: Joi.string().required(),
+    email: Joi.string()
+        .email({
+            minDomainSegments: 2,
+            maxDomainSegments: 3,
+            tlds: { allow: ["com", "net", "id"] },
+        })
+        .required(),
+    first_title: Joi.string().required(),
+    first_fullName: Joi.string().required(),
+    first_familyName: Joi.string().required(),
+    first_citizenship: Joi.string().required(),
+    first_issuingCountry: Joi.string().required(),
+    first_seatId: Joi.required(),
+    first_validityPeriod: Joi.date()
+        .required()
+        .greater(Date.now() - 24 * 60 * 60 * 1000),
+    second_title: Joi.string().required(),
+    second_fullName: Joi.string().required(),
+    second_familyName: Joi.string().required(),
+    second_citizenship: Joi.string().required(),
+    second_issuingCountry: Joi.string().required(),
+    second_seatId: Joi.required(),
+    second_validityPeriod: Joi.date()
+        .required()
+        .greater(Date.now() - 24 * 60 * 60 * 1000),
+});
+
 module.exports = {
     LoginSchema,
     RegisterSchema,
@@ -213,4 +247,5 @@ module.exports = {
     updateAirportSchema,
     TicketSchema,
     UpdateTicketSchema,
+    createTransactionBank,
 };
