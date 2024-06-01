@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1717036814854" clover="3.2.0">
+  <project timestamp="1717036814854" name="All files">
+    <metrics statements="26" coveredstatements="25" conditionals="2" coveredconditionals="1" methods="2" coveredmethods="2" elements="30" coveredelements="28" complexity="0" loc="26" ncloc="26" packages="2" files="2" classes="2"/>
+    <package name="lib">
+      <metrics statements="10" coveredstatements="9" conditionals="2" coveredconditionals="1" methods="2" coveredmethods="2"/>
+      <file name="validator.js" path="C:\Users\Setsuna\Documents\GitHub\GroupProject\BE-Rest-API-SkyFly\lib\validator.js">
+        <metrics statements="10" coveredstatements="9" conditionals="2" coveredconditionals="1" methods="2" coveredmethods="2"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="4" count="54" type="stmt"/>
+        <line num="5" count="54" type="stmt"/>
+        <line num="6" count="54" type="stmt"/>
+        <line num="7" count="15" type="stmt"/>
+        <line num="8" count="15" type="stmt"/>
+        <line num="10" count="39" type="cond" truecount="1" falsecount="1"/>
+        <line num="11" count="39" type="stmt"/>
+        <line num="13" count="0" type="stmt"/>
+      </file>
+    </package>
+    <package name="utils">
+      <metrics statements="16" coveredstatements="16" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <file name="joiValidation.js" path="C:\Users\Setsuna\Documents\GitHub\GroupProject\BE-Rest-API-SkyFly\utils\joiValidation.js">
+        <metrics statements="16" coveredstatements="16" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="4" count="1" type="stmt"/>
+        <line num="15" count="1" type="stmt"/>
+        <line num="32" count="1" type="stmt"/>
+        <line num="39" count="1" type="stmt"/>
+        <line num="43" count="1" type="stmt"/>
+        <line num="54" count="1" type="stmt"/>
+        <line num="65" count="1" type="stmt"/>
+        <line num="76" count="1" type="stmt"/>
+        <line num="92" count="1" type="stmt"/>
+        <line num="109" count="1" type="stmt"/>
+        <line num="116" count="1" type="stmt"/>
+        <line num="125" count="1" type="stmt"/>
+        <line num="134" count="1" type="stmt"/>
+        <line num="145" count="1" type="stmt"/>
+        <line num="160" count="1" type="stmt"/>
+      </file>
+    </package>
+  </project>
+</coverage>
