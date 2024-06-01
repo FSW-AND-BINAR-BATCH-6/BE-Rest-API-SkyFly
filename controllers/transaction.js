@@ -9,6 +9,7 @@ const {
 } = require("../utils/parameterMidtrans");
 const { unescape } = require("querystring");
 const { PrismaClient } = require("@prisma/client");
+const { checkSeatAvailability } = require("../utils/checkSeat");
 const prisma = new PrismaClient();
 
 const getTransaction = async (req, res, next) => {
@@ -136,7 +137,7 @@ const bankTransfer = async (req, res, next) => {
         req.body.flightId = flightId;
 
         // Check if the seat exists and is not booked
-        const seat = await prisma.flightSeat.findMany({
+        const seats = await prisma.flightSeat.findMany({
             where: {
                 id: {
                     in: [req.body.first_seatId, req.body.second_seatId],
@@ -144,15 +145,14 @@ const bankTransfer = async (req, res, next) => {
             },
         });
 
-        if (!seat) {
-            return next(createHttpError(404, { message: "Seat not found" }));
-        }
+        const { isBooked, seatNumber } = await checkSeatAvailability(seats);
 
-        if (seat.isBooked) {
-            return next(
-                createHttpError(400, { message: "Seat is already booked" })
+        if (isBooked)
+            next(
+                createHttpError(400, {
+                    message: `Flight seat in this flight with seat number: ${seatNumber} is already booked`,
+                })
             );
-        }
 
         const dataCustomer = await dataCustomerDetail(req.body);
         const dataItem = await dataItemDetail(req.body);
@@ -273,11 +273,21 @@ const bankTransfer = async (req, res, next) => {
                     })
                 );
 
-                let seatId = seat.map((seat) => {
+                let seatId = seats.map((seat) => {
                     return seat.id;
                 });
 
-                console.log(seatId);
+                await prisma.flightSeat.updateMany({
+                    where: {
+                        id: {
+                            in: [seatId[0], seatId[1]],
+                        },
+                    },
+                    data: {
+                        isBooked: true,
+                    },
+                });
+
                 res.status(200).json({
                     status: true,
                     message: "Bank VA created successfully",

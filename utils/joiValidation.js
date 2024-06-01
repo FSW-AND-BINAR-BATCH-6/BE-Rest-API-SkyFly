@@ -197,39 +197,6 @@ const updateAirportSchema = Joi.object({
         .regex(/^(?!\s*$)[a-zA-Z\s]+$/),
 });
 
-// transaction
-const createTransactionBank = Joi.object({
-    bank: Joi.string().required(),
-    fullname: Joi.string().required(),
-    familyName: Joi.string().required(),
-    phoneNumber: Joi.string().required(),
-    email: Joi.string()
-        .email({
-            minDomainSegments: 2,
-            maxDomainSegments: 3,
-            tlds: { allow: ["com", "net", "id"] },
-        })
-        .required(),
-    first_title: Joi.string().required(),
-    first_fullName: Joi.string().required(),
-    first_familyName: Joi.string().required(),
-    first_citizenship: Joi.string().required(),
-    first_issuingCountry: Joi.string().required(),
-    first_seatId: Joi.required(),
-    first_validityPeriod: Joi.date()
-        .required()
-        .greater(Date.now() - 24 * 60 * 60 * 1000),
-    second_title: Joi.string().required(),
-    second_fullName: Joi.string().required(),
-    second_familyName: Joi.string().required(),
-    second_citizenship: Joi.string().required(),
-    second_issuingCountry: Joi.string().required(),
-    second_seatId: Joi.required(),
-    second_validityPeriod: Joi.date()
-        .required()
-        .greater(Date.now() - 24 * 60 * 60 * 1000),
-});
-
 module.exports = {
     LoginSchema,
     RegisterSchema,
@@ -247,5 +214,4 @@ module.exports = {
     updateAirportSchema,
     TicketSchema,
     UpdateTicketSchema,
-    createTransactionBank,
 };
