@@ -331,11 +331,6 @@
         "/auth/forgetPassword": {
             "post": {
                 "tags": ["Auths"],
-                "security": [
-                    {
-                        "bearerToken": []
-                    }
-                ],
                 "summary": "Return result of user forget password",
                 "description": "This API is for user forget password",
                 "requestBody": {
@@ -421,11 +416,6 @@
         "/auth/resetPassword": {
             "put": {
                 "tags": ["Auths"],
-                "security": [
-                    {
-                        "bearerToken": []
-                    }
-                ],
                 "summary": "Return result of user forget password",
                 "description": "This API is for user forget password",
                 "parameters": [
@@ -507,11 +497,6 @@
         "/auth/register": {
             "post": {
                 "tags": ["Auths"],
-                "security": [
-                    {
-                        "bearerToken": []
-                    }
-                ],
                 "summary": "Returns the result of the registration API",
                 "description": "This API is used for user registration.",
                 "requestBody": {
@@ -665,13 +650,20 @@
         "/auth/verified": {
             "put": {
                 "tags": ["Auths"],
-                "security": [
-                    {
-                        "bearerToken": []
-                    }
-                ],
                 "summary": "Return result of otp verification",
                 "description": "This API is for otp verification",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZWdpc3RlcklkIjoiYTY2ZDgxZTQtMmNhNC00NGRiLTlkOWItNTg5NzA2MDA2NTRlIiwiZW1haWwiOiJ2aWVyeTE1MTAyMDAyQGdtYWlsLmNvbSIsIm90cCI6IjQ5NTYwMyIsImVtYWlsVGl0bGUiOiJFbWFpbCBBY3RpdmF0aW9uIiwiaWF0IjoxNzE2Njk4NjE0LCJleHAiOjE3MTY3ODUwMTR9.Vpr5MJY6yQsd8xwqK-cdrpOyRoYAXVwnnuT5UQuunvE"
+                        },
+                        "description": "Token"
+                    }
+                ],
                 "requestBody": {
                     "description": "Request body for otp verification",
                     "content": {
@@ -775,11 +767,6 @@
         "/auth/verified/resend-otp": {
             "post": {
                 "tags": ["Auths"],
-                "security": [
-                    {
-                        "bearerToken": []
-                    }
-                ],
                 "summary": "Return result of resend otp",
                 "description": "This API is for resend otp",
                 "parameters": [
@@ -1706,6 +1693,46 @@
                             "example": 5
                         },
                         "description": "Limit Page"
+                    },
+                    {
+                        "name": "minPrice",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 0
+                        },
+                        "description": "Min Price"
+                    },
+                    {
+                        "name": "maxPrice",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 0
+                        },
+                        "description": "Max Price"
+                    },
+                    {
+                        "name": "hasTransit",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "example": ""
+                        },
+                        "description": "Transit"
+                    },
+                    {
+                        "name": "facilities",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": ""
+                        },
+                        "description": "Facilities"
                     }
                 ],
                 "summary": "Return result HIT API get all flights data",
