@@ -1702,7 +1702,7 @@
             "required":false,
             "schema":{
               "type":"integer",
-              "example": 5
+              "example": 0
             },
             "description": "Min Price"
           },
@@ -1712,7 +1712,7 @@
             "required":false,
             "schema":{
               "type":"integer",
-              "example": 5
+              "example": 0
             },
             "description": "Max Price"
           },
