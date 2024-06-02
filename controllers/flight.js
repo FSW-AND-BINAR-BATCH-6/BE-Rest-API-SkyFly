@@ -157,7 +157,7 @@ const getAllFlight = async (req, res, next) => {
     if (error.code === 'P2025') {
       return next(
         createHttpError(409, {
-          message: "Flight Database Records Not Found",
+          message: "Flight Not Found",
         })
       );
     } else {
@@ -400,7 +400,7 @@ const removeFlight = async (req, res, next) => {
       deletedData: deletedFlight,
     });
   } catch (error) {
-    next(createHttpError(500, {"message": "Internal Server Error" }));
+    next(createHttpError(500, {message: "Internal Server Error" }));
   }
 };
 
