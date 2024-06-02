@@ -95,7 +95,7 @@ const getUserById = async (req, res, next) => {
             return next(createHttpError(404, { message: "Id Not Found" }));
         }
     } catch (error) {
-        return next(createHttpError(500, { message: error.message }));
+        next(createHttpError(500, { message: error.message }));
     }
 };
 
