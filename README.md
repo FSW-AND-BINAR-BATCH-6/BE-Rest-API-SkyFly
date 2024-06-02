@@ -1,5 +1,5 @@
 <div align="center" width="100%">
-    <img width="100%" height="100%" src="./public/assets/erd_c1.png" alt="ERD Team C1" title="ERD Team C1"> 
+    <img width="100%" height="100%" src="./public/assets/ERD_Final.png" alt="ERD Team C1" title="ERD Team C1"> 
 </div>
 
 # Data Team C1

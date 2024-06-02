@@ -145,11 +145,17 @@ const bankTransfer = async (req, res, next) => {
             },
         });
 
-        const { isBooked, seatNumber } = await checkSeatAvailability(seats);
+        const { isFound, isBooked, seatNumber } = await checkSeatAvailability(
+            seats
+        );
+
+        if (!isFound) {
+            return next(createHttpError(404, { message: "Seat not found" }));
+        }
 
         if (isBooked)
             next(
-                createHttpError(400, {
+                createHttpError(422, {
                     message: `Flight seat in this flight with seat number: ${seatNumber} is already booked`,
                 })
             );

@@ -1,11 +1,14 @@
 const createHttpError = require("http-errors");
 
 const checkSeatAvailability = async (seats) => {
-    let seatFound, isBooked, seatNumber;
+    let seatFound;
+    let seatNumber;
+    let isFound = true;
+    let isBooked = false;
+    console.log(seats);
 
-    if (!seats) {
-        seatFound = seats;
-        return next(createHttpError(404, { message: "Seat not found" }));
+    if (seats.length <= 0) {
+        return (isFound = false);
     }
 
     await seats.forEach((seat) => {
@@ -16,7 +19,7 @@ const checkSeatAvailability = async (seats) => {
         }
     });
 
-    return { seatFound, isBooked, seatNumber };
+    return { isFound, seatFound, isBooked, seatNumber };
 };
 
 module.exports = { checkSeatAvailability };
