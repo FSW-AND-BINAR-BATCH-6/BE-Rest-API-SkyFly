@@ -92,7 +92,7 @@ model Flight {
     transitArrivalDate      DateTime?
     transitDepartureDate    DateTime?
     capacity                Int
-    price                   Int
+    price                   Float
     seats                   FlightSeat[]
     tickets                 Ticket[]
     facilities              String?
@@ -100,13 +100,14 @@ model Flight {
 }
 
 model FlightSeat {
-    id         String   @id @default(cuid())
-    flightId   String
-    flight     Flight   @relation(fields: [flightId], references: [id])
-    seatNumber String
-    isBooked   Boolean? @default(false)
-    type       TypeSeat
-    tickets    Ticket[]
+    id                      String                   @id @default(cuid())
+    flightId                String
+    flight                  Flight                   @relation(fields: [flightId], references: [id])
+    seatNumber              String
+    isBooked                Boolean?                 @default(false)
+    type                    TypeSeat
+    tickets                 Ticket[]
+    TicketTransactionDetail TicketTransactionDetail?
 }
 
 model Ticket {
@@ -136,6 +137,8 @@ model TicketTransactionDetail {
     transactionId  String
     transaction    TicketTransaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
     price          Float
+    seatId         String            @unique
+    seat           FlightSeat        @relation(fields: [seatId], references: [id])
     name           String
     familyName     String
     dob            DateTime
