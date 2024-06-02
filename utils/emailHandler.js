@@ -17,7 +17,7 @@ const generateSecretEmail = async (dataUrl, type, template) => {
         },
     });
 
-    const urlTokenVerification = `${process.env.BASE_URL}/api/v1/auth/${type}?token=${dataUrl.token}`;
+    const urlTokenVerification = `${process.env.BASE_URL}/auth/${type}?token=${dataUrl.token}`;
 
     const html = await nodeMailer.getHtml(template, {
         email: payload.email,
@@ -27,7 +27,7 @@ const generateSecretEmail = async (dataUrl, type, template) => {
 
     nodeMailer.sendEmail(
         payload.email,
-        `${payload.emailTitle} | SkyFly Team 01 Jago`,
+        `${payload.emailTitle} | SkyFly Team C1`,
         html
     );
 

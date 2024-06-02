@@ -1,7 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
 const { uploadFile } = require("../lib/supabase");
 const {randomUUID} = require("crypto");
-const createHttpError = require("http-errors")
+const createHttpError = require("http-errors");
 
 const prisma = new PrismaClient();
 
@@ -31,7 +31,7 @@ const getAllAirline = async (req, res, next) => {
           data: getAirline.length !== 0 ? getAirline : "Empty"
         });
       } catch (err) {
-        res.status(500).json({ message: err.message });
+        next(createHttpError(500, {message: err.message}));
       }
 }
 

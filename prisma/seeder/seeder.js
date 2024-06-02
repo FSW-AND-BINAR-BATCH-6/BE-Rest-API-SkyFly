@@ -1,21 +1,24 @@
 const { PrismaClient } = require("@prisma/client");
 const { secretHash } = require("../../utils/hashSalt");
-const {randomUUID} = require("crypto");
+const { randomUUID } = require("crypto");
 
 const prisma = new PrismaClient();
 
 async function main() {
     // Seeder data
     const accountAuthData = [
-        "user",
-        "Alice",
-        "Anastasia",
-        "Ren",
-        "Len",
-        "Togenashi",
-        "Maya",
-        "Ferdinan",
-        "Zenith",
+        "Faris",
+        "Viery",
+        "Andhika",
+        "Falah",
+        "Naufal",
+        "Yoga",
+        "Rafi",
+        "Lowis",
+        "Komang",
+        "Ihsan",
+        "Bella",
+        "Yusuf",
     ];
 
     const airports = [
@@ -203,6 +206,7 @@ async function main() {
             arrivalDate: new Date("2024-06-01T12:00:00Z"),
             destinationCity: "Bali",
             destinationCityCode: "DPS",
+            capacity: 72,
             price: 1500000,
         },
         {
@@ -213,6 +217,7 @@ async function main() {
             arrivalDate: new Date("2024-06-02T13:00:00Z"),
             destinationCity: "Surabaya",
             destinationCityCode: "SUB",
+            capacity: 72,
             price: 1200000,
         },
         {
@@ -223,6 +228,7 @@ async function main() {
             arrivalDate: new Date("2024-06-03T14:00:00Z"),
             destinationCity: "Medan",
             destinationCityCode: "KNO",
+            capacity: 72,
             price: 1300000,
         },
         {
@@ -233,6 +239,7 @@ async function main() {
             arrivalDate: new Date("2024-06-04T15:00:00Z"),
             destinationCity: "Makassar",
             destinationCityCode: "UPG",
+            capacity: 72,
             price: 1400000,
         },
         {
@@ -243,6 +250,7 @@ async function main() {
             arrivalDate: new Date("2024-06-05T16:00:00Z"),
             destinationCity: "Semarang",
             destinationCityCode: "SRG",
+            capacity: 72,
             price: 1100000,
         },
         {
@@ -253,6 +261,7 @@ async function main() {
             arrivalDate: new Date("2024-06-06T17:00:00Z"),
             destinationCity: "Bandung",
             destinationCityCode: "BDO",
+            capacity: 72,
             price: 1000000,
         },
         {
@@ -263,6 +272,7 @@ async function main() {
             arrivalDate: new Date("2024-06-07T18:00:00Z"),
             destinationCity: "Yogyakarta",
             destinationCityCode: "JOG",
+            capacity: 72,
             price: 1150000,
         },
         {
@@ -273,6 +283,7 @@ async function main() {
             arrivalDate: new Date("2024-06-08T19:00:00Z"),
             destinationCity: "Balikpapan",
             destinationCityCode: "BPN",
+            capacity: 72,
             price: 1250000,
         },
         {
@@ -283,6 +294,7 @@ async function main() {
             arrivalDate: new Date("2024-06-09T20:00:00Z"),
             destinationCity: "Pekanbaru",
             destinationCityCode: "PKU",
+            capacity: 72,
             price: 1350000,
         },
         {
@@ -293,6 +305,7 @@ async function main() {
             arrivalDate: new Date("2024-06-10T21:00:00Z"),
             destinationCity: "Padang",
             destinationCityCode: "PDG",
+            capacity: 72,
             price: 1450000,
         },
     ];
@@ -300,14 +313,14 @@ async function main() {
     const flightSeats = [];
 
     const seatRows = 12;
-    const seatLetters = ['A', 'B', 'C', 'D'];
+    const seatLetters = ["A", "B", "C", "D", "E", "F"];
 
     for (let i = 1; i <= seatRows; i++) {
         for (let letter of seatLetters) {
             flightSeats.push({
                 seatNumber: `${i}${letter}`,
                 isBooked: false,
-                type: 'ECONOMY'
+                type: "ECONOMY",
             });
         }
     }
@@ -318,7 +331,7 @@ async function main() {
 
     const airlinesMap = await prisma.airline.findMany();
     const airportsMap = await prisma.airport.findMany();
- 
+
     // create user, auth
     await Promise.all(
         accountAuthData.map((name) =>
@@ -326,8 +339,9 @@ async function main() {
                 data: {
                     name: name,
                     role: "BUYER",
+                    familyName: "Family",
                     phoneNumber: "628123456789",
-                    Auth: {
+                    auth: {
                         create: {
                             email: `${name.toLowerCase()}@test.com`,
                             password: secretHash("password"),
@@ -357,11 +371,10 @@ async function main() {
                     data: {
                         planeId: plane.id,
                         departureDate: flight.departureDate,
-                        departureCity: departureAirport.city,
-                        departureCityCode: departureAirport.code,
+                        departureAirportId: departureAirport.id,
                         arrivalDate: flight.arrivalDate,
-                        destinationCity: destinationAirport.city,
-                        destinationCityCode: destinationAirport.code,
+                        destinationAirportId: destinationAirport.id,
+                        capacity: flight.capacity,
                         price: flight.price,
                     },
                 });
@@ -370,7 +383,7 @@ async function main() {
     );
 
     const flightData = await prisma.flight.findMany();
-    
+
     await Promise.all(
         flightData.map(async (flight) => {
             await Promise.all(
@@ -384,9 +397,12 @@ async function main() {
                             tickets: {
                                 create: {
                                     code: randomUUID(),
-                                    flightId: flight.id,
-                                    bookingDate: new Date('2024-06-01T10:00:00Z'),
-                                    price: 1500000n,
+                                    bookingDate: new Date(
+                                        "2024-06-01T10:00:00Z"
+                                    ),
+                                    flight: {
+                                        connect: { id: flight.id },
+                                    },
                                 },
                             },
                         },
@@ -395,8 +411,6 @@ async function main() {
             );
         })
     );
-
-    
 }
 
 main()
