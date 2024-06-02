@@ -1,3 +1,4 @@
+const router = require("express").Router();
 const {
     bankTransfer,
     creditCard,
@@ -5,8 +6,6 @@ const {
     getTransaction,
     updateTransaction,
 } = require("../controllers/transaction");
-
-const router = require("express").Router();
 
 router.use((req, res, next) => {
     res.header(

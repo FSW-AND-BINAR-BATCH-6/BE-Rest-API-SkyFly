@@ -27,7 +27,7 @@ const generateSecretEmail = async (dataUrl, type, template) => {
 
     nodeMailer.sendEmail(
         payload.email,
-        `${payload.emailTitle} | SkyFly Team 01 Jago`,
+        `${payload.emailTitle} | SkyFly Team C1`,
         html
     );
 

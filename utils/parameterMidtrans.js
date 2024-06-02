@@ -17,21 +17,23 @@ const dataItemDetail = async (data) => {
             id: randomUUID(),
             name: `${data.first_title} ${data.first_fullName}`,
             familyName: data.first_familyName,
-            ticketId: data.first_ticketId,
+            flightId: data.flightId,
             citizenship: data.first_citizenship,
             issuingCountry: data.first_issuingCountry,
             price: data.first_price,
             quantity: data.first_quantity,
+            seatId: data.first_seatId,
         },
         {
             id: randomUUID(),
             name: `${data.second_title} ${data.second_fullName}`,
             familyName: data.second_familyName,
-            ticketId: data.second_ticketId,
+            flightId: data.flightId,
             citizenship: data.second_citizenship,
             issuingCountry: data.second_issuingCountry,
             price: data.second_price,
             quantity: data.second_quantity,
+            seatId: data.second_seatId,
         },
     ];
 
@@ -46,4 +48,8 @@ const totalPrice = async (itemDetails) => {
     return totalPrice;
 };
 
-module.exports = { dataCustomerDetail, dataItemDetail, totalPrice };
+module.exports = {
+    dataCustomerDetail,
+    dataItemDetail,
+    totalPrice,
+};

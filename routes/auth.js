@@ -1,6 +1,4 @@
 const router = require("express").Router();
-const validator = require("../lib/validator");
-
 const {
     handleRegister,
     handleLogin,
@@ -13,7 +11,8 @@ const {
     getUsers,
     getUserLoggedIn,
 } = require("../controllers/auth");
-
+const authentication = require("../middlewares/authentication");
+const validator = require("../lib/validator");
 const {
     RegisterSchema,
     LoginSchema,
@@ -21,7 +20,6 @@ const {
     PasswordSchema,
     forgetPasswordSchema,
 } = require("../utils/joiValidation");
-const authentication = require("../middlewares/authentication");
 
 router.post("/register", validator(RegisterSchema), handleRegister);
 router.post("/login", validator(LoginSchema), handleLogin);
@@ -39,8 +37,6 @@ router.post(
 );
 
 router.put("/resetPassword", validator(PasswordSchema), resetPassword);
-
-// dummy route to check all user account
 
 router.get("/", getUsers);
 router.get("/me", authentication, getUserLoggedIn);
