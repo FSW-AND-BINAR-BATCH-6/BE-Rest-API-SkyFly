@@ -3,9 +3,6 @@ const createHttpError = require("http-errors");
 const { randomUUID } = require("crypto");
 const prisma = new PrismaClient();
 
-
-
-
 const getAllUsers = async (req, res, next) => {
     try {
         const search = req.query.search || "";
@@ -68,7 +65,6 @@ const getAllUsers = async (req, res, next) => {
     }
 };
 
-
 const getUserById = async (req, res, next) => {
     try {
         const user = await prisma.user.findUnique({
@@ -86,7 +82,6 @@ const getUserById = async (req, res, next) => {
                     },
                 },
             },
-
             where: { id: req.params.id },
         });
 
@@ -105,14 +100,13 @@ const getUserById = async (req, res, next) => {
 };
 
 const createUser = async (req, res, next) => {
-console.log(randomUUID());
+    console.log(randomUUID());
     const data = req.body;
 
     try {
-
         const newUser = await prisma.user.create({
             data: {
-                id: randomUUID(), 
+                id: randomUUID(),
                 name: data.name,
                 phoneNumber: data.phoneNumber,
                 familyName: data.familyName,
@@ -136,9 +130,7 @@ console.log(randomUUID());
     }
 };
 
-
 const updateUser = async (req, res, next) => {
-
     // const { name, phoneNumber, role } = value;
     const data = req.body;
 

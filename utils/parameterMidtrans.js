@@ -22,6 +22,7 @@ const dataItemDetail = async (data) => {
             issuingCountry: data.first_issuingCountry,
             price: data.first_price,
             quantity: data.first_quantity,
+            seatId: data.first_seatId,
         },
         {
             id: randomUUID(),
@@ -32,6 +33,7 @@ const dataItemDetail = async (data) => {
             issuingCountry: data.second_issuingCountry,
             price: data.second_price,
             quantity: data.second_quantity,
+            seatId: data.second_seatId,
         },
     ];
 
