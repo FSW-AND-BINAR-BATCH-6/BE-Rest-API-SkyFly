@@ -5,45 +5,70 @@ const prisma = new PrismaClient();
 
 const getAllFlight = async (req, res, next) => {
   try {
-    const { page = 1, limit = 10, search, minPrice, maxPrice, hasTransit, facilities } = req.query;
+    const {
+      page = 1,
+      limit = 10,
+      departureAirport,
+      arrivalAirport,
+      departureDate,
+      passengers,
+      seatClass,
+      minPrice,
+      maxPrice,
+      facilities,
+      hasTransit
+    } = req.query;
+
     const skip = (page - 1) * limit;
     const take = parseInt(limit);
 
     let filters = { AND: [] };
 
-    if (search) {
-      const decodedSearch = decodeURIComponent(search);
-      const searchTerms = decodedSearch.split('%20').map(term => term.toLowerCase());
+    if (departureAirport) {
+      filters.AND.push({
+        OR: [
+          { departureAirport: { code: { contains: departureAirport.toUpperCase(), mode: 'insensitive' } } },
+          { departureAirport: { city: { contains: departureAirport, mode: 'insensitive' } } }
+        ]
+      });
+    }
 
-      let departureFilters = [];
-      let arrivalFilters = [];
+    if (arrivalAirport) {
+      filters.AND.push({
+        OR: [
+          { destinationAirport: { code: { contains: arrivalAirport.toUpperCase(), mode: 'insensitive' } } },
+          { destinationAirport: { city: { contains: arrivalAirport, mode: 'insensitive' } } }
+        ]
+      });
+    }
 
-      searchTerms.forEach(term => {
-        const isDate = !isNaN(Date.parse(term));
-        if (!isDate) {
-          departureFilters.push({
-            OR: [
-              { departureAirport: { city: { contains: term, mode: 'insensitive' } } },
-              { departureAirport: { code: { contains: term.toUpperCase(), mode: 'insensitive' } } }
-            ]
-          });
-          arrivalFilters.push({
-            OR: [
-              { destinationAirport: { city: { contains: term, mode: 'insensitive' } } },
-              { destinationAirport: { code: { contains: term.toUpperCase(), mode: 'insensitive' } } }
-            ]
-          });
+    if (departureDate) {
+      const parsedDepartureDate = new Date(departureDate);
+      filters.AND.push({
+        departureDate: {
+          gte: new Date(parsedDepartureDate.setHours(0, 0, 0, 0)),
+          lt: new Date(parsedDepartureDate.setHours(23, 59, 59, 999))
         }
       });
+    }
 
-      if (departureFilters.length > 0 || arrivalFilters.length > 0) {
-        filters.AND.push({
-          OR: [
-            { AND: departureFilters },
-            { AND: arrivalFilters }
-          ]
-        });
-      }
+    if (passengers) {
+      filters.AND.push({ capacity: { gte: parseInt(passengers) } });
+    }
+    
+    if (seatClass) {
+      filters.AND.push({
+        seats: {
+          some: {
+            type: seatClass.toUpperCase(),
+            isBooked: false
+          }
+        }
+      });
+    }
+
+    if (seatClass) {
+      filters.AND.push({ seatClass: { equals: seatClass, mode: 'insensitive' } });
     }
 
     if (hasTransit && hasTransit === 'true') {
@@ -135,7 +160,7 @@ const getAllFlight = async (req, res, next) => {
     if (error.code === 'P2025') {
       res.status(404).json({
         status: false,
-        message: "No flights found with transit.",
+        message: "No flights found.",
       });
     } else {
       next(createHttpError(500, { message: error.message }));
