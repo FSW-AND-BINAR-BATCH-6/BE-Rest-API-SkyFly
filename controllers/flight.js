@@ -55,7 +55,7 @@ const getAllFlight = async (req, res, next) => {
     if (passengers) {
       filters.AND.push({ capacity: { gte: parseInt(passengers) } });
     }
-    
+
     if (seatClass) {
       filters.AND.push({
         seats: {
@@ -65,10 +65,6 @@ const getAllFlight = async (req, res, next) => {
           }
         }
       });
-    }
-
-    if (seatClass) {
-      filters.AND.push({ seatClass: { equals: seatClass, mode: 'insensitive' } });
     }
 
     if (hasTransit && hasTransit === 'true') {
@@ -101,6 +97,7 @@ const getAllFlight = async (req, res, next) => {
         departureAirport: true,
         transitAirport: true,
         destinationAirport: true,
+        seats: true,
       },
     });
 
@@ -158,15 +155,17 @@ const getAllFlight = async (req, res, next) => {
     });
   } catch (error) {
     if (error.code === 'P2025') {
-      res.status(404).json({
-        status: false,
-        message: "No flights found.",
-      });
+      return next(
+        createHttpError(409, {
+          message: "Flight Database Records Not Found",
+        })
+      );
     } else {
-      next(createHttpError(500, { message: error.message }));
+      next(createHttpError(500, { message: "Internal Server Error" }));
     }
   }
 };
+
 
 const getFlightById = async (req, res, next) => {
   try {
@@ -180,10 +179,11 @@ const getFlightById = async (req, res, next) => {
     });
 
     if (!flight) {
-      return res.status(404).json({
-        status: "404 Not found",
-        message: "Flight not found",
-      });
+      return next(
+        createHttpError(409, {
+          message: "Flight not found",
+        })
+      );
     }
 
     const formattedFlight = {
@@ -227,7 +227,7 @@ const getFlightById = async (req, res, next) => {
       data: formattedFlight,
     });
   } catch (error) {
-    next(createHttpError(500, { message: error.message }));
+    next(createHttpError(500, { message: "Internal Server Error" }));
   }
 };
 
@@ -284,7 +284,7 @@ const createFlight = async (req, res, next) => {
       data: newFlight,
     });
   } catch (error) {
-    next(createHttpError(500, { message: error.message }));
+    next(createHttpError(500, { message: "Internal Server Error" }));
   }
 };
 
@@ -319,10 +319,11 @@ const updateFlight = async (req, res, next) => {
     });
 
     if (!flight) {
-      return res.status(404).json({
-        status: false,
-        message: "Flight not found",
-      });
+      return next(
+        createHttpError(409, {
+          message: "Flight Not Found",
+        })
+      );
     }
 
     const updatedFlight = await prisma.flight.update({
@@ -356,7 +357,7 @@ const updateFlight = async (req, res, next) => {
       },
     });
   } catch (error) {
-    next(createHttpError(500, { message: error.message }));
+    next(createHttpError(500, { message: "Internal Server Error" }));
   }
 };
 
@@ -372,10 +373,11 @@ const removeFlight = async (req, res, next) => {
     });
 
     if (!flight) {
-      return res.status(404).json({
-        status: false,
-        message: "Flight not found",
-      });
+      return next(
+        createHttpError(409, {
+          message: "Flight Not Found",
+        })
+      );
     }
 
     if (flight.seats.length > 0 || flight.tickets.length > 0) {
@@ -398,7 +400,7 @@ const removeFlight = async (req, res, next) => {
       deletedData: deletedFlight,
     });
   } catch (error) {
-    next(createHttpError(500, { message: error.message }));
+    next(createHttpError(500, {"message": "Internal Server Error" }));
   }
 };
 
