@@ -430,6 +430,7 @@ const creditCard = async (req, res, next) => {
                                 transactionId: transaction.id,
                                 price: parseFloat(dataItem.price),
                                 name: dataItem.name,
+                                seatId: dataItem.seatId,
                                 familyName: dataItem.familyName,
                                 flightId: req.body.flightId,
                                 dob: new Date().toISOString(),
@@ -441,6 +442,21 @@ const creditCard = async (req, res, next) => {
                         });
                     })
                 );
+
+                let seatId = seats.map((seat) => {
+                    return seat.id;
+                });
+
+                await prisma.flightSeat.updateMany({
+                    where: {
+                        id: {
+                            in: [seatId[0], seatId[1]],
+                        },
+                    },
+                    data: {
+                        isBooked: true,
+                    },
+                });
 
                 res.status(200).json({
                     status: true,
@@ -567,6 +583,21 @@ const gopay = async (req, res, next) => {
                         });
                     })
                 );
+
+                let seatId = seats.map((seat) => {
+                    return seat.id;
+                });
+
+                await prisma.flightSeat.updateMany({
+                    where: {
+                        id: {
+                            in: [seatId[0], seatId[1]],
+                        },
+                    },
+                    data: {
+                        isBooked: true,
+                    },
+                });
 
                 res.status(200).json({
                     status: true,
