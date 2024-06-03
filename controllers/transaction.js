@@ -65,6 +65,8 @@ const getTransaction = async (req, res, next) => {
     }
 };
 
+const createTransaction = async (req, res, next) => {};
+
 //! on proggress
 const updateTransaction = async (req, res, next) => {
     try {
@@ -145,20 +147,32 @@ const bankTransfer = async (req, res, next) => {
             },
         });
 
-        const { isFound, isBooked, seatNumber } = await checkSeatAvailability(
-            seats
-        );
+        const { seatIsFound, flightIsFound, isBooked, seatNumber } =
+            await checkSeatAvailability(seats, flightId);
 
-        if (!isFound) {
-            return next(createHttpError(404, { message: "Seat not found" }));
+        if (!flightIsFound) {
+            return next(
+                createHttpError(404, {
+                    message: "Flight is not found",
+                })
+            );
         }
 
-        if (isBooked)
-            next(
+        if (!seatIsFound) {
+            return next(
+                createHttpError(404, {
+                    message: "Seat not found",
+                })
+            );
+        }
+
+        if (isBooked) {
+            return next(
                 createHttpError(422, {
                     message: `Flight seat in this flight with seat number: ${seatNumber} is already booked`,
                 })
             );
+        }
 
         const dataCustomer = await dataCustomerDetail(req.body);
         const dataItem = await dataItemDetail(req.body);
@@ -331,6 +345,41 @@ const creditCard = async (req, res, next) => {
 
         req.body.flightId = flightId;
 
+        const seats = await prisma.flightSeat.findMany({
+            where: {
+                id: {
+                    in: [req.body.first_seatId, req.body.second_seatId],
+                },
+            },
+        });
+
+        const { seatIsFound, flightIsFound, isBooked, seatNumber } =
+            await checkSeatAvailability(seats, flightId);
+
+        if (!flightIsFound) {
+            return next(
+                createHttpError(404, {
+                    message: "Flight is not found",
+                })
+            );
+        }
+
+        if (!seatIsFound) {
+            return next(
+                createHttpError(404, {
+                    message: "Seat not found",
+                })
+            );
+        }
+
+        if (isBooked) {
+            return next(
+                createHttpError(422, {
+                    message: `Flight seat in this flight with seat number: ${seatNumber} is already booked`,
+                })
+            );
+        }
+
         const dataCustomer = await dataCustomerDetail(req.body);
         const dataItem = await dataItemDetail(req.body);
 
@@ -368,7 +417,7 @@ const creditCard = async (req, res, next) => {
 
                 const transaction = await tx.ticketTransaction.create({
                     data: {
-                        userId: "clwt39neg000u11bv775dxt07", // req.user.id (from user loggedIn)
+                        userId: "clwudd72l000ujj2zedoasy2a", // req.user.id (from user loggedIn)
                         orderId: response.order_id,
                         status: response.transaction_status,
                         totalPrice: parseFloat(response.gross_amount),
@@ -383,6 +432,7 @@ const creditCard = async (req, res, next) => {
                                 transactionId: transaction.id,
                                 price: parseFloat(dataItem.price),
                                 name: dataItem.name,
+                                seatId: dataItem.seatId,
                                 familyName: dataItem.familyName,
                                 flightId: req.body.flightId,
                                 dob: new Date().toISOString(),
@@ -394,6 +444,21 @@ const creditCard = async (req, res, next) => {
                         });
                     })
                 );
+
+                let seatId = seats.map((seat) => {
+                    return seat.id;
+                });
+
+                await prisma.flightSeat.updateMany({
+                    where: {
+                        id: {
+                            in: [seatId[0], seatId[1]],
+                        },
+                    },
+                    data: {
+                        isBooked: true,
+                    },
+                });
 
                 res.status(200).json({
                     status: true,
@@ -436,6 +501,42 @@ const gopay = async (req, res, next) => {
 
         req.body.flightId = flightId;
 
+        // Check if the seat exists and is not booked
+        const seats = await prisma.flightSeat.findMany({
+            where: {
+                id: {
+                    in: [req.body.first_seatId, req.body.second_seatId],
+                },
+            },
+        });
+
+        const { seatIsFound, flightIsFound, isBooked, seatNumber } =
+            await checkSeatAvailability(seats, flightId);
+
+        if (!flightIsFound) {
+            return next(
+                createHttpError(404, {
+                    message: "Flight is not found",
+                })
+            );
+        }
+
+        if (!seatIsFound) {
+            return next(
+                createHttpError(404, {
+                    message: "Seat not found",
+                })
+            );
+        }
+
+        if (isBooked) {
+            return next(
+                createHttpError(422, {
+                    message: `Flight seat in this flight with seat number: ${seatNumber} is already booked`,
+                })
+            );
+        }
+
         const dataCustomer = await dataCustomerDetail(req.body);
         const dataItem = await dataItemDetail(req.body);
 
@@ -457,7 +558,7 @@ const gopay = async (req, res, next) => {
 
                 const transaction = await tx.ticketTransaction.create({
                     data: {
-                        userId: "clwt39neg000u11bv775dxt07", // req.user.id (from user loggedIn)
+                        userId: "clwudd72l000ujj2zedoasy2a", // req.user.id (from user loggedIn)
                         orderId: response.order_id,
                         status: response.transaction_status,
                         totalPrice: parseFloat(response.gross_amount),
@@ -472,6 +573,7 @@ const gopay = async (req, res, next) => {
                                 transactionId: transaction.id,
                                 price: parseFloat(dataItem.price),
                                 name: dataItem.name,
+                                seatId: dataItem.seatId,
                                 familyName: dataItem.familyName,
                                 flightId: req.body.flightId,
                                 dob: new Date().toISOString(),
@@ -483,6 +585,21 @@ const gopay = async (req, res, next) => {
                         });
                     })
                 );
+
+                let seatId = seats.map((seat) => {
+                    return seat.id;
+                });
+
+                await prisma.flightSeat.updateMany({
+                    where: {
+                        id: {
+                            in: [seatId[0], seatId[1]],
+                        },
+                    },
+                    data: {
+                        isBooked: true,
+                    },
+                });
 
                 res.status(200).json({
                     status: true,
