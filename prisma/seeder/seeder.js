@@ -397,9 +397,6 @@ async function main() {
                             tickets: {
                                 create: {
                                     code: randomUUID(),
-                                    bookingDate: new Date(
-                                        "2024-06-01T10:00:00Z"
-                                    ),
                                     flight: {
                                         connect: { id: flight.id },
                                     },
