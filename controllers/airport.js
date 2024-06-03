@@ -28,10 +28,10 @@ const getAllAirports = async (req, res, next) => {
                 nextPage: page < Math.ceil(count / limit) ? page + 1 : null,
                 prevPage: page > 1 ? page - 1 : null
             },
-            data: getAirports.length !== 0 ? getAirports : "Empty",
+            data: getAirports.length !== 0 ? getAirports : "empty product data",
         });
-    } catch (err) {
-        next(createHttpError(500, {message: err.message}));
+    } catch (error) {
+        next(createHttpError(500, {message: error.message}));
     }
 }
 
@@ -57,10 +57,16 @@ const getAirportById = async (req, res, next) => {
 }
 
 const createNewAirport = async (req, res, next) => {
-    const { name, code, country, city } = req.body;
-    console.log(req.body)
-
     try {
+        const {name, code, country, city} = req.body;
+
+        const getAirport = await prisma.airport.findUnique({
+            where: {
+                 code: code
+            }
+        })
+        if(getAirport) return next(createHttpError(403, {message: "Airport with the same code already exists in the database"}))
+
         const newAirport = await prisma.airport.create({
             data: {
                 id: randomUUID(),
@@ -83,15 +89,13 @@ const createNewAirport = async (req, res, next) => {
 }
 
 const updateAirport = async (req, res, next) => {
-    const { name, code, country, city } = req.body;
-
     try {
+        const { name, code, country, city } = req.body;
         const getAirport = await prisma.airport.findUnique({
             where: {
                 id: req.params.id
             }
         })
-
         if (!getAirport) return next(createHttpError(404, { message: "Airport not found" }))
 
         const updateAirport = await prisma.airport.update({
