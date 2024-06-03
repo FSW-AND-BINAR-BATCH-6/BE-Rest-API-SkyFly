@@ -96,6 +96,7 @@ model Flight {
     seats                   FlightSeat[]
     tickets                 Ticket[]
     facilities              String?
+    code                    String
     ticketTransactionDetail TicketTransactionDetail[]
 }
 

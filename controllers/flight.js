@@ -109,6 +109,7 @@ const getAllFlight = async (req, res, next) => {
       id: flight.id,
       planeId: flight.planeId,
       departureDate: flight.departureDate,
+      code: flight.code,
       departureAirport: {
         id: flight.departureAirport.id,
         name: flight.departureAirport.name,
@@ -190,6 +191,7 @@ const getFlightById = async (req, res, next) => {
       id: flight.id,
       planeId: flight.planeId,
       departureDate: flight.departureDate,
+      code: flight.code,
       departureAirport: {
         id: flight.departureAirport.id,
         name: flight.departureAirport.name,
@@ -231,6 +233,8 @@ const getFlightById = async (req, res, next) => {
   }
 };
 
+const counter = new Map();
+
 const createFlight = async (req, res, next) => {
   const {
     planeId,
@@ -248,8 +252,8 @@ const createFlight = async (req, res, next) => {
 
   const departureDateTime = new Date(departureDate);
   const arrivalDateTime = new Date(arrivalDate);
-  const transitArrivalDateTime = new Date(transitArrivalDate)
-  const transitDepartureDateTime = new Date(transitDepartureDate)
+  const transitArrivalDateTime = new Date(transitArrivalDate);
+  const transitDepartureDateTime = new Date(transitDepartureDate);
 
   const departureDateTimeConvert = new Date(departureDateTime.getTime() + 7 * 60 * 60 * 1000).toISOString();
   const arrivalDateTimeConvert = new Date(arrivalDateTime.getTime() + 7 * 60 * 60 * 1000).toISOString();
@@ -257,6 +261,23 @@ const createFlight = async (req, res, next) => {
   const transitDepartureDateTimeConvert = new Date(transitDepartureDateTime.getTime() + 7 * 60 * 60 * 1000).toISOString();
 
   try {
+    const plane = await prisma.airline.findUnique({ where: { id: planeId } });
+    const departureAirport = await prisma.airport.findUnique({ where: { id: departureAirportId } });
+
+    if (!plane || !departureAirport) {
+      return next(createHttpError(400, { message: "Invalid planeId or departureAirportId" }));
+    }
+
+    const baseCode = `${plane.code}-${departureAirport.code}`;
+
+    const lastNumber = counter.get(baseCode) || 0;
+
+    const newNumber = lastNumber + 1;
+
+    counter.set(baseCode, newNumber);
+
+    const code = `${baseCode}-${newNumber}`;
+
     const newFlight = await prisma.flight.create({
       data: {
         planeId,
@@ -269,7 +290,8 @@ const createFlight = async (req, res, next) => {
         destinationAirportId,
         capacity,
         price,
-        facilities
+        facilities,
+        code
       },
       include: {
         departureAirport: true,
@@ -290,17 +312,16 @@ const createFlight = async (req, res, next) => {
 
 const updateFlight = async (req, res, next) => {
   const {
-    planeId,
     departureDate,
     departureAirportId,
+    transitArrivalDate,
+    transitDepartureDate,
+    transitAirportId,
     arrivalDate,
     destinationAirportId,
     capacity,
     price,
     facilities,
-    transitArrivalDate,
-    transitDepartureDate,
-    transitAirportId
   } = req.body;
 
   const departureDateTime = new Date(departureDate);
@@ -329,7 +350,7 @@ const updateFlight = async (req, res, next) => {
     const updatedFlight = await prisma.flight.update({
       where: { id: req.params.id },
       data: {
-        planeId,
+        planeId: flight.planeId,
         departureDate: departureDateTimeConvert,
         departureAirportId,
         transitArrivalDate: transitArrivalDateTimeConvert,
@@ -339,7 +360,7 @@ const updateFlight = async (req, res, next) => {
         destinationAirportId,
         capacity,
         price,
-        facilities
+        facilities,
       },
       include: {
         departureAirport: true,
@@ -360,7 +381,6 @@ const updateFlight = async (req, res, next) => {
     next(createHttpError(500, { message: "Internal Server Error" }));
   }
 };
-
 
 const removeFlight = async (req, res, next) => {
   try {
@@ -400,7 +420,7 @@ const removeFlight = async (req, res, next) => {
       deletedData: deletedFlight,
     });
   } catch (error) {
-    next(createHttpError(500, {message: "Internal Server Error" }));
+    next(createHttpError(500, { message: "Internal Server Error" }));
   }
 };
 
