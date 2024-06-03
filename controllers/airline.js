@@ -28,7 +28,7 @@ const getAllAirline = async (req, res, next) => {
             nextPage: page < Math.ceil(count/limit) ? page + 1 : null,
             prevPage: page > 1 ? page - 1 : null
           },
-          data: getAirline.length !== 0 ? getAirline : "Empty"
+          data: getAirline.length !== 0 ? getAirline : "empty product data"
         });
       } catch (err) {
         next(createHttpError(500, {message: err.message}));
@@ -57,7 +57,6 @@ const getAirlineById = async (req, res, next) => {
 
 const createNewAirline = async (req, res, next) => {
     const {name, code} = req.body;
-    console.log(req.body)
     const file = req.file;
 
     try {
@@ -95,9 +94,8 @@ const updateAirline = async (req, res, next) => {
             }
         })
 
-        !file ? imageUrl = getAirline.image : imageUrl = await uploadFile(file)
-
         if(!getAirline) return next(createHttpError(404, {message: "Airline not found"}))
+        !file ? imageUrl = getAirline.image : imageUrl = await uploadFile(file)
         
         const updateAirline = await prisma.airline.update({
             where: {
@@ -123,14 +121,12 @@ const updateAirline = async (req, res, next) => {
 
 const deleteAirline = async (req, res, next) => {
     try {
-        console.log(req.params.id)
         const getAirline = await prisma.airline.findUnique({
             where: {
                 id: req.params.id
             }
         })
 
-        console.log(getAirline)
         if(!getAirline) return next(createHttpError(404, {message: "Airline not found"}))
         
         await prisma.airline.delete({
