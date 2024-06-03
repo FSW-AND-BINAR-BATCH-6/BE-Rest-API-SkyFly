@@ -1933,6 +1933,22 @@
                                     "price": {
                                         "type": "integer",
                                         "example": 350
+                                    },
+                                    "transitAirportId": {
+                                        "type": "string",
+                                        "example": "aa8eae43-f60c-435c-b787-b8525e406249"
+                                    },
+                                    "transitArrivalDate": {
+                                        "type": "string",
+                                        "example": ""
+                                    },
+                                    "transitDepartureDate": {
+                                        "type": "string",
+                                        "example": ""
+                                    },
+                                    "capacity": {
+                                        "type": "integer",
+                                        "example": null
                                     }
                                 }
                             }
@@ -2281,12 +2297,12 @@
                                         },
                                         "totalItems": {
                                             "type": "integer",
-                                            "example": 12
+                                            "example": 240
                                         },
                                         "pagination": {
                                             "type": "object",
                                             "example": {
-                                                "totalPages": 3,
+                                                "totalPages": 48,
                                                 "currentPage": 1,
                                                 "pageItems": 5,
                                                 "nextPage": 2,
@@ -2297,41 +2313,111 @@
                                             "type": "object",
                                             "example": [
                                                 {
-                                                    "id": "02420c4a-9444-462e-b23c-727a3c36ebe0",
-                                                    "flightId": "63c1eb31-14f0-4069-b5f1-487572f3c886",
-                                                    "seatNumber": "14A",
+                                                    "id": "clwte48oe002411086qgx3moi",
+                                                    "flightId": "clwte48ff001p1108kq2cd8ss",
+                                                    "seatNumber": "1A",
                                                     "isBooked": false,
-                                                    "type": "ECONOMY"
-                                                },
-                                                {
-                                                    "id": "05e38121-82b9-4f0d-a278-d4571e9ae806",
-                                                    "flightId": "63c1eb31-14f0-4069-b5f1-487572f3c886",
-                                                    "seatNumber": "4A",
+                                                    "type": "ECONOMY",
+                                                    "flight": {
+                                                      "id": "clwte48ff001p1108kq2cd8ss",
+                                                      "planeId": "clwte46f9000k1108xn2jpitl",
+                                                      "departureDate": "2024-06-02T09:00:00.000Z",
+                                                      "departureAirportId": "clwte46b7000011085wol5fht",
+                                                      "arrivalDate": "2024-06-02T13:00:00.000Z",
+                                                      "destinationAirportId": "clwte46b700021108mjnqfhpp",
+                                                      "transitAirportId": null,
+                                                      "transitArrivalDate": null,
+                                                      "transitDepartureDate": null,
+                                                      "capacity": 72,
+                                                      "price": 1200000,
+                                                      "facilities": null
+                                                    }
+                                                  },
+                                                  {
+                                                    "id": "clwte48oe00251108ot4mt02v",
+                                                    "flightId": "clwte48ff001p1108kq2cd8ss",
+                                                    "seatNumber": "1B",
                                                     "isBooked": false,
-                                                    "type": "BUSINESS"
-                                                },
-                                                {
-                                                    "id": "1d22d31e-422a-4c8e-b58a-a12149b0e1db",
-                                                    "flightId": "63c1eb31-14f0-4069-b5f1-487572f3c886",
-                                                    "seatNumber": "11A",
+                                                    "type": "ECONOMY",
+                                                    "flight": {
+                                                      "id": "clwte48ff001p1108kq2cd8ss",
+                                                      "planeId": "clwte46f9000k1108xn2jpitl",
+                                                      "departureDate": "2024-06-02T09:00:00.000Z",
+                                                      "departureAirportId": "clwte46b7000011085wol5fht",
+                                                      "arrivalDate": "2024-06-02T13:00:00.000Z",
+                                                      "destinationAirportId": "clwte46b700021108mjnqfhpp",
+                                                      "transitAirportId": null,
+                                                      "transitArrivalDate": null,
+                                                      "transitDepartureDate": null,
+                                                      "capacity": 72,
+                                                      "price": 1200000,
+                                                      "facilities": null
+                                                    }
+                                                  },
+                                                  {
+                                                    "id": "clwte48oe00261108dvbkx6y9",
+                                                    "flightId": "clwte48ff001p1108kq2cd8ss",
+                                                    "seatNumber": "1C",
                                                     "isBooked": false,
-                                                    "type": "ECONOMY"
-                                                },
-                                                {
-                                                    "id": "31c78c30-d28a-4bfe-97d4-45fbb03a1576",
-                                                    "flightId": "63c1eb31-14f0-4069-b5f1-487572f3c886",
-                                                    "seatNumber": "16A",
+                                                    "type": "ECONOMY",
+                                                    "flight": {
+                                                      "id": "clwte48ff001p1108kq2cd8ss",
+                                                      "planeId": "clwte46f9000k1108xn2jpitl",
+                                                      "departureDate": "2024-06-02T09:00:00.000Z",
+                                                      "departureAirportId": "clwte46b7000011085wol5fht",
+                                                      "arrivalDate": "2024-06-02T13:00:00.000Z",
+                                                      "destinationAirportId": "clwte46b700021108mjnqfhpp",
+                                                      "transitAirportId": null,
+                                                      "transitArrivalDate": null,
+                                                      "transitDepartureDate": null,
+                                                      "capacity": 72,
+                                                      "price": 1200000,
+                                                      "facilities": null
+                                                    }
+                                                  },
+                                                  {
+                                                    "id": "clwte48oe00271108ltek2c8l",
+                                                    "flightId": "clwte48ff001p1108kq2cd8ss",
+                                                    "seatNumber": "1D",
                                                     "isBooked": false,
-                                                    "type": "ECONOMY"
-                                                },
-                                                {
-                                                    "id": "67a46b20-d63c-401a-b609-957d29ebc878",
-                                                    "flightId": "63c1eb31-14f0-4069-b5f1-487572f3c886",
-                                                    "seatNumber": "6A",
+                                                    "type": "ECONOMY",
+                                                    "flight": {
+                                                      "id": "clwte48ff001p1108kq2cd8ss",
+                                                      "planeId": "clwte46f9000k1108xn2jpitl",
+                                                      "departureDate": "2024-06-02T09:00:00.000Z",
+                                                      "departureAirportId": "clwte46b7000011085wol5fht",
+                                                      "arrivalDate": "2024-06-02T13:00:00.000Z",
+                                                      "destinationAirportId": "clwte46b700021108mjnqfhpp",
+                                                      "transitAirportId": null,
+                                                      "transitArrivalDate": null,
+                                                      "transitDepartureDate": null,
+                                                      "capacity": 72,
+                                                      "price": 1200000,
+                                                      "facilities": null
+                                                    }
+                                                  },
+                                                  {
+                                                    "id": "clwte48of002d110878smid6r",
+                                                    "flightId": "clwte48ff001p1108kq2cd8ss",
+                                                    "seatNumber": "1E",
                                                     "isBooked": false,
-                                                    "type": "BUSINESS"
-                                                }
-                                            ]
+                                                    "type": "ECONOMY",
+                                                    "flight": {
+                                                      "id": "clwte48ff001p1108kq2cd8ss",
+                                                      "planeId": "clwte46f9000k1108xn2jpitl",
+                                                      "departureDate": "2024-06-02T09:00:00.000Z",
+                                                      "departureAirportId": "clwte46b7000011085wol5fht",
+                                                      "arrivalDate": "2024-06-02T13:00:00.000Z",
+                                                      "destinationAirportId": "clwte46b700021108mjnqfhpp",
+                                                      "transitAirportId": null,
+                                                      "transitArrivalDate": null,
+                                                      "transitDepartureDate": null,
+                                                      "capacity": 72,
+                                                      "price": 1200000,
+                                                      "facilities": null
+                                                    }
+                                                  }
+                                                ]
                                         }
                                     }
                                 }
@@ -2676,9 +2762,9 @@
                             "application/json": {
                                 "schema": {
                                     "type": "object",
-                                    "example": {
+                                    "properties": {
                                         "status": {
-                                            "type": "string",
+                                            "type": "boolean",
                                             "example": true
                                         },
                                         "totalItems": {
@@ -2703,157 +2789,157 @@
                                                     "code": "64ccdef1-2647-406d-8860-0e0a8ce44586",
                                                     "bookingDate": "2024-06-01T10:00:00.000Z",
                                                     "flight": {
-                                                        "id": "clwte48ff001p1108kq2cd8ss",
-                                                        "departureDate": "2024-06-02T09:00:00.000Z",
-                                                        "departureAirport": {
-                                                            "id": "clwte46b7000011085wol5fht",
-                                                            "name": "Soekarno-Hatta International Airport",
-                                                            "code": "CGK",
-                                                            "country": "Indonesia",
-                                                            "city": "Jakarta"
-                                                        },
-                                                        "arrivalDate": "2024-06-02T13:00:00.000Z",
-                                                        "destinationAirport": {
-                                                            "id": "clwte46b700021108mjnqfhpp",
-                                                            "name": "Juanda International Airport",
-                                                            "code": "SUB",
-                                                            "country": "Indonesia",
-                                                            "city": "Surabaya"
-                                                        },
-                                                        "price": 1200000
+                                                      "id": "clwte48ff001p1108kq2cd8ss",
+                                                      "departureDate": "2024-06-02T09:00:00.000Z",
+                                                      "departureAirport": {
+                                                        "id": "clwte46b7000011085wol5fht",
+                                                        "name": "Soekarno-Hatta International Airport",
+                                                        "code": "CGK",
+                                                        "country": "Indonesia",
+                                                        "city": "Jakarta"
+                                                      },
+                                                      "arrivalDate": "2024-06-02T13:00:00.000Z",
+                                                      "destinationAirport": {
+                                                        "id": "clwte46b700021108mjnqfhpp",
+                                                        "name": "Juanda International Airport",
+                                                        "code": "SUB",
+                                                        "country": "Indonesia",
+                                                        "city": "Surabaya"
+                                                      },
+                                                      "price": 1200000
                                                     },
                                                     "user": null,
                                                     "seat": {
-                                                        "id": "clwte48oe002411086qgx3moi",
-                                                        "seatNumber": "1A",
-                                                        "type": "ECONOMY"
+                                                      "id": "clwte48oe002411086qgx3moi",
+                                                      "seatNumber": "1A",
+                                                      "type": "ECONOMY"
                                                     }
-                                                },
-                                                {
+                                                  },
+                                                  {
                                                     "id": "clwte48oe00291108defspy04",
                                                     "code": "84232417-b548-4e59-b22f-04f586057156",
                                                     "bookingDate": "2024-06-01T10:00:00.000Z",
                                                     "flight": {
-                                                        "id": "clwte48ff001p1108kq2cd8ss",
-                                                        "departureDate": "2024-06-02T09:00:00.000Z",
-                                                        "departureAirport": {
-                                                            "id": "clwte46b7000011085wol5fht",
-                                                            "name": "Soekarno-Hatta International Airport",
-                                                            "code": "CGK",
-                                                            "country": "Indonesia",
-                                                            "city": "Jakarta"
-                                                        },
-                                                        "arrivalDate": "2024-06-02T13:00:00.000Z",
-                                                        "destinationAirport": {
-                                                            "id": "clwte46b700021108mjnqfhpp",
-                                                            "name": "Juanda International Airport",
-                                                            "code": "SUB",
-                                                            "country": "Indonesia",
-                                                            "city": "Surabaya"
-                                                        },
-                                                        "price": 1200000
+                                                      "id": "clwte48ff001p1108kq2cd8ss",
+                                                      "departureDate": "2024-06-02T09:00:00.000Z",
+                                                      "departureAirport": {
+                                                        "id": "clwte46b7000011085wol5fht",
+                                                        "name": "Soekarno-Hatta International Airport",
+                                                        "code": "CGK",
+                                                        "country": "Indonesia",
+                                                        "city": "Jakarta"
+                                                      },
+                                                      "arrivalDate": "2024-06-02T13:00:00.000Z",
+                                                      "destinationAirport": {
+                                                        "id": "clwte46b700021108mjnqfhpp",
+                                                        "name": "Juanda International Airport",
+                                                        "code": "SUB",
+                                                        "country": "Indonesia",
+                                                        "city": "Surabaya"
+                                                      },
+                                                      "price": 1200000
                                                     },
                                                     "user": null,
                                                     "seat": {
-                                                        "id": "clwte48oe00251108ot4mt02v",
-                                                        "seatNumber": "1B",
-                                                        "type": "ECONOMY"
+                                                      "id": "clwte48oe00251108ot4mt02v",
+                                                      "seatNumber": "1B",
+                                                      "type": "ECONOMY"
                                                     }
-                                                },
-                                                {
+                                                  },
+                                                  {
                                                     "id": "clwte48oe002a1108xbyhdi7w",
                                                     "code": "453fe2d9-c906-4a45-ad34-77f37dc4e96d",
                                                     "bookingDate": "2024-06-01T10:00:00.000Z",
                                                     "flight": {
-                                                        "id": "clwte48ff001p1108kq2cd8ss",
-                                                        "departureDate": "2024-06-02T09:00:00.000Z",
-                                                        "departureAirport": {
-                                                            "id": "clwte46b7000011085wol5fht",
-                                                            "name": "Soekarno-Hatta International Airport",
-                                                            "code": "CGK",
-                                                            "country": "Indonesia",
-                                                            "city": "Jakarta"
-                                                        },
-                                                        "arrivalDate": "2024-06-02T13:00:00.000Z",
-                                                        "destinationAirport": {
-                                                            "id": "clwte46b700021108mjnqfhpp",
-                                                            "name": "Juanda International Airport",
-                                                            "code": "SUB",
-                                                            "country": "Indonesia",
-                                                            "city": "Surabaya"
-                                                        },
-                                                        "price": 1200000
+                                                      "id": "clwte48ff001p1108kq2cd8ss",
+                                                      "departureDate": "2024-06-02T09:00:00.000Z",
+                                                      "departureAirport": {
+                                                        "id": "clwte46b7000011085wol5fht",
+                                                        "name": "Soekarno-Hatta International Airport",
+                                                        "code": "CGK",
+                                                        "country": "Indonesia",
+                                                        "city": "Jakarta"
+                                                      },
+                                                      "arrivalDate": "2024-06-02T13:00:00.000Z",
+                                                      "destinationAirport": {
+                                                        "id": "clwte46b700021108mjnqfhpp",
+                                                        "name": "Juanda International Airport",
+                                                        "code": "SUB",
+                                                        "country": "Indonesia",
+                                                        "city": "Surabaya"
+                                                      },
+                                                      "price": 1200000
                                                     },
                                                     "user": null,
                                                     "seat": {
-                                                        "id": "clwte48oe00261108dvbkx6y9",
-                                                        "seatNumber": "1C",
-                                                        "type": "ECONOMY"
+                                                      "id": "clwte48oe00261108dvbkx6y9",
+                                                      "seatNumber": "1C",
+                                                      "type": "ECONOMY"
                                                     }
-                                                },
-                                                {
+                                                  },
+                                                  {
                                                     "id": "clwte48oe002b1108kq53joe4",
                                                     "code": "b1503963-a608-4780-860c-1d20d78025c7",
                                                     "bookingDate": "2024-06-01T10:00:00.000Z",
                                                     "flight": {
-                                                        "id": "clwte48ff001p1108kq2cd8ss",
-                                                        "departureDate": "2024-06-02T09:00:00.000Z",
-                                                        "departureAirport": {
-                                                            "id": "clwte46b7000011085wol5fht",
-                                                            "name": "Soekarno-Hatta International Airport",
-                                                            "code": "CGK",
-                                                            "country": "Indonesia",
-                                                            "city": "Jakarta"
-                                                        },
-                                                        "arrivalDate": "2024-06-02T13:00:00.000Z",
-                                                        "destinationAirport": {
-                                                            "id": "clwte46b700021108mjnqfhpp",
-                                                            "name": "Juanda International Airport",
-                                                            "code": "SUB",
-                                                            "country": "Indonesia",
-                                                            "city": "Surabaya"
-                                                        },
-                                                        "price": 1200000
+                                                      "id": "clwte48ff001p1108kq2cd8ss",
+                                                      "departureDate": "2024-06-02T09:00:00.000Z",
+                                                      "departureAirport": {
+                                                        "id": "clwte46b7000011085wol5fht",
+                                                        "name": "Soekarno-Hatta International Airport",
+                                                        "code": "CGK",
+                                                        "country": "Indonesia",
+                                                        "city": "Jakarta"
+                                                      },
+                                                      "arrivalDate": "2024-06-02T13:00:00.000Z",
+                                                      "destinationAirport": {
+                                                        "id": "clwte46b700021108mjnqfhpp",
+                                                        "name": "Juanda International Airport",
+                                                        "code": "SUB",
+                                                        "country": "Indonesia",
+                                                        "city": "Surabaya"
+                                                      },
+                                                      "price": 1200000
                                                     },
                                                     "user": null,
                                                     "seat": {
-                                                        "id": "clwte48oe00271108ltek2c8l",
-                                                        "seatNumber": "1D",
-                                                        "type": "ECONOMY"
+                                                      "id": "clwte48oe00271108ltek2c8l",
+                                                      "seatNumber": "1D",
+                                                      "type": "ECONOMY"
                                                     }
-                                                },
-                                                {
+                                                  },
+                                                  {
                                                     "id": "clwte48of002e1108z2r5q5qq",
                                                     "code": "eae34b5f-5b88-4f62-848e-811ecfbc2e9d",
                                                     "bookingDate": "2024-06-01T10:00:00.000Z",
                                                     "flight": {
-                                                        "id": "clwte48ff001p1108kq2cd8ss",
-                                                        "departureDate": "2024-06-02T09:00:00.000Z",
-                                                        "departureAirport": {
-                                                            "id": "clwte46b7000011085wol5fht",
-                                                            "name": "Soekarno-Hatta International Airport",
-                                                            "code": "CGK",
-                                                            "country": "Indonesia",
-                                                            "city": "Jakarta"
-                                                        },
-                                                        "arrivalDate": "2024-06-02T13:00:00.000Z",
-                                                        "destinationAirport": {
-                                                            "id": "clwte46b700021108mjnqfhpp",
-                                                            "name": "Juanda International Airport",
-                                                            "code": "SUB",
-                                                            "country": "Indonesia",
-                                                            "city": "Surabaya"
-                                                        },
-                                                        "price": 1200000
+                                                      "id": "clwte48ff001p1108kq2cd8ss",
+                                                      "departureDate": "2024-06-02T09:00:00.000Z",
+                                                      "departureAirport": {
+                                                        "id": "clwte46b7000011085wol5fht",
+                                                        "name": "Soekarno-Hatta International Airport",
+                                                        "code": "CGK",
+                                                        "country": "Indonesia",
+                                                        "city": "Jakarta"
+                                                      },
+                                                      "arrivalDate": "2024-06-02T13:00:00.000Z",
+                                                      "destinationAirport": {
+                                                        "id": "clwte46b700021108mjnqfhpp",
+                                                        "name": "Juanda International Airport",
+                                                        "code": "SUB",
+                                                        "country": "Indonesia",
+                                                        "city": "Surabaya"
+                                                      },
+                                                      "price": 1200000
                                                     },
                                                     "user": null,
                                                     "seat": {
-                                                        "id": "clwte48of002d110878smid6r",
-                                                        "seatNumber": "1E",
-                                                        "type": "ECONOMY"
+                                                      "id": "clwte48of002d110878smid6r",
+                                                      "seatNumber": "1E",
+                                                      "type": "ECONOMY"
                                                     }
-                                                }
-                                            ]
+                                                  }
+                                                ]
                                         }
                                     }
                                 }
