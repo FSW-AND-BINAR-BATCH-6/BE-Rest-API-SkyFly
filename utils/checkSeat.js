@@ -1,11 +1,14 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+const createHttpError = require("http-errors");
 
 const checkSeatAvailability = async (seats, flightId) => {
     let seatNumber = [];
-    let flightIsFound = true;
-    let seatIsFound = true;
-    let isBooked = false;
+    let error = {
+        flight: false,
+        seat: false,
+        booked: false,
+    };
 
     const flight = await prisma.flight.findUnique({
         where: {
@@ -14,23 +17,24 @@ const checkSeatAvailability = async (seats, flightId) => {
     });
 
     if (!flight) {
-        console.log(`masuk flight: ${flight}`);
-        flightIsFound = false;
+        error.flight = true;
     }
 
     if (seats.length <= 0) {
-        console.log(`masuk seat: ${seats.length}`);
-        seatIsFound = false;
+        error.seat = true;
     }
 
     await seats.forEach((seat) => {
-        if (seat.isBooked === true) {
+        if (seat.status === "BOOKED" || seat.status === "OCCUPIED") {
             seatNumber.push(seat.seatNumber);
-            isBooked = true;
         }
     });
 
-    return { seatIsFound, flightIsFound, isBooked, seatNumber };
+    if (seatNumber.length > 0) {
+        error.booked = true;
+    }
+
+    return { error, seatNumber };
 };
 
 module.exports = { checkSeatAvailability };
