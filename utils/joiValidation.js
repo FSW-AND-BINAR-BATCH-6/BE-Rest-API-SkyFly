@@ -75,6 +75,34 @@ const userUpdateSchema = Joi.object({
 // flight
 const createFlightSchema = Joi.object({
     planeId: Joi.string().required(),
+    planeId: Joi.string().required(),
+    departureDate: Joi.date().iso().required().messages({
+        "date.format":
+            '"departureDate" must be in ISO format, eg: 2024-01-07 09:30:00',
+    }),
+    departureAirportId: Joi.string().required(),
+    departureAirportId: Joi.string().required(),
+    arrivalDate: Joi.date().iso().required().messages({
+        "date.format":
+            '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
+    }),
+    transitAirportId: Joi.string().required(),
+    transitArrivalDate: Joi.date().iso().required().messages({
+        "date.format":
+            '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
+    }),
+    transitDepartureDate: Joi.date().iso().required().messages({
+        "date.format":
+            '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
+    }),
+    destinationAirportId: Joi.string().required(),
+    price: Joi.number().required(),
+    capacity: Joi.number().min(2).max(850).required(),
+    facilities: Joi.string(),
+});
+
+const updateFlightSchema = Joi.object({
+    planeId: Joi.string().required(),
     departureDate: Joi.date().iso().required().messages({
         "date.format":
             '"departureDate" must be in ISO format, eg: 2024-01-07 09:30:00',
@@ -84,36 +112,22 @@ const createFlightSchema = Joi.object({
         "date.format":
             '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
     }),
+    transitAirportId: Joi.string().required(),
+    transitArrivalDate: Joi.date().iso().required().messages({
+        "date.format":
+            '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
+    }),
+    transitDepartureDate: Joi.date().iso().required().messages({
+        "date.format":
+            '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
+    }),
     destinationAirportId: Joi.string().required(),
     price: Joi.number().required(),
     capacity: Joi.number().min(2).max(850).required(),
+    facilities: Joi.string(),
 });
 
-const updateFlightSchema = Joi.object({
-    planeId: Joi.string(),
-    departureDate: Joi.date()
-        .iso()
-        .required()
-        .messages({
-            "date.format":
-                '"departureDate" must be in ISO format, eg: 2024-01-07 09:30:00',
-        })
-        .optional(),
-    departureAirportId: Joi.string(),
-    arrivalDate: Joi.date()
-        .iso()
-        .required()
-        .messages({
-            "date.format":
-                '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
-        })
-        .optional(),
-    destinationAirportId: Joi.string(),
-    price: Joi.number().optional(),
-    capacity: Joi.number().min(2).max(850).optional(),
-});
-
-//ticket
+// ticket
 const TicketSchema = Joi.object({
     flightId: Joi.string().required(),
     userId: Joi.string().required(),
@@ -184,6 +198,7 @@ const updateAirportSchema = Joi.object({
         .max(40)
         .regex(/^(?!\s*$)[a-zA-Z\s]+$/),
 });
+
 module.exports = {
     LoginSchema,
     RegisterSchema,
