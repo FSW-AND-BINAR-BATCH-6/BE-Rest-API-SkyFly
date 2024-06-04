@@ -147,29 +147,26 @@ const bankTransfer = async (req, res, next) => {
             },
         });
 
-        const { seatIsFound, flightIsFound, isBooked, seatNumber } =
-            await checkSeatAvailability(seats, flightId);
+        // check seat
+        const { error, seatNumber } = await checkSeatAvailability(
+            seats,
+            flightId
+        );
 
-        if (!flightIsFound) {
+        if (error.flight) {
             return next(
-                createHttpError(404, {
-                    message: "Flight is not found",
-                })
+                createHttpError(404, { message: "Flight is not found" })
             );
         }
-
-        if (!seatIsFound) {
-            return next(
-                createHttpError(404, {
-                    message: "Seat not found",
-                })
-            );
+        if (error.seat) {
+            return next(createHttpError(404, { message: "Seat is not found" }));
         }
-
-        if (isBooked) {
+        if (error.booked) {
             return next(
-                createHttpError(422, {
-                    message: `Flight seat in this flight with seat number: ${seatNumber} is already booked`,
+                createHttpError(400, {
+                    message: `Seat in this flight with seat number: ${seatNumber.join(
+                        " & "
+                    )} is booked`,
                 })
             );
         }
@@ -265,10 +262,11 @@ const bankTransfer = async (req, res, next) => {
 
                 const transaction = await tx.ticketTransaction.create({
                     data: {
-                        userId: "clwudd72l000ujj2zedoasy2a", // req.user.id (from user loggedIn)
+                        userId: "clwzk52fn001csazohnfp1omc", // req.user.id (from user loggedIn)
                         orderId: response.order_id,
                         status: response.transaction_status,
                         totalPrice: parseFloat(response.gross_amount),
+                        bookingDate: dataCustomer.bookingDate,
                     },
                 });
 
@@ -283,11 +281,11 @@ const bankTransfer = async (req, res, next) => {
                                 seatId: dataItem.seatId,
                                 familyName: dataItem.familyName,
                                 flightId: req.body.flightId,
-                                dob: new Date().toISOString(),
+                                dob: dataItem.dob,
                                 citizenship: dataItem.citizenship,
                                 passport: randomUUID(),
                                 issuingCountry: dataItem.issuingCountry,
-                                validityPeriod: new Date().toISOString(),
+                                validityPeriod: dataItem.validityPeriod,
                             },
                         });
                     })
@@ -304,7 +302,7 @@ const bankTransfer = async (req, res, next) => {
                         },
                     },
                     data: {
-                        isBooked: true,
+                        status: "OCCUPIED",
                     },
                 });
 
@@ -323,6 +321,7 @@ const bankTransfer = async (req, res, next) => {
                         payment_status: response.fraud_status,
                         expiry_time: response.expiry_time,
                         va_numbers: response.va_numbers,
+                        dataItem,
                     },
                 });
             });
@@ -353,29 +352,26 @@ const creditCard = async (req, res, next) => {
             },
         });
 
-        const { seatIsFound, flightIsFound, isBooked, seatNumber } =
-            await checkSeatAvailability(seats, flightId);
+        // check seat
+        const { error, seatNumber } = await checkSeatAvailability(
+            seats,
+            flightId
+        );
 
-        if (!flightIsFound) {
+        if (error.flight) {
             return next(
-                createHttpError(404, {
-                    message: "Flight is not found",
-                })
+                createHttpError(404, { message: "Flight is not found" })
             );
         }
-
-        if (!seatIsFound) {
-            return next(
-                createHttpError(404, {
-                    message: "Seat not found",
-                })
-            );
+        if (error.seat) {
+            return next(createHttpError(404, { message: "Seat is not found" }));
         }
-
-        if (isBooked) {
+        if (error.booked) {
             return next(
-                createHttpError(422, {
-                    message: `Flight seat in this flight with seat number: ${seatNumber} is already booked`,
+                createHttpError(400, {
+                    message: `Seat in this flight with seat number: ${seatNumber.join(
+                        " & "
+                    )} is booked`,
                 })
             );
         }
@@ -417,10 +413,11 @@ const creditCard = async (req, res, next) => {
 
                 const transaction = await tx.ticketTransaction.create({
                     data: {
-                        userId: "clwudd72l000ujj2zedoasy2a", // req.user.id (from user loggedIn)
+                        userId: "clwzk52fn001csazohnfp1omc", // req.user.id (from user loggedIn)
                         orderId: response.order_id,
                         status: response.transaction_status,
                         totalPrice: parseFloat(response.gross_amount),
+                        bookingDate: dataCustomer.bookingDate,
                     },
                 });
 
@@ -435,11 +432,11 @@ const creditCard = async (req, res, next) => {
                                 seatId: dataItem.seatId,
                                 familyName: dataItem.familyName,
                                 flightId: req.body.flightId,
-                                dob: new Date().toISOString(),
+                                dob: dataItem.dob,
                                 citizenship: dataItem.citizenship,
                                 passport: randomUUID(),
                                 issuingCountry: dataItem.issuingCountry,
-                                validityPeriod: new Date().toISOString(),
+                                validityPeriod: dataItem.validityPeriod,
                             },
                         });
                     })
@@ -456,7 +453,7 @@ const creditCard = async (req, res, next) => {
                         },
                     },
                     data: {
-                        isBooked: true,
+                        status: "OCCUPIED",
                     },
                 });
 
@@ -476,6 +473,7 @@ const creditCard = async (req, res, next) => {
                         expiry_time: response.expiry_time,
                         redirect_url: response.redirect_url,
                         bank: response.bank,
+                        dataItem,
                     },
                 });
             });
@@ -510,29 +508,26 @@ const gopay = async (req, res, next) => {
             },
         });
 
-        const { seatIsFound, flightIsFound, isBooked, seatNumber } =
-            await checkSeatAvailability(seats, flightId);
+        // check seat
+        const { error, seatNumber } = await checkSeatAvailability(
+            seats,
+            flightId
+        );
 
-        if (!flightIsFound) {
+        if (error.flight) {
             return next(
-                createHttpError(404, {
-                    message: "Flight is not found",
-                })
+                createHttpError(404, { message: "Flight is not found" })
             );
         }
-
-        if (!seatIsFound) {
-            return next(
-                createHttpError(404, {
-                    message: "Seat not found",
-                })
-            );
+        if (error.seat) {
+            return next(createHttpError(404, { message: "Seat is not found" }));
         }
-
-        if (isBooked) {
+        if (error.booked) {
             return next(
-                createHttpError(422, {
-                    message: `Flight seat in this flight with seat number: ${seatNumber} is already booked`,
+                createHttpError(400, {
+                    message: `Seat in this flight with seat number: ${seatNumber.join(
+                        " & "
+                    )} is booked`,
                 })
             );
         }
@@ -558,10 +553,11 @@ const gopay = async (req, res, next) => {
 
                 const transaction = await tx.ticketTransaction.create({
                     data: {
-                        userId: "clwudd72l000ujj2zedoasy2a", // req.user.id (from user loggedIn)
+                        userId: "clwzk52fn001csazohnfp1omc", // req.user.id (from user loggedIn)
                         orderId: response.order_id,
                         status: response.transaction_status,
                         totalPrice: parseFloat(response.gross_amount),
+                        bookingDate: dataCustomer.bookingDate,
                     },
                 });
 
@@ -576,11 +572,11 @@ const gopay = async (req, res, next) => {
                                 seatId: dataItem.seatId,
                                 familyName: dataItem.familyName,
                                 flightId: req.body.flightId,
-                                dob: new Date().toISOString(),
+                                dob: dataItem.dob,
                                 citizenship: dataItem.citizenship,
                                 passport: randomUUID(),
                                 issuingCountry: dataItem.issuingCountry,
-                                validityPeriod: new Date().toISOString(),
+                                validityPeriod: dataItem.validityPeriod,
                             },
                         });
                     })
@@ -597,7 +593,7 @@ const gopay = async (req, res, next) => {
                         },
                     },
                     data: {
-                        isBooked: true,
+                        status: "OCCUPIED",
                     },
                 });
 
@@ -613,6 +609,7 @@ const gopay = async (req, res, next) => {
                         transaction_status: response.transaction_status,
                         payment_status: response.fraud_status,
                         expiry_time: response.expiry_time,
+                        dataItem,
                         action: response.actions,
                     },
                 });
