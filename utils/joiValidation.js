@@ -141,10 +141,18 @@ const UpdateTicketSchema = Joi.object({
 });
 
 // flightSeat
-const createFlightSeatSchema = Joi.object({
-    flightId: Joi.string().regex(/^\d+$/).required(),
-    seatNumber: Joi.string().min(2).max(4).required(),
+const createSeatSchema = Joi.object({
+    flightId: Joi.string().required(),
+    seatNumber: Joi.string().required(),
     type: Joi.string().valid("ECONOMY", "BUSINESS", "FIRST").required(),
+    status: Joi.string()
+        .valid("AVAILABLE", "OCCUPIED", "BOOKED")
+        .default("AVAILABLE"),
+});
+
+const updateSeatSchema = Joi.object({
+    seatNumber: Joi.string().required(),
+    status: Joi.string().valid("AVAILABLE", "OCCUPIED", "BOOKED").required(),
 });
 
 // Airline
@@ -207,7 +215,8 @@ module.exports = {
     forgetPasswordSchema,
     userCreateSchema,
     userUpdateSchema,
-    createFlightSeatSchema,
+    createSeatSchema,
+    updateSeatSchema,
     createAirlineSchema,
     updateAirlineSchema,
     createAirportSchema,
