@@ -3,15 +3,15 @@
 <html lang="en">
 
 <head>
-    <title>Code coverage report for utils/joiValidation.js</title>
+    <title>Code coverage report for BE-Rest-API-SkyFly/controllers/ticket.js</title>
     <meta charset="utf-8" />
-    <link rel="stylesheet" href="../prettify.css" />
-    <link rel="stylesheet" href="../base.css" />
-    <link rel="shortcut icon" type="image/x-icon" href="../favicon.png" />
+    <link rel="stylesheet" href="../../prettify.css" />
+    <link rel="stylesheet" href="../../base.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="../../favicon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style type='text/css'>
         .coverage-summary .sorter {
-            background-image: url(../sort-arrow-sprite.png);
+            background-image: url(../../sort-arrow-sprite.png);
         }
     </style>
 </head>
@@ -19,34 +19,34 @@
 <body>
 <div class='wrapper'>
     <div class='pad1'>
-        <h1><a href="../index.html">All files</a> / <a href="index.html">utils</a> joiValidation.js</h1>
+        <h1><a href="../../index.html">All files</a> / <a href="index.html">BE-Rest-API-SkyFly/controllers</a> ticket.js</h1>
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">15.15% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>18/18</span>
+                <span class='fraction'>10/66</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/0</span>
+                <span class='fraction'>0/26</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">0% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>0/0</span>
+                <span class='fraction'>0/6</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">100% </span>
+                <span class="strong">15.38% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>18/18</span>
+                <span class='fraction'>10/65</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line high'></div>
+    <div class='status-line low'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -288,7 +288,308 @@
 <a name='L223'></a><a href='#L223'>223</a>
 <a name='L224'></a><a href='#L224'>224</a>
 <a name='L225'></a><a href='#L225'>225</a>
-<a name='L226'></a><a href='#L226'>226</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<a name='L226'></a><a href='#L226'>226</a>
+<a name='L227'></a><a href='#L227'>227</a>
+<a name='L228'></a><a href='#L228'>228</a>
+<a name='L229'></a><a href='#L229'>229</a>
+<a name='L230'></a><a href='#L230'>230</a>
+<a name='L231'></a><a href='#L231'>231</a>
+<a name='L232'></a><a href='#L232'>232</a>
+<a name='L233'></a><a href='#L233'>233</a>
+<a name='L234'></a><a href='#L234'>234</a>
+<a name='L235'></a><a href='#L235'>235</a>
+<a name='L236'></a><a href='#L236'>236</a>
+<a name='L237'></a><a href='#L237'>237</a>
+<a name='L238'></a><a href='#L238'>238</a>
+<a name='L239'></a><a href='#L239'>239</a>
+<a name='L240'></a><a href='#L240'>240</a>
+<a name='L241'></a><a href='#L241'>241</a>
+<a name='L242'></a><a href='#L242'>242</a>
+<a name='L243'></a><a href='#L243'>243</a>
+<a name='L244'></a><a href='#L244'>244</a>
+<a name='L245'></a><a href='#L245'>245</a>
+<a name='L246'></a><a href='#L246'>246</a>
+<a name='L247'></a><a href='#L247'>247</a>
+<a name='L248'></a><a href='#L248'>248</a>
+<a name='L249'></a><a href='#L249'>249</a>
+<a name='L250'></a><a href='#L250'>250</a>
+<a name='L251'></a><a href='#L251'>251</a>
+<a name='L252'></a><a href='#L252'>252</a>
+<a name='L253'></a><a href='#L253'>253</a>
+<a name='L254'></a><a href='#L254'>254</a>
+<a name='L255'></a><a href='#L255'>255</a>
+<a name='L256'></a><a href='#L256'>256</a>
+<a name='L257'></a><a href='#L257'>257</a>
+<a name='L258'></a><a href='#L258'>258</a>
+<a name='L259'></a><a href='#L259'>259</a>
+<a name='L260'></a><a href='#L260'>260</a>
+<a name='L261'></a><a href='#L261'>261</a>
+<a name='L262'></a><a href='#L262'>262</a>
+<a name='L263'></a><a href='#L263'>263</a>
+<a name='L264'></a><a href='#L264'>264</a>
+<a name='L265'></a><a href='#L265'>265</a>
+<a name='L266'></a><a href='#L266'>266</a>
+<a name='L267'></a><a href='#L267'>267</a>
+<a name='L268'></a><a href='#L268'>268</a>
+<a name='L269'></a><a href='#L269'>269</a></td><td class="line-coverage quiet"><span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -298,445 +599,273 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const Joi = require("joi").extend(require("@joi/date"));
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">const { PrismaClient } = require("@prisma/client");
+const createHttpError = require("http-errors");
+const { v4: uuidv4 } = require("uuid");
 &nbsp;
-// auth
-const LoginSchema = Joi.object({
-    password: Joi.string().min(8).max(50).required(),
-    email: Joi.string()
-        .email({
-            minDomainSegments: 2,
-            maxDomainSegments: 3,
-            tlds: { allow: ["com", "net", "id"] },
-        })
-        .required(),
-});
+const prisma = new PrismaClient();
 &nbsp;
-const RegisterSchema = Joi.object({
-    name: Joi.string()
-        .min(3)
-        .max(30)
-        .regex(/^(?!\s*$)[a-zA-Z\s]+$/) //will allow user to input only alphabet and won't accept if there is only blank space
-        .required(),
-    email: Joi.string()
-        .email({
-            minDomainSegments: 2,
-            maxDomainSegments: 3,
-            tlds: { allow: ["com", "net", "id"] },
-        })
-        .required(),
-    phoneNumber: Joi.string().min(11).max(13).required(),
-    password: Joi.string().min(8).max(20).required(),
-});
+const getAllTicket = <span class="fstat-no" title="function not covered" >as</span>ync (req, res, next) =&gt; {
+<span class="cstat-no" title="statement not covered" >    try {</span>
+        const search = <span class="cstat-no" title="statement not covered" >req.query.search || "";</span>
+        const limit = <span class="cstat-no" title="statement not covered" >parseInt(req.query.limit) || 10;</span>
+        const page = <span class="cstat-no" title="statement not covered" >parseInt(req.query.page) || 1;</span>
+        const offset = <span class="cstat-no" title="statement not covered" >(page - 1) * limit;</span>
 &nbsp;
-const PasswordSchema = Joi.object({
-    password: Joi.string().min(8).max(30).required(),
-    confirmPassword: Joi.any().valid(Joi.ref("password")).required().messages({
-        "any.only": "Confirm password does not match password",
-    }),
-});
+        const tickets = <span class="cstat-no" title="statement not covered" >await prisma.ticket.findMany({</span>
+            select: {
+                id: true,
+                code: true,
+                bookingDate: true,
+                flight: {
+                    select: {
+                        id: true,
+                        departureDate: true,
+                        departureAirport: true,
+                        arrivalDate: true,
+                        destinationAirport: true,
+                        price: true,
+                    },
+                },
+                user: {
+                    select: {
+                        id: true,
+                        name: true,
+                        phoneNumber: true,
+                    },
+                },
+                seat: {
+                    select: {
+                        id: true,
+                        seatNumber: true,
+                        type: true,
+                    },
+                },
+            },
+            where: {
+                code: {
+                    contains: search,
+                },
+            },
+            orderBy: {
+                id: "asc",
+            },
+            skip: offset,
+            take: limit,
+        });
 &nbsp;
-const OTPSchema = Joi.object({
-    otp: Joi.string().min(6).max(6).required(),
-});
+        const count = <span class="cstat-no" title="statement not covered" >await prisma.ticket.count({</span>
+            where: {
+                code: {
+                    contains: search,
+                },
+            },
+        });
 &nbsp;
-const forgetPasswordSchema = Joi.object({
-    email: Joi.string()
-        .email({
-            minDomainSegments: 2,
-            maxDomainSegments: 3,
-            tlds: { allow: ["com", "net", "id"] },
-        })
-        .required(),
-});
+<span class="cstat-no" title="statement not covered" >        res.status(200).json({</span>
+            status: true,
+            totalItems: count,
+            pagination: {
+                totalPages: Math.ceil(count / limit),
+                currentPage: page,
+                pageItems: tickets.length,
+                nextPage: page &lt; Math.ceil(count / limit) ? page + 1 : null,
+                prevPage: page &gt; 1 ? page - 1 : null,
+            },
+            data: tickets.length !== 0 ? tickets : "empty ticket data",
+        });
+    } catch (error) {
+<span class="cstat-no" title="statement not covered" >        next(createHttpError(500, { message: error.message }));</span>
+    }
+};
 &nbsp;
-// user
-const userCreateSchema = Joi.object({
-    name: Joi.string()
-        .regex(/^(?!\s*$)[a-zA-Z\s]+$/)
-        .required(),
-    phoneNumber: Joi.string().min(11).max(13).optional(),
-    familyName: Joi.string()
-        .regex(/^(?!\s*$)[a-zA-Z\s]+$/)
-        .required(),
-    role: Joi.string().valid("BUYER", "ADMIN").default("BUYER"), // Set default value for role
-});
+const getTicketById = <span class="fstat-no" title="function not covered" >as</span>ync (req, res, next) =&gt; {
+<span class="cstat-no" title="statement not covered" >    try {</span>
+        const ticket = <span class="cstat-no" title="statement not covered" >await prisma.ticket.findUnique({</span>
+            where: { id: req.params.id },
+            include: {
+                flight: {
+                    select: {
+                        id: true,
+                        departureDate: true,
+                        departureAirport: true,
+                        arrivalDate: true,
+                        destinationAirport: true,
+                        price: true,
+                    },
+                },
+                user: {
+                    select: {
+                        id: true,
+                        name: true,
+                    },
+                },
+                seat: {
+                    select: {
+                        id: true,
+                        seatNumber: true,
+                        type: true,
+                    },
+                },
+            },
+        });
 &nbsp;
-const userUpdateSchema = Joi.object({
-    id: Joi.string(),
-    name: Joi.string().regex(/^(?!\s*$)[a-zA-Z\s]+$/),
-    phoneNumber: Joi.string().optional(),
-    familyName: Joi.string()
-        .regex(/^(?!\s*$)[a-zA-Z\s]+$/)
-        .required(),
-    role: Joi.forbidden(), // Ensure role is not allowed in request body
-});
+<span class="cstat-no" title="statement not covered" >        if (!ticket) {</span>
+<span class="cstat-no" title="statement not covered" >            return next(createHttpError(404, { message: "Ticket not found" }));</span>
+        }
+<span class="cstat-no" title="statement not covered" >        res.status(200).json({</span>
+            status: true,
+            message: "Ticket data retrieved successfully",
+            data: ticket,
+        });
+    } catch (error) {
+<span class="cstat-no" title="statement not covered" >        next(createHttpError(500, { message: error.message }));</span>
+    }
+};
 &nbsp;
-// flight
-const createFlightSchema = Joi.object({
-    planeId: Joi.string().regex(/^[a-zA-Z0-9]*$/).required(),
-    departureDate: Joi.date().iso().required().messages({
-        "date.format":
-            '"departureDate" must be in ISO format, eg: 2024-01-07 09:30:00',
-    }),
-    departureAirportId: Joi.string().required(),
-    arrivalDate: Joi.date().iso().required().messages({
-        "date.format":
-            '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
-    }),
-    transitAirportId: Joi.string().allow(null),
-    transitArrivalDate: Joi.alternatives().conditional('transitAirportId', {
-        is: Joi.exist(),
-        then: Joi.date().iso().required().messages({
-            "date.format":
-                '"transitArrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
-        }),
-        otherwise: Joi.forbidden(),
-    }),
-    transitDepartureDate: Joi.alternatives().conditional('transitAirportId', {
-        is: Joi.exist(),
-        then: Joi.date().iso().required().messages({
-            "date.format":
-                '"transitDepartureDate" must be in ISO format, eg: 2024-01-07 09:30:00',
-        }),
-        otherwise: Joi.forbidden(),
-    }),
-    destinationAirportId: Joi.string().required(),
-    price: Joi.number().required(),
-    capacity: Joi.number().min(2).max(850).required(),
-    facilities: Joi.string(),
-});
+const createTicket = <span class="fstat-no" title="function not covered" >as</span>ync (req, res, next) =&gt; {
+    const { flightId, userId, seatId, bookingDate } = <span class="cstat-no" title="statement not covered" >req.body;</span>
 &nbsp;
-const updateFlightSchema = Joi.object({
-    planeId: Joi.string(),
-    departureDate: Joi.date().iso().messages({
-        "date.format":
-            '"departureDate" must be in ISO format, eg: 2024-01-07 09:30:00',
-    }),
-    departureAirportId: Joi.string(),
-    arrivalDate: Joi.date().iso().messages({
-        "date.format":
-            '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
-    }),
-    transitAirportId: Joi.string(),
-    transitArrivalDate: Joi.date().iso().messages({
-        "date.format":
-            '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
-    }),
-    transitDepartureDate: Joi.date().iso().messages({
-        "date.format":
-            '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
-    }),
-    destinationAirportId: Joi.string(),
-    price: Joi.number(),
-    capacity: Joi.number().min(2).max(850),
-    facilities: Joi.string(),
-});
+    // Generate RandomCode
+    const generateRandomCode = <span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" >(l</span>ength) =&gt; {</span>
+        const characters = <span class="cstat-no" title="statement not covered" >"ABCDEFGHIJKLMNOPQRSTUVWXYZ";</span>
+        let result = <span class="cstat-no" title="statement not covered" >"";</span>
+<span class="cstat-no" title="statement not covered" >        for (let i = <span class="cstat-no" title="statement not covered" >0;</span> i &lt; length; i++) {</span>
+            const randomIndex = <span class="cstat-no" title="statement not covered" >Math.floor(Math.random() * characters.length);</span>
+<span class="cstat-no" title="statement not covered" >            result += characters[randomIndex];</span>
+        }
+<span class="cstat-no" title="statement not covered" >        return result;</span>
+    };
 &nbsp;
-// ticket
-const TicketSchema = Joi.object({
-    flightId: Joi.string().regex(/^[a-zA-Z0-9]*$/).required(),
-    userId: Joi.string().required(),
-    seatId: Joi.string().required(),
-    bookingDate: Joi.date()
-        .required()
-        .greater(Date.now() - 24 * 60 * 60 * 1000),
-});
+    const codeRandom = <span class="cstat-no" title="statement not covered" >generateRandomCode(6);</span>
+<span class="cstat-no" title="statement not covered" >    try {</span>
+        // Check if the flight exists
+        const flight = <span class="cstat-no" title="statement not covered" >await prisma.flight.findUnique({</span>
+            where: { id: flightId },
+        });
+<span class="cstat-no" title="statement not covered" >        if (!flight) {</span>
+<span class="cstat-no" title="statement not covered" >            return next(createHttpError(404, { message: "Flight not found" }));</span>
+        }
 &nbsp;
-const UpdateTicketSchema = Joi.object({
-    code: Joi.string(),
-    bookingDate: Joi.date().greater(Date.now() - 24 * 60 * 60 * 1000),
-});
+        // Check if the USER exists
+        const user = <span class="cstat-no" title="statement not covered" >await prisma.user.findUnique({</span>
+            where: { id: userId },
+        });
+<span class="cstat-no" title="statement not covered" >        if (!user) {</span>
+<span class="cstat-no" title="statement not covered" >            return next(createHttpError(404, { message: "User not found" }));</span>
+        }
 &nbsp;
-// flightSeat
-const createFlightSeatSchema = Joi.object({
-    flightId: Joi.string().regex(/^[a-zA-Z0-9]*$/).required(),
-    seatNumber: Joi.string().min(2).max(4).required(),
-    type: Joi.string().valid("ECONOMY", "BUSINESS", "FIRST").required(),
-});
+        // Check if the seat exists and is not booked
+        const seat = <span class="cstat-no" title="statement not covered" >await prisma.flightSeat.findUnique({</span>
+            where: { id: seatId },
+        });
+<span class="cstat-no" title="statement not covered" >        if (!seat) {</span>
+<span class="cstat-no" title="statement not covered" >            return next(createHttpError(404, { message: "Seat not found" }));</span>
+        }
+<span class="cstat-no" title="statement not covered" >        if (seat.isBooked) {</span>
+<span class="cstat-no" title="statement not covered" >            return next(</span>
+                createHttpError(400, { message: "Seat is already booked" })
+            );
+        }
 &nbsp;
-// Airline
-const createAirlineSchema = Joi.object({
-    name: Joi.string()
-        .min(6)
-        .max(20)
-        .regex(/^(?!\s*$)[a-zA-Z\s]+$/)
-        .required(),
-    code: Joi.string().min(2).max(2).required(),
-});
+        // Create the new ticket
+        const newTicket = <span class="cstat-no" title="statement not covered" >await prisma.ticket.create({</span>
+            data: {
+                code: codeRandom,
+                flightId,
+                userId,
+                seatId,
+                bookingDate,
+            },
 &nbsp;
-const updateAirlineSchema = Joi.object({
-    name: Joi.string()
-        .min(6)
-        .max(20)
-        .regex(/^(?!\s*$)[a-zA-Z\s]+$/),
-    code: Joi.string().min(2).max(2),
-});
+            include: {
+                flight: true,
+                user: true,
+                seat: true,
+            },
+        });
 &nbsp;
-// Airport
-const createAirportSchema = Joi.object({
-    name: Joi.string()
-        .min(2)
-        .max(70)
-        .regex(/^(?!\s*$)[a-zA-Z\s]+$/)
-        .required(),
-    code: Joi.string().min(3).max(3).required(),
-    country: Joi.string()
-        .regex(/^(?!\s*$)[a-zA-Z\s]+$/)
-        .required(),
-    city: Joi.string()
-        .regex(/^(?!\s*$)[a-zA-Z\s]+$/)
-        .required(),
-});
+        // Mark the seat as booked
+<span class="cstat-no" title="statement not covered" >        await prisma.flightSeat.update({</span>
+            where: { id: seatId },
+            data: { isBooked: true },
+        });
 &nbsp;
-const updateAirportSchema = Joi.object({
-    name: Joi.string()
-        .min(2)
-        .max(70)
-        .regex(/^(?!\s*$)[a-zA-Z\s]+$/),
-    code: Joi.string().min(3).max(3),
-    country: Joi.string()
-        .min(3)
-        .max(25)
-        .regex(/^(?!\s*$)[a-zA-Z\s]+$/),
-    city: Joi.string()
-        .min(3)
-        .max(40)
-        .regex(/^(?!\s*$)[a-zA-Z\s]+$/),
-});
+<span class="cstat-no" title="statement not covered" >        res.status(201).json({</span>
+            status: true,
+            message: "Ticket created successfully",
+            data: newTicket,
+        });
+    } catch (error) {
+<span class="cstat-no" title="statement not covered" >        next(createHttpError(500, { message: error.message }));</span>
+    }
+};
+&nbsp;
+const updateTicket = <span class="fstat-no" title="function not covered" >as</span>ync (req, res, next) =&gt; {
+    const { code, flightId, userId, seatId, bookingDate } = <span class="cstat-no" title="statement not covered" >req.body;</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    try {</span>
+        const ticket = <span class="cstat-no" title="statement not covered" >await prisma.ticket.findUnique({</span>
+            where: { id: req.params.id },
+        });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        if (!ticket) {</span>
+<span class="cstat-no" title="statement not covered" >            return next(createHttpError(404, { message: "Ticket not found" }));</span>
+        }
+&nbsp;
+        const updatedTicket = <span class="cstat-no" title="statement not covered" >await prisma.ticket.update({</span>
+            where: { id: req.params.id },
+            data: {
+                code,
+                flightId,
+                userId,
+                seatId,
+                bookingDate,
+            },
+            include: {
+                flight: true,
+                user: true,
+                seat: true,
+            },
+        });
+<span class="cstat-no" title="statement not covered" >        res.status(200).json({</span>
+            status: true,
+            message: "Ticket updated successfully",
+            data: updatedTicket,
+        });
+    } catch (error) {
+<span class="cstat-no" title="statement not covered" >        next(createHttpError(500, { message: error.message }));</span>
+    }
+};
+&nbsp;
+const deleteTicket = <span class="fstat-no" title="function not covered" >as</span>ync (req, res, next) =&gt; {
+<span class="cstat-no" title="statement not covered" >    try {</span>
+        const ticket = <span class="cstat-no" title="statement not covered" >await prisma.ticket.findUnique({</span>
+            where: { id: req.params.id },
+        });
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        if (!ticket) {</span>
+<span class="cstat-no" title="statement not covered" >            return next(createHttpError(404, { message: "Ticket not found" }));</span>
+        }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >        await prisma.ticket.delete({</span>
+            where: { id: req.params.id },
+        });
+<span class="cstat-no" title="statement not covered" >        res.status(200).json({</span>
+            status: true,
+            message: "Ticket deleted successfully",
+        });
+    } catch (error) {
+<span class="cstat-no" title="statement not covered" >        next(createHttpError(500, { message: error.message }));</span>
+    }
+};
 &nbsp;
 module.exports = {
-    LoginSchema,
-    RegisterSchema,
-    OTPSchema,
-    createFlightSchema,
-    updateFlightSchema,
-    PasswordSchema,
-    forgetPasswordSchema,
-    userCreateSchema,
-    userUpdateSchema,
-    createFlightSeatSchema,
-    createAirlineSchema,
-    updateAirlineSchema,
-    createAirportSchema,
-    updateAirportSchema,
-    TicketSchema,
-    UpdateTicketSchema,
+    getAllTicket,
+    getTicketById,
+    createTicket,
+    updateTicket,
+    deleteTicket,
 };
 &nbsp;</pre></td></tr></table></pre>
 
@@ -745,16 +874,16 @@ module.exports = {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2024-06-07T05:23:21.289Z
+                at 2024-06-07T05:20:07.298Z
             </div>
-        <script src="../prettify.js"></script>
+        <script src="../../prettify.js"></script>
         <script>
             window.onload = function () {
                 prettyPrint();
             };
         </script>
-        <script src="../sorter.js"></script>
-        <script src="../block-navigation.js"></script>
+        <script src="../../sorter.js"></script>
+        <script src="../../block-navigation.js"></script>
     </body>
 </html>
     
