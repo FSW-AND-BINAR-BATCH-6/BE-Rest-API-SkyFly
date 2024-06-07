@@ -1755,6 +1755,16 @@
                         "description": "Transit"
                     },
                     {
+                        "name": "hasDiscount",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "example": "false"
+                        },
+                        "description": "Discount"
+                    },
+                    {
                         "name": "facilities",
                         "in": "query",
                         "required": false,
