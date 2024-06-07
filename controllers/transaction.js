@@ -128,7 +128,7 @@ const createTransaction = async (req, res, next) => {
 
                 const transaction = await tx.ticketTransaction.create({
                     data: {
-                        userId: "clwzk52fn001csazohnfp1omc", // req.user.id (from user loggedIn)
+                        userId: req.user.id, // req.user.id (from user loggedIn)
                         orderId: parameter.transaction_details.order_id,
                         status: "pending",
                         totalPrice: parseFloat(
@@ -163,7 +163,7 @@ const createTransaction = async (req, res, next) => {
                     return seat.id;
                 });
 
-                await prisma.flightSeat.updateMany({
+                await tx.flightSeat.updateMany({
                     where: {
                         id: {
                             in: [seatId[0], seatId[1]],
@@ -200,23 +200,21 @@ const createTransaction = async (req, res, next) => {
 const notification = async (req, res, next) => {
     try {
         const data = req.body;
-
-        const seats = await prisma.flightSeat.findMany({
+        const ticketTransaction = await prisma.ticketTransaction.findUnique({
             where: {
-                id: {
-                    in: [req.body.first_seatId, req.body.second_seatId],
-                },
+                orderI: data.order_id,
             },
+            include: {
+                Transaction_Detail: true,
+            },
+        });
+
+        const seats = ticketTransaction.Transaction_Detail.map((data) => {
+            return seatId.push(data.seatId);
         });
 
         let seatId = seats.map((seat) => {
             return seat.id;
-        });
-
-        const ticketTransaction = await prisma.ticketTransaction.findUnique({
-            where: {
-                orderId: data.order_id,
-            },
         });
 
         if (ticketTransaction) {
@@ -242,7 +240,8 @@ const notification = async (req, res, next) => {
                     responseData = await prisma.flightSeat.updateMany({
                         where: {
                             id: {
-                                in: [seatId[0], seatId[1]],
+                                in: ticketTransaction.ticketTransactionDetail
+                                    .seatId,
                             },
                         },
                         data: {
@@ -299,70 +298,6 @@ const notification = async (req, res, next) => {
         res.status(200).json({
             status: true,
             message: "OK",
-        });
-    } catch (error) {
-        next(createHttpError(500, { message: error.message }));
-    }
-};
-
-//! on proggress
-const updateTransaction = async (req, res, next) => {
-    try {
-        const { orderId } = req.params;
-
-        // encode serverKey for authorization get transaction status
-        const encodedServerKey = btoa(
-            unescape(encodeURIComponent(`${process.env.SANDBOX_SERVER_KEY}:`))
-        );
-
-        const url = `https://api.sandbox.midtrans.com/v2/${orderId}/status`;
-        const options = {
-            method: "GET",
-            headers: {
-                accept: "application/json",
-                authorization: `Basic ${encodedServerKey}`,
-            },
-        };
-
-        const response = await fetch(url, options);
-        const transaction = await response.json();
-
-        if (transaction.status_code === "404") {
-            return next(
-                createHttpError(422, {
-                    message: "Transaction doesn't exist",
-                })
-            );
-        }
-
-        if (transaction.transaction_status === "expire") {
-            return next(
-                createHttpError(410, {
-                    message: "Transaction is expired",
-                })
-            );
-        }
-
-        if (
-            transaction.transaction_status !== "pending" ||
-            transaction.transaction_status !== "PENDING"
-        ) {
-            await prisma.ticketTransaction.update({
-                data: {
-                    status: transaction.transaction_status,
-                },
-                where: {
-                    orderId,
-                },
-            });
-        }
-
-        res.status(200).json({
-            status: true,
-            message: "Transaction data retrieved successfully",
-            data: {
-                transaction_status: transaction.transaction_status,
-            },
         });
     } catch (error) {
         next(createHttpError(500, { message: error.message }));
@@ -500,7 +435,7 @@ const bankTransfer = async (req, res, next) => {
 
                 const transaction = await tx.ticketTransaction.create({
                     data: {
-                        userId: "clwzk52fn001csazohnfp1omc", // req.user.id (from user loggedIn)
+                        userId: req.user.id, // req.user.id (from user loggedIn)
                         orderId: response.order_id,
                         status: response.transaction_status,
                         totalPrice: parseFloat(response.gross_amount),
@@ -533,7 +468,7 @@ const bankTransfer = async (req, res, next) => {
                     return seat.id;
                 });
 
-                await prisma.flightSeat.updateMany({
+                await tx.flightSeat.updateMany({
                     where: {
                         id: {
                             in: [seatId[0], seatId[1]],
@@ -651,7 +586,7 @@ const creditCard = async (req, res, next) => {
 
                 const transaction = await tx.ticketTransaction.create({
                     data: {
-                        userId: "clwzk52fn001csazohnfp1omc", // req.user.id (from user loggedIn)
+                        userId: req.user.id, // req.user.id (from user loggedIn)
                         orderId: response.order_id,
                         status: response.transaction_status,
                         totalPrice: parseFloat(response.gross_amount),
@@ -684,7 +619,7 @@ const creditCard = async (req, res, next) => {
                     return seat.id;
                 });
 
-                await prisma.flightSeat.updateMany({
+                await tx.flightSeat.updateMany({
                     where: {
                         id: {
                             in: [seatId[0], seatId[1]],
@@ -791,7 +726,7 @@ const gopay = async (req, res, next) => {
 
                 const transaction = await tx.ticketTransaction.create({
                     data: {
-                        userId: "clwzk52fn001csazohnfp1omc", // req.user.id (from user loggedIn)
+                        userId: req.user.id, // req.user.id (from user loggedIn)
                         orderId: response.order_id,
                         status: response.transaction_status,
                         totalPrice: parseFloat(response.gross_amount),
@@ -824,7 +759,7 @@ const gopay = async (req, res, next) => {
                     return seat.id;
                 });
 
-                await prisma.flightSeat.updateMany({
+                await tx.flightSeat.updateMany({
                     where: {
                         id: {
                             in: [seatId[0], seatId[1]],
@@ -864,12 +799,59 @@ const gopay = async (req, res, next) => {
     }
 };
 
+//TODO: dashboard action
+
+const getAllTransaction = async (req, res, next) => {
+    // get all transaction data from ticketTransaction & include ticketTransaction detail
+
+    try {
+        const ticketTransactions = await prisma.ticketTransaction.findMany({
+            include: {
+                Transaction_Detail: true,
+            },
+        });
+        res.status(200).json({
+            status: true,
+            message: "ticket transactions data retrieved successfully",
+            data: ticketTransactions,
+        });
+    } catch (error) {
+        next(
+            createHttpError(500, {
+                message: error.message,
+            })
+        );
+    }
+};
+
+const getTransactionById = async (req, res, next) => {
+    // get transaction data by id from ticketTransaction & include ticketTransaction detail
+};
+
+const updateTransaction = async (req, res, next) => {
+    // update transaction data by id from ticketTransaction & include ticketTransaction detail
+    // pake db transaction yak.. contoh ada di atas / di auth controller -> update user logged in
+    // kalau perlu bikin function baru buat update transactionDetail satuan
+};
+
+const deleteTransaction = async (req, res, next) => {
+    // delete transaction data by id from ticketTransaction & include ticketTransaction detail
+};
+
+const deleteTransactionDetail = async (req, res, next) => {
+    // delete transaction detail data by id
+};
+
 module.exports = {
     getTransaction,
-    updateTransaction,
     createTransaction,
     notification,
     gopay,
     bankTransfer,
     creditCard,
+    getAllTransaction,
+    getTransactionById,
+    updateTransaction,
+    deleteTransaction,
+    deleteTransactionDetail,
 };

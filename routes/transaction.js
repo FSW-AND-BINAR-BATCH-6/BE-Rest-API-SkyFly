@@ -7,7 +7,9 @@ const {
     updateTransaction,
     createTransaction,
     notification,
+    getAllTransaction,
 } = require("../controllers/transaction");
+const authentication = require("../middlewares/authentication");
 
 router.use((req, res, next) => {
     res.header(
@@ -17,12 +19,15 @@ router.use((req, res, next) => {
     next();
 });
 
-router.post("/payment", createTransaction);
-router.post("/bank", bankTransfer);
-router.post("/creditcard", creditCard);
-router.post("/gopay", gopay);
-router.get("/status/:orderId", getTransaction);
+router.post("/payment", authentication, createTransaction);
+router.post("/bank", authentication, bankTransfer);
+router.post("/creditcard", authentication, creditCard);
+router.post("/gopay", authentication, gopay);
+router.get("/status/:orderId", authentication, getTransaction);
 router.post("/notification", notification);
-router.put("/status/:orderId", updateTransaction);
+router.put("/status/:orderId", authentication, updateTransaction);
+
+// dashboard action
+router.get("/", getAllTransaction);
 
 module.exports = router;
