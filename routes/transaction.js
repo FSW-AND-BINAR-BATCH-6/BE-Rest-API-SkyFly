@@ -5,6 +5,8 @@ const {
     gopay,
     getTransaction,
     updateTransaction,
+    createTransaction,
+    notification,
 } = require("../controllers/transaction");
 
 router.use((req, res, next) => {
@@ -15,10 +17,12 @@ router.use((req, res, next) => {
     next();
 });
 
-router.get("/status/:orderId", getTransaction);
+router.post("/payment", createTransaction);
 router.post("/bank", bankTransfer);
 router.post("/creditcard", creditCard);
 router.post("/gopay", gopay);
+router.get("/status/:orderId", getTransaction);
+router.post("/notification", notification);
 router.put("/status/:orderId", updateTransaction);
 
 module.exports = router;
