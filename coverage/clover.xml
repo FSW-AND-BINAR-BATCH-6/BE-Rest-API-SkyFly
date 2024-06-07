@@ -1,27 +1,78 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1717036814854" clover="3.2.0">
-  <project timestamp="1717036814854" name="All files">
-    <metrics statements="26" coveredstatements="25" conditionals="2" coveredconditionals="1" methods="2" coveredmethods="2" elements="30" coveredelements="28" complexity="0" loc="26" ncloc="26" packages="2" files="2" classes="2"/>
+<coverage generated="1717751640351" clover="3.2.0">
+  <project timestamp="1717751640351" name="All files">
+    <metrics statements="73" coveredstatements="50" conditionals="22" coveredconditionals="9" methods="7" coveredmethods="4" elements="102" coveredelements="63" complexity="0" loc="73" ncloc="73" packages="3" files="3" classes="3"/>
+    <package name="controllers">
+      <metrics statements="45" coveredstatements="23" conditionals="20" coveredconditionals="8" methods="5" coveredmethods="2"/>
+      <file name="user.js" path="C:\Belajar-Golang\stupen Binar Semester 6\finalprojekbinar-github\update-branchdevanduser\BE-Rest-API-SkyFly\controllers\user.js">
+        <metrics statements="45" coveredstatements="23" conditionals="20" coveredconditionals="8" methods="5" coveredmethods="2"/>
+        <line num="1" count="1" type="stmt"/>
+        <line num="2" count="1" type="stmt"/>
+        <line num="3" count="1" type="stmt"/>
+        <line num="4" count="1" type="stmt"/>
+        <line num="6" count="1" type="stmt"/>
+        <line num="7" count="2" type="stmt"/>
+        <line num="8" count="2" type="cond" truecount="2" falsecount="0"/>
+        <line num="9" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="10" count="2" type="cond" truecount="1" falsecount="1"/>
+        <line num="11" count="2" type="stmt"/>
+        <line num="13" count="2" type="stmt"/>
+        <line num="41" count="1" type="stmt"/>
+        <line num="50" count="1" type="stmt"/>
+        <line num="64" count="1" type="stmt"/>
+        <line num="68" count="1" type="stmt"/>
+        <line num="69" count="1" type="stmt"/>
+        <line num="70" count="1" type="stmt"/>
+        <line num="88" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="89" count="1" type="stmt"/>
+        <line num="95" count="0" type="stmt"/>
+        <line num="98" count="0" type="stmt"/>
+        <line num="102" count="1" type="stmt"/>
+        <line num="103" count="0" type="stmt"/>
+        <line num="105" count="0" type="stmt"/>
+        <line num="106" count="0" type="stmt"/>
+        <line num="116" count="0" type="stmt"/>
+        <line num="128" count="0" type="stmt"/>
+        <line num="132" count="1" type="stmt"/>
+        <line num="134" count="0" type="stmt"/>
+        <line num="136" count="0" type="stmt"/>
+        <line num="137" count="0" type="stmt"/>
+        <line num="141" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="142" count="0" type="stmt"/>
+        <line num="147" count="0" type="stmt"/>
+        <line num="157" count="0" type="stmt"/>
+        <line num="169" count="0" type="stmt"/>
+        <line num="173" count="1" type="stmt"/>
+        <line num="174" count="0" type="stmt"/>
+        <line num="175" count="0" type="stmt"/>
+        <line num="179" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="180" count="0" type="stmt"/>
+        <line num="183" count="0" type="stmt"/>
+        <line num="187" count="0" type="stmt"/>
+        <line num="192" count="0" type="stmt"/>
+        <line num="196" count="1" type="stmt"/>
+      </file>
+    </package>
     <package name="lib">
       <metrics statements="10" coveredstatements="9" conditionals="2" coveredconditionals="1" methods="2" coveredmethods="2"/>
-      <file name="validator.js" path="C:\Users\Setsuna\Documents\GitHub\GroupProject\BE-Rest-API-SkyFly\lib\validator.js">
+      <file name="validator.js" path="C:\Belajar-Golang\stupen Binar Semester 6\finalprojekbinar-github\update-branchdevanduser\BE-Rest-API-SkyFly\lib\validator.js">
         <metrics statements="10" coveredstatements="9" conditionals="2" coveredconditionals="1" methods="2" coveredmethods="2"/>
         <line num="1" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
-        <line num="4" count="54" type="stmt"/>
-        <line num="5" count="54" type="stmt"/>
-        <line num="6" count="54" type="stmt"/>
-        <line num="7" count="15" type="stmt"/>
-        <line num="8" count="15" type="stmt"/>
-        <line num="10" count="39" type="cond" truecount="1" falsecount="1"/>
-        <line num="11" count="39" type="stmt"/>
+        <line num="4" count="46" type="stmt"/>
+        <line num="5" count="46" type="stmt"/>
+        <line num="6" count="46" type="stmt"/>
+        <line num="7" count="13" type="stmt"/>
+        <line num="8" count="13" type="stmt"/>
+        <line num="10" count="33" type="cond" truecount="1" falsecount="1"/>
+        <line num="11" count="33" type="stmt"/>
         <line num="13" count="0" type="stmt"/>
       </file>
     </package>
     <package name="utils">
-      <metrics statements="16" coveredstatements="16" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
-      <file name="joiValidation.js" path="C:\Users\Setsuna\Documents\GitHub\GroupProject\BE-Rest-API-SkyFly\utils\joiValidation.js">
-        <metrics statements="16" coveredstatements="16" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <metrics statements="18" coveredstatements="18" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
+      <file name="joiValidation.js" path="C:\Belajar-Golang\stupen Binar Semester 6\finalprojekbinar-github\update-branchdevanduser\BE-Rest-API-SkyFly\utils\joiValidation.js">
+        <metrics statements="18" coveredstatements="18" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
         <line num="1" count="1" type="stmt"/>
         <line num="4" count="1" type="stmt"/>
         <line num="15" count="1" type="stmt"/>
@@ -31,13 +82,15 @@
         <line num="54" count="1" type="stmt"/>
         <line num="65" count="1" type="stmt"/>
         <line num="76" count="1" type="stmt"/>
-        <line num="92" count="1" type="stmt"/>
-        <line num="109" count="1" type="stmt"/>
-        <line num="116" count="1" type="stmt"/>
-        <line num="125" count="1" type="stmt"/>
-        <line num="134" count="1" type="stmt"/>
-        <line num="145" count="1" type="stmt"/>
+        <line num="102" count="1" type="stmt"/>
+        <line num="129" count="1" type="stmt"/>
+        <line num="138" count="1" type="stmt"/>
+        <line num="144" count="1" type="stmt"/>
+        <line num="151" count="1" type="stmt"/>
         <line num="160" count="1" type="stmt"/>
+        <line num="169" count="1" type="stmt"/>
+        <line num="184" count="1" type="stmt"/>
+        <line num="200" count="1" type="stmt"/>
       </file>
     </package>
   </project>
