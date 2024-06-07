@@ -25,8 +25,27 @@ const RegisterSchema = Joi.object({
             tlds: { allow: ["com", "net", "id"] },
         })
         .required(),
-    phoneNumber: Joi.string().min(11).max(13).required(),
+    phoneNumber: Joi.string().min(11).max(16).required(),
     password: Joi.string().min(8).max(20).required(),
+});
+
+const updateUserLoginSchema = Joi.object({
+    name: Joi.string()
+        .min(3)
+        .max(30)
+        .regex(/^(?!\s*$)[a-zA-Z\s]+$/) //will allow user to input only alphabet and won't accept if there is only blank space
+        .required(),
+    email: Joi.string().email({
+        minDomainSegments: 2,
+        maxDomainSegments: 3,
+        tlds: { allow: ["com", "net", "id"] },
+    }),
+    phoneNumber: Joi.string().min(11).max(16),
+    familyName: Joi.string(),
+    password: Joi.string().min(8).max(20),
+    confirmPassword: Joi.any().valid(Joi.ref("password")).required().messages({
+        "any.only": "Confirm password does not match password",
+    }),
 });
 
 const PasswordSchema = Joi.object({
@@ -216,4 +235,5 @@ module.exports = {
     updateAirportSchema,
     TicketSchema,
     UpdateTicketSchema,
+    updateUserLoginSchema,
 };
