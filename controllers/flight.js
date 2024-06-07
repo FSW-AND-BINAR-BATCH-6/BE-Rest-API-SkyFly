@@ -16,7 +16,8 @@ const getAllFlight = async (req, res, next) => {
       minPrice,
       maxPrice,
       facilities,
-      hasTransit
+      hasTransit,
+      hasDiscount
     } = req.query;
 
     const skip = (page - 1) * limit;
@@ -71,6 +72,12 @@ const getAllFlight = async (req, res, next) => {
       filters.AND.push({ transitAirport: { isNot: null } });
     } else if (hasTransit && hasTransit === 'false') {
       filters.AND.push({ transitAirport: null });
+    }
+
+    if (hasDiscount && hasDiscount === 'true') {
+      filters.AND.push({ discount: { not: null || 0 } });
+    } else if (hasDiscount && hasDiscount === 'false') {
+      filters.AND.push({ discount: null || 0 });
     }
 
     if (minPrice || maxPrice) {
@@ -137,6 +144,7 @@ const getAllFlight = async (req, res, next) => {
         city: flight.destinationAirport.city,
       },
       capacity: flight.capacity,
+      discount: flight.discount,
       price: flight.price,
       facilities: flight.facilities,
     }));
@@ -219,6 +227,7 @@ const getFlightById = async (req, res, next) => {
         city: flight.destinationAirport.city,
       },
       capacity: flight.capacity,
+      discount: flight.discount,
       price: flight.price,
       facilities: flight.facilities,
     };
@@ -247,25 +256,30 @@ const createFlight = async (req, res, next) => {
     destinationAirportId,
     capacity,
     price,
+    discount,
     facilities
   } = req.body;
 
   const departureDateTime = new Date(departureDate);
   const arrivalDateTime = new Date(arrivalDate);
-  const transitArrivalDateTime = new Date(transitArrivalDate);
-  const transitDepartureDateTime = new Date(transitDepartureDate);
+  const transitArrivalDateTime = transitArrivalDate ? new Date(transitArrivalDate) : null;
+  const transitDepartureDateTime = transitDepartureDate ? new Date(transitDepartureDate) : null;
 
   const departureDateTimeConvert = new Date(departureDateTime.getTime() + 7 * 60 * 60 * 1000).toISOString();
   const arrivalDateTimeConvert = new Date(arrivalDateTime.getTime() + 7 * 60 * 60 * 1000).toISOString();
-  const transitArrivalDateTimeConvert = new Date(transitArrivalDateTime.getTime() + 7 * 60 * 60 * 1000).toISOString();
-  const transitDepartureDateTimeConvert = new Date(transitDepartureDateTime.getTime() + 7 * 60 * 60 * 1000).toISOString();
-
+  const transitArrivalDateTimeConvert = transitArrivalDateTime ? new Date(transitArrivalDateTime.getTime() + 7 * 60 * 60 * 1000).toISOString() : null;
+  const transitDepartureDateTimeConvert = transitDepartureDateTime ? new Date(transitDepartureDateTime.getTime() + 7 * 60 * 60 * 1000).toISOString() : null;
   try {
     const plane = await prisma.airline.findUnique({ where: { id: planeId } });
     const departureAirport = await prisma.airport.findUnique({ where: { id: departureAirportId } });
 
     if (!plane || !departureAirport) {
       return next(createHttpError(400, { message: "Invalid planeId or departureAirportId" }));
+    }
+
+    let finalPrice = price;
+    if (discount) {
+      finalPrice = price - (price * (discount / 100));
     }
 
     const baseCode = `${plane.code}-${departureAirport.code}`;
@@ -289,7 +303,8 @@ const createFlight = async (req, res, next) => {
         arrivalDate: arrivalDateTimeConvert,
         destinationAirportId,
         capacity,
-        price,
+        discount,
+        price: finalPrice,
         facilities,
         code
       },
@@ -320,20 +335,25 @@ const updateFlight = async (req, res, next) => {
     arrivalDate,
     destinationAirportId,
     capacity,
+    discount,
     price,
     facilities,
   } = req.body;
 
   const departureDateTime = new Date(departureDate);
   const arrivalDateTime = new Date(arrivalDate);
-  const transitArrivalDateTime = new Date(transitArrivalDate);
-  const transitDepartureDateTime = new Date(transitDepartureDate);
+  const transitArrivalDateTime = transitArrivalDate ? new Date(transitArrivalDate) : null;
+  const transitDepartureDateTime = transitDepartureDate ? new Date(transitDepartureDate) : null;
 
   const departureDateTimeConvert = new Date(departureDateTime.getTime() + 7 * 60 * 60 * 1000).toISOString();
   const arrivalDateTimeConvert = new Date(arrivalDateTime.getTime() + 7 * 60 * 60 * 1000).toISOString();
-  const transitArrivalDateTimeConvert = new Date(transitArrivalDateTime.getTime() + 7 * 60 * 60 * 1000).toISOString();
-  const transitDepartureDateTimeConvert = new Date(transitDepartureDateTime.getTime() + 7 * 60 * 60 * 1000).toISOString();
+  const transitArrivalDateTimeConvert = transitArrivalDateTime ? new Date(transitArrivalDateTime.getTime() + 7 * 60 * 60 * 1000).toISOString() : null;
+  const transitDepartureDateTimeConvert = transitDepartureDateTime ? new Date(transitDepartureDateTime.getTime() + 7 * 60 * 60 * 1000).toISOString() : null;
 
+  let finalPrice = price;
+  if (discount) {
+    finalPrice = price - (price * (discount / 100));
+  }
   try {
     const flight = await prisma.flight.findUnique({
       where: { id: req.params.id },
@@ -359,7 +379,8 @@ const updateFlight = async (req, res, next) => {
         arrivalDate: arrivalDateTimeConvert,
         destinationAirportId,
         capacity,
-        price,
+        discount,
+        price: finalPrice,
         facilities,
       },
       include: {
@@ -376,6 +397,42 @@ const updateFlight = async (req, res, next) => {
         beforeUpdate: flight,
         afterUpdate: updatedFlight,
       },
+    });
+  } catch (error) {
+    next(createHttpError(500, { message: "Internal Server Error" }));
+  }
+};
+
+const getFavoriteDestinations = async (req, res, next) => {
+  try {
+    const favoriteDestinations = await prisma.flight.groupBy({
+      by: ['destinationAirportId'],
+      _count: {
+        ticketTransactionDetail: true,
+      },
+      orderBy: {
+        _count: {
+          ticketTransactionDetail: 'desc',
+        },
+      },
+      take: 5,
+    });
+
+    const destinationsWithDetails = await Promise.all(favoriteDestinations.map(async (destination) => {
+      const airport = await prisma.airport.findUnique({
+        where: { id: destination.destinationAirportId },
+      });
+
+      return {
+        airport,
+        transactionCount: destination._count.ticketTransactionDetail,
+      };
+    }));
+
+    res.status(200).json({
+      status: true,
+      message: 'Favorite destinations retrieved successfully',
+      data: destinationsWithDetails,
     });
   } catch (error) {
     next(createHttpError(500, { message: "Internal Server Error" }));
@@ -430,4 +487,5 @@ module.exports = {
   createFlight,
   removeFlight,
   updateFlight,
+  getFavoriteDestinations,
 };

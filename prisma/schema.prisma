@@ -93,6 +93,7 @@ model Flight {
     transitDepartureDate    DateTime?
     capacity                Int
     price                   Float
+    discount                Float?
     seats                   FlightSeat[]
     tickets                 Ticket[]
     facilities              String?

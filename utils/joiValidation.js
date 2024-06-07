@@ -84,17 +84,18 @@ const createFlightSchema = Joi.object({
         "date.format":
             '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
     }),
-    transitAirportId: Joi.string().required(),
-    transitArrivalDate: Joi.date().iso().required().messages({
+    transitAirportId: Joi.string(),
+    transitArrivalDate: Joi.date().iso().messages({
         "date.format":
             '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
     }),
-    transitDepartureDate: Joi.date().iso().required().messages({
+    transitDepartureDate: Joi.date().iso().messages({
         "date.format":
             '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
     }),
     destinationAirportId: Joi.string().required(),
     price: Joi.number().required(),
+    discount: Joi.number().min(0).max(100),
     capacity: Joi.number().min(2).max(850).required(),
     facilities: Joi.string(),
 });
@@ -110,16 +111,17 @@ const updateFlightSchema = Joi.object({
         "date.format":
             '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
     }),
-    transitAirportId: Joi.string().required(),
-    transitArrivalDate: Joi.date().iso().required().messages({
+    transitAirportId: Joi.string(),
+    transitArrivalDate: Joi.date().iso().messages({
         "date.format":
             '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
     }),
-    transitDepartureDate: Joi.date().iso().required().messages({
+    transitDepartureDate: Joi.date().iso().messages({
         "date.format":
             '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
     }),
     destinationAirportId: Joi.string().required(),
+    discount: Joi.number().min(0).max(100),
     price: Joi.number().required(),
     capacity: Joi.number().min(2).max(850).required(),
     facilities: Joi.string(),
