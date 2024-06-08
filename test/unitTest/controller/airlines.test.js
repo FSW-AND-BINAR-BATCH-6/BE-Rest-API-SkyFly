@@ -1,10 +1,9 @@
 const createHttpError = require("http-errors");
-const airlineController = require("../../../controllers/airline")
-const { PrismaClient } = require("@prisma/client")
+const airlineController = require("../../../controllers/airline");
+const { PrismaClient } = require("@prisma/client");
 const { randomUUID } = require("crypto");
 const { uploadFile } = require("../../../lib/supabase");
-const prisma = new PrismaClient()
-
+const prisma = new PrismaClient();
 
 jest.mock("@prisma/client", () => {
     const mPrismaClient = {
@@ -14,21 +13,21 @@ jest.mock("@prisma/client", () => {
             findUnique: jest.fn(),
             create: jest.fn(),
             update: jest.fn(),
-            delete: jest.fn()
+            delete: jest.fn(),
         },
     };
     return {
-        PrismaClient: jest.fn(() => mPrismaClient)
-    }
-})
+        PrismaClient: jest.fn(() => mPrismaClient),
+    };
+});
 
 jest.mock("crypto", () => ({
-    randomUUID: jest.fn() 
-}))
+    randomUUID: jest.fn(),
+}));
 
 jest.mock("../../../lib/supabase", () => ({
-    uploadFile: jest.fn()
-}))
+    uploadFile: jest.fn(),
+}));
 
 const serverFailed = async (
     req,
@@ -45,7 +44,6 @@ const serverFailed = async (
     );
 };
 
-
 describe("Airline API", () => {
     let req, res, next;
 
@@ -55,126 +53,146 @@ describe("Airline API", () => {
             code: "GA",
             name: "Garuda Indonesia",
             image: "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/1716536772224.png",
-        }
-    ]
+        },
+    ];
 
     beforeEach(() => {
         res = {
             status: jest.fn().mockReturnThis(),
-            json: jest.fn()
+            json: jest.fn(),
         };
-        next = jest.fn()
-    })
+        next = jest.fn();
+    });
 
     afterEach(() => {
         jest.resetAllMocks();
-    })
+    });
 
     describe("GetAllAirlines", () => {
         beforeEach(() => {
             req = {
                 query: {
                     page: "1",
-                    limit: "10"
-                }
-            }
-        })
+                    limit: "10",
+                },
+            };
+        });
 
         it("Success", async () => {
             const totalItems = 1;
 
-            prisma.airline.findMany.mockResolvedValue(airlineDummyData)
-            prisma.airline.count.mockResolvedValue(totalItems)
+            prisma.airline.findMany.mockResolvedValue(airlineDummyData);
+            prisma.airline.count.mockResolvedValue(totalItems);
 
             await airlineController.getAllAirline(req, res, next);
             expect(res.status).toHaveBeenCalledWith(200),
-            expect(res.json).toHaveBeenCalledWith({
-                status: true,
-                message: "All airline data retrieved successfully",
-                totalItems,
-                pagination: {
-                    totalPage: 1,
-                    currentPage: 1,
-                    pageItems: 1,
-                    nextPage: null,
-                    prevPage: null,
-                },
-                data: airlineDummyData,
-            })
-        })
+                expect(res.json).toHaveBeenCalledWith({
+                    status: true,
+                    message: "All airline data retrieved successfully",
+                    totalItems,
+                    pagination: {
+                        totalPage: 1,
+                        currentPage: 1,
+                        pageItems: 1,
+                        nextPage: null,
+                        prevPage: null,
+                    },
+                    data: airlineDummyData,
+                });
+        });
 
         it("Failed, 500", async () => {
-            await serverFailed(req, res, next, prisma.airline.findMany, airlineController.getAllAirline)
-        })
-    })
+            await serverFailed(
+                req,
+                res,
+                next,
+                prisma.airline.findMany,
+                airlineController.getAllAirline
+            );
+        });
+    });
 
     describe("getAirlineById", () => {
         beforeEach(() => {
             req = {
                 params: {
-                    id: "1"
-                }
-            }
-        })
+                    id: "1",
+                },
+            };
+        });
 
         it("Success", async () => {
-            prisma.airline.findUnique.mockResolvedValue(airlineDummyData)
+            prisma.airline.findUnique.mockResolvedValue(airlineDummyData);
 
-            await airlineController.getAirlineById(req, res, next)
-            expect(res.status).toHaveBeenCalledWith(200)
+            await airlineController.getAirlineById(req, res, next);
+            expect(res.status).toHaveBeenCalledWith(200);
             expect(res.json).toHaveBeenCalledWith({
                 status: true,
                 message: "All airline data retrieved successfully",
                 data: airlineDummyData,
-            })
-        })
+            });
+        });
 
         it("Failed, 404", async () => {
-            prisma.airline.findUnique.mockResolvedValue(null)
+            prisma.airline.findUnique.mockResolvedValue(null);
 
-            await airlineController.getAirlineById(req, res, next)
-            expect(next).toHaveBeenCalledWith(createHttpError(404, {message: "Airline not found"}))
-        })
+            await airlineController.getAirlineById(req, res, next);
+            expect(next).toHaveBeenCalledWith(
+                createHttpError(404, { message: "Airline not found" })
+            );
+        });
 
         it("Failed, 500", async () => {
-            await serverFailed(req, res, next, prisma.airline.findUnique, airlineController.getAirlineById)
-        })
-    })
+            await serverFailed(
+                req,
+                res,
+                next,
+                prisma.airline.findUnique,
+                airlineController.getAirlineById
+            );
+        });
+    });
 
     describe("createNewAirline", () => {
         beforeEach(() => {
             req = {
                 file: {
                     buffer: Buffer.from("test"),
-                    mimetype: "image/jpg"
+                    mimetype: "image/jpg",
                 },
                 body: {
                     code: "GA",
                     name: "Garuda Indonesia",
                     image: "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/1716536772224.png",
-                }
-            } 
-        })
+                },
+            };
+        });
 
         it("Success", async () => {
-            prisma.airline.create.mockResolvedValue(airlineDummyData)
-            uploadFile.mockReturnThis(req.file)
-            randomUUID.mockReturnThis("GFL")
+            prisma.airline.create.mockResolvedValue(airlineDummyData);
+            uploadFile.mockReturnThis(req.file);
+            randomUUID.mockReturnThis("GFL");
 
-            await airlineController.createNewAirline(req, res, next)
-            expect(uploadFile).toHaveBeenCalled()
-            expect(res.status).toHaveBeenCalledWith(201)
+            await airlineController.createNewAirline(req, res, next);
+            expect(uploadFile).toHaveBeenCalled();
+            expect(res.status).toHaveBeenCalledWith(201);
             expect(res.json).toHaveBeenCalledWith({
                 status: true,
                 message: "Airline created successfully",
-                data: airlineDummyData
-            })
-        })
+                data: airlineDummyData,
+            });
+        });
 
         it("Failed, 500", async () => {
-            await serverFailed(req, res, next, prisma.airline.create, airlineController.createNewAirline)
-        })
-    }) 
+            await serverFailed(
+                req,
+                res,
+                next,
+                prisma.airline.create,
+                airlineController.createNewAirline
+            );
+        });
+    });
 
     describe("updateAirline", () => {
         beforeEach(() => {
@@ -184,55 +202,67 @@ describe("Airline API", () => {
                     name: "Garuda Indonesia",
                 },
                 params: {
-                    id: "GFL"
-                }
-            } 
-        })
+                    id: "GFL",
+                },
+            };
+        });
 
         it("Success", async () => {
-            prisma.airline.findUnique.mockResolvedValue(airlineDummyData)
-            prisma.airline.update.mockResolvedValue(airlineDummyData)
-            
-            await airlineController.updateAirline(req, res, next)
-            expect(uploadFile).not.toHaveBeenCalled()
-            expect(res.status).toHaveBeenCalledWith(201)
-        })
+            prisma.airline.findUnique.mockResolvedValue(airlineDummyData);
+            prisma.airline.update.mockResolvedValue(airlineDummyData);
+
+            await airlineController.updateAirline(req, res, next);
+            expect(uploadFile).not.toHaveBeenCalled();
+            expect(res.status).toHaveBeenCalledWith(201);
+        });
 
         it("Failed, 404", async () => {
-            prisma.airline.findUnique.mockResolvedValue(null)
-            
-            await airlineController.updateAirline(req, res, next)
-            expect(prisma.airline.update).not.toHaveBeenCalled()
-            expect(uploadFile).not.toHaveBeenCalled()
-            expect(next).toHaveBeenCalledWith(createHttpError(404, {message: "Airline not found"}))
-        })
+            prisma.airline.findUnique.mockResolvedValue(null);
+
+            await airlineController.updateAirline(req, res, next);
+            expect(prisma.airline.update).not.toHaveBeenCalled();
+            expect(uploadFile).not.toHaveBeenCalled();
+            expect(next).toHaveBeenCalledWith(
+                createHttpError(404, { message: "Airline not found" })
+            );
+        });
 
         it("Failed, 500", async () => {
-            await serverFailed(req, res, next, prisma.airline.findUnique, airlineController.updateAirline)
-        })
-    })
+            await serverFailed(
+                req,
+                res,
+                next,
+                prisma.airline.findUnique,
+                airlineController.updateAirline
+            );
+        });
+    });
 
     describe("deleteAirline", () => {
         beforeEach(() => {
             req = {
                 params: {
-                    id: "GFL"
-                }
-            } 
-        })
+                    id: "GFL",
+                },
+            };
+        });
 
         it("Success", async () => {
-            prisma.airline.findUnique.mockResolvedValue(airlineDummyData)
-            prisma.airline.findUnique.mockReturnThis()
+            prisma.airline.findUnique.mockResolvedValue(airlineDummyData);
+            prisma.airline.findUnique.mockReturnThis();
 
-            await airlineController.deleteAirline(req, res, next)
-            expect(res.status).toHaveBeenCalledWith(200)
-        })
+            await airlineController.deleteAirline(req, res, next);
+            expect(res.status).toHaveBeenCalledWith(200);
+        });
 
         it("Failed, 500", async () => {
-            await serverFailed(req, res, next, prisma.airline.findUnique, airlineController.deleteAirline)
-        })
-    })
-})
-
-
+            await serverFailed(
+                req,
+                res,
+                next,
+                prisma.airline.findUnique,
+                airlineController.deleteAirline
+            );
+        });
+    });
+});

@@ -25,7 +25,7 @@ const RegisterSchema = Joi.object({
             tlds: { allow: ["com", "net", "id"] },
         })
         .required(),
-    phoneNumber: Joi.string().min(11).max(16).required(),
+    phoneNumber: Joi.string().min(11).max(13).required(),
     password: Joi.string().min(8).max(20).required(),
 });
 
@@ -40,7 +40,7 @@ const updateUserLoginSchema = Joi.object({
         maxDomainSegments: 3,
         tlds: { allow: ["com", "net", "id"] },
     }),
-    phoneNumber: Joi.string().min(11).max(16),
+    phoneNumber: Joi.string().min(11).max(13),
     familyName: Joi.string(),
     password: Joi.string().min(8).max(20),
     confirmPassword: Joi.any().valid(Joi.ref("password")).required().messages({
@@ -171,8 +171,8 @@ const UpdateTicketSchema = Joi.object({
 
 // flightSeat
 const createSeatSchema = Joi.object({
-    flightId: Joi.string().required(),
-    seatNumber: Joi.string().required(),
+    flightId: Joi.string().regex(/^[a-zA-Z0-9]*$/).required(),
+    seatNumber: Joi.string().min(2).max(4).required(),
     type: Joi.string().valid("ECONOMY", "BUSINESS", "FIRST").required(),
     status: Joi.string()
         .valid("AVAILABLE", "OCCUPIED", "BOOKED")
@@ -180,7 +180,7 @@ const createSeatSchema = Joi.object({
 });
 
 const updateSeatSchema = Joi.object({
-    seatNumber: Joi.string().required(),
+    seatNumber: Joi.string().regex(/^[a-zA-Z0-9]*$/).required(),
     status: Joi.string().valid("AVAILABLE", "OCCUPIED", "BOOKED").required(),
 });
 
