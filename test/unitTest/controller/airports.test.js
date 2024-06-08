@@ -98,6 +98,30 @@ describe("Airports API", () => {
             });
         });
 
+        it("Success, without params", async () => {
+            req.query = {}
+            const totalItems = 1;
+
+            prisma.airport.findMany.mockResolvedValue(airportDummyData);
+            prisma.airport.count.mockResolvedValue(totalItems);
+
+            await airportController.getAllAirports(req, res, next);
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith({
+                status: true,
+                message: "All airports data retrieved successfully",
+                totalItems,
+                pagination: {
+                    totalPage: 1,
+                    currentPage: 1,
+                    pageItems: 1,
+                    nextPage: null,
+                    prevPage: null,
+                },
+                data: airportDummyData,
+            });
+        });
+
         it("Failed, 500", async () => {
             await serverFailed(
                 req,
