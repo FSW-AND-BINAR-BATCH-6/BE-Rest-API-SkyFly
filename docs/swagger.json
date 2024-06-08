@@ -1665,16 +1665,6 @@
                 "tags": ["Flights"],
                 "parameters": [
                     {
-                        "name": "search",
-                        "in": "query",
-                        "required": false,
-                        "schema": {
-                            "type": "string",
-                            "example": "CGK"
-                        },
-                        "description": "Search place"
-                    },
-                    {
                         "name": "page",
                         "in": "query",
                         "required": false,
@@ -1695,6 +1685,46 @@
                         "description": "Limit Page"
                     },
                     {
+                        "name": "departureAirport",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "CGK"
+                        },
+                        "description": "Search Departure Airport"
+                    },
+                    {
+                        "name": "arrivalAirport",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "BDO"
+                        },
+                        "description": "Search Arrival Airport"
+                    },
+                    {
+                        "name": "departureDate",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "2024-06-06"
+                        },
+                        "description": "Search Departure Date"
+                    },
+                    {
+                        "name": "seatClass",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "ECONOMY"
+                        },
+                        "description": "Search Seat Class"
+                    },
+                    {
                         "name": "minPrice",
                         "in": "query",
                         "required": false,
@@ -1710,7 +1740,7 @@
                         "required": false,
                         "schema": {
                             "type": "integer",
-                            "example": 0
+                            "example": 1000000
                         },
                         "description": "Max Price"
                     },
@@ -1720,9 +1750,19 @@
                         "required": false,
                         "schema": {
                             "type": "boolean",
-                            "example": ""
+                            "example": "false"
                         },
                         "description": "Transit"
+                    },
+                    {
+                        "name": "hasDiscount",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "boolean",
+                            "example": "false"
+                        },
+                        "description": "Discount"
                     },
                     {
                         "name": "facilities",

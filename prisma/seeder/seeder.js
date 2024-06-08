@@ -319,7 +319,7 @@ async function main() {
         for (let letter of seatLetters) {
             flightSeats.push({
                 seatNumber: `${i}${letter}`,
-                isBooked: false,
+                status: "AVAILABLE",
                 type: "ECONOMY",
             });
         }
@@ -376,6 +376,7 @@ async function main() {
                         destinationAirportId: destinationAirport.id,
                         capacity: flight.capacity,
                         price: flight.price,
+                        code: `${flight.planeCode}.${flight.departureCityCode}.${flight.destinationCityCode}`,
                     },
                 });
             }

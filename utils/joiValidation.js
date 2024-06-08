@@ -25,8 +25,27 @@ const RegisterSchema = Joi.object({
             tlds: { allow: ["com", "net", "id"] },
         })
         .required(),
-    phoneNumber: Joi.string().min(11).max(13).required(),
+    phoneNumber: Joi.string().min(11).max(16).required(),
     password: Joi.string().min(8).max(20).required(),
+});
+
+const updateUserLoginSchema = Joi.object({
+    name: Joi.string()
+        .min(3)
+        .max(30)
+        .regex(/^(?!\s*$)[a-zA-Z\s]+$/) //will allow user to input only alphabet and won't accept if there is only blank space
+        .required(),
+    email: Joi.string().email({
+        minDomainSegments: 2,
+        maxDomainSegments: 3,
+        tlds: { allow: ["com", "net", "id"] },
+    }),
+    phoneNumber: Joi.string().min(11).max(16),
+    familyName: Joi.string(),
+    password: Joi.string().min(8).max(20),
+    confirmPassword: Joi.any().valid(Joi.ref("password")).required().messages({
+        "any.only": "Confirm password does not match password",
+    }),
 });
 
 const PasswordSchema = Joi.object({
@@ -103,6 +122,7 @@ const createFlightSchema = Joi.object({
     }),
     destinationAirportId: Joi.string().required(),
     price: Joi.number().required(),
+    discount: Joi.number().min(0).max(100),
     capacity: Joi.number().min(2).max(850).required(),
     facilities: Joi.string(),
 });
@@ -127,9 +147,10 @@ const updateFlightSchema = Joi.object({
         "date.format":
             '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
     }),
-    destinationAirportId: Joi.string(),
-    price: Joi.number(),
-    capacity: Joi.number().min(2).max(850),
+    destinationAirportId: Joi.string().required(),
+    discount: Joi.number().min(0).max(100),
+    price: Joi.number().required(),
+    capacity: Joi.number().min(2).max(850).required(),
     facilities: Joi.string(),
 });
 
@@ -149,10 +170,18 @@ const UpdateTicketSchema = Joi.object({
 });
 
 // flightSeat
-const createFlightSeatSchema = Joi.object({
-    flightId: Joi.string().regex(/^[a-zA-Z0-9]*$/).required(),
-    seatNumber: Joi.string().min(2).max(4).required(),
+const createSeatSchema = Joi.object({
+    flightId: Joi.string().required(),
+    seatNumber: Joi.string().required(),
     type: Joi.string().valid("ECONOMY", "BUSINESS", "FIRST").required(),
+    status: Joi.string()
+        .valid("AVAILABLE", "OCCUPIED", "BOOKED")
+        .default("AVAILABLE"),
+});
+
+const updateSeatSchema = Joi.object({
+    seatNumber: Joi.string().required(),
+    status: Joi.string().valid("AVAILABLE", "OCCUPIED", "BOOKED").required(),
 });
 
 // Airline
@@ -215,11 +244,13 @@ module.exports = {
     forgetPasswordSchema,
     userCreateSchema,
     userUpdateSchema,
-    createFlightSeatSchema,
+    createSeatSchema,
+    updateSeatSchema,
     createAirlineSchema,
     updateAirlineSchema,
     createAirportSchema,
     updateAirportSchema,
     TicketSchema,
     UpdateTicketSchema,
+    updateUserLoginSchema,
 };

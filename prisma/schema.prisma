@@ -5,7 +5,7 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+    provider = "prisma-client-js"
 }
 
 datasource db {
@@ -25,23 +25,23 @@ enum TypeSeat {
 }
 
 enum StatusTicket {
-    PENDING
-    SUCCESS
-    FAILED
+    PENDING // pending
+    SUCCESS // settlement
+    FAILED // expire
 }
 
 enum StatusFlightSeat {
-    AVAILABLE
-    BOOKED
-    OCCUPIED
+    AVAILABLE // no transaction
+    BOOKED // payment success
+    OCCUPIED // booked, payment pending
 }
 
 model User {
     id                String              @id @default(cuid())
     name              String
     phoneNumber       String?
-    familyName        String? // Optional family name
-    role              RoleUser            @default(BUYER) // Default value for role
+    familyName        String?
+    role              RoleUser            @default(BUYER)
     tickets           Ticket?
     auth              Auth?
     ticketTransaction TicketTransaction[]
@@ -93,9 +93,11 @@ model Flight {
     transitDepartureDate    DateTime?
     capacity                Int
     price                   Float
+    discount                Float?
     seats                   FlightSeat[]
     tickets                 Ticket[]
     facilities              String?
+    code                    String
     ticketTransactionDetail TicketTransactionDetail[]
 }
 
@@ -104,7 +106,7 @@ model FlightSeat {
     flightId                String
     flight                  Flight                   @relation(fields: [flightId], references: [id])
     seatNumber              String
-    isBooked                Boolean?                 @default(false)
+    status                  StatusFlightSeat         @default(AVAILABLE)
     type                    TypeSeat
     tickets                 Ticket[]
     TicketTransactionDetail TicketTransactionDetail?
