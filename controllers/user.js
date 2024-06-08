@@ -30,7 +30,7 @@ const getAllUsers = async (req, res, next) => {
                         isVerified: true,
                     },
                 },
-            },
+            }, 
             orderBy: {
                 name: "asc",
             },
