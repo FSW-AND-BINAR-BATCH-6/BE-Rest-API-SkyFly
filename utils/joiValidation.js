@@ -158,9 +158,7 @@ const updateFlightSchema = Joi.object({
 
 // ticket
 const TicketSchema = Joi.object({
-    flightId: Joi.string()
-        .regex(/^[a-zA-Z0-9]*$/)
-        .required(),
+    flightId: Joi.string().required(),
     userId: Joi.string().required(),
     seatId: Joi.string().required(),
     transactionId: Joi.string().required(),
@@ -168,8 +166,11 @@ const TicketSchema = Joi.object({
 });
 
 const UpdateTicketSchema = Joi.object({
-    code: Joi.string(),
+    flightId: Joi.string(),
+    userId: Joi.string(),
     seatId: Joi.string(),
+    transactionId: Joi.string(),
+    detailTransactionId: Joi.string(),
 });
 
 // flightSeat
