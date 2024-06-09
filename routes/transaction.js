@@ -10,6 +10,7 @@ const {
     notification,
     getAllTransaction,
 } = require("../controllers/transaction");
+
 const authentication = require("../middlewares/authentication");
 
 router.use((req, res, next) => {
@@ -20,10 +21,23 @@ router.use((req, res, next) => {
     next();
 });
 
-router.post("/payment", authentication, createTransaction);
-router.post("/bank", authentication, bankTransfer);
-router.post("/creditcard", authentication, creditCard);
-router.post("/gopay", authentication, gopay);
+const validator = require("../lib/validator");
+const {
+    BankSchema,
+    CCSchema,
+    GopaySchema,
+    SnapSchema,
+} = require("../utils/joiValidation");
+
+router.post(
+    "/payment",
+    authentication,
+    validator(SnapSchema),
+    createTransaction
+);
+router.post("/bank", authentication, validator(BankSchema), bankTransfer);
+router.post("/creditcard", authentication, validator(CCSchema), creditCard);
+router.post("/gopay", authentication, validator(GopaySchema), gopay);
 router.get("/status/:orderId", authentication, getTransaction);
 router.post("/notification", notification);
 router.put("/status/:orderId", authentication, updateTransaction);
