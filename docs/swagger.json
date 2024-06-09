@@ -781,20 +781,101 @@
                         "description": "Token"
                     }
                 ],
+                "responses": {
+                    "200": {
+                        "description": "resending the otp",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Verification token has been sent, please check your email"
+                                        },
+                                        "_token": {
+                                            "type": "string",
+                                            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZWdpc3RlcklkIjoiYTY2ZDgxZTQtMmNhNC00NGRiLTlkOWItNTg5NzA2MDA2NTRlIiwiZW1haWwiOiJ2aWVyeTE1MTAyMDAyQGdtYWlsLmNvbSIsIm90cCI6IjQ5NTYwMyIsImVtYWlsVGl0bGUiOiJFbWFpbCBBY3RpdmF0aW9uIiwiaWF0IjoxNzE2Njk4NjE0LCJleHAiOjE3MTY3ODUwMTR9.Vpr5MJY6yQsd8xwqK-cdrpOyRoYAXVwnnuT5UQuunvE"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "description": "Email has been verified",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 403
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "User email has been verified"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Login failed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 400
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Wrong Password or user not found"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/verified/resendSMS-otp": {
+            "post": {
+                "tags": ["Auths"],
+                "summary": "Return result of resend otp via SMS",
+                "description": "This API is for resend otp via SMS",
+                "parameters": [
+                    {
+                        "name": "token",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZWdpc3RlcklkIjoiYTY2ZDgxZTQtMmNhNC00NGRiLTlkOWItNTg5NzA2MDA2NTRlIiwiZW1haWwiOiJ2aWVyeTE1MTAyMDAyQGdtYWlsLmNvbSIsIm90cCI6IjQ5NTYwMyIsImVtYWlsVGl0bGUiOiJFbWFpbCBBY3RpdmF0aW9uIiwiaWF0IjoxNzE2Njk4NjE0LCJleHAiOjE3MTY3ODUwMTR9.Vpr5MJY6yQsd8xwqK-cdrpOyRoYAXVwnnuT5UQuunvE"
+                        },
+                        "description": "Secret Token"
+                    }
+                ],
                 "requestBody": {
-                    "description": "Request body for resend otp",
+                    "description": "Request body for resendSMS otp",
                     "content": {
                         "application/json": {
                             "schema": {
                                 "type": "object",
                                 "properties": {
-                                    "email": {
+                                    "phoneNumber": {
                                         "type": "string",
-                                        "example": "skyflyproduction1@gmail.com"
-                                    },
-                                    "password": {
-                                        "type": "string",
-                                        "example": "password"
+                                        "example": "628123456789"
                                     }
                                 }
                             }
@@ -815,7 +896,11 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "otp resended"
+                                            "example": "SMS verification sent"
+                                        },
+                                        "_token": {
+                                            "type": "string",
+                                            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZWdpc3RlcklkIjoiYTY2ZDgxZTQtMmNhNC00NGRiLTlkOWItNTg5NzA2MDA2NTRlIiwiZW1haWwiOiJ2aWVyeTE1MTAyMDAyQGdtYWlsLmNvbSIsIm90cCI6IjQ5NTYwMyIsImVtYWlsVGl0bGUiOiJFbWFpbCBBY3RpdmF0aW9uIiwiaWF0IjoxNzE2Njk4NjE0LCJleHAiOjE3MTY3ODUwMTR9.Vpr5MJY6yQsd8xwqK-cdrpOyRoYAXVwnnuT5UQuunvE"
                                         }
                                     }
                                 }

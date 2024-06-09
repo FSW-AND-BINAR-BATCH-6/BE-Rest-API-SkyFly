@@ -2,7 +2,6 @@ const jwt = require("jsonwebtoken");
 const createHttpError = require("http-errors");
 const { PrismaClient } = require("@prisma/client");
 const { randomUUID } = require("crypto");
-const https = require("follow-redirects").https;
 
 const { generateTOTP, validateTOTP } = require("../utils/otp");
 const { secretCompare, secretHash } = require("../utils/hashSalt");
@@ -11,6 +10,7 @@ const { generateSecretEmail } = require("../utils/emailHandler");
 
 const { authorizationUrl, oauth2Client } = require("../lib/googleOauth2");
 const { google } = require("googleapis");
+const { smsHandler } = require("../utils/smsHandler");
 
 const prisma = new PrismaClient();
 
@@ -586,6 +586,8 @@ const sendOTPSMS = async (req, res, next) => {
 
         const urlTokenVerification = `${process.env.BASE_URL}/auth/verified?token=${dataUrl.token}`;
 
+        smsHandler(phoneNumber, OTPToken, urlTokenVerification);
+
         // update otp & secretToken user
         await prisma.auth.update({
             where: {
@@ -597,49 +599,6 @@ const sendOTPSMS = async (req, res, next) => {
             },
         });
 
-        // send SMS
-        let options = {
-            method: "POST",
-            hostname: "9l6dx4.api.infobip.com",
-            path: "/sms/2/text/advanced",
-            headers: {
-                Authorization:
-                    "App e898ced2b249e39c6cbce389ef8e63d7-f7692da5-49f6-4027-bfd0-5baa4bce094c",
-                "Content-Type": "application/json",
-                Accept: "application/json",
-            },
-            maxRedirects: 20,
-        };
-
-        let reqSMS = https.request(options, function (res) {
-            let chunks = [];
-
-            res.on("data", function (chunk) {
-                chunks.push(chunk);
-            });
-
-            res.on("end", function (chunk) {
-                let body = Buffer.concat(chunks);
-                console.log(body.toString());
-            });
-
-            res.on("error", function (error) {
-                console.error(error);
-            });
-        });
-
-        let postData = JSON.stringify({
-            messages: [
-                {
-                    destinations: [{ to: phoneNumber }],
-                    from: "Sky Fly Production",
-                    text: `Verify your account with Sky Fly Production.\nOTP: ${OTPToken}\nTo protect your account, please do not give the OTP to anyone\nFollow the following link to verify your account:\n ${urlTokenVerification} (verify your account)`,
-                },
-            ],
-        });
-
-        reqSMS.write(postData);
-        reqSMS.end();
         res.status(200).json({
             status: true,
             message: "SMS verification sent",
