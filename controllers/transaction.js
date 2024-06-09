@@ -11,6 +11,10 @@ const {
 const { unescape } = require("querystring");
 const { PrismaClient } = require("@prisma/client");
 const { checkSeatAvailability } = require("../utils/checkSeat");
+const {
+    extractFirstData,
+    extractSecondData,
+} = require("../utils/extractItems");
 const prisma = new PrismaClient();
 
 const getTransaction = async (req, res, next) => {
@@ -71,6 +75,24 @@ const createTransaction = async (req, res, next) => {
         let { flightId } = req.query;
 
         req.body.flightId = flightId;
+        const firstData = extractFirstData(req.body);
+        const secondData = extractSecondData(req.body);
+
+        req.body.flightId = flightId;
+
+        let where;
+        if (Object.keys(secondData).length !== 0) {
+            where = {
+                id: {
+                    in: [req.body.first_seatId, req.body.second_seatId],
+                },
+            };
+        }
+        where = {
+            id: {
+                in: [req.body.first_seatId],
+            },
+        };
 
         // Check if the seat exists and is not booked
         const seats = await prisma.flightSeat.findMany({
@@ -163,12 +185,22 @@ const createTransaction = async (req, res, next) => {
                     return seat.id;
                 });
 
-                await tx.flightSeat.updateMany({
-                    where: {
+                let whereUpdate;
+                if (Object.keys(secondData).length !== 0) {
+                    whereUpdate = {
                         id: {
                             in: [seatId[0], seatId[1]],
                         },
+                    };
+                }
+                whereUpdate = {
+                    id: {
+                        in: [seatId[0]],
                     },
+                };
+
+                await tx.flightSeat.updateMany({
+                    where: whereUpdate,
                     data: {
                         status: "OCCUPIED",
                     },
@@ -217,6 +249,20 @@ const notification = async (req, res, next) => {
             return seat.id;
         });
 
+        let where;
+        where = {
+            id: {
+                in: [seatId[0]],
+            },
+        };
+        if (seatId.length !== 1) {
+            where = {
+                id: {
+                    in: [seatId[0], seatId[1]],
+                },
+            };
+        }
+
         if (ticketTransaction) {
             const hash = crypto
                 .createHash("sha512")
@@ -253,11 +299,7 @@ const notification = async (req, res, next) => {
                 // TODO set transaction status on your database to 'success'
                 // and response with 200 OK
                 responseData = await prisma.flightSeat.updateMany({
-                    where: {
-                        id: {
-                            in: [seatId[0], seatId[1]],
-                        },
-                    },
+                    where,
                     data: {
                         status: "BOOKED",
                     },
@@ -270,11 +312,7 @@ const notification = async (req, res, next) => {
                 // TODO set transaction status on your database to 'failure'
                 // and response with 200 OK
                 responseData = await prisma.flightSeat.updateMany({
-                    where: {
-                        id: {
-                            in: [seatId[0], seatId[1]],
-                        },
-                    },
+                    where,
                     data: {
                         status: "AVAILABLE",
                     },
@@ -283,11 +321,7 @@ const notification = async (req, res, next) => {
                 // TODO set transaction status on your database to 'pending' / waiting payment
                 // and response with 200 OK
                 responseData = await prisma.flightSeat.updateMany({
-                    where: {
-                        id: {
-                            in: [seatId[0], seatId[1]],
-                        },
-                    },
+                    where,
                     data: {
                         status: "OCCUPIED",
                     },
@@ -309,17 +343,29 @@ const bankTransfer = async (req, res, next) => {
         let { bank, payment_type } = req.body;
         let { flightId } = req.query;
 
+        const firstData = extractFirstData(req.body);
+        const secondData = extractSecondData(req.body);
+
         req.body.flightId = flightId;
 
-        // Check if the seat exists and is not booked
-        const seats = await prisma.flightSeat.findMany({
-            where: {
+        let where;
+        if (Object.keys(secondData).length !== 0) {
+            where = {
                 id: {
                     in: [req.body.first_seatId, req.body.second_seatId],
                 },
+            };
+        }
+        where = {
+            id: {
+                in: [req.body.first_seatId],
             },
-        });
+        };
 
+        // Check if the seat exists and is not booked
+        const seats = await prisma.flightSeat.findMany({
+            where,
+        });
         // check seat
         const { error, seatNumber } = await checkSeatAvailability(
             seats,
@@ -468,12 +514,22 @@ const bankTransfer = async (req, res, next) => {
                     return seat.id;
                 });
 
-                await tx.flightSeat.updateMany({
-                    where: {
+                let whereUpdate;
+                if (Object.keys(secondData).length !== 0) {
+                    whereUpdate = {
                         id: {
                             in: [seatId[0], seatId[1]],
                         },
+                    };
+                }
+                whereUpdate = {
+                    id: {
+                        in: [seatId[0]],
                     },
+                };
+
+                await tx.flightSeat.updateMany({
+                    where: whereUpdate,
                     data: {
                         status: "OCCUPIED",
                     },
@@ -516,6 +572,25 @@ const creditCard = async (req, res, next) => {
         let { flightId } = req.query;
 
         req.body.flightId = flightId;
+
+        const firstData = extractFirstData(req.body);
+        const secondData = extractSecondData(req.body);
+
+        req.body.flightId = flightId;
+
+        let where;
+        if (Object.keys(secondData).length !== 0) {
+            where = {
+                id: {
+                    in: [req.body.first_seatId, req.body.second_seatId],
+                },
+            };
+        }
+        where = {
+            id: {
+                in: [req.body.first_seatId],
+            },
+        };
 
         const seats = await prisma.flightSeat.findMany({
             where: {
@@ -619,12 +694,22 @@ const creditCard = async (req, res, next) => {
                     return seat.id;
                 });
 
-                await tx.flightSeat.updateMany({
-                    where: {
+                let whereUpdate;
+                if (Object.keys(secondData).length !== 0) {
+                    whereUpdate = {
                         id: {
                             in: [seatId[0], seatId[1]],
                         },
+                    };
+                }
+                whereUpdate = {
+                    id: {
+                        in: [seatId[0]],
                     },
+                };
+
+                await tx.flightSeat.updateMany({
+                    where: whereUpdate,
                     data: {
                         status: "OCCUPIED",
                     },
@@ -671,6 +756,25 @@ const gopay = async (req, res, next) => {
         let { flightId } = req.query;
 
         req.body.flightId = flightId;
+
+        const firstData = extractFirstData(req.body);
+        const secondData = extractSecondData(req.body);
+
+        req.body.flightId = flightId;
+
+        let where;
+        if (Object.keys(secondData).length !== 0) {
+            where = {
+                id: {
+                    in: [req.body.first_seatId, req.body.second_seatId],
+                },
+            };
+        }
+        where = {
+            id: {
+                in: [req.body.first_seatId],
+            },
+        };
 
         // Check if the seat exists and is not booked
         const seats = await prisma.flightSeat.findMany({
@@ -759,12 +863,22 @@ const gopay = async (req, res, next) => {
                     return seat.id;
                 });
 
-                await tx.flightSeat.updateMany({
-                    where: {
+                let whereUpdate;
+                if (Object.keys(secondData).length !== 0) {
+                    whereUpdate = {
                         id: {
                             in: [seatId[0], seatId[1]],
                         },
+                    };
+                }
+                whereUpdate = {
+                    id: {
+                        in: [seatId[0]],
                     },
+                };
+
+                await tx.flightSeat.updateMany({
+                    where: whereUpdate,
                     data: {
                         status: "OCCUPIED",
                     },
