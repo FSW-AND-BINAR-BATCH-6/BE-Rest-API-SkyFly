@@ -130,10 +130,9 @@ const createUser = async (req, res, next) => {
 };
 
 const updateUser = async (req, res, next) => {
-    // const { name, phoneNumber, role } = value;
-    const data = req.body;
-
+    
     try {
+        const { name, phoneNumber, familyName } = req.body;
         const user = await prisma.user.findUnique({
             where: { id: req.params.id },
         });
@@ -147,9 +146,9 @@ const updateUser = async (req, res, next) => {
         const updatedUser = await prisma.user.update({
             where: { id: req.params.id },
             data: {
-                name: data.name,
-                phoneNumber: data.phoneNumber,
-                familyName: data.familyName,
+                name: name,
+                phoneNumber: phoneNumber,
+                familyName: familyName,
                 role: "BUYER", // Ensures role is always 'BUYER'
             },
         });

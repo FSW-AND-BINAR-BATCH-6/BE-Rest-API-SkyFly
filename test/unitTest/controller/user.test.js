@@ -1,6 +1,7 @@
 const createHttpError = require("http-errors");
 const userController = require("../../../controllers/user");
 const { PrismaClient } = require("@prisma/client");
+const { randomUUID } = require("crypto");
 const prisma = new PrismaClient();
 
 // Mock Function
@@ -21,23 +22,27 @@ jest.mock("@prisma/client", () => {
     };
 });
 
+jest.mock("crypto", () => ({
+    randomUUID: jest.fn(),
+}));
+
 describe("User API", () => {
     let req, res, next;
 
     const userDummyData = [
-    { 
-        id: "123",
-        name: "Agus",
-        phoneNumber: "08962394959",
-        role: "BUYER",
-        auth: {
+        {
             id: "123",
-            email: "agus@gmail.com",
-            isVerified: true,
+            name: "Agus",
+            phoneNumber: "08962394959",
+            role: "BUYER",
+            auth: {
+                id: "123",
+                email: "agus@gmail.com",
+                isVerified: true,
 
+            }
         }
-    }
-]
+    ]
 
     beforeEach(() => {
         res = {
@@ -89,8 +94,8 @@ describe("User API", () => {
     });
 
     describe("getById", () => {
-        it ("succes", async () => {
-            req = { 
+        it("succes", async () => {
+            req = {
                 params: {
                     id: "123",
                 },
@@ -107,4 +112,86 @@ describe("User API", () => {
             })
         })
     })
+
+    describe("createUsers", () => {
+
+        beforeEach(() => {
+            req = {
+                body: {
+                    name: "asep",
+                    phoneNumber: "089653421423",
+                    familyName: "agus",
+                    role: "BUYER",
+                },
+            };
+        });
+
+        const body = {
+            id: "mercy",
+            name: "asep",
+            phoneNumber: "089653421423",
+            familyName: "agus",
+            role: "BUYER",
+        };
+
+        it("Success", async () => {
+            randomUUID.mockReturnValue("mercy");
+            prisma.user.create.mockResolvedValue(body);
+
+            await userController.createUser(req, res, next);
+            expect(res.status).toHaveBeenCalledWith(201);
+            expect(res.json).toHaveBeenCalledWith({
+                status: true,
+                message: "User created successfully",
+                data: body,
+            });
+        });
+
+
+        it(" failed, 500", async () => {
+            const errorMessage = "Internal Server Error"
+            prisma.user.create.mockRejectedValue(new Error(errorMessage))
+            await userController.createUser(req, res, next)
+            expect(next).toHaveBeenCalledWith(createHttpError(500, { message: errorMessage }))
+        });
+    });
+
+    
+    describe("UpdateUser", () => {
+        beforeEach(() => {
+            req = {
+                body: {
+                    id: "123",
+                    name: "Agus",
+                    phoneNumber: "08962394959",
+                    role: "BUYER",
+                },
+                params: {
+                    id: "123",
+                },
+            };
+        });
+
+        const data = {
+            id: "123",
+            name: "Agus",
+            phoneNumber: "08962394959",
+            role: "BUYER",}
+
+
+        it("Success", async () => {
+            randomUUID.mockReturnValue("mercy");
+            prisma.user.findUnique.mockResolvedValue(userDummyData);
+            prisma.user.update.mockResolvedValue(userDummyData);
+
+            await userController.updateUser(req, res, next);
+            expect(res.status).toHaveBeenCalledWith(201);
+            expect(res.json).toHaveBeenCalledWith({
+                status: true,
+                message: "User updated successfully",
+                data: data,
+            });
+        });
+    });
 });
+
