@@ -18,9 +18,14 @@ const {
 router
     .route("/")
     .get(getAllSeats)
-    .post(authentication, checkRole(["ADMIN"]), validator(createSeatSchema), createSeat);
+    .post(
+        authentication,
+        checkRole(["ADMIN"]),
+        validator(createSeatSchema),
+        createSeat
+    );
 
-router.route("/:flightId").get(getSeatsByFlightId);
+router.route("/available/:flightId").get(getSeatsByFlightId);
 
 router
     .route("/:id")
