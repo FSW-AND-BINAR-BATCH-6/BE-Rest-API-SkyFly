@@ -264,13 +264,16 @@ const createTicket = async (req, res, next) => {
 };
 
 const updateTicket = async (req, res, next) => {
-    const { code, flightId, userId, seatId } = req.body;
+    const { flightId, userId, seatId, transactionId, detailTransactionId } =
+        req.body;
+    console.log(req.body);
 
     try {
         const ticket = await prisma.ticket.findUnique({
             where: { id: req.params.id },
         });
 
+        console.log(ticket);
         if (!ticket) {
             return next(createHttpError(404, { message: "Ticket not found" }));
         }
@@ -278,15 +281,11 @@ const updateTicket = async (req, res, next) => {
         const updatedTicket = await prisma.ticket.update({
             where: { id: req.params.id },
             data: {
-                code,
                 flightId,
-                userId,
+                userId: userId,
                 seatId,
-            },
-            include: {
-                flight: true,
-                user: true,
-                seat: true,
+                transactionId,
+                detailTransactionId,
             },
         });
         res.status(200).json({
