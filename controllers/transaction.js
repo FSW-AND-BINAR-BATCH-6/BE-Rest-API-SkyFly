@@ -241,27 +241,15 @@ const notification = async (req, res, next) => {
             },
         });
 
-        const seats = ticketTransaction.Transaction_Detail.map((data) => {
-            return seatId.push(data.seatId);
-        });
+        const seatIds = ticketTransaction.Transaction_Detail.map(
+            (data) => data.seatId
+        );
 
-        let seatId = seats.map((seat) => {
-            return seat.id;
-        });
-
-        let where;
-        where = {
+        let where = {
             id: {
-                in: [seatId[0]],
+                in: seatIds,
             },
         };
-        if (seatId.length !== 1) {
-            where = {
-                id: {
-                    in: [seatId[0], seatId[1]],
-                },
-            };
-        }
 
         if (ticketTransaction) {
             const hash = crypto
