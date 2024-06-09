@@ -228,100 +228,90 @@ const createTransaction = async (req, res, next) => {
 };
 
 const notification = async (req, res, next) => {
-    try {
-        const data = req.body;
-        const ticketTransaction = await prisma.ticketTransaction.findUnique({
-            where: {
-                orderI: data.order_id,
-            },
-            include: {
-                Transaction_Detail: true,
-            },
-        });
+    const data = req.body;
+    const ticketTransaction = await prisma.ticketTransaction.findUnique({
+        where: {
+            orderId: data.order_id,
+        },
+        include: {
+            Transaction_Detail: true,
+        },
+    });
 
-        const seatIds = ticketTransaction.Transaction_Detail.map(
-            (data) => data.seatId
-        );
+    const seatIds = ticketTransaction.Transaction_Detail.map(
+        (data) => data.seatId
+    );
 
-        let where = {
-            id: {
-                in: seatIds,
-            },
-        };
+    let where = {
+        id: {
+            in: seatIds,
+        },
+    };
 
-        if (ticketTransaction) {
-            const hash = crypto
-                .createHash("sha512")
-                .update(
-                    `${ticketTransaction.orderId}${data.status_code}${data.gross_amount}${process.env.SANDBOX_SERVER_KEY}`
-                );
-            if (data.signature_key !== hash) {
-                return next(
-                    createHttpError(403, { message: "Invalid Signature Key" })
-                );
-            }
-            let responseData = null;
-            let transactionStatus = data.transaction_status;
-            let fraudStatus = data.fraud_status;
+    let notification = {
+        currency: req.body.currency,
+        fraud_status: req.body.fraud_status,
+        gross_amount: req.body.gross_amount,
+        order_id: req.body.order_id,
+        payment_type: req.body.payment_type,
+        status_code: req.body.status_code,
+        status_message: req.body.status_message,
+        transaction_id: req.body.transaction_id,
+        transaction_status: req.body.transaction_status,
+        transaction_time: req.body.transaction_time,
+        merchant_id: req.body.merchant_id,
+    };
 
-            if (transactionStatus == "capture") {
-                if (fraudStatus == "accept") {
-                    // TODO set transaction status on your database to 'success'
-                    // and response with 200 OK
+    let datas = await snap.transaction.notification(notification);
+    console.log(datas);
 
-                    responseData = await prisma.flightSeat.updateMany({
-                        where: {
-                            id: {
-                                in: ticketTransaction.ticketTransactionDetail
-                                    .seatId,
-                            },
-                        },
-                        data: {
-                            status: "BOOKED",
-                        },
-                    });
-                }
-            } else if (transactionStatus == "settlement") {
-                // TODO set transaction status on your database to 'success'
-                // and response with 200 OK
-                responseData = await prisma.flightSeat.updateMany({
-                    where,
-                    data: {
-                        status: "BOOKED",
-                    },
-                });
-            } else if (
-                transactionStatus == "cancel" ||
-                transactionStatus == "deny" ||
-                transactionStatus == "expire"
-            ) {
-                // TODO set transaction status on your database to 'failure'
-                // and response with 200 OK
-                responseData = await prisma.flightSeat.updateMany({
-                    where,
-                    data: {
-                        status: "AVAILABLE",
-                    },
-                });
-            } else if (transactionStatus == "pending") {
-                // TODO set transaction status on your database to 'pending' / waiting payment
-                // and response with 200 OK
-                responseData = await prisma.flightSeat.updateMany({
-                    where,
-                    data: {
-                        status: "OCCUPIED",
-                    },
-                });
-            }
+    if (datas.transaction_status == "capture") {
+        if (fraudStatus == "accept") {
+            // TODO set transaction status on your database to 'success'
+            // and response with 200 OK
+
+            responseData = await prisma.flightSeat.updateMany({
+                where,
+                data: {
+                    status: "BOOKED",
+                },
+            });
         }
-
-        res.status(200).json({
-            status: true,
-            message: "OK",
+    } else if (datas.transaction_status == "settlement") {
+        // TODO set transaction status on your database to 'success'
+        // and response with 200 OK
+        responseData = await prisma.flightSeat.updateMany({
+            where,
+            data: {
+                status: "BOOKED",
+            },
         });
-    } catch (error) {
-        next(createHttpError(500, { message: error.message }));
+    } else if (
+        datas.transaction_status == "cancel" ||
+        datas.transaction_status == "deny" ||
+        datas.transaction_status == "expire"
+    ) {
+        // TODO set transaction status on your database to 'failure'
+        // and response with 200 OK
+        responseData = await prisma.flightSeat.updateMany({
+            where,
+            data: {
+                status: "AVAILABLE",
+            },
+        });
+    } else if (datas.transaction_status == "pending") {
+        // TODO set transaction status on your database to 'pending' / waiting payment
+        // and response with 200 OK
+        responseData = await prisma.flightSeat.updateMany({
+            where,
+            data: {
+                status: "OCCUPIED",
+            },
+        });
     }
+
+    // end try
+    res.status(200).send("OK");
 };
 
 const bankTransfer = async (req, res, next) => {

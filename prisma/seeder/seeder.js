@@ -395,14 +395,6 @@ async function main() {
                             seatNumber: seat.seatNumber,
                             isBooked: seat.isBooked,
                             type: seat.type,
-                            tickets: {
-                                create: {
-                                    code: randomUUID(),
-                                    flight: {
-                                        connect: { id: flight.id },
-                                    },
-                                },
-                            },
                         },
                     });
                 })
