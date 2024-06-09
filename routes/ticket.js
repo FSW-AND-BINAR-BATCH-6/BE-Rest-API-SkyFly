@@ -1,4 +1,7 @@
 const router = require("express").Router();
+const authentication = require("../middlewares/authentication");
+const checkRole = require("../middlewares/checkrole");
+
 const {
     getAllTicket,
     getTicketById,
@@ -9,11 +12,15 @@ const {
 const validator = require("../lib/validator");
 const { TicketSchema, UpdateTicketSchema } = require("../utils/joiValidation");
 
-router.route("/").get(getAllTicket).post(validator(TicketSchema), createTicket);
+router
+    .route("/")
+    .get(getAllTicket)
+    .post(authentication, validator(TicketSchema), createTicket);
+
 router
     .route("/:id")
-    .get(getTicketById)
-    .put(validator(UpdateTicketSchema), updateTicket)
-    .delete(deleteTicket);
+    .get(authentication, getTicketById)
+    .put(authentication, validator(UpdateTicketSchema), updateTicket)
+    .delete(authentication, checkRole(["ADMIN"]), deleteTicket);
 
 module.exports = router;
