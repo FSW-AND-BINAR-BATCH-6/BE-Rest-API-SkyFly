@@ -25,7 +25,7 @@ const RegisterSchema = Joi.object({
             tlds: { allow: ["com", "net", "id"] },
         })
         .required(),
-    phoneNumber: Joi.string().min(11).max(16).required(),
+    phoneNumber: Joi.string().min(11).max(13).required(),
     password: Joi.string().min(8).max(20).required(),
 });
 
@@ -40,7 +40,7 @@ const updateUserLoginSchema = Joi.object({
         maxDomainSegments: 3,
         tlds: { allow: ["com", "net", "id"] },
     }),
-    phoneNumber: Joi.string().min(11).max(16),
+    phoneNumber: Joi.string().min(11).max(13),
     familyName: Joi.string(),
     password: Joi.string().min(8).max(20),
     confirmPassword: Joi.any().valid(Joi.ref("password")).required().messages({
@@ -93,7 +93,7 @@ const userUpdateSchema = Joi.object({
 
 // flight
 const createFlightSchema = Joi.object({
-    planeId: Joi.string().required(),
+    planeId: Joi.string().regex(/^[a-zA-Z0-9]*$/).required(),
     departureDate: Joi.date().iso().required().messages({
         "date.format":
             '"departureDate" must be in ISO format, eg: 2024-01-07 09:30:00',
@@ -103,14 +103,22 @@ const createFlightSchema = Joi.object({
         "date.format":
             '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
     }),
-    transitAirportId: Joi.string(),
-    transitArrivalDate: Joi.date().iso().messages({
-        "date.format":
-            '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
+    transitAirportId: Joi.string().allow(null),
+    transitArrivalDate: Joi.alternatives().conditional('transitAirportId', {
+        is: Joi.exist(),
+        then: Joi.date().iso().required().messages({
+            "date.format":
+                '"transitArrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
+        }),
+        otherwise: Joi.forbidden(),
     }),
-    transitDepartureDate: Joi.date().iso().messages({
-        "date.format":
-            '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
+    transitDepartureDate: Joi.alternatives().conditional('transitAirportId', {
+        is: Joi.exist(),
+        then: Joi.date().iso().required().messages({
+            "date.format":
+                '"transitDepartureDate" must be in ISO format, eg: 2024-01-07 09:30:00',
+        }),
+        otherwise: Joi.forbidden(),
     }),
     destinationAirportId: Joi.string().required(),
     price: Joi.number().required(),
@@ -120,13 +128,13 @@ const createFlightSchema = Joi.object({
 });
 
 const updateFlightSchema = Joi.object({
-    planeId: Joi.string().required(),
-    departureDate: Joi.date().iso().required().messages({
+    planeId: Joi.string(),
+    departureDate: Joi.date().iso().messages({
         "date.format":
             '"departureDate" must be in ISO format, eg: 2024-01-07 09:30:00',
     }),
-    departureAirportId: Joi.string().required(),
-    arrivalDate: Joi.date().iso().required().messages({
+    departureAirportId: Joi.string(),
+    arrivalDate: Joi.date().iso().messages({
         "date.format":
             '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
     }),
@@ -148,7 +156,7 @@ const updateFlightSchema = Joi.object({
 
 // ticket
 const TicketSchema = Joi.object({
-    flightId: Joi.string().required(),
+    flightId: Joi.string().regex(/^[a-zA-Z0-9]*$/).required(),
     userId: Joi.string().required(),
     seatId: Joi.string().required(),
     bookingDate: Joi.date()
@@ -163,8 +171,8 @@ const UpdateTicketSchema = Joi.object({
 
 // flightSeat
 const createSeatSchema = Joi.object({
-    flightId: Joi.string().required(),
-    seatNumber: Joi.string().required(),
+    flightId: Joi.string().regex(/^[a-zA-Z0-9]*$/).required(),
+    seatNumber: Joi.string().min(2).max(4).required(),
     type: Joi.string().valid("ECONOMY", "BUSINESS", "FIRST").required(),
     status: Joi.string()
         .valid("AVAILABLE", "OCCUPIED", "BOOKED")
@@ -172,7 +180,7 @@ const createSeatSchema = Joi.object({
 });
 
 const updateSeatSchema = Joi.object({
-    seatNumber: Joi.string().required(),
+    seatNumber: Joi.string().regex(/^[a-zA-Z0-9]*$/).required(),
     status: Joi.string().valid("AVAILABLE", "OCCUPIED", "BOOKED").required(),
 });
 

@@ -19,7 +19,7 @@ const getAllAirports = async (req, res, next) => {
 
         res.status(200).json({
             status: true,
-            message: "all Airport data retrieved successfully",
+            message: "All airports data retrieved successfully",
             totalItems: count,
             pagination: {
                 totalPage: Math.ceil(count / limit),
@@ -48,7 +48,7 @@ const getAirportById = async (req, res, next) => {
 
         res.status(200).json({
             status: true,
-            message: "all Airports data retrieved successfully",
+            message: "All airports data retrieved successfully",
             data: getAirport
         })
     } catch (error) {

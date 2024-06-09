@@ -3,7 +3,6 @@ const createHttpError = require("http-errors");
 module.exports = (allowedRoles) => {
     return async (req, res, next) => {
         let role = req.user !== undefined ? req.user.role : "member";
-
         try {
             const user = req.user;
             if (!user)
