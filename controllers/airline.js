@@ -31,8 +31,8 @@ const getAllAirline = async (req, res, next) => {
           },
           data: getAirline.length !== 0 ? getAirline : "empty product data"
         });
-      } catch (err) {
-        next(createHttpError(500, {message: err.message}));
+      } catch (error) {
+        next(createHttpError(500, {message: error.message}));
       }
 }
 
