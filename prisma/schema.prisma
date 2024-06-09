@@ -42,7 +42,7 @@ model User {
     phoneNumber       String?
     familyName        String?
     role              RoleUser            @default(BUYER)
-    tickets           Ticket?
+    tickets           Ticket[]
     auth              Auth?
     ticketTransaction TicketTransaction[]
 }
@@ -117,7 +117,7 @@ model Ticket {
     code                      String                   @unique
     flightId                  String?
     flight                    Flight?                  @relation(fields: [flightId], references: [id])
-    userId                    String?                  @unique
+    userId                    String?
     user                      User?                    @relation(fields: [userId], references: [id])
     seatId                    String?                  @unique
     seat                      FlightSeat?              @relation(fields: [seatId], references: [id])

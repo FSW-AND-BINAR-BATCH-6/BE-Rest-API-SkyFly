@@ -80,7 +80,11 @@ const createTransaction = async (req, res, next) => {
 
         req.body.flightId = flightId;
 
-        let where;
+        let where = {
+            id: {
+                in: [req.body.first_seatId],
+            },
+        };
         if (Object.keys(secondData).length !== 0) {
             where = {
                 id: {
@@ -88,11 +92,6 @@ const createTransaction = async (req, res, next) => {
                 },
             };
         }
-        where = {
-            id: {
-                in: [req.body.first_seatId],
-            },
-        };
 
         // Check if the seat exists and is not booked
         const seats = await prisma.flightSeat.findMany({
@@ -185,7 +184,11 @@ const createTransaction = async (req, res, next) => {
                     return seat.id;
                 });
 
-                let whereUpdate;
+                let whereUpdate = {
+                    id: {
+                        in: [seatId[0]],
+                    },
+                };
                 if (Object.keys(secondData).length !== 0) {
                     whereUpdate = {
                         id: {
@@ -193,11 +196,6 @@ const createTransaction = async (req, res, next) => {
                         },
                     };
                 }
-                whereUpdate = {
-                    id: {
-                        in: [seatId[0]],
-                    },
-                };
 
                 await tx.flightSeat.updateMany({
                     where: whereUpdate,
@@ -336,7 +334,12 @@ const bankTransfer = async (req, res, next) => {
 
         req.body.flightId = flightId;
 
-        let where;
+        let where = {
+            id: {
+                in: [req.body.first_seatId],
+            },
+        };
+
         if (Object.keys(secondData).length !== 0) {
             where = {
                 id: {
@@ -344,16 +347,12 @@ const bankTransfer = async (req, res, next) => {
                 },
             };
         }
-        where = {
-            id: {
-                in: [req.body.first_seatId],
-            },
-        };
 
         // Check if the seat exists and is not booked
         const seats = await prisma.flightSeat.findMany({
             where,
         });
+
         // check seat
         const { error, seatNumber } = await checkSeatAvailability(
             seats,
@@ -502,7 +501,11 @@ const bankTransfer = async (req, res, next) => {
                     return seat.id;
                 });
 
-                let whereUpdate;
+                let whereUpdate = {
+                    id: {
+                        in: [seatId[0]],
+                    },
+                };
                 if (Object.keys(secondData).length !== 0) {
                     whereUpdate = {
                         id: {
@@ -510,11 +513,6 @@ const bankTransfer = async (req, res, next) => {
                         },
                     };
                 }
-                whereUpdate = {
-                    id: {
-                        in: [seatId[0]],
-                    },
-                };
 
                 await tx.flightSeat.updateMany({
                     where: whereUpdate,
@@ -566,7 +564,11 @@ const creditCard = async (req, res, next) => {
 
         req.body.flightId = flightId;
 
-        let where;
+        let where = {
+            id: {
+                in: [req.body.first_seatId],
+            },
+        };
         if (Object.keys(secondData).length !== 0) {
             where = {
                 id: {
@@ -574,11 +576,6 @@ const creditCard = async (req, res, next) => {
                 },
             };
         }
-        where = {
-            id: {
-                in: [req.body.first_seatId],
-            },
-        };
 
         const seats = await prisma.flightSeat.findMany({
             where: {
@@ -682,7 +679,11 @@ const creditCard = async (req, res, next) => {
                     return seat.id;
                 });
 
-                let whereUpdate;
+                let whereUpdate = {
+                    id: {
+                        in: [seatId[0]],
+                    },
+                };
                 if (Object.keys(secondData).length !== 0) {
                     whereUpdate = {
                         id: {
@@ -690,11 +691,6 @@ const creditCard = async (req, res, next) => {
                         },
                     };
                 }
-                whereUpdate = {
-                    id: {
-                        in: [seatId[0]],
-                    },
-                };
 
                 await tx.flightSeat.updateMany({
                     where: whereUpdate,
@@ -750,7 +746,11 @@ const gopay = async (req, res, next) => {
 
         req.body.flightId = flightId;
 
-        let where;
+        let where = {
+            id: {
+                in: [req.body.first_seatId],
+            },
+        };
         if (Object.keys(secondData).length !== 0) {
             where = {
                 id: {
@@ -758,11 +758,6 @@ const gopay = async (req, res, next) => {
                 },
             };
         }
-        where = {
-            id: {
-                in: [req.body.first_seatId],
-            },
-        };
 
         // Check if the seat exists and is not booked
         const seats = await prisma.flightSeat.findMany({
@@ -851,7 +846,11 @@ const gopay = async (req, res, next) => {
                     return seat.id;
                 });
 
-                let whereUpdate;
+                let whereUpdate = {
+                    id: {
+                        in: [seatId[0]],
+                    },
+                };
                 if (Object.keys(secondData).length !== 0) {
                     whereUpdate = {
                         id: {
@@ -859,11 +858,6 @@ const gopay = async (req, res, next) => {
                         },
                     };
                 }
-                whereUpdate = {
-                    id: {
-                        in: [seatId[0]],
-                    },
-                };
 
                 await tx.flightSeat.updateMany({
                     where: whereUpdate,

@@ -65,27 +65,27 @@ const dataItemDetail = async (data) => {
                 seatId: data.second_seatId,
             },
         ];
+    } else {
+        item_details = [
+            {
+                id: randomUUID(),
+                name: `${data.first_title} ${data.first_fullName}`,
+                dob: new Date(
+                    first.dob.getTime() + 7 * 60 * 60 * 1000
+                ).toISOString(),
+                validityPeriod: new Date(
+                    first.validityPeriod.getTime() + 7 * 60 * 60 * 1000
+                ).toISOString(),
+                familyName: data.first_familyName,
+                flightId: data.flightId,
+                citizenship: data.first_citizenship,
+                issuingCountry: data.first_issuingCountry,
+                price: data.first_price,
+                quantity: data.first_quantity,
+                seatId: data.first_seatId,
+            },
+        ];
     }
-
-    item_details = [
-        {
-            id: randomUUID(),
-            name: `${data.first_title} ${data.first_fullName}`,
-            dob: new Date(
-                first.dob.getTime() + 7 * 60 * 60 * 1000
-            ).toISOString(),
-            validityPeriod: new Date(
-                first.validityPeriod.getTime() + 7 * 60 * 60 * 1000
-            ).toISOString(),
-            familyName: data.first_familyName,
-            flightId: data.flightId,
-            citizenship: data.first_citizenship,
-            issuingCountry: data.first_issuingCountry,
-            price: data.first_price,
-            quantity: data.first_quantity,
-            seatId: data.first_seatId,
-        },
-    ];
 
     return item_details;
 };
