@@ -15,7 +15,6 @@ const getAllTicket = async (req, res, next) => {
             select: {
                 id: true,
                 code: true,
-                bookingDate: true,
                 flight: {
                     select: {
                         id: true,
@@ -38,6 +37,31 @@ const getAllTicket = async (req, res, next) => {
                         id: true,
                         seatNumber: true,
                         type: true,
+                    },
+                },
+                ticketTransaction: {
+                    select: {
+                        id: true,
+                        orderId: true,
+                        totalPrice: true,
+                        status: true,
+                        bookingDate: true,
+                    },
+                },
+                ticketTransactionDetail: {
+                    select: {
+                        id: true,
+                        transactionId: true,
+                        price: true,
+                        name: true,
+                        familyName: true,
+                        dob: true,
+                        citizenship: true,
+                        passport: true,
+                        issuingCountry: true,
+                        validityPeriod: true,
+                        flightId: true,
+                        seatId: true,
                     },
                 },
             },
@@ -91,6 +115,7 @@ const getTicketById = async (req, res, next) => {
                         arrivalDate: true,
                         destinationAirport: true,
                         price: true,
+                        plane: true,
                     },
                 },
                 user: {
@@ -104,6 +129,31 @@ const getTicketById = async (req, res, next) => {
                         id: true,
                         seatNumber: true,
                         type: true,
+                    },
+                },
+                ticketTransaction: {
+                    select: {
+                        id: true,
+                        orderId: true,
+                        totalPrice: true,
+                        status: true,
+                        bookingDate: true,
+                    },
+                },
+                ticketTransactionDetail: {
+                    select: {
+                        id: true,
+                        transactionId: true,
+                        price: true,
+                        name: true,
+                        familyName: true,
+                        dob: true,
+                        citizenship: true,
+                        passport: true,
+                        issuingCountry: true,
+                        validityPeriod: true,
+                        flightId: true,
+                        seatId: true,
                     },
                 },
             },
@@ -123,24 +173,17 @@ const getTicketById = async (req, res, next) => {
 };
 
 const createTicket = async (req, res, next) => {
-    const { flightId, userId, seatId, bookingDate } = req.body;
+    const { flightId, userId, seatId, transactionId, detailTransactionId } =
+        req.body;
 
-    // Generate RandomCode
-    const generateRandomCode = (length) => {
-        const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        let result = "";
-        for (let i = 0; i < length; i++) {
-            const randomIndex = Math.floor(Math.random() * characters.length);
-            result += characters[randomIndex];
-        }
-        return result;
-    };
-
-    const codeRandom = generateRandomCode(6);
     try {
         // Check if the flight exists
         const flight = await prisma.flight.findUnique({
             where: { id: flightId },
+            include: {
+                plane: true,
+                departureAirport: true,
+            },
         });
         if (!flight) {
             return next(createHttpError(404, { message: "Flight not found" }));
@@ -167,27 +210,47 @@ const createTicket = async (req, res, next) => {
             );
         }
 
+        const airlineCode = flight.plane.code;
+        const airportCode = flight.departureAirport.code;
+        const flightCode = flight.code;
+        const seatNumber = seat.seatNumber;
+        let uniqueCode = `${airlineCode}-${airportCode}-${flightCode}-${seatNumber}`;
+        let isUnique = false;
+
+        // Ensure the code is unique
+        while (!isUnique) {
+            const existingTicket = await prisma.ticket.findUnique({
+                where: { code: uniqueCode },
+            });
+
+            if (existingTicket) {
+                // Append a unique identifier to ensure uniqueness
+                uniqueCode = `${airlineCode}-${airportCode}-${flightCode}-${seatNumber}-${uuidv4()}`;
+            } else {
+                isUnique = true;
+            }
+        }
+
         // Create the new ticket
         const newTicket = await prisma.ticket.create({
             data: {
-                code: codeRandom,
-                flightId,
-                userId,
-                seatId,
-                bookingDate,
+                code: uniqueCode,
+                flight: { connect: { id: flightId } },
+                user: { connect: { id: userId } },
+                seat: { connect: { id: seatId } },
+                ticketTransaction: { connect: { id: transactionId } },
+                ticketTransactionDetail: {
+                    connect: { id: detailTransactionId },
+                },
             },
 
             include: {
                 flight: true,
                 user: true,
                 seat: true,
+                ticketTransaction: true,
+                ticketTransactionDetail: true,
             },
-        });
-
-        // Mark the seat as booked
-        await prisma.flightSeat.update({
-            where: { id: seatId },
-            data: { isBooked: true },
         });
 
         res.status(201).json({
@@ -201,7 +264,7 @@ const createTicket = async (req, res, next) => {
 };
 
 const updateTicket = async (req, res, next) => {
-    const { code, flightId, userId, seatId, bookingDate } = req.body;
+    const { code, flightId, userId, seatId } = req.body;
 
     try {
         const ticket = await prisma.ticket.findUnique({
@@ -219,7 +282,6 @@ const updateTicket = async (req, res, next) => {
                 flightId,
                 userId,
                 seatId,
-                bookingDate,
             },
             include: {
                 flight: true,

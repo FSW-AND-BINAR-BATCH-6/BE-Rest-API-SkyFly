@@ -158,19 +158,19 @@ const updateFlightSchema = Joi.object({
 
 // ticket
 const TicketSchema = Joi.object({
-    flightId: Joi.string()
-        .regex(/^[a-zA-Z0-9]*$/)
-        .required(),
+    flightId: Joi.string().required(),
     userId: Joi.string().required(),
     seatId: Joi.string().required(),
-    bookingDate: Joi.date()
-        .required()
-        .greater(Date.now() - 24 * 60 * 60 * 1000),
+    transactionId: Joi.string().required(),
+    detailTransactionId: Joi.string().required(),
 });
 
 const UpdateTicketSchema = Joi.object({
-    code: Joi.string(),
-    bookingDate: Joi.date().greater(Date.now() - 24 * 60 * 60 * 1000),
+    flightId: Joi.string(),
+    userId: Joi.string(),
+    seatId: Joi.string(),
+    transactionId: Joi.string(),
+    detailTransactionId: Joi.string(),
 });
 
 // flightSeat
