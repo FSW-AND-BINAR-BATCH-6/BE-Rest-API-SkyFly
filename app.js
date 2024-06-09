@@ -35,13 +35,6 @@ app.use(express.json());
 app.use(logger(MORGAN_FORMAT));
 app.use(express.urlencoded({ extended: true }));
 
-//* Force the output to be application/json and remove fingerprint
-app.use((req, res, next) => {
-    res.removeHeader("X-Powered-By");
-    res.setHeader("Content-Type", "application/json");
-    next();
-});
-
 app.use(router);
 
 //* Error Handler with http-errors
