@@ -7,6 +7,7 @@ const prisma = new PrismaClient();
 const getAllTicket = async (req, res, next) => {
     try {
         const search = req.query.search || "";
+        const code = req.query.code || "";
         const limit = parseInt(req.query.limit) || 10;
         const page = parseInt(req.query.page) || 1;
         const offset = (page - 1) * limit;
@@ -66,9 +67,10 @@ const getAllTicket = async (req, res, next) => {
                 },
             },
             where: {
-                code: {
-                    contains: search,
-                },
+                AND: [
+                    { code: { contains: code } },
+                    { code: { contains: search } },
+                ],
             },
             orderBy: {
                 id: "asc",
@@ -79,9 +81,10 @@ const getAllTicket = async (req, res, next) => {
 
         const count = await prisma.ticket.count({
             where: {
-                code: {
-                    contains: search,
-                },
+                AND: [
+                    { code: { contains: code } },
+                    { code: { contains: search } },
+                ],
             },
         });
 
@@ -266,14 +269,18 @@ const createTicket = async (req, res, next) => {
 const updateTicket = async (req, res, next) => {
     const { flightId, userId, seatId, transactionId, detailTransactionId } =
         req.body;
-    console.log(req.body);
 
     try {
         const ticket = await prisma.ticket.findUnique({
             where: { id: req.params.id },
+            include: {
+                flight: true,
+                user: true,
+                seat: true,
+                ticketTransaction: true,
+                ticketTransactionDetail: true,
+            },
         });
-
-        console.log(ticket);
         if (!ticket) {
             return next(createHttpError(404, { message: "Ticket not found" }));
         }
@@ -281,11 +288,13 @@ const updateTicket = async (req, res, next) => {
         const updatedTicket = await prisma.ticket.update({
             where: { id: req.params.id },
             data: {
-                flightId,
-                userId: userId,
-                seatId,
-                transactionId,
-                detailTransactionId,
+                flight: { connect: { id: flightId } },
+                user: { connect: { id: userId } },
+                seat: { connect: { id: seatId } },
+                ticketTransaction: { connect: { id: transactionId } },
+                ticketTransactionDetail: {
+                    connect: { id: detailTransactionId },
+                },
             },
         });
         res.status(200).json({
