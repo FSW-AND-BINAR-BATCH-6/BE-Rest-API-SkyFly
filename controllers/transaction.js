@@ -938,11 +938,8 @@ const updateTransaction = async (req, res, next) => {
     // kalau perlu bikin function baru buat update transactionDetail satuan
     const { id } = req.params; 
     const {
-        userId, 
         totalPrice, 
         status, 
-        orderId, 
-        ticketId, 
         transactionDetails
     } = req.body;
 
