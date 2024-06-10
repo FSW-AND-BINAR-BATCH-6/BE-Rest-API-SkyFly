@@ -95,11 +95,7 @@ const createTransaction = async (req, res, next) => {
 
         // Check if the seat exists and is not booked
         const seats = await prisma.flightSeat.findMany({
-            where: {
-                id: {
-                    in: [req.body.first_seatId, req.body.second_seatId],
-                },
-            },
+            where,
         });
 
         // check seat
@@ -577,11 +573,7 @@ const creditCard = async (req, res, next) => {
         }
 
         const seats = await prisma.flightSeat.findMany({
-            where: {
-                id: {
-                    in: [req.body.first_seatId, req.body.second_seatId],
-                },
-            },
+            where,
         });
 
         // check seat
@@ -760,11 +752,7 @@ const gopay = async (req, res, next) => {
 
         // Check if the seat exists and is not booked
         const seats = await prisma.flightSeat.findMany({
-            where: {
-                id: {
-                    in: [req.body.first_seatId, req.body.second_seatId],
-                },
-            },
+            where,
         });
 
         // check seat
