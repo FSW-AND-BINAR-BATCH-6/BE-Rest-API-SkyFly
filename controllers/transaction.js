@@ -938,27 +938,34 @@ const updateTransaction = async (req, res, next) => {
     // kalau perlu bikin function baru buat update transactionDetail satuan
     const { id } = req.params; 
     const {
-        userId, 
         totalPrice, 
         status, 
-        orderId, 
-        ticketId, 
         transactionDetails
     } = req.body;
 
     try {
         await prisma.$transaction(async (tx) => {
             // Update the ticketTransaction record
+            const validateId = await prisma.ticketTransaction.findUnique({
+                where: { id }
+            })
+
+            
+            if (!validateId){
+                return next(createHttpError(404, "Transaction not found"));
+            }
+
             const updatedTransaction = await tx.ticketTransaction.update({
                 where: { id: id },
                 data: {
-                    userId,
                     totalPrice,
                     status,
-                    orderId,
-                    ticketId
                 },
+                include: {
+                    Transaction_Detail: true,
+                }
             });
+
 
             // Update each transactionDetail record if provided
             if (transactionDetails && transactionDetails.length > 0) {
@@ -997,16 +1004,20 @@ const deleteTransaction = async (req, res, next) => {
     const { id } = req.params
 
     try{
+        const validateId = await prisma.ticketTransaction.findUnique({
+            where: { id }
+        })
+
+        if (!validateId) {
+            return next(createHttpError(404, "Transaction not found"));
+        }
+
         const ticketTransactions = await prisma.ticketTransaction.delete({
             where:{ id },
             include: {
                 Transaction_Detail: true
             }
         })
-
-        if (!ticketTransactions) {
-            return next(createHttpError(404, "Transaction not found"));
-        }
 
         res.status(200).json({
             status: true,
@@ -1023,13 +1034,17 @@ const deleteTransactionDetail = async (req, res, next) => {
     const { id } = req.params
 
     try{
+        const validateId = await prisma.ticketTransactionDetail.findUnique({
+            where: { id }
+        })
+
+        if (!validateId) {
+            return next(createHttpError(404, "Transaction Detail not found"));
+        }
+
         const ticketTransactions = await prisma.ticketTransactionDetail.delete({
             where:{ id }
         })
-
-        if (!ticketTransactions) {
-            return next(createHttpError(404, "Transaction not found"));
-        }
 
         res.status(200).json({
             status: true,
