@@ -25,7 +25,7 @@ router
         createSeat
     );
 
-router.route("/available/:flightId").get(getSeatsByFlightId);
+router.route("/flight/:flightId").get(getSeatsByFlightId);
 
 router
     .route("/:id")
