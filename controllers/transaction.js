@@ -265,12 +265,21 @@ const notification = async (req, res, next) => {
     let datas = await snap.transaction.notification(notification);
     console.log(datas);
 
+    await prisma.ticketTransaction.update({
+        where: {
+            orderId: data.order_id,
+        },
+        data: {
+            status: datas.transaction_status,
+        },
+    });
+
     if (datas.transaction_status == "capture") {
-        if (fraudStatus == "accept") {
+        if (datas.fraud_status == "accept") {
             // TODO set transaction status on your database to 'success'
             // and response with 200 OK
 
-            responseData = await prisma.flightSeat.updateMany({
+            await prisma.flightSeat.updateMany({
                 where,
                 data: {
                     status: "BOOKED",
@@ -280,7 +289,7 @@ const notification = async (req, res, next) => {
     } else if (datas.transaction_status == "settlement") {
         // TODO set transaction status on your database to 'success'
         // and response with 200 OK
-        responseData = await prisma.flightSeat.updateMany({
+        await prisma.flightSeat.updateMany({
             where,
             data: {
                 status: "BOOKED",
@@ -293,7 +302,7 @@ const notification = async (req, res, next) => {
     ) {
         // TODO set transaction status on your database to 'failure'
         // and response with 200 OK
-        responseData = await prisma.flightSeat.updateMany({
+        await prisma.flightSeat.updateMany({
             where,
             data: {
                 status: "AVAILABLE",
@@ -302,7 +311,7 @@ const notification = async (req, res, next) => {
     } else if (datas.transaction_status == "pending") {
         // TODO set transaction status on your database to 'pending' / waiting payment
         // and response with 200 OK
-        responseData = await prisma.flightSeat.updateMany({
+        await prisma.flightSeat.updateMany({
             where,
             data: {
                 status: "OCCUPIED",
