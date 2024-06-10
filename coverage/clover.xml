@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1717940373473" clover="3.2.0">
-  <project timestamp="1717940373473" name="All files">
-    <metrics statements="73" coveredstatements="61" conditionals="22" coveredconditionals="11" methods="7" coveredmethods="6" elements="102" coveredelements="78" complexity="0" loc="73" ncloc="73" packages="3" files="3" classes="3"/>
+<coverage generated="1718005581122" clover="3.2.0">
+  <project timestamp="1718005581122" name="All files">
+    <metrics statements="73" coveredstatements="69" conditionals="22" coveredconditionals="12" methods="7" coveredmethods="7" elements="102" coveredelements="88" complexity="0" loc="73" ncloc="73" packages="3" files="3" classes="3"/>
     <package name="controllers">
-      <metrics statements="45" coveredstatements="34" conditionals="20" coveredconditionals="10" methods="5" coveredmethods="4"/>
+      <metrics statements="45" coveredstatements="42" conditionals="20" coveredconditionals="11" methods="5" coveredmethods="5"/>
       <file name="user.js" path="C:\Belajar-Golang\stupen Binar Semester 6\finalprojekbinar-github\update-branchdevanduser\BE-Rest-API-SkyFly\controllers\user.js">
-        <metrics statements="45" coveredstatements="34" conditionals="20" coveredconditionals="10" methods="5" coveredmethods="4"/>
+        <metrics statements="45" coveredstatements="42" conditionals="20" coveredconditionals="11" methods="5" coveredmethods="5"/>
         <line num="1" count="1" type="stmt"/>
         <line num="2" count="1" type="stmt"/>
         <line num="3" count="1" type="stmt"/>
@@ -21,12 +21,12 @@
         <line num="50" count="1" type="stmt"/>
         <line num="64" count="1" type="stmt"/>
         <line num="68" count="1" type="stmt"/>
-        <line num="69" count="1" type="stmt"/>
-        <line num="70" count="1" type="stmt"/>
+        <line num="69" count="2" type="stmt"/>
+        <line num="70" count="2" type="stmt"/>
         <line num="88" count="1" type="cond" truecount="1" falsecount="1"/>
         <line num="89" count="1" type="stmt"/>
         <line num="95" count="0" type="stmt"/>
-        <line num="98" count="0" type="stmt"/>
+        <line num="98" count="1" type="stmt"/>
         <line num="102" count="1" type="stmt"/>
         <line num="103" count="2" type="stmt"/>
         <line num="105" count="2" type="stmt"/>
@@ -34,22 +34,22 @@
         <line num="116" count="1" type="stmt"/>
         <line num="128" count="1" type="stmt"/>
         <line num="132" count="1" type="stmt"/>
-        <line num="134" count="1" type="stmt"/>
-        <line num="135" count="1" type="stmt"/>
-        <line num="136" count="1" type="stmt"/>
-        <line num="140" count="1" type="cond" truecount="1" falsecount="1"/>
+        <line num="134" count="2" type="stmt"/>
+        <line num="135" count="2" type="stmt"/>
+        <line num="136" count="2" type="stmt"/>
+        <line num="140" count="2" type="cond" truecount="1" falsecount="1"/>
         <line num="141" count="0" type="stmt"/>
-        <line num="146" count="1" type="stmt"/>
+        <line num="146" count="2" type="stmt"/>
         <line num="156" count="1" type="stmt"/>
-        <line num="168" count="0" type="stmt"/>
+        <line num="168" count="1" type="stmt"/>
         <line num="172" count="1" type="stmt"/>
-        <line num="173" count="0" type="stmt"/>
-        <line num="174" count="0" type="stmt"/>
-        <line num="178" count="0" type="cond" truecount="0" falsecount="2"/>
+        <line num="173" count="2" type="stmt"/>
+        <line num="174" count="2" type="stmt"/>
+        <line num="178" count="2" type="cond" truecount="1" falsecount="1"/>
         <line num="179" count="0" type="stmt"/>
-        <line num="182" count="0" type="stmt"/>
-        <line num="186" count="0" type="stmt"/>
-        <line num="191" count="0" type="stmt"/>
+        <line num="182" count="2" type="stmt"/>
+        <line num="186" count="1" type="stmt"/>
+        <line num="191" count="1" type="stmt"/>
         <line num="195" count="1" type="stmt"/>
       </file>
     </package>
