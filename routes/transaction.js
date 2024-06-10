@@ -9,6 +9,9 @@ const {
     createTransaction,
     notification,
     getAllTransaction,
+    getTransactionById,
+    deleteTransaction,
+    deleteTransactionDetail,
 } = require("../controllers/transaction");
 
 const authentication = require("../middlewares/authentication");
@@ -42,7 +45,13 @@ router.get("/status/:orderId", authentication, getTransaction);
 router.post("/notification", notification);
 router.put("/status/:orderId", authentication, updateTransaction);
 
+router.post("/create", createTransaction)
+
 // dashboard action
 router.get("/", getAllTransaction);
+router.get("/:id", getTransactionById)
+router.put("/:id", updateTransaction)
+router.delete("/:id", deleteTransaction)
+router.delete("/transactionDetail/:id", deleteTransactionDetail)
 
 module.exports = router;
