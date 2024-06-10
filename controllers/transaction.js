@@ -95,11 +95,7 @@ const createTransaction = async (req, res, next) => {
 
         // Check if the seat exists and is not booked
         const seats = await prisma.flightSeat.findMany({
-            where: {
-                id: {
-                    in: [req.body.first_seatId, req.body.second_seatId],
-                },
-            },
+            where,
         });
 
         // check seat
@@ -577,11 +573,7 @@ const creditCard = async (req, res, next) => {
         }
 
         const seats = await prisma.flightSeat.findMany({
-            where: {
-                id: {
-                    in: [req.body.first_seatId, req.body.second_seatId],
-                },
-            },
+            where,
         });
 
         // check seat
@@ -760,11 +752,7 @@ const gopay = async (req, res, next) => {
 
         // Check if the seat exists and is not booked
         const seats = await prisma.flightSeat.findMany({
-            where: {
-                id: {
-                    in: [req.body.first_seatId, req.body.second_seatId],
-                },
-            },
+            where,
         });
 
         // check seat
@@ -921,20 +909,136 @@ const getAllTransaction = async (req, res, next) => {
 
 const getTransactionById = async (req, res, next) => {
     // get transaction data by id from ticketTransaction & include ticketTransaction detail
+    try {
+        const { id } = req.params;
+        const ticketTransactions = await prisma.ticketTransaction.findUnique({
+            where: { id },
+            include: {
+                Transaction_Detail: true,
+            },
+        });
+
+        if (!ticketTransactions) {
+            return next(createHttpError(404, "Transaction not found"));
+        }
+
+        res.status(200).json({
+            status: true,
+            message: "ticket transactions data retrieved successfully",
+            data: ticketTransactions,
+        });
+    } catch (error) {
+        next(createHttpError(500, error.message));
+    }
 };
 
 const updateTransaction = async (req, res, next) => {
     // update transaction data by id from ticketTransaction & include ticketTransaction detail
     // pake db transaction yak.. contoh ada di atas / di auth controller -> update user logged in
     // kalau perlu bikin function baru buat update transactionDetail satuan
+    const { id } = req.params; 
+    const {
+        userId, 
+        totalPrice, 
+        status, 
+        orderId, 
+        ticketId, 
+        transactionDetails
+    } = req.body;
+
+    try {
+        await prisma.$transaction(async (tx) => {
+            // Update the ticketTransaction record
+            const updatedTransaction = await tx.ticketTransaction.update({
+                where: { id: id },
+                data: {
+                    userId,
+                    totalPrice,
+                    status,
+                    orderId,
+                    ticketId
+                },
+            });
+
+            // Update each transactionDetail record if provided
+            if (transactionDetails && transactionDetails.length > 0) {
+                await Promise.all(transactionDetails.map(async (detail) => {
+                    await tx.transactionDetail.update({
+                        where: { ide: detail.ide },
+                        data: {
+                            transactionId: detail.transactionId,
+                            ticketId: detail.ticketId,
+                            name: detail.name,
+                            familyName: detail.familyName,
+                            dob: detail.dob,
+                            citizenship: detail.citizenship,
+                            passport: detail.passport,
+                            issuingCountry: detail.issuingCountry,
+                            validityPeriod: detail.validityPeriod,
+                        },
+                    });
+                }));
+            }
+
+            res.status(200).json({
+                status: true,
+                message: 'Transaction updated successfully',
+                data: updatedTransaction,
+            });
+        });
+    } catch (error) {
+        next(createHttpError(500, { message: error.message }));
+    }
+    
 };
 
 const deleteTransaction = async (req, res, next) => {
     // delete transaction data by id from ticketTransaction & include ticketTransaction detail
+    const { id } = req.params
+
+    try{
+        const ticketTransactions = await prisma.ticketTransaction.delete({
+            where:{ id },
+            include: {
+                Transaction_Detail: true
+            }
+        })
+
+        if (!ticketTransactions) {
+            return next(createHttpError(404, "Transaction not found"));
+        }
+
+        res.status(200).json({
+            status: true,
+            message: 'Transaction deleted successfully',
+            data: ticketTransactions
+        });
+    } catch (error) {
+        next(createHttpError(500, error.message));
+    }
 };
 
 const deleteTransactionDetail = async (req, res, next) => {
     // delete transaction detail data by id
+    const { id } = req.params
+
+    try{
+        const ticketTransactions = await prisma.ticketTransactionDetail.delete({
+            where:{ id }
+        })
+
+        if (!ticketTransactions) {
+            return next(createHttpError(404, "Transaction not found"));
+        }
+
+        res.status(200).json({
+            status: true,
+            message: 'Transaction Detail deleted successfully',
+            data: ticketTransactions
+        });
+    } catch (error) {
+        next(createHttpError(500, error.message));
+    }
 };
 
 module.exports = {
