@@ -923,15 +923,35 @@ const getAllTransaction = async (req, res, next) => {
     // get all transaction data from ticketTransaction & include ticketTransaction detail
 
     try {
-        const ticketTransactions = await prisma.ticketTransaction.findMany({
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const offset = (page - 1) * limit;
+
+        const transactions = await prisma.ticketTransaction.findMany({
+            skip: offset,
+            take: limit,
             include: {
                 Transaction_Detail: true,
             },
         });
+
+        const count = await prisma.ticketTransaction.count();
+
         res.status(200).json({
             status: true,
-            message: "ticket transactions data retrieved successfully",
-            data: ticketTransactions,
+            message: "All airports data retrieved successfully",
+            totalItems: count,
+            pagination: {
+                totalPage: Math.ceil(count / limit),
+                currentPage: page,
+                pageItems: transactions.length,
+                nextPage: page < Math.ceil(count / limit) ? page + 1 : null,
+                prevPage: page > 1 ? page - 1 : null,
+            },
+            data:
+                transactions.length !== 0
+                    ? transactions
+                    : "empty transaction data",
         });
     } catch (error) {
         next(
