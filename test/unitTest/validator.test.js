@@ -12,7 +12,7 @@ const {
     forgetPasswordSchema,
     userCreateSchema,
     userUpdateSchema,
-    createFlightSeatSchema,
+    createSeatSchema,
     createAirlineSchema,
     updateAirlineSchema,
     createAirportSchema,
@@ -661,7 +661,7 @@ describe("FlightSeat Input Validation", () => {
         const updateFlightSeatTest = [
             {
                 description: "Success",
-                schema: createFlightSeatSchema,
+                schema: createSeatSchema,
                 inputData: {
                     flightId: "12345",
                     seatNumber: "12B",
@@ -674,9 +674,9 @@ describe("FlightSeat Input Validation", () => {
             {
                 description:
                     "Invalid Input, there are letters in the flightId input",
-                schema: createFlightSeatSchema,
+                schema: createSeatSchema,
                 inputData: {
-                    flightId: "asd123",
+                    flightId: "asd1231@",
                     seatNumber: "13B",
                     type: "ECONOMY",
                 },
@@ -684,13 +684,13 @@ describe("FlightSeat Input Validation", () => {
                     success: false,
                     status: 422,
                     message:
-                        '"flightId" with value "asd123" fails to match the required pattern: /^\\d+$/',
+                        '"flightId" with value "asd1231@" fails to match the required pattern: /^[a-zA-Z0-9]*$/',
                 },
             },
             {
                 description:
                     "Invalid Input, seatNumber must has less than or equal 5",
-                schema: createFlightSeatSchema,
+                schema: createSeatSchema,
                 inputData: {
                     flightId: "123456",
                     seatNumber: "1234B",
@@ -706,7 +706,7 @@ describe("FlightSeat Input Validation", () => {
             {
                 description:
                     "Invalid Input, input at type doesn't match enum data",
-                schema: createFlightSeatSchema,
+                schema: createSeatSchema,
                 inputData: {
                     flightId: "123456",
                     seatNumber: "123B",
@@ -720,7 +720,7 @@ describe("FlightSeat Input Validation", () => {
             },
             {
                 description: "Invalid Input, wrong data tyoe at flightId",
-                schema: createFlightSeatSchema,
+                schema: createSeatSchema,
                 inputData: {
                     flightId: 12344,
                     seatNumber: "123B",

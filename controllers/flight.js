@@ -189,7 +189,7 @@ const getFlightById = async (req, res, next) => {
 
     if (!flight) {
       return next(
-        createHttpError(409, {
+        createHttpError(404, {
           message: "Flight not found",
         })
       );
@@ -315,7 +315,7 @@ const createFlight = async (req, res, next) => {
       }
     });
 
-    res.status(200).json({
+    res.status(201).json({
       status: true,
       message: 'Flight created successfully',
       data: newFlight,
@@ -361,7 +361,7 @@ const updateFlight = async (req, res, next) => {
 
     if (!flight) {
       return next(
-        createHttpError(409, {
+        createHttpError(404, {
           message: "Flight Not Found",
         })
       );
@@ -390,7 +390,7 @@ const updateFlight = async (req, res, next) => {
       }
     });
 
-    res.status(200).json({
+    res.status(201).json({
       status: true,
       message: 'Flight updated successfully',
       data: {

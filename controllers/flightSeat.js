@@ -1,332 +1,199 @@
 const { PrismaClient } = require("@prisma/client");
-const { v4: uuidv4 } = require("uuid");
+const createHttpError = require("http-errors");
 
 const prisma = new PrismaClient();
 
-const getAllFlightSeats = async (req, res) => {
+const getAllSeats = async (req, res, next) => {
     try {
-        const { page = 1, limit = 5, search } = req.query;
-        const skip = (page - 1) * limit;
-        const take = parseInt(limit);
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const offset = (page - 1) * limit;
 
-        let filters = {};
-
-        if (search) {
-            const decodedSearch = decodeURIComponent(search);
-            const searchTerms = decodedSearch
-                .split("%20")
-                .map((term) => term.toLowerCase());
-            filters = {
-                AND: [],
-            };
-
-            searchTerms.forEach((term) => {
-                filters.AND.push({
-                    OR: [
-                        { seatNumber: { contains: term, mode: "insensitive" } },
-                        { type: { equals: term.toUpperCase() } },
-                    ],
-                });
-            });
-        }
-
-        const flightSeats = await prisma.flightSeat.findMany({
-            where: filters,
-            skip,
-            take,
-            include: {
-                flight: true,
-            },
+        const seats = await prisma.flightSeat.findMany({
+            skip: offset,
+            take: limit,
         });
 
-        const total = await prisma.flightSeat.count({
-            where: filters,
-        });
-
-        const totalPages = Math.ceil(total / take);
-        const currentPage = parseInt(page);
+        const count = await prisma.flightSeat.count();
 
         res.status(200).json({
             status: true,
-            message: "All flight seats data retrieved successfully",
-            totalItems: total,
+            message: "All seat flights retrieved successfully",
+            totalItems: count,
             pagination: {
-                totalPages: totalPages,
-                currentPage: currentPage,
-                pageItems: flightSeats.length,
-                nextPage: currentPage < totalPages ? currentPage + 1 : null,
-                prevPage: currentPage > 1 ? currentPage - 1 : null,
+                totalPage: Math.ceil(count / limit),
+                currentPage: page,
+                pageItems: seats.length,
+                nextPage: page < Math.ceil(count / limit) ? page + 1 : null,
+                prevPage: page > 1 ? page - 1 : null,
             },
-            data:
-                flightSeats.length !== 0
-                    ? flightSeats
-                    : "No flight seats data found",
+            data: seats.length !== 0 ? seats : "No flight seats data found",
         });
-    } catch (err) {
-        next(
-            createHttpError(500, {
-                message: err.message,
-            })
-        );
+    } catch (error) {
+        next(createHttpError(500, { message: error.message }));
     }
 };
 
-const getAvailableFlightSeats = async (req, res) => {
-    const { flightId } = req.params;
-    const { page = 1, limit = 5 } = req.query;
-    const skip = (page - 1) * limit;
-    const take = parseInt(limit);
-
+const getSeatsByFlightId = async (req, res, next) => {
     try {
-        const availableSeats = await prisma.flightSeat.findMany({
-            where: {
-                flightId: flightId,
-                isBooked: false,
-            },
-            skip,
-            take,
-        });
+        const { flightId } = req.params;
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const offset = (page - 1) * limit;
 
-        const total = await prisma.flightSeat.count({
-            where: {
-                flightId: flightId,
-                isBooked: false,
-            },
-        });
-
-        const totalPages = Math.ceil(total / take);
-        const currentPage = parseInt(page);
-
-        res.status(200).json({
-            status: true,
-            message: "Available flight seats data retrieved successfully",
-            totalItems: total,
-            pagination: {
-                totalPages: totalPages,
-                currentPage: currentPage,
-                pageItems: availableSeats.length,
-                nextPage: currentPage < totalPages ? currentPage + 1 : null,
-                prevPage: currentPage > 1 ? currentPage - 1 : null,
-            },
-            data:
-                availableSeats.length !== 0
-                    ? availableSeats
-                    : "No available flight seats data found",
-        });
-    } catch (err) {
-        next(
-            createHttpError(500, {
-                message: err.message,
-            })
-        );
-    }
-};
-
-const getFlightSeatById = async (req, res) => {
-    const { id } = req.params;
-
-    try {
-        const flightSeat = await prisma.flightSeat.findUnique({
-            where: { id },
-        });
-
-        if (!flightSeat) {
-            return res.status(404).json({ message: "Flight seat not found" });
-        }
-
-        res.status(200).json(flightSeat);
-    } catch (err) {
-        next(
-            createHttpError(500, {
-                message: err.message,
-            })
-        );
-    }
-};
-
-const createFlightSeat = async (req, res, next) => {
-    try {
-        const { createFlightSeatSchema } = require("../utils/joiValidation");
-        const { error } = createFlightSeatSchema.validate(req.body);
-        if (error) {
-            return res.status(400).json({ message: error.details[0].message });
-        }
-
-        const { flightId, seatNumber, type } = req.body;
+        console.log(flightId);
 
         const flight = await prisma.flight.findUnique({
-            where: { id: flightId },
+            where: {
+                id: flightId,
+            },
         });
 
         if (!flight) {
-            return res
-                .status(400)
-                .json({ message: "Invalid flightId. Flight does not exist." });
+            return next(
+                createHttpError(404, {
+                    message: "flight is not found",
+                })
+            );
         }
 
-        if (flight.capacity <= 0) {
-            return res
-                .status(400)
-                .json({ message: "No available capacity for this flight." });
-        }
-
-        const existingSeat = await prisma.flightSeat.findFirst({
-            where: {
-                flightId,
-                seatNumber,
-            },
+        const seats = await prisma.flightSeat.findMany({
+            where: { flightId },
+            skip: offset,
+            take: limit,
         });
 
-        if (existingSeat) {
-            return res.status(400).json({
-                message: "Seat number already exists for this flight.",
-            });
-        }
+        const count = await prisma.flightSeat.count({ where: { flightId } });
 
-        const newFlightSeat = await prisma.flightSeat.create({
+        res.status(200).json({
+            status: true,
+            message: "Seats retrieved successfully",
+            totalItems: count,
+            pagination: {
+                totalPage: Math.ceil(count / limit),
+                currentPage: page,
+                pageItems: seats.length,
+                nextPage: page < Math.ceil(count / limit) ? page + 1 : null,
+                prevPage: page > 1 ? page - 1 : null,
+            },
+            data: seats.length !== 0 ? seats : "No flight seats data found",
+        });
+    } catch (error) {
+        next(createHttpError(500, { message: error.message }));
+    }
+};
+
+const decreaseFlightCapacity = async (flightId) => {
+    await prisma.flight.update({
+        where: { id: flightId },
+        data: {
+            capacity: {
+                decrement: 1,
+            },
+        },
+    });
+};
+
+const increaseFlightCapacity = async (flightId) => {
+    await prisma.flight.update({
+        where: { id: flightId },
+        data: {
+            capacity: {
+                increment: 1,
+            },
+        },
+    });
+};
+
+const createSeat = async (req, res, next) => {
+    try {
+        const { flightId, seatNumber, type } = req.body;
+
+        await decreaseFlightCapacity(flightId);
+
+        const newSeat = await prisma.flightSeat.create({
             data: {
-                id: uuidv4(),
                 flightId,
                 seatNumber,
                 type,
-                isBooked: false,
+                status: "AVAILABLE",
             },
-        });
-
-        await prisma.flight.update({
-            where: { id: flightId },
-            data: { capacity: flight.capacity - 1 },
         });
 
         res.status(201).json({
-            message: "Flight seat created successfully",
             status: true,
-            data: newFlightSeat,
+            message: "Seat created successfully",
+            data: newSeat,
         });
-    } catch (err) {
-        next(createHttpError(500, { message: err.message }));
+    } catch (error) {
+        next(createHttpError(500, { message: error.message }));
     }
 };
 
-module.exports = { createFlightSeat };
-
-const updateFlightSeat = async (req, res, next) => {
-    const { id } = req.params;
-    const { seatNumber, type } = req.body;
-
-    console.log("Request Params:", id);
-    console.log("Request Body:", req.body);
-
-    // Validate request body against schema
-    const { updateFlightSeatSchema } = require("../utils/joiValidation");
-    const { error } = updateFlightSeatSchema.validate(req.body);
-    if (error) {
-        console.log("Validation Error:", error.details[0].message);
-        return res.status(400).json({ message: error.details[0].message });
-    }
-
+const updateSeat = async (req, res, next) => {
     try {
-        const updatedFlightSeat = await prisma.flightSeat.update({
+        const { id } = req.params;
+        const { seatNumber, status } = req.body;
+
+        const seat = await prisma.flightSeat.findUnique({
+            where: { id },
+        });
+
+        if (!seat) {
+            return next(createHttpError(404, { message: "Seat not found" }));
+        }
+
+        const updatedSeat = await prisma.flightSeat.update({
             where: { id },
             data: {
                 seatNumber,
-                type,
+                status,
             },
         });
 
-        console.log("Updated Flight Seat:", updatedFlightSeat);
-
         res.status(200).json({
-            message: "Flight seat updated successfully",
             status: true,
-            data: updatedFlightSeat,
+            message: "Seat updated successfully",
+            data: updatedSeat,
         });
-    } catch (err) {
-        console.error("Update Error:", err); // Log the error for debugging purposes
-        next(
-            createHttpError(500, {
-                message: err.message, // Use err.message to get the actual error message
-            })
-        );
+    } catch (error) {
+        next(createHttpError(500, { message: error.message }));
     }
 };
 
-const deleteFlightSeat = async (req, res) => {
-    const { id } = req.params;
-
+const deleteSeat = async (req, res, next) => {
     try {
-        const flightSeat = await prisma.flightSeat.findUnique({
+        const { id } = req.params;
+
+        const seat = await prisma.flightSeat.findUnique({
             where: { id },
         });
 
-        if (!flightSeat) {
-            return res.status(404).json({ message: "FlightSeat not found." });
+        if (!seat) {
+            return next(createHttpError(404, { message: "Seat not found" }));
         }
 
-        // Delete the flight seat
+        const { flightId } = seat;
+
+        await increaseFlightCapacity(flightId);
+
         await prisma.flightSeat.delete({
             where: { id },
         });
 
-        // Increment the flight capacity
-        await prisma.flight.update({
-            where: { id: flightSeat.flightId },
-            data: { capacity: { increment: 1 } },
-        });
-
-        res.status(200).json({ message: "Flight seat deleted successfully" });
-    } catch (err) {
-        next(
-            createHttpError(500, {
-                message: err.message,
-            })
-        );
-    }
-};
-
-const bookFlightSeat = async (req, res) => {
-    const { id } = req.params;
-
-    try {
-        const flightSeat = await prisma.flightSeat.findUnique({
-            where: { id },
-        });
-
-        if (!flightSeat) {
-            return res.status(404).json({ message: "Flight seat not found" });
-        }
-
-        if (flightSeat.isBooked) {
-            return res
-                .status(400)
-                .json({ message: "Flight seat is already booked" });
-        }
-
-        const bookedFlightSeat = await prisma.flightSeat.update({
-            where: { id },
-            data: { isBooked: true },
-        });
-
         res.status(200).json({
             status: true,
-            message: "Flight seat booked successfully",
-            bookedFlightSeat,
+            message: "Seat deleted successfully",
         });
-    } catch (err) {
-        next(
-            createHttpError(500, {
-                message: err.message,
-            })
-        );
+    } catch (error) {
+        next(createHttpError(500, { message: error.message }));
     }
 };
 
 module.exports = {
-    getAllFlightSeats,
-    getAvailableFlightSeats,
-    getFlightSeatById,
-    createFlightSeat,
-    updateFlightSeat,
-    deleteFlightSeat,
-    bookFlightSeat,
+    getAllSeats,
+    getSeatsByFlightId,
+    createSeat,
+    updateSeat,
+    deleteSeat,
 };

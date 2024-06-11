@@ -4,6 +4,7 @@ const router = require("./routes");
 const logger = require("morgan");
 const { MORGAN_FORMAT } = require("./config/logger");
 const helmet = require("helmet");
+const { rateLimit } = require("./lib/rateLimit");
 
 const app = express();
 
@@ -12,24 +13,27 @@ app.set("views", __dirname + "/views");
 
 //* configuration to allow all origins and specific methods and headers.
 app.use(
-	cors({
-		origin: "*",
+    cors({
+        origin: "*",
         methods: "GET, POST, PUT, DELETE",
         allowedHeaders: "Content-Type, Authorization",
     })
 );
-	
+
+//* Limit hit API from the same IP only 100 times per 15 minutes
+app.use(
+    rateLimit(
+        15 * 60 * 1000,
+        100,
+        "Too many requests from this IP, please try again later.",
+        true
+    )
+);
+
 app.use(helmet());
 app.use(express.json());
 app.use(logger(MORGAN_FORMAT));
 app.use(express.urlencoded({ extended: true }));
-
-//* Force the output to be application/json and remove fingerprint
-app.use((req, res, next) => {
-    res.removeHeader("X-Powered-By");
-    // res.setHeader("Content-Type", "application/json");
-    next();
-});
 
 app.use(router);
 
