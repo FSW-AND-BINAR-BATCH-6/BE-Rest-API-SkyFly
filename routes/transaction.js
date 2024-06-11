@@ -30,6 +30,7 @@ const {
     CCSchema,
     GopaySchema,
     SnapSchema,
+    updateTransactionSchema,
 } = require("../utils/joiValidation");
 
 router.post(
@@ -48,10 +49,10 @@ router.put("/status/:orderId", authentication, updateTransaction);
 router.post("/create", createTransaction)
 
 // dashboard action
-router.get("/", getAllTransaction);
-router.get("/:id", getTransactionById)
-router.put("/:id", updateTransaction)
-router.delete("/:id", deleteTransaction)
-router.delete("/transactionDetail/:id", deleteTransactionDetail)
+router.get("/", authentication, getAllTransaction);
+router.get("/:id", authentication,  getTransactionById)
+router.put("/:id", authentication, validator(updateTransactionSchema), updateTransaction)
+router.delete("/:id", authentication, deleteTransaction)
+router.delete("/transactionDetail/:id", authentication, deleteTransactionDetail)
 
 module.exports = router;
