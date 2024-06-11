@@ -30,7 +30,7 @@ const getAllUsers = async (req, res, next) => {
                         isVerified: true,
                     },
                 },
-            },
+            }, 
             orderBy: {
                 name: "asc",
             },
@@ -92,15 +92,14 @@ const getUserById = async (req, res, next) => {
                 data: user,
             });
         } else {
-            next(createHttpError(404, { message: "Id Not Found" }));
+            return next(createHttpError(404, { message: "Id Not Found" }));
         }
     } catch (error) {
-        next(createHttpError(500, { error: error.message }));
+        next(createHttpError(500, { message: error.message }));
     }
 };
 
 const createUser = async (req, res, next) => {
-    console.log(randomUUID());
     const data = req.body;
 
     try {

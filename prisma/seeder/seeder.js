@@ -319,7 +319,7 @@ async function main() {
         for (let letter of seatLetters) {
             flightSeats.push({
                 seatNumber: `${i}${letter}`,
-                isBooked: false,
+                status: "AVAILABLE",
                 type: "ECONOMY",
             });
         }
@@ -376,6 +376,7 @@ async function main() {
                         destinationAirportId: destinationAirport.id,
                         capacity: flight.capacity,
                         price: flight.price,
+                        code: `${flight.planeCode}.${flight.departureCityCode}.${flight.destinationCityCode}`,
                     },
                 });
             }
@@ -394,23 +395,77 @@ async function main() {
                             seatNumber: seat.seatNumber,
                             isBooked: seat.isBooked,
                             type: seat.type,
-                            tickets: {
-                                create: {
-                                    code: randomUUID(),
-                                    bookingDate: new Date(
-                                        "2024-06-01T10:00:00Z"
-                                    ),
-                                    flight: {
-                                        connect: { id: flight.id },
-                                    },
-                                },
-                            },
                         },
                     });
                 })
             );
         })
     );
+
+    const transactions = [
+        {
+          id: randomUUID(),
+          userId: "user-123", // Replace with actual user ID
+          orderId: "order-123",
+          status: "pending",
+          totalPrice: 100.00,
+          bookingDate: new Date(),
+        },
+        {
+          id: randomUUID(),
+          userId: "user-124", // Replace with actual user ID
+          orderId: "order-124",
+          status: "success",
+          totalPrice: 200.00,
+          bookingDate: new Date(),
+        },
+      ];
+    
+      // Sample data for ticketTransactionDetail
+      const transactionDetails = [
+        {
+          id: randomUUID(),
+          transactionId: transactions[0].id,
+          price: 50.00,
+          name: "Seat A1",
+          seatId: "seat-123",
+          familyName: "Smith",
+          flightId: "flight-123",
+          dob: new Date("1990-01-01"),
+          citizenship: "USA",
+          passport: randomUUID(),
+          issuingCountry: "USA",
+          validityPeriod: new Date("2030-01-01"),
+        },
+        {
+          id: randomUUID(),
+          transactionId: transactions[1].id,
+          price: 100.00,
+          name: "Seat B1",
+          seatId: "seat-124",
+          familyName: "Johnson",
+          flightId: "flight-124",
+          dob: new Date("1985-01-01"),
+          citizenship: "Canada",
+          passport: randomUUID(),
+          issuingCountry: "Canada",
+          validityPeriod: new Date("2030-01-01"),
+        },
+      ];
+    
+      // Insert ticketTransaction data
+      for (const transaction of transactions) {
+        await prisma.ticketTransaction.create({
+          data: transaction,
+        });
+      }
+    
+      // Insert ticketTransactionDetail data
+      for (const detail of transactionDetails) {
+        await prisma.ticketTransactionDetail.create({
+          data: detail,
+        });
+      }
 }
 
 main()

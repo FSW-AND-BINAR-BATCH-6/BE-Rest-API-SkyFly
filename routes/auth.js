@@ -8,8 +8,9 @@ const {
     resetPassword,
     handleLoginGoogle,
     redirectAuthorization,
-    getUsers,
     getUserLoggedIn,
+    sendOTPSMS,
+    updateUserLoggedIn,
 } = require("../controllers/auth");
 const authentication = require("../middlewares/authentication");
 const validator = require("../lib/validator");
@@ -19,6 +20,7 @@ const {
     OTPSchema,
     PasswordSchema,
     forgetPasswordSchema,
+    updateUserLoginSchema,
 } = require("../utils/joiValidation");
 
 router.post("/register", validator(RegisterSchema), handleRegister);
@@ -29,6 +31,7 @@ router.get("/google/callback", handleLoginGoogle);
 
 router.put("/verified", validator(OTPSchema), verifyOTP);
 router.post("/verified/resend-otp", resendOTP);
+router.post("/verified/resendSMS-otp", sendOTPSMS);
 
 router.post(
     "/forgetPassword",
@@ -38,7 +41,13 @@ router.post(
 
 router.put("/resetPassword", validator(PasswordSchema), resetPassword);
 
-router.get("/", getUsers);
+// loggedIn action
 router.get("/me", authentication, getUserLoggedIn);
+router.patch(
+    "/me",
+    authentication,
+    validator(updateUserLoginSchema),
+    updateUserLoggedIn
+);
 
 module.exports = router;
