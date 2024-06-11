@@ -1,4 +1,5 @@
 const router = require("express").Router();
+const checkRole = require("../middlewares/checkrole");
 
 const {
     bankTransfer,
@@ -30,6 +31,7 @@ const {
     CCSchema,
     GopaySchema,
     SnapSchema,
+    updateTransactionSchema,
 } = require("../utils/joiValidation");
 
 router.post(
@@ -48,10 +50,10 @@ router.put("/status/:orderId", authentication, updateTransaction);
 router.post("/create", createTransaction)
 
 // dashboard action
-router.get("/", getAllTransaction);
-router.get("/:id", getTransactionById)
-router.put("/:id", updateTransaction)
-router.delete("/:id", deleteTransaction)
-router.delete("/transactionDetail/:id", deleteTransactionDetail)
+router.get("/", authentication, getAllTransaction);
+router.get("/:id", authentication,  getTransactionById)
+router.put("/:id", authentication, checkRole(["ADMIN"]), validator(updateTransactionSchema), updateTransaction)
+router.delete("/:id", authentication, checkRole(["ADMIN"]), deleteTransaction)
+router.delete("/transactionDetail/:id", authentication, checkRole(["ADMIN"]), deleteTransactionDetail)
 
 module.exports = router;

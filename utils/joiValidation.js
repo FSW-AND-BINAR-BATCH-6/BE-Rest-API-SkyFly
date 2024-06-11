@@ -1,3 +1,5 @@
+const { totalPrice } = require("./parameterMidtrans");
+
 const Joi = require("joi").extend(require("@joi/date"));
 
 // auth
@@ -279,6 +281,7 @@ const BankSchema = Joi.object({
     second_seatId: Joi.string(),
 });
 
+
 const GopaySchema = Joi.object({
     fullName: Joi.string().required(),
     familyName: Joi.string(),
@@ -386,6 +389,11 @@ const CCSchema = Joi.object({
     second_seatId: Joi.string(),
 });
 
+const updateTransactionSchema = Joi.object({
+    totalPrice: Joi.number().required(),
+    status: Joi.string().valid("pending", "paid").required()
+})
+
 module.exports = {
     LoginSchema,
     RegisterSchema,
@@ -409,4 +417,5 @@ module.exports = {
     GopaySchema,
     CCSchema,
     SnapSchema,
+    updateTransactionSchema
 };
