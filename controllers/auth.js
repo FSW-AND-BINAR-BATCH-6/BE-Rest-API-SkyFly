@@ -243,9 +243,6 @@ const resendOTP = async (req, res, next) => {
             },
         });
 
-        if(foundUser){
-            console.log("yess")
-        }
         // check user is exist
         if (!foundUser) {
             return next(createHttpError(404, { message: "User is not found" }));
@@ -381,7 +378,7 @@ const sendResetPassword = async (req, res, next) => {
                 user: true,
             },
         });
-
+    
         if (!foundUser) {
             return next(
                 createHttpError(404, {
@@ -399,7 +396,7 @@ const sendResetPassword = async (req, res, next) => {
         const dataUrl = {
             token: generateJWT(payload),
         };
-
+      
         await prisma.auth.update({
             where: {
                 email: payload.email,
@@ -408,13 +405,13 @@ const sendResetPassword = async (req, res, next) => {
                 secretToken: dataUrl.token,
             },
         });
-
+      
         await generateSecretEmail(
             dataUrl,
             "resetPassword",
             "resetPassword.ejs"
         );
-
+        
         res.status(200).json({
             status: true,
             message:

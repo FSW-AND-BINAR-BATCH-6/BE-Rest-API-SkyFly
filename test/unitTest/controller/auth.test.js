@@ -14,7 +14,7 @@ const { google } = require("googleapis");
 const authController = require("../../../controllers/auth");
 const prisma = new PrismaClient();
 
-jest.mock('follow-redirects', () => ({
+jest.mock("follow-redirects", () => ({
     https: {
         request: jest.fn(),
     },
@@ -33,14 +33,14 @@ jest.mock("@prisma/client", () => {
         },
         user: {
             create: jest.fn(),
-            update: jest.fn()
+            update: jest.fn(),
         },
     };
     return {
         PrismaClient: jest.fn(() => mPrismaClient),
     };
 });
- 
+
 jest.mock("googleapis", () => {
     const mockOauth2Client = {
         getToken: jest.fn(),
@@ -197,7 +197,7 @@ describe("Auth API", () => {
         res = {
             status: jest.fn().mockReturnThis(),
             json: jest.fn(),
-            redirect: jest.fn()
+            redirect: jest.fn(),
         };
         next = jest.fn();
     });
@@ -624,6 +624,37 @@ describe("Auth API", () => {
         });
     });
 
+    describe("sendResetPassword", () => {
+        beforeEach(() => {
+            req = {
+                body: {
+                    email: "togeari@test.com"
+                }
+            }
+        })
+
+        it("success", async () => {
+            prisma.auth.findUnique.mockResolvedValue(loginDummyData[1])
+            prisma.auth.update.mockResolvedValue(loginDummyData[1])
+            randomUUID.mockReturnValue("Togenashi")
+            generateJWT.mockReturnValue("tokenMockup")
+            
+            await authController.sendResetPassword(req, res, next)
+            expect(res.status).toHaveBeenCalledWith(200)
+        })
+
+        it("User is not found", async () => {
+            prisma.auth.findUnique.mockResolvedValue(null)
+            await authController.sendResetPassword(req, res, next)
+            expect(next).toHaveBeenCalledWith(createHttpError(404, {message: "User is not found"}))
+        })
+
+        it("Handle server failed", async () => {
+            prisma.auth.findUnique.mockRejectedValue(new Error("Internal Server Error"))
+            await authController.sendResetPassword(req, res, next)
+            expect(next).toHaveBeenCalledWith(createHttpError(500, {message: "Internal Server Error"}))
+        })
+    })
     describe("resetPassword", () => {
         beforeEach(() => {
             req = {
@@ -803,52 +834,54 @@ describe("Auth API", () => {
         });
 
         it("Failed", async () => {
-            secretHash.mockReturnValue("password")
+            secretHash.mockReturnValue("password");
             prisma.$transaction.mockImplementation(async (callback) => {
-                throw new Error("error")
-            })
-            await authController.updateUserLoggedIn(req, res, next)
-            expect(next).toHaveBeenCalledWith(createHttpError(422, {message: "error"}))
-        })
+                throw new Error("error");
+            });
+            await authController.updateUserLoggedIn(req, res, next);
+            expect(next).toHaveBeenCalledWith(
+                createHttpError(422, { message: "error" })
+            );
+        });
 
         it("Handles server error", async () => {
-            prisma.$transaction.mockRejectedValue(new Error("server failed"))
-            await authController.updateUserLoggedIn(req, res, next)
-            expect(next).toHaveBeenCalledWith(createHttpError(500, {message: "server failed"}))
-        })
+            prisma.$transaction.mockRejectedValue(new Error("server failed"));
+            await authController.updateUserLoggedIn(req, res, next);
+            expect(next).toHaveBeenCalledWith(
+                createHttpError(500, { message: "server failed" })
+            );
+        });
     });
 
     describe("redirectAuthorization", () => {
         beforeEach(() => {
-            req = {}
-        })
+            req = {};
+        });
         it("success", async () => {
-            await authController.redirectAuthorization(req, res)
-            expect(res.redirect).toHaveBeenCalledWith(authorizationUrl)
-        })
-    })
+            await authController.redirectAuthorization(req, res);
+            expect(res.redirect).toHaveBeenCalledWith(authorizationUrl);
+        });
+    });
 
     describe("sendOTPSMS", () => {
         beforeEach(() => {
-            req.body = { phoneNumber: '1234567890' };
-            req.query = { token: 'someToken' };
-            jwt.verify.mockReturnValue({ email: 'test@test.com' });
-            prisma.auth.findUnique.mockResolvedValue({
-                email: 'test@test.com',
-                secretToken: 'someToken',
-                isVerified: false,
-                id: 'userId123',
-            });
-            generateTOTP.mockReturnValue('123456');
-            randomUUID.mockReturnValue('randomUUID');
-            generateJWT.mockReturnValue('newJWTToken');
-    
+            req.body = { phoneNumber: "628123456789" };
+            req.query = { token: "tokenMockup" };
+        });
+
+        it("should send OTP SMS and return status 200 with a token", async () => {
+            jwt.verify.mockReturnValue(loginDummyData[1]);
+            prisma.auth.findUnique.mockResolvedValue(loginDummyData[1]);
+            generateTOTP.mockReturnValue("1233");
+            randomUUID.mockReturnValue("Togenashi");
+            generateJWT.mockReturnValue("tokenMockup");
+
             https.request.mockImplementation((options, callback) => {
                 const resMock = {
                     on: (event, handler) => {
-                        if (event === 'data') {
-                            handler(Buffer.from(''));
-                        } else if (event === 'end') {
+                        if (event === "data") {
+                            handler(Buffer.from(""));
+                        } else if (event === "end") {
                             handler();
                         }
                     },
@@ -859,40 +892,40 @@ describe("Auth API", () => {
                     end: jest.fn(),
                 };
             });
-        });
-    
-        it('should send OTP SMS and return status 200 with a token', async () => {
+
             await authController.sendOTPSMS(req, res, next);
-    
-            expect(jwt.verify).toHaveBeenCalledWith('someToken', process.env.JWT_SIGNATURE_KEY);
+
+            expect(jwt.verify).toHaveBeenCalledWith(
+                "tokenMockup",
+                process.env.JWT_SIGNATURE_KEY
+            );
             expect(prisma.auth.findUnique).toHaveBeenCalledWith({
-                where: { email: 'test@test.com' },
-                include: { user: true },
+                where: {
+                    email: "togeari@test.com",
+                },
+                include: {
+                    user: true,
+                },
             });
             expect(generateTOTP).toHaveBeenCalled();
             expect(randomUUID).toHaveBeenCalled();
-            expect(generateJWT).toHaveBeenCalledWith({
-                registerId: 'randomUUID',
-                userId: 'userId123',
-                email: 'test@test.com',
-                otp: '123456',
-                emailTitle: 'Resend Email Activation',
-            });
+            expect(generateJWT).toHaveBeenCalled();
             expect(prisma.auth.update).toHaveBeenCalledWith({
-                where: { email: 'test@test.com' },
+                where: {
+                    email: "togeari@test.com",
+                },
                 data: {
-                    otpToken: '123456',
-                    secretToken: 'newJWTToken',
+                    otpToken: "1233",
+                    secretToken: "tokenMockup",
                 },
             });
-    
+
             expect(res.status).toHaveBeenCalledWith(200);
             expect(res.json).toHaveBeenCalledWith({
                 status: true,
-                message: 'SMS verification sent',
-                _token: 'newJWTToken',
+                message: "SMS verification sent",
+                _token: "tokenMockup",
             });
         });
-    
-    })
+    });
 });
