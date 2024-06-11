@@ -1,3 +1,5 @@
+const { totalPrice } = require("./parameterMidtrans");
+
 const Joi = require("joi").extend(require("@joi/date"));
 
 // auth
@@ -93,7 +95,9 @@ const userUpdateSchema = Joi.object({
 
 // flight
 const createFlightSchema = Joi.object({
-    planeId: Joi.string().regex(/^[a-zA-Z0-9]*$/).required(),
+    planeId: Joi.string()
+        .regex(/^[a-zA-Z0-9]*$/)
+        .required(),
     departureDate: Joi.date().iso().required().messages({
         "date.format":
             '"departureDate" must be in ISO format, eg: 2024-01-07 09:30:00',
@@ -104,7 +108,7 @@ const createFlightSchema = Joi.object({
             '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
     }),
     transitAirportId: Joi.string().allow(null),
-    transitArrivalDate: Joi.alternatives().conditional('transitAirportId', {
+    transitArrivalDate: Joi.alternatives().conditional("transitAirportId", {
         is: Joi.exist(),
         then: Joi.date().iso().required().messages({
             "date.format":
@@ -112,7 +116,7 @@ const createFlightSchema = Joi.object({
         }),
         otherwise: Joi.forbidden(),
     }),
-    transitDepartureDate: Joi.alternatives().conditional('transitAirportId', {
+    transitDepartureDate: Joi.alternatives().conditional("transitAirportId", {
         is: Joi.exist(),
         then: Joi.date().iso().required().messages({
             "date.format":
@@ -156,22 +160,26 @@ const updateFlightSchema = Joi.object({
 
 // ticket
 const TicketSchema = Joi.object({
-    flightId: Joi.string().regex(/^[a-zA-Z0-9]*$/).required(),
+    flightId: Joi.string().required(),
     userId: Joi.string().required(),
     seatId: Joi.string().required(),
-    bookingDate: Joi.date()
-        .required()
-        .greater(Date.now() - 24 * 60 * 60 * 1000),
+    transactionId: Joi.string().required(),
+    detailTransactionId: Joi.string().required(),
 });
 
 const UpdateTicketSchema = Joi.object({
-    code: Joi.string(),
-    bookingDate: Joi.date().greater(Date.now() - 24 * 60 * 60 * 1000),
+    flightId: Joi.string(),
+    userId: Joi.string(),
+    seatId: Joi.string(),
+    transactionId: Joi.string(),
+    detailTransactionId: Joi.string(),
 });
 
 // flightSeat
 const createSeatSchema = Joi.object({
-    flightId: Joi.string().regex(/^[a-zA-Z0-9]*$/).required(),
+    flightId: Joi.string()
+        .regex(/^[a-zA-Z0-9]*$/)
+        .required(),
     seatNumber: Joi.string().min(2).max(4).required(),
     type: Joi.string().valid("ECONOMY", "BUSINESS", "FIRST").required(),
     status: Joi.string()
@@ -180,7 +188,9 @@ const createSeatSchema = Joi.object({
 });
 
 const updateSeatSchema = Joi.object({
-    seatNumber: Joi.string().regex(/^[a-zA-Z0-9]*$/).required(),
+    seatNumber: Joi.string()
+        .regex(/^[a-zA-Z0-9]*$/)
+        .required(),
     status: Joi.string().valid("AVAILABLE", "OCCUPIED", "BOOKED").required(),
 });
 
@@ -234,6 +244,156 @@ const updateAirportSchema = Joi.object({
         .regex(/^(?!\s*$)[a-zA-Z\s]+$/),
 });
 
+// transaction
+const BankSchema = Joi.object({
+    bank: Joi.string().valid("bca", "bni", "bri", "mandiri", "permata", "cimb"),
+    payment_type: Joi.string(),
+    fullName: Joi.string().required(),
+    familyName: Joi.string(),
+    phoneNumber: Joi.string().min(10).required(),
+    email: Joi.string()
+        .email({
+            minDomainSegments: 2,
+            maxDomainSegments: 3,
+            tlds: { allow: ["com", "net", "id"] },
+        })
+        .required(),
+    first_title: Joi.string().required(),
+    first_fullName: Joi.string().required(),
+    first_dob: Joi.date().required(),
+    first_validityPeriod: Joi.date().required().greater(Date.now()),
+    first_familyName: Joi.string().required(),
+    first_citizenship: Joi.string().required(),
+    first_issuingCountry: Joi.string().required(),
+    first_price: Joi.number().required(),
+    first_quantity: Joi.number().required(),
+    first_seatId: Joi.string().required(),
+
+    second_title: Joi.string(),
+    second_fullName: Joi.string(),
+    second_dob: Joi.date(),
+    second_validityPeriod: Joi.date().greater(Date.now()),
+    second_familyName: Joi.string(),
+    second_citizenship: Joi.string(),
+    second_issuingCountry: Joi.string(),
+    second_price: Joi.number(),
+    second_quantity: Joi.number(),
+    second_seatId: Joi.string(),
+});
+
+
+const GopaySchema = Joi.object({
+    fullName: Joi.string().required(),
+    familyName: Joi.string(),
+    phoneNumber: Joi.string().min(10).required(),
+    email: Joi.string()
+        .email({
+            minDomainSegments: 2,
+            maxDomainSegments: 3,
+            tlds: { allow: ["com", "net", "id"] },
+        })
+        .required(),
+    first_title: Joi.string().required(),
+    first_fullName: Joi.string().required(),
+    first_dob: Joi.date().required(),
+    first_validityPeriod: Joi.date().required().greater(Date.now()),
+    first_familyName: Joi.string().required(),
+    first_citizenship: Joi.string().required(),
+    first_issuingCountry: Joi.string().required(),
+    first_price: Joi.number().required(),
+    first_quantity: Joi.number().required(),
+    first_seatId: Joi.string().required(),
+
+    second_title: Joi.string(),
+    second_fullName: Joi.string(),
+    second_dob: Joi.date(),
+    second_validityPeriod: Joi.date().greater(Date.now()),
+    second_familyName: Joi.string(),
+    second_citizenship: Joi.string(),
+    second_issuingCountry: Joi.string(),
+    second_price: Joi.number(),
+    second_quantity: Joi.number(),
+    second_seatId: Joi.string(),
+});
+
+const SnapSchema = Joi.object({
+    fullName: Joi.string().required(),
+    familyName: Joi.string(),
+    phoneNumber: Joi.string().min(10).required(),
+    email: Joi.string()
+        .email({
+            minDomainSegments: 2,
+            maxDomainSegments: 3,
+            tlds: { allow: ["com", "net", "id"] },
+        })
+        .required(),
+    first_title: Joi.string().required(),
+    first_fullName: Joi.string().required(),
+    first_dob: Joi.date().required(),
+    first_validityPeriod: Joi.date().required().greater(Date.now()),
+    first_familyName: Joi.string().required(),
+    first_citizenship: Joi.string().required(),
+    first_issuingCountry: Joi.string().required(),
+    first_price: Joi.number().required(),
+    first_quantity: Joi.number().required(),
+    first_seatId: Joi.string().required(),
+
+    second_title: Joi.string(),
+    second_fullName: Joi.string(),
+    second_dob: Joi.date(),
+    second_validityPeriod: Joi.date().greater(Date.now()),
+    second_familyName: Joi.string(),
+    second_citizenship: Joi.string(),
+    second_issuingCountry: Joi.string(),
+    second_price: Joi.number(),
+    second_quantity: Joi.number(),
+    second_seatId: Joi.string(),
+});
+
+const CCSchema = Joi.object({
+    card_number: Joi.string().min(8).required(),
+    card_exp_month: Joi.string().min(1).required(),
+    card_exp_year: Joi.string().min(4).required(),
+    card_cvv: Joi.string().required(),
+
+    fullName: Joi.string().required(),
+    familyName: Joi.string(),
+    phoneNumber: Joi.string().min(10).required(),
+    email: Joi.string()
+        .email({
+            minDomainSegments: 2,
+            maxDomainSegments: 3,
+            tlds: { allow: ["com", "net", "id"] },
+        })
+        .required(),
+    first_title: Joi.string().required(),
+    first_fullName: Joi.string().required(),
+    first_dob: Joi.date().required(),
+    first_validityPeriod: Joi.date().required().greater(Date.now()),
+    first_familyName: Joi.string().required(),
+    first_citizenship: Joi.string().required(),
+    first_issuingCountry: Joi.string().required(),
+    first_price: Joi.number().required(),
+    first_quantity: Joi.number().required(),
+    first_seatId: Joi.string().required(),
+
+    second_title: Joi.string(),
+    second_fullName: Joi.string(),
+    second_dob: Joi.date(),
+    second_validityPeriod: Joi.date().greater(Date.now()),
+    second_familyName: Joi.string(),
+    second_citizenship: Joi.string(),
+    second_issuingCountry: Joi.string(),
+    second_price: Joi.number(),
+    second_quantity: Joi.number(),
+    second_seatId: Joi.string(),
+});
+
+const updateTransactionSchema = Joi.object({
+    totalPrice: Joi.number().required(),
+    status: Joi.string().valid("pending", "paid").required()
+})
+
 module.exports = {
     LoginSchema,
     RegisterSchema,
@@ -253,4 +413,9 @@ module.exports = {
     TicketSchema,
     UpdateTicketSchema,
     updateUserLoginSchema,
+    BankSchema,
+    GopaySchema,
+    CCSchema,
+    SnapSchema,
+    updateTransactionSchema
 };

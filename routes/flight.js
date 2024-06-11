@@ -1,4 +1,7 @@
 const router = require("express").Router();
+const authentication = require("../middlewares/authentication");
+const checkRole = require("../middlewares/checkrole");
+
 const {
     getAllFlight,
     getFlightById,
@@ -16,14 +19,22 @@ const {
 router
     .route("/")
     .get(getAllFlight)
-    .post(validator(createFlightSchema), createFlight);
+    .post(
+        authentication,
+        checkRole(["ADMIN"]),
+        validator(createFlightSchema),
+        createFlight
+    );
 router
     .route("/:id")
     .get(getFlightById)
-    .put(validator(updateFlightSchema), updateFlight)
-    .delete(removeFlight);
-router
-    .route("/favorite-destination")
-    .get(getFavoriteDestinations);
+    .put(
+        authentication,
+        checkRole(["ADMIN"]),
+        validator(updateFlightSchema),
+        updateFlight
+    )
+    .delete(authentication, checkRole(["ADMIN"]), removeFlight);
+router.route("/favorite-destination").get(getFavoriteDestinations);
 
 module.exports = router;
