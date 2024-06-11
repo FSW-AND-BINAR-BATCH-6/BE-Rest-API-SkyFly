@@ -51,8 +51,8 @@ router.post("/create", createTransaction)
 // dashboard action
 router.get("/", authentication, getAllTransaction);
 router.get("/:id", authentication,  getTransactionById)
-router.put("/:id", authentication, validator(updateTransactionSchema), updateTransaction)
-router.delete("/:id", authentication, deleteTransaction)
-router.delete("/transactionDetail/:id", authentication, deleteTransactionDetail)
+router.put("/:id", authentication, checkRole(["ADMIN"]), validator(updateTransactionSchema), updateTransaction)
+router.delete("/:id", authentication, checkRole(["ADMIN"]), deleteTransaction)
+router.delete("/transactionDetail/:id", authentication, checkRole(["ADMIN"]), deleteTransactionDetail)
 
 module.exports = router;
