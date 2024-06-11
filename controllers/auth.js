@@ -243,14 +243,17 @@ const resendOTP = async (req, res, next) => {
             },
         });
 
-        // check matching token with user secretToken
-        if (token !== foundUser.secretToken || token === "" || token === null) {
-            return next(createHttpError(404, { message: "Token is invalid" }));
+        if(foundUser){
+            console.log("yess")
         }
-
         // check user is exist
         if (!foundUser) {
             return next(createHttpError(404, { message: "User is not found" }));
+        }
+
+        // check matching token with user secretToken
+        if (token !== foundUser.secretToken || token === "" || token === null) {
+            return next(createHttpError(404, { message: "Token is invalid" }));
         }
 
         if (foundUser.isVerified) {
@@ -439,12 +442,12 @@ const resetPassword = async (req, res, next) => {
             },
         });
 
-        if (token !== foundUser.secretToken || token === "" || token === null) {
-            return next(createHttpError(422, { message: "Token is invalid" }));
-        }
-
         if (!foundUser) {
             return next(createHttpError(404, { message: "User is not found" }));
+        }
+
+        if (token !== foundUser.secretToken || token === "" || token === null) {
+            return next(createHttpError(422, { message: "Token is invalid" }));
         }
 
         await prisma.auth.update({
@@ -486,7 +489,6 @@ const updateUserLoggedIn = async (req, res, next) => {
         const { name, phoneNumber, familyName, password } = req.body;
         const hashedPassword = secretHash(password);
 
-        console.log(req.user);
         try {
             await prisma.$transaction(async (tx) => {
                 await tx.user.update({
@@ -530,8 +532,12 @@ const updateUserLoggedIn = async (req, res, next) => {
     }
 };
 
-const redirectAuthorization = (req, res) => {
-    res.redirect(authorizationUrl);
+const redirectAuthorization = (req, res, next) => {
+    try {
+        res.redirect(authorizationUrl);        
+    } catch (error) {
+        next(createHttpError(500, {message: error.message}))
+    }
 };
 
 const sendOTPSMS = async (req, res, next) => {

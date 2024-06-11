@@ -2,6 +2,8 @@ const { PrismaClient } = require("@prisma/client");
 const { randomUUID } = require("crypto");
 const createHttpError = require("http-errors");
 const jwt = require("jsonwebtoken");
+const https = require("follow-redirects").https;
+
 const { generateTOTP, validateTOTP } = require("../../../utils/otp");
 const { secretCompare, secretHash } = require("../../../utils/hashSalt");
 const { generateJWT } = require("../../../utils/jwtGenerate");
@@ -12,8 +14,15 @@ const { google } = require("googleapis");
 const authController = require("../../../controllers/auth");
 const prisma = new PrismaClient();
 
+jest.mock('follow-redirects', () => ({
+    https: {
+        request: jest.fn(),
+    },
+}));
+
 jest.mock("@prisma/client", () => {
     const mPrismaClient = {
+        $transaction: jest.fn(),
         auth: {
             findMany: jest.fn(),
             count: jest.fn(),
@@ -24,12 +33,42 @@ jest.mock("@prisma/client", () => {
         },
         user: {
             create: jest.fn(),
+            update: jest.fn()
         },
     };
     return {
         PrismaClient: jest.fn(() => mPrismaClient),
     };
 });
+ 
+jest.mock("googleapis", () => {
+    const mockOauth2Client = {
+        getToken: jest.fn(),
+        setCredentials: jest.fn(),
+    };
+    const mockGoogle = {
+        oauth2: {
+            userinfo: {
+                get: jest.fn(),
+            },
+        },
+        auth: {
+            OAuth2: jest.fn().mockReturnValue(mockOauth2Client),
+        },
+    };
+    return { google: mockGoogle };
+});
+
+jest.mock("../../../lib/googleOauth2", () => ({
+    oauth2Client: {
+        getToken: jest.fn(),
+        setCredentials: jest.fn(),
+    },
+}));
+
+jest.mock("jsonwebtoken", () => ({
+    verify: jest.fn(),
+}));
 
 jest.mock("../../../utils/hashSalt", () => ({
     secretCompare: jest.fn(),
@@ -42,6 +81,7 @@ jest.mock("crypto", () => ({
 
 jest.mock("../../../utils/otp", () => ({
     generateTOTP: jest.fn(),
+    validateTOTP: jest.fn(),
 }));
 
 jest.mock("../../../utils/jwtGenerate", () => ({
@@ -70,6 +110,71 @@ const serverFailed = async (
 describe("Auth API", () => {
     let req, res, next;
 
+    const loginDummyData = [
+        {
+            id: "Togenashi",
+            email: `togeari@test.com`,
+            password: "password",
+            isVerified: true,
+            otpToken: "1233",
+            secretToken: "tokenMockup",
+            user: {
+                id: "Togenashi",
+                name: "Togeari",
+                role: "BUYER",
+                familyName: "Family",
+                phoneNumber: "628123456789",
+            },
+        },
+        {
+            id: "Togenashi",
+            email: `togeari@test.com`,
+            password: "password",
+            isVerified: false,
+            otpToken: "1233",
+            secretToken: "tokenMockup",
+            user: {
+                id: "Togenashi",
+                name: "Togeari",
+                role: "BUYER",
+                familyName: "Family",
+                phoneNumber: "628123456789",
+            },
+        },
+    ];
+
+    const resendOTP = [
+        {
+            id: "Togenashi",
+            name: "Togeari",
+            role: "BUYER",
+            email: `togeari@test.com`,
+            password: "hashedpassword",
+            isVerified: false,
+            otpToken: "1233",
+            secretToken: "tokenMockup",
+        },
+        {
+            id: "Togenashi",
+            name: "Togeari",
+            role: "BUYER",
+            email: `togeari@test.com`,
+            password: "hashedpassword",
+            isVerified: true,
+            otpToken: "newOtpToken",
+            secretToken: "newSecretToken",
+        },
+        {
+            id: "Togenashi",
+            name: "Togeari",
+            role: "BUYER",
+            email: `togeari@test.com`,
+            password: "hashedpassword",
+            isVerified: true,
+            otpToken: null,
+            secretToken: null,
+        },
+    ];
     const registerDummyData = [
         {
             id: "Togenashi",
@@ -78,14 +183,12 @@ describe("Auth API", () => {
             familyName: "Family",
             phoneNumber: "628123456789",
             auth: {
-                create: {
-                    id: "Togenashi",
-                    email: `togeari@test.com`,
-                    password: "password",
-                    isVerified: true,
-                    otpToken: "1233",
-                    secretToken: "12333",
-                },
+                id: "Togenashi",
+                email: `togeari@test.com`,
+                password: "password",
+                isVerified: true,
+                otpToken: "1233",
+                secretToken: "12333",
             },
         },
     ];
@@ -94,6 +197,7 @@ describe("Auth API", () => {
         res = {
             status: jest.fn().mockReturnThis(),
             json: jest.fn(),
+            redirect: jest.fn()
         };
         next = jest.fn();
     });
@@ -129,7 +233,7 @@ describe("Auth API", () => {
         it("Failed, 409", async () => {
             prisma.auth.findUnique.mockResolvedValue(registerDummyData);
             await authController.handleRegister(req, res, next);
-            expect(prisma.user.create).not.toHaveBeenCalled()
+            expect(prisma.user.create).not.toHaveBeenCalled();
 
             expect(next).toHaveBeenCalledWith(
                 createHttpError(409, {
@@ -148,6 +252,647 @@ describe("Auth API", () => {
             );
         });
     });
+
+    // stil having problem mocking google service
+    //     describe("handleLoginGoogle", () => {
+    //         beforeEach(() => {
+    //             req = {
+    //                 query: {
+    //                     code: "testCode",
+    //                 },
+    //             };
+    //         });
+
+    //         it("Success", async () => {
+    //             const tokens = {
+    //                 tokens: {
+    //                     access_token: "ya29.a0AfH6SMBN9VzJZP",
+    //                     expires_in: 3599,
+    //                     refresh_token: "1//04iH0Mn",
+    //                     scope: "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile",
+    //                     token_type: "Bearer",
+    //                     id_token: "eyJhbGciOiJSUzI1NiIsImtpZCI6IjM4OWRjNjhjM",
+    //                 },
+    //             };
+
+    //             const userData = {
+    //                 data: {
+    //                 id: "12345678901234567890",
+    //                 email: "user@example.com",
+    //                 verified_email: true,
+    //                 name: "John Doe",
+    //                 given_name: "John",
+    //                 family_name: "Doe",
+    //                 picture: "https://lh3.googleusercontent.com/a-/AOh14Gg8h8",
+    //                 locale: "en"
+    //   }
+    //             };
+
+    //             oauth2Client.getToken.mockResolvedValue(tokens);
+    //             google.oauth2.userinfo.get.mockResolvedValue(userData);
+    //             secretHash.mockReturnThis("12345678901234567890");
+    //             randomUUID.mockReturnThis("uuid");
+    //             generateJWT.mockReturnThis("jwtToken");
+
+    //             await authController.handleLoginGoogle(req, res, next);
+
+    //             expect(oauth2Client.getToken).toHaveBeenCalledWith(req.query.code);
+    //             expect(oauth2Client.setCredentials).toHaveBeenCalled();
+    //             expect(res.status).toHaveBeenCalledWith(200);
+    //             expect(res.json).toHaveBeenCalledWith({
+    //                 status: true,
+    //                 message: "User logged in successfully",
+    //                 _token: "jwt_token",
+    //             });
+    //         });
+    //     });
+
+    describe("handleLogin", () => {
+        beforeEach(() => {
+            req = {
+                body: {
+                    email: "togeari@test.com",
+                    body: "password",
+                },
+            };
+        });
+
+        it("Success", async () => {
+            prisma.auth.findUnique.mockResolvedValue(loginDummyData[0]);
+            secretCompare.mockReturnValue(true);
+            generateJWT.mockReturnValue("mockToken");
+            await authController.handleLogin(req, res, next);
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith({
+                status: true,
+                message: "User logged in successfully",
+                _token: "mockToken",
+            });
+        });
+
+        it("Failed, 404", async () => {
+            prisma.auth.findUnique.mockResolvedValue(null);
+            await authController.handleLogin(req, res, next);
+            expect(secretCompare).not.toHaveBeenCalled();
+            expect(generateJWT).not.toHaveBeenCalled();
+            expect(next).toHaveBeenCalledWith(
+                createHttpError(404, { message: "User is not found" })
+            );
+        });
+
+        it("Failed, 401, email not verified", async () => {
+            prisma.auth.findUnique.mockResolvedValue(loginDummyData[1]);
+            await authController.handleLogin(req, res, next);
+            expect(secretCompare).not.toHaveBeenCalled();
+            expect(generateJWT).not.toHaveBeenCalled();
+            expect(next).toHaveBeenCalledWith(
+                createHttpError(401, {
+                    message: "Email has not been activated",
+                })
+            );
+        });
+
+        it("Failed, 401, wrong password", async () => {
+            prisma.auth.findUnique.mockResolvedValue(loginDummyData[0]);
+            secretCompare.mockReturnValue(false);
+            await authController.handleLogin(req, res, next);
+            expect(generateJWT).not.toHaveBeenCalled();
+            expect(next).toHaveBeenCalledWith(
+                createHttpError(401, { message: "Wrong password" })
+            );
+        });
+
+        it("Failed, 500", async () => {
+            await serverFailed(
+                req,
+                res,
+                next,
+                prisma.auth.findUnique,
+                authController.handleLogin
+            );
+        });
+    });
+
+    describe("resendOTP", () => {
+        beforeEach(() => {
+            req = {
+                query: {
+                    token: "tokenMockup",
+                },
+            };
+        });
+
+        it("Success", async () => {
+            prisma.auth.findUnique.mockResolvedValue(resendOTP[0]);
+            prisma.auth.update.mockResolvedValue(resendOTP[1]);
+            jwt.verify.mockReturnValue(resendOTP[0]);
+            generateTOTP.mockReturnValue("newOtpToken");
+            randomUUID.mockReturnValue("Togenashi");
+            generateJWT.mockReturnValue("newSecretToken");
+
+            await authController.resendOTP(req, res, next);
+
+            expect(jwt.verify).toHaveBeenCalledWith(
+                "tokenMockup",
+                process.env.JWT_SIGNATURE_KEY
+            );
+            expect(prisma.auth.findUnique).toHaveBeenCalledWith({
+                where: {
+                    email: resendOTP[0].email,
+                },
+                include: {
+                    user: true,
+                },
+            });
+            expect(prisma.auth.update).toHaveBeenCalledWith({
+                where: {
+                    email: resendOTP[0].email,
+                },
+                data: {
+                    otpToken: "newOtpToken",
+                    secretToken: "newSecretToken",
+                },
+            });
+            expect(generateSecretEmail).toHaveBeenCalledWith(
+                { token: "newSecretToken" },
+                "verified",
+                "verifyOtp.ejs"
+            );
+            expect(res.status).toHaveBeenCalledWith(201);
+            expect(res.json).toHaveBeenCalledWith({
+                status: true,
+                message:
+                    "Verification link has been sent, please check your email",
+                _token: "newSecretToken",
+            });
+        });
+
+        it("Token is invalid", async () => {
+            jwt.verify.mockReturnValue(loginDummyData[0]);
+            prisma.auth.findUnique.mockResolvedValue({
+                id: "Togenashi",
+                email: `togeari@test.com`,
+                password: "password",
+                isVerified: false,
+                otpToken: "1233",
+                secretToken: "12334",
+                user: {
+                    id: "Togenashi",
+                    name: "Togeari",
+                    role: "BUYER",
+                    familyName: "Family",
+                    phoneNumber: "628123456789",
+                },
+            });
+
+            await authController.resendOTP(req, res, next);
+
+            expect(next).toHaveBeenCalledWith(
+                createHttpError(404, { message: "Token is invalid" })
+            );
+        });
+
+        it("User is not found", async () => {
+            jwt.verify.mockReturnValue(loginDummyData[0]);
+            prisma.auth.findUnique.mockResolvedValue(false);
+
+            await authController.resendOTP(req, res, next);
+            expect(prisma.auth.update).not.toHaveBeenCalled();
+            expect(generateJWT).not.toHaveBeenCalled();
+            expect(generateTOTP).not.toHaveBeenCalled();
+            expect(randomUUID).not.toHaveBeenCalled();
+            expect(next).toHaveBeenCalledWith(
+                createHttpError(404, { message: "User is not found" })
+            );
+        });
+
+        it("User is already verified", async () => {
+            prisma.auth.findUnique.mockResolvedValue({
+                ...resendOTP[0],
+                isVerified: true,
+            });
+            jwt.verify.mockReturnValue(resendOTP[0]);
+
+            await authController.resendOTP(req, res, next);
+
+            expect(next).toHaveBeenCalledWith(
+                createHttpError(403, {
+                    message: "User email has been verified",
+                })
+            );
+        });
+
+        it("Handles error", async () => {
+            jwt.verify.mockImplementation(() => {
+                throw new Error("Error");
+            });
+
+            await authController.resendOTP(req, res, next);
+
+            expect(next).toHaveBeenCalledWith(
+                createHttpError(500, { message: "Error" })
+            );
+        });
+    });
+
+    describe("verifyOTP", () => {
+        beforeEach(() => {
+            req = {
+                query: {
+                    token: "tokenMockup",
+                },
+                body: {
+                    otp: "1233",
+                },
+            };
+        });
+
+        it("Success", async () => {
+            prisma.auth.findUnique.mockResolvedValue(loginDummyData[1]);
+            prisma.auth.update.mockResolvedValue(resendOTP[2]);
+            jwt.verify.mockReturnValue(resendOTP[0]);
+            validateTOTP.mockReturnValue("1233");
+
+            await authController.verifyOTP(req, res, next);
+            expect(jwt.verify).toHaveBeenCalledWith(
+                "tokenMockup",
+                process.env.JWT_SIGNATURE_KEY
+            );
+
+            expect(prisma.auth.findUnique).toHaveBeenCalledWith({
+                where: {
+                    email: "togeari@test.com",
+                },
+                include: {
+                    user: true,
+                },
+            });
+
+            expect(prisma.auth.update).toHaveBeenCalledWith({
+                where: {
+                    id: "Togenashi",
+                },
+                data: {
+                    isVerified: true,
+                    secretToken: null,
+                    otpToken: null,
+                },
+            });
+
+            expect(validateTOTP).toHaveBeenCalledWith("1233");
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith({
+                status: true,
+                message: "user email verified successfully",
+            });
+        });
+
+        it("Token is invalid", async () => {
+            jwt.verify.mockReturnValue(loginDummyData[0]);
+            prisma.auth.findUnique.mockResolvedValue({
+                id: "Togenashi",
+                email: `togeari@test.com`,
+                password: "password",
+                isVerified: false,
+                otpToken: "1233",
+                secretToken: "12334",
+                user: {
+                    id: "Togenashi",
+                    name: "Togeari",
+                    role: "BUYER",
+                    familyName: "Family",
+                    phoneNumber: "628123456789",
+                },
+            });
+
+            await authController.resendOTP(req, res, next);
+
+            expect(next).toHaveBeenCalledWith(
+                createHttpError(404, { message: "Token is invalid" })
+            );
+        });
+
+        it("User is not found", async () => {
+            jwt.verify.mockReturnValue(loginDummyData[0]);
+            prisma.auth.findUnique.mockResolvedValue(false);
+
+            await authController.resendOTP(req, res, next);
+            expect(prisma.auth.update).not.toHaveBeenCalled();
+            expect(validateTOTP).not.toHaveBeenCalled();
+            expect(next).toHaveBeenCalledWith(
+                createHttpError(404, { message: "User is not found" })
+            );
+        });
+
+        it("User is already verified", async () => {
+            prisma.auth.findUnique.mockResolvedValue({
+                ...resendOTP[0],
+                isVerified: true,
+            });
+            jwt.verify.mockReturnValue(resendOTP[0]);
+
+            await authController.resendOTP(req, res, next);
+
+            expect(next).toHaveBeenCalledWith(
+                createHttpError(403, {
+                    message: "User email has been verified",
+                })
+            );
+        });
+
+        it("OTP token is expired", async () => {
+            prisma.auth.findUnique.mockResolvedValue(resendOTP[0]);
+            jwt.verify.mockReturnValue(resendOTP[0]);
+            validateTOTP.mockReturnValue(null);
+
+            await authController.verifyOTP(req, res, next);
+            expect(next).toHaveBeenCalledWith(
+                createHttpError(422, { message: "OTP Token is expired" })
+            );
+        });
+
+        it("Handles error", async () => {
+            jwt.verify.mockImplementation(() => {
+                throw new Error("Error");
+            });
+
+            await authController.resendOTP(req, res, next);
+
+            expect(next).toHaveBeenCalledWith(
+                createHttpError(500, { message: "Error" })
+            );
+        });
+    });
+
+    describe("resetPassword", () => {
+        beforeEach(() => {
+            req = {
+                query: {
+                    token: "tokenMockup",
+                },
+                body: {
+                    password: "password",
+                },
+            };
+        });
+
+        it("Success", async () => {
+            jwt.verify.mockReturnValue(resendOTP[1]);
+            secretHash.mockReturnValue("password");
+            prisma.auth.findUnique.mockResolvedValue(loginDummyData[0]);
+            prisma.auth.update.mockResolvedValue(loginDummyData[0]);
+            await authController.resetPassword(req, res, next);
+            expect(jwt.verify).toHaveBeenCalledWith(
+                "tokenMockup",
+                process.env.JWT_SIGNATURE_KEY
+            );
+            expect(prisma.auth.findUnique).toHaveBeenCalledWith({
+                where: {
+                    email: "togeari@test.com",
+                },
+                include: {
+                    user: true,
+                },
+            });
+            expect(prisma.auth.update).toHaveBeenCalledWith({
+                where: {
+                    id: "Togenashi",
+                },
+                data: {
+                    password: "password",
+                    secretToken: null,
+                },
+            });
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith({
+                status: true,
+                message: "user password updated successfully",
+            });
+        });
+
+        it("Invalid Token", async () => {
+            jwt.verify.mockReturnValue(loginDummyData[0]);
+            secretHash.mockReturnValue("password");
+            prisma.auth.findUnique.mockResolvedValue({
+                id: "Togenashi",
+                email: `togeari@test.com`,
+                password: "password",
+                isVerified: false,
+                otpToken: "1233",
+                secretToken: "12334",
+                user: {
+                    id: "Togenashi",
+                    name: "Togeari",
+                    role: "BUYER",
+                    familyName: "Family",
+                    phoneNumber: "628123456789",
+                },
+            });
+            await authController.resetPassword(req, res, next);
+            expect(next).toHaveBeenCalledWith(
+                createHttpError(422, { message: "Token is invalid" })
+            );
+        });
+
+        it("User is not found", async () => {
+            jwt.verify.mockReturnValue(loginDummyData[0]);
+            secretHash.mockReturnValue("password");
+            prisma.auth.findUnique.mockResolvedValue(null);
+            await authController.resetPassword(req, res, next);
+            expect(next).toHaveBeenCalledWith(
+                createHttpError(402, { message: "User is not found" })
+            );
+        });
+
+        it("Handles server error", async () => {
+            jwt.verify.mockImplementation(() => {
+                throw new Error("Error");
+            });
+
+            await authController.resendOTP(req, res, next);
+
+            expect(next).toHaveBeenCalledWith(
+                createHttpError(500, { message: "Error" })
+            );
+        });
+    });
+
+    describe("getUserLoggedIn", () => {
+        beforeEach(() => {
+            req = {
+                user: loginDummyData[0],
+            };
+        });
+
+        it("Success", async () => {
+            await authController.getUserLoggedIn(req, res, next);
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith({
+                status: true,
+                data: loginDummyData[0],
+            });
+        });
+
+        it("Unauthenticated", async () => {
+            req = {
+                user: null,
+            };
+            await authController.getUserLoggedIn(req, res, next);
+            expect(next).toHaveBeenCalledWith(
+                createHttpError(401, { message: "Unauthenticated" })
+            );
+        });
+    });
+
+    describe("updateUserLoggedIn", () => {
+        beforeEach(() => {
+            req = {
+                body: {
+                    name: "Togeari",
+                    role: "BUYER",
+                    familyName: "Family",
+                    phoneNumber: "628123456789",
+                },
+                user: {
+                    id: "Togenashi",
+                    name: "Togeari",
+                    role: "BUYER",
+                    familyName: "Family",
+                    phoneNumber: "628123456789",
+                    auth: {
+                        id: "Togenashi",
+                        email: `togeari@test.com`,
+                        password: "password",
+                        isVerified: true,
+                        otpToken: "1233",
+                        secretToken: "12333",
+                    },
+                },
+            };
+        });
+
+        it("Success", async () => {
+            secretHash.mockReturnValue("password");
+            prisma.$transaction.mockImplementation(async (callback) => {
+                await callback({
+                    user: prisma.user,
+                    auth: prisma.auth,
+                });
+            });
+
+            await authController.updateUserLoggedIn(req, res, next);
+
+            expect(prisma.$transaction).toHaveBeenCalledTimes(1);
+            expect(prisma.user.update).toHaveBeenCalledWith({
+                where: { id: "Togenashi" },
+                data: {
+                    name: "Togeari",
+                    phoneNumber: "628123456789",
+                    familyName: "Family",
+                },
+            });
+            expect(prisma.auth.update).toHaveBeenCalledWith({
+                where: { id: "Togenashi" },
+                data: { password: "password" },
+            });
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith({
+                status: true,
+                message: "user data updated successfully",
+            });
+        });
+
+        it("Failed", async () => {
+            secretHash.mockReturnValue("password")
+            prisma.$transaction.mockImplementation(async (callback) => {
+                throw new Error("error")
+            })
+            await authController.updateUserLoggedIn(req, res, next)
+            expect(next).toHaveBeenCalledWith(createHttpError(422, {message: "error"}))
+        })
+
+        it("Handles server error", async () => {
+            prisma.$transaction.mockRejectedValue(new Error("server failed"))
+            await authController.updateUserLoggedIn(req, res, next)
+            expect(next).toHaveBeenCalledWith(createHttpError(500, {message: "server failed"}))
+        })
+    });
+
+    describe("redirectAuthorization", () => {
+        beforeEach(() => {
+            req = {}
+        })
+        it("success", async () => {
+            await authController.redirectAuthorization(req, res)
+            expect(res.redirect).toHaveBeenCalledWith(authorizationUrl)
+        })
+    })
+
+    describe("sendOTPSMS", () => {
+        beforeEach(() => {
+            req.body = { phoneNumber: '1234567890' };
+            req.query = { token: 'someToken' };
+            jwt.verify.mockReturnValue({ email: 'test@test.com' });
+            prisma.auth.findUnique.mockResolvedValue({
+                email: 'test@test.com',
+                secretToken: 'someToken',
+                isVerified: false,
+                id: 'userId123',
+            });
+            generateTOTP.mockReturnValue('123456');
+            randomUUID.mockReturnValue('randomUUID');
+            generateJWT.mockReturnValue('newJWTToken');
     
+            https.request.mockImplementation((options, callback) => {
+                const resMock = {
+                    on: (event, handler) => {
+                        if (event === 'data') {
+                            handler(Buffer.from(''));
+                        } else if (event === 'end') {
+                            handler();
+                        }
+                    },
+                };
+                callback(resMock);
+                return {
+                    write: jest.fn(),
+                    end: jest.fn(),
+                };
+            });
+        });
     
+        it('should send OTP SMS and return status 200 with a token', async () => {
+            await authController.sendOTPSMS(req, res, next);
+    
+            expect(jwt.verify).toHaveBeenCalledWith('someToken', process.env.JWT_SIGNATURE_KEY);
+            expect(prisma.auth.findUnique).toHaveBeenCalledWith({
+                where: { email: 'test@test.com' },
+                include: { user: true },
+            });
+            expect(generateTOTP).toHaveBeenCalled();
+            expect(randomUUID).toHaveBeenCalled();
+            expect(generateJWT).toHaveBeenCalledWith({
+                registerId: 'randomUUID',
+                userId: 'userId123',
+                email: 'test@test.com',
+                otp: '123456',
+                emailTitle: 'Resend Email Activation',
+            });
+            expect(prisma.auth.update).toHaveBeenCalledWith({
+                where: { email: 'test@test.com' },
+                data: {
+                    otpToken: '123456',
+                    secretToken: 'newJWTToken',
+                },
+            });
+    
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith({
+                status: true,
+                message: 'SMS verification sent',
+                _token: 'newJWTToken',
+            });
+        });
+    
+    })
 });
