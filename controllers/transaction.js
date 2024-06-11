@@ -261,6 +261,41 @@ const notification = async (req, res, next) => {
     let datas = await snap.transaction.notification(notification);
     console.log(datas);
 
+    //! [start] ticket
+    // TODO: create ticket disini
+    // TODO: kan kalo mau hit endpoint ini harus deploy dulu
+    // TODO: sementara mas lowis bikin aja endpoint sendiri buat get data sama create sesuai logic yang ku bikin. kalo aman bisa di paste lagi kesini
+
+    // user_id ambil aja dari kondisi where find transaction where order Id, terus ambil userId
+    //? contoh
+    const dataTransaction = await prisma.ticketTransaction.findUnique({
+        where: {
+            orderId: notification.order_id,
+        },
+        include: {
+            Transaction_Detail: true,
+        },
+    });
+
+    let ticketFlightId = dataTransaction.Transaction_Detail.forEach(
+        (data) => data.flightId[0] // btw ini belum tentu bener gini mas
+    );
+    let ticketSeatId = dataTransaction.Transaction_Detail.forEach(
+        (data) => data.seatId // ini juga sama
+    );
+
+    // create ticket
+    await prisma.ticket.create({
+        data: {
+            userId: dataTransaction.userId,
+            flightId: ticketFlightId,
+            seatId: ticketSeatId,
+            code, // kode seperti yang udah mas lowis buat masukin disini
+        },
+    });
+
+    //! [end] ticket
+
     await prisma.ticketTransaction.update({
         where: {
             orderId: data.order_id,
@@ -936,22 +971,17 @@ const updateTransaction = async (req, res, next) => {
     // update transaction data by id from ticketTransaction & include ticketTransaction detail
     // pake db transaction yak.. contoh ada di atas / di auth controller -> update user logged in
     // kalau perlu bikin function baru buat update transactionDetail satuan
-    const { id } = req.params; 
-    const {
-        totalPrice, 
-        status, 
-        transactionDetails
-    } = req.body;
+    const { id } = req.params;
+    const { totalPrice, status, transactionDetails } = req.body;
 
     try {
         await prisma.$transaction(async (tx) => {
             // Update the ticketTransaction record
             const validateId = await prisma.ticketTransaction.findUnique({
-                where: { id }
-            })
+                where: { id },
+            });
 
-            
-            if (!validateId){
+            if (!validateId) {
                 return next(createHttpError(404, "Transaction not found"));
             }
 
@@ -963,66 +993,66 @@ const updateTransaction = async (req, res, next) => {
                 },
                 include: {
                     Transaction_Detail: true,
-                }
+                },
             });
-
 
             // Update each transactionDetail record if provided
             if (transactionDetails && transactionDetails.length > 0) {
-                await Promise.all(transactionDetails.map(async (detail) => {
-                    await tx.transactionDetail.update({
-                        where: { ide: detail.ide },
-                        data: {
-                            transactionId: detail.transactionId,
-                            ticketId: detail.ticketId,
-                            name: detail.name,
-                            familyName: detail.familyName,
-                            dob: detail.dob,
-                            citizenship: detail.citizenship,
-                            passport: detail.passport,
-                            issuingCountry: detail.issuingCountry,
-                            validityPeriod: detail.validityPeriod,
-                        },
-                    });
-                }));
+                await Promise.all(
+                    transactionDetails.map(async (detail) => {
+                        await tx.transactionDetail.update({
+                            where: { ide: detail.ide },
+                            data: {
+                                transactionId: detail.transactionId,
+                                ticketId: detail.ticketId,
+                                name: detail.name,
+                                familyName: detail.familyName,
+                                dob: detail.dob,
+                                citizenship: detail.citizenship,
+                                passport: detail.passport,
+                                issuingCountry: detail.issuingCountry,
+                                validityPeriod: detail.validityPeriod,
+                            },
+                        });
+                    })
+                );
             }
 
             res.status(200).json({
                 status: true,
-                message: 'Transaction updated successfully',
+                message: "Transaction updated successfully",
                 data: updatedTransaction,
             });
         });
     } catch (error) {
         next(createHttpError(500, { message: error.message }));
     }
-    
 };
 
 const deleteTransaction = async (req, res, next) => {
     // delete transaction data by id from ticketTransaction & include ticketTransaction detail
-    const { id } = req.params
+    const { id } = req.params;
 
-    try{
+    try {
         const validateId = await prisma.ticketTransaction.findUnique({
-            where: { id }
-        })
+            where: { id },
+        });
 
         if (!validateId) {
             return next(createHttpError(404, "Transaction not found"));
         }
 
         const ticketTransactions = await prisma.ticketTransaction.delete({
-            where:{ id },
+            where: { id },
             include: {
-                Transaction_Detail: true
-            }
-        })
+                Transaction_Detail: true,
+            },
+        });
 
         res.status(200).json({
             status: true,
-            message: 'Transaction deleted successfully',
-            data: ticketTransactions
+            message: "Transaction deleted successfully",
+            data: ticketTransactions,
         });
     } catch (error) {
         next(createHttpError(500, error.message));
@@ -1031,25 +1061,25 @@ const deleteTransaction = async (req, res, next) => {
 
 const deleteTransactionDetail = async (req, res, next) => {
     // delete transaction detail data by id
-    const { id } = req.params
+    const { id } = req.params;
 
-    try{
+    try {
         const validateId = await prisma.ticketTransactionDetail.findUnique({
-            where: { id }
-        })
+            where: { id },
+        });
 
         if (!validateId) {
             return next(createHttpError(404, "Transaction Detail not found"));
         }
 
         const ticketTransactions = await prisma.ticketTransactionDetail.delete({
-            where:{ id }
-        })
+            where: { id },
+        });
 
         res.status(200).json({
             status: true,
-            message: 'Transaction Detail deleted successfully',
-            data: ticketTransactions
+            message: "Transaction Detail deleted successfully",
+            data: ticketTransactions,
         });
     } catch (error) {
         next(createHttpError(500, error.message));

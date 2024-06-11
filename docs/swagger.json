@@ -1,17 +1,21 @@
 {
     "openapi": "3.0.0",
     "info": {
-        "title": "team01-api-Skyfly Express-rest API Swagger Documentation",
-        "description": "Development For Final Project Binar FSW1 Team1 Fullstack Dashboard for a library designed to manage library data and a library website utilizing, Express.js as the backend and Postgress as the Database Management System (DBMS). Github: [TEAM1-API-SKYFLY](https://github.com/orgs/FSW-AND-BINAR-BATCH-6/repositories)",
+        "title": "team01-api-Skyfly API Documentation",
+        "description": "Development For Final Project Binar FSW1 Team1 Fullstack Dashboard for a library designed to manage library data and a library website utilizing, Express.js as the backend and Postgress as the Database Management System (DBMS)",
         "version": "1.0.0",
         "license": {
             "name": "ISC",
             "url": "https://spdx.org/licenses/ISC.html"
         },
         "contact": {
-            "name": "team1-FSW1",
+            "name": "Github Team C1",
             "url": "https://github.com/orgs/FSW-AND-BINAR-BATCH-6/repositories"
         }
+    },
+    "externalDocs": {
+        "description": "Postman API Documentation",
+        "url": "https://documenter.getpostman.com/view/22814931/2sA3XLE3m1"
     },
     "tags": [
         {
