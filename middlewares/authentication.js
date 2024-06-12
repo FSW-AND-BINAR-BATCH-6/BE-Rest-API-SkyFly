@@ -1,6 +1,6 @@
-const createHttpError = require("http-errors");
 const jwt = require("jsonwebtoken");
 const { PrismaClient } = require("@prisma/client");
+const createHttpError = require("http-errors");
 const prisma = new PrismaClient();
 
 module.exports = async (req, res, next) => {
@@ -36,10 +36,25 @@ module.exports = async (req, res, next) => {
 
         req.user = user;
         if (req.user === null) {
-            return next(createHttpError(401, "Unauthorized, please re-login"));
+            return next(
+                createHttpError(401, {
+                    message: "Unauthorized, please re-login",
+                })
+            );
         }
         next();
     } catch (error) {
-        next(createHttpError(500, { message: error.message }));
+        if (error.message === "jwt expired") {
+            res.status(401).json({
+                status: false,
+                message: "Token expired",
+            });
+        } else {
+            next(
+                createHttpError(500, {
+                    message: error.message,
+                })
+            );
+        }
     }
 };
