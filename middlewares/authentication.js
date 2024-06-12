@@ -45,10 +45,11 @@ module.exports = async (req, res, next) => {
         next();
     } catch (error) {
         if (error.message === "jwt expired") {
-            res.status(401).json({
-                status: false,
-                message: "Token expired",
-            });
+            return next(
+                createHttpError(401, {
+                    message: "JWT Token Expired",
+                })
+            );
         } else {
             next(
                 createHttpError(500, {
