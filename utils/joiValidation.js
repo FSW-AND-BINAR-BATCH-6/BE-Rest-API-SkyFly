@@ -77,7 +77,7 @@ const userCreateSchema = Joi.object({
     phoneNumber: Joi.string().min(11).max(13).optional(),
     familyName: Joi.string()
         .regex(/^(?!\s*$)[a-zA-Z\s]+$/)
-        .required(),
+        .optional(),
     role: Joi.string().valid("BUYER", "ADMIN").default("BUYER"), // Set default value for role
 });
 
@@ -85,7 +85,9 @@ const userUpdateSchema = Joi.object({
     id: Joi.string(),
     name: Joi.string().regex(/^(?!\s*$)[a-zA-Z\s]+$/),
     phoneNumber: Joi.string().optional(),
-    familyName: Joi.string().regex(/^(?!\s*$)[a-zA-Z\s]+$/),
+    familyName: Joi.string()
+        .regex(/^(?!\s*$)[a-zA-Z\s]+$/)
+        .optional(),
     role: Joi.forbidden(), // Ensure role is not allowed in request body
 });
 
