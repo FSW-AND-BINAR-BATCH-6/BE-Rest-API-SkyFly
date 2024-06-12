@@ -915,16 +915,50 @@ const getAllTransactionByUserLoggedIn = async (req, res, next) => {
     // get all transaction data from ticketTransaction & include ticketTransaction detail
 
     try {
+        let { dateOfDeparture, returnDate, flightCode } = req.query;
+
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const offset = (page - 1) * limit;
 
-        console.log(req.user.id);
+        const parsedDepartureDate = new Date(dateOfDeparture);
+        const parsedReturnDate = new Date(returnDate);
+
+        let flightCondition = {
+            code: {
+                contains: flightCode,
+                mode: "insensitive",
+            },
+        };
+
+        if (dateOfDeparture || returnDate) {
+            if (flightCode) {
+                flightCondition = {
+                    departureDate: {
+                        gte: new Date(parsedDepartureDate.setHours(0, 0, 0, 0)),
+                    },
+                    arrivalDate: {
+                        lt: new Date(parsedReturnDate.setHours(23, 59, 59, 0)),
+                    },
+                    code: {
+                        contains: flightCode,
+                        mode: "insensitive",
+                    },
+                };
+            }
+        }
+
         const transactions = await prisma.ticketTransaction.findMany({
             skip: offset,
             take: limit,
             include: {
-                Transaction_Detail: true,
+                Transaction_Detail: {
+                    include: {
+                        flight: {
+                            where: flightCondition,
+                        },
+                    },
+                },
             },
             where: {
                 userId: req.user.id,
@@ -933,6 +967,14 @@ const getAllTransactionByUserLoggedIn = async (req, res, next) => {
 
         const count = await prisma.ticketTransaction.count();
 
+        const filteredTransactions = transactions.filter((transaction) =>
+            transaction.Transaction_Detail.some(
+                (detail) => detail.flight !== null
+            )
+        );
+
+        // console.log(filteredTransaction);
+
         res.status(200).json({
             status: true,
             message: "All transaction data retrieved successfully",
@@ -940,14 +982,14 @@ const getAllTransactionByUserLoggedIn = async (req, res, next) => {
             pagination: {
                 totalPage: Math.ceil(count / limit),
                 currentPage: page,
-                pageItems: transactions.length,
+                pageItems: filteredTransactions.length,
                 nextPage: page < Math.ceil(count / limit) ? page + 1 : null,
                 prevPage: page > 1 ? page - 1 : null,
             },
             data:
-                transactions.length !== 0
-                    ? transactions
-                    : "empty transaction data",
+                filteredTransactions.length !== 0
+                    ? filteredTransactions
+                    : "transaction data is empty",
         });
     } catch (error) {
         next(
