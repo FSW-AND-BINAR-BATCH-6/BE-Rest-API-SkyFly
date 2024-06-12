@@ -38,7 +38,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(router);
 
 //* Error Handler with http-errors
-app.use((err, req, res, next) => {
+app.use((err, req, res) => {
     res.status(err.status || 500);
     res.json({
         status: false,

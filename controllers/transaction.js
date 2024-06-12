@@ -1,7 +1,6 @@
 require("dotenv/config");
 const { randomUUID } = require("crypto");
-const crypto = require("crypto");
-const { coreApi, snap, iris } = require("../config/coreApiMidtrans");
+const { coreApi, snap } = require("../config/coreApiMidtrans");
 const createHttpError = require("http-errors");
 const {
     dataCustomerDetail,
@@ -11,10 +10,7 @@ const {
 const { unescape } = require("querystring");
 const { PrismaClient } = require("@prisma/client");
 const { checkSeatAvailability } = require("../utils/checkSeat");
-const {
-    extractFirstData,
-    extractSecondData,
-} = require("../utils/extractItems");
+const { extractSecondData } = require("../utils/extractItems");
 const prisma = new PrismaClient();
 
 const getTransaction = async (req, res, next) => {
@@ -75,7 +71,6 @@ const createTransaction = async (req, res, next) => {
         let { flightId } = req.query;
 
         req.body.flightId = flightId;
-        const firstData = extractFirstData(req.body);
         const secondData = extractSecondData(req.body);
 
         req.body.flightId = flightId;
@@ -223,7 +218,7 @@ const createTransaction = async (req, res, next) => {
     }
 };
 
-const notification = async (req, res, next) => {
+const notification = async (req, res) => {
     const data = req.body;
     const ticketTransaction = await prisma.ticketTransaction.findUnique({
         where: {
@@ -359,7 +354,6 @@ const bankTransfer = async (req, res, next) => {
         let { bank, payment_type } = req.body;
         let { flightId } = req.query;
 
-        const firstData = extractFirstData(req.body);
         const secondData = extractSecondData(req.body);
 
         req.body.flightId = flightId;
@@ -589,7 +583,6 @@ const creditCard = async (req, res, next) => {
 
         req.body.flightId = flightId;
 
-        const firstData = extractFirstData(req.body);
         const secondData = extractSecondData(req.body);
 
         req.body.flightId = flightId;
@@ -767,7 +760,6 @@ const gopay = async (req, res, next) => {
 
         req.body.flightId = flightId;
 
-        const firstData = extractFirstData(req.body);
         const secondData = extractSecondData(req.body);
 
         req.body.flightId = flightId;
