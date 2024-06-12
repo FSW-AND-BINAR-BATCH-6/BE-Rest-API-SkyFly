@@ -1,6 +1,3 @@
-const Joi = require("joi");
-const createHttpError = require("http-errors");
-
 const validator = require("../../lib/validator");
 const {
     LoginSchema,
