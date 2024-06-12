@@ -1,7 +1,60 @@
 const { PrismaClient } = require("@prisma/client");
 const createHttpError = require("http-errors");
+const fetch = require("node-fetch");
 
 const prisma = new PrismaClient();
+
+const getSeatStatus = async (seatId) => {
+    const transactionDetail = await prisma.ticketTransactionDetail.findFirst({
+        where: {
+            seatId,
+        },
+        orderBy: {
+            transaction: {
+                bookingDate: "desc",
+            },
+        },
+        include: {
+            transaction: true,
+        },
+    });
+
+    if (!transactionDetail || !transactionDetail.transaction) {
+        return "available";
+    }
+
+    const { orderId } = transactionDetail.transaction;
+
+    const encodedServerKey = Buffer.from(
+        `${process.env.SANDBOX_SERVER_KEY}:`
+    ).toString("base64");
+    const url = `https://api.sandbox.midtrans.com/v2/${orderId}/status`;
+    const options = {
+        method: "GET",
+        headers: {
+            accept: "application/json",
+            authorization: `Basic ${encodedServerKey}`,
+        },
+    };
+
+    const response = await fetch(url, options);
+    const transaction = await response.json();
+
+    if (transaction.status_code === "404") {
+        return "available";
+    }
+
+    const { transaction_status } = transaction;
+
+    switch (transaction_status) {
+        case "pending":
+            return "pending";
+        case "settlement":
+            return "settlement";
+        default:
+            return "available";
+    }
+};
 
 const getAllSeats = async (req, res, next) => {
     try {
@@ -16,6 +69,13 @@ const getAllSeats = async (req, res, next) => {
 
         const count = await prisma.flightSeat.count();
 
+        const seatsWithStatus = await Promise.all(
+            seats.map(async (seat) => {
+                const status = await getSeatStatus(seat.id);
+                return { ...seat, status };
+            })
+        );
+
         res.status(200).json({
             status: true,
             message: "All seat flights retrieved successfully",
@@ -23,11 +83,11 @@ const getAllSeats = async (req, res, next) => {
             pagination: {
                 totalPage: Math.ceil(count / limit),
                 currentPage: page,
-                pageItems: seats.length,
+                pageItems: seatsWithStatus.length,
                 nextPage: page < Math.ceil(count / limit) ? page + 1 : null,
                 prevPage: page > 1 ? page - 1 : null,
             },
-            data: seats.length !== 0 ? seats : "No flight seats data found",
+            data: seatsWithStatus,
         });
     } catch (error) {
         next(createHttpError(500, { message: error.message }));
@@ -41,29 +101,28 @@ const getSeatsByFlightId = async (req, res, next) => {
         const limit = parseInt(req.query.limit) || 10;
         const offset = (page - 1) * limit;
 
-        console.log(flightId);
-
-        const flight = await prisma.flight.findUnique({
-            where: {
-                id: flightId,
-            },
-        });
-
-        if (!flight) {
-            return next(
-                createHttpError(404, {
-                    message: "flight is not found",
-                })
-            );
-        }
-
         const seats = await prisma.flightSeat.findMany({
             where: { flightId },
             skip: offset,
             take: limit,
         });
 
+        if (!seats.length) {
+            return next(
+                createHttpError(404, {
+                    message: "Seats not found for the given flight ID",
+                })
+            );
+        }
+
         const count = await prisma.flightSeat.count({ where: { flightId } });
+
+        const seatsWithStatus = await Promise.all(
+            seats.map(async (seat) => {
+                const status = await getSeatStatus(seat.id);
+                return { ...seat, status };
+            })
+        );
 
         res.status(200).json({
             status: true,
@@ -72,11 +131,11 @@ const getSeatsByFlightId = async (req, res, next) => {
             pagination: {
                 totalPage: Math.ceil(count / limit),
                 currentPage: page,
-                pageItems: seats.length,
+                pageItems: seatsWithStatus.length,
                 nextPage: page < Math.ceil(count / limit) ? page + 1 : null,
                 prevPage: page > 1 ? page - 1 : null,
             },
-            data: seats.length !== 0 ? seats : "No flight seats data found",
+            data: seatsWithStatus,
         });
     } catch (error) {
         next(createHttpError(500, { message: error.message }));

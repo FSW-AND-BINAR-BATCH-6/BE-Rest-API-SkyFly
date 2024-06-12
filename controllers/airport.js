@@ -9,25 +9,51 @@ const getAllAirports = async (req, res, next) => {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const offset = (page - 1) * limit;
+        const showAll = req.query.showall || "false";
+        const code = req.query.code;
+        const name = req.query.name;
 
-        const getAirports = await prisma.airport.findMany({
-            skip: offset,
-            take: limit,
-        });
+        const conditions = {};
+        if (code) {
+            conditions.code = { contains: code, mode: "insensitive" };
+        }
+        if (name) {
+            conditions.name = { contains: name, mode: "insensitive" };
+        }
 
-        const count = await prisma.airport.count();
+        let getAirports, count;
+
+        if (showAll === "true") {
+            getAirports = await prisma.airport.findMany({
+                where: conditions,
+            });
+            count = getAirports.length;
+        } else {
+            getAirports = await prisma.airport.findMany({
+                where: conditions,
+                skip: offset,
+                take: limit,
+            });
+            count = await prisma.airport.count({
+                where: conditions,
+            });
+        }
 
         res.status(200).json({
             status: true,
             message: "All airports data retrieved successfully",
             totalItems: count,
-            pagination: {
-                totalPage: Math.ceil(count / limit),
-                currentPage: page,
-                pageItems: getAirports.length,
-                nextPage: page < Math.ceil(count / limit) ? page + 1 : null,
-                prevPage: page > 1 ? page - 1 : null,
-            },
+            pagination:
+                showAll === "true"
+                    ? null
+                    : {
+                          totalPage: Math.ceil(count / limit),
+                          currentPage: page,
+                          pageItems: getAirports.length,
+                          nextPage:
+                              page < Math.ceil(count / limit) ? page + 1 : null,
+                          prevPage: page > 1 ? page - 1 : null,
+                      },
             data: getAirports.length !== 0 ? getAirports : "empty airport data",
         });
     } catch (error) {
