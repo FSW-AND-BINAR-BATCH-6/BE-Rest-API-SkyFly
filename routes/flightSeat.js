@@ -29,7 +29,12 @@ router.route("/flight/:flightId").get(getSeatsByFlightId);
 
 router
     .route("/:id")
-    .put(authentication, validator(updateSeatSchema), updateSeat)
+    .put(
+        authentication,
+        checkRole(["ADMIN"]),
+        validator(updateSeatSchema),
+        updateSeat
+    )
     .delete(authentication, checkRole(["ADMIN"]), deleteSeat);
 
 module.exports = router;
