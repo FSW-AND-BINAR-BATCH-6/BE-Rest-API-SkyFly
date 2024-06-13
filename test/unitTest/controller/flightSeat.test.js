@@ -291,6 +291,10 @@ describe("FlighSeats API", () => {
             expect(res.status).toHaveBeenCalledWith(200);
         });
 
-        it("")
+        it("Internal server error", async () => {
+            prisma.flightSeat.findUnique.mockRejectedValue(new Error("Internal server error"))
+            await seatsController.deleteSeat(req, res, next);
+            expect(next).toHaveBeenCalledWith(createHttpError(500, {message: "Internal server error"}));
+        })
     });
 });
