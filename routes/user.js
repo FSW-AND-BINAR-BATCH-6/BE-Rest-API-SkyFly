@@ -13,12 +13,12 @@ const {
 
 router
     .route("/")
-    .get(authentication, userController.getAllUsers, )
-    .post(authentication, validator(userCreateSchema), userController.createUser);
+    .get(authentication, checkRole(["ADMIN"]), userController.getAllUsers, )
+    .post(authentication, checkRole(["ADMIN"]), validator(userCreateSchema), userController.createUser);
 router
     .route("/:id")
-    .get(userController.getUserById)
-    .put(authentication, validator(userUpdateSchema), userController.updateUser)
+    .get(authentication, checkRole(["ADMIN"]), userController.getUserById)
+    .put(authentication, checkRole(["ADMIN"]), validator(userUpdateSchema), userController.updateUser)
     .delete(authentication, checkRole(["ADMIN"]), userController.deleteUser);
 
 module.exports = router;
