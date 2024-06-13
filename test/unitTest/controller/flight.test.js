@@ -52,7 +52,7 @@ describe("Flight Controller", () => {
 
     const flightDummyData = [
         {
-            id: "flight1",
+            id: "KGB57",
             planeId: "plane1",
             departureDate: new Date(),
             code: "FLT1",
