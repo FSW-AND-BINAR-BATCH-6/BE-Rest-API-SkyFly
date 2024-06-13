@@ -66,48 +66,7 @@ describe("FlighSeats API", () => {
             facilities: "WiFi",
         },
     ];
-
-    const transactionDetail = [
-        {
-            id: "transactionDetail",
-            transactionId: "transaction",
-            price: 50.0,
-            name: "Seat A1",
-            seatId: "seat-123",
-            familyName: "Smith",
-            flightId: "flight-123",
-            dob: new Date("1990-01-01"),
-            citizenship: "USA",
-            passport: "transaction",
-            issuingCountry: "USA",
-            validityPeriod: new Date("2030-01-01"),
-        },
-    ];
-
-    const ticketTransactionDetailDummyData = [
-        {
-            id: "transactionDetail",
-            transactionId: "transaction",
-            price: 50.0,
-            name: "Seat A1",
-            seatId: "seat-123",
-            familyName: "Smith",
-            flightId: "flight-123",
-            dob: new Date("1990-01-01"),
-            citizenship: "USA",
-            passport: "transaction",
-            issuingCountry: "USA",
-            validityPeriod: new Date("2030-01-01"),
-            transaction: {
-                id: "transaction",
-                userId: "user-123",
-                orderId: "order-123",
-                status: "available",
-                totalPrice: 100.0,
-                bookingDate: new Date(),
-            },
-        },
-    ];
+    
     beforeEach(() => {
         res = {
             status: jest.fn().mockReturnThis(),
