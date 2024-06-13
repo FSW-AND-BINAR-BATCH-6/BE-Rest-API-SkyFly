@@ -1,5 +1,3 @@
-const { totalPrice } = require("./parameterMidtrans");
-
 const Joi = require("joi").extend(require("@joi/date"));
 
 // auth
@@ -79,7 +77,7 @@ const userCreateSchema = Joi.object({
     phoneNumber: Joi.string().min(11).max(13).optional(),
     familyName: Joi.string()
         .regex(/^(?!\s*$)[a-zA-Z\s]+$/)
-        .required(),
+        .optional(),
     role: Joi.string().valid("BUYER", "ADMIN").default("BUYER"), // Set default value for role
 });
 
@@ -89,7 +87,7 @@ const userUpdateSchema = Joi.object({
     phoneNumber: Joi.string().optional(),
     familyName: Joi.string()
         .regex(/^(?!\s*$)[a-zA-Z\s]+$/)
-        .required(),
+        .optional(),
     role: Joi.forbidden(), // Ensure role is not allowed in request body
 });
 
@@ -281,7 +279,6 @@ const BankSchema = Joi.object({
     second_seatId: Joi.string(),
 });
 
-
 const GopaySchema = Joi.object({
     fullName: Joi.string().required(),
     familyName: Joi.string(),
@@ -391,8 +388,8 @@ const CCSchema = Joi.object({
 
 const updateTransactionSchema = Joi.object({
     totalPrice: Joi.number().required(),
-    status: Joi.string().valid("pending", "paid").required()
-})
+    status: Joi.string().valid("pending", "paid").required(),
+});
 
 module.exports = {
     LoginSchema,
@@ -417,5 +414,5 @@ module.exports = {
     GopaySchema,
     CCSchema,
     SnapSchema,
-    updateTransactionSchema
+    updateTransactionSchema,
 };

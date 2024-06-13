@@ -1,7 +1,6 @@
 require("dotenv/config");
 const { randomUUID } = require("crypto");
-const crypto = require("crypto");
-const { coreApi, snap, iris } = require("../config/coreApiMidtrans");
+const { coreApi, snap } = require("../config/coreApiMidtrans");
 const createHttpError = require("http-errors");
 const {
     dataCustomerDetail,
@@ -11,10 +10,7 @@ const {
 const { unescape } = require("querystring");
 const { PrismaClient } = require("@prisma/client");
 const { checkSeatAvailability } = require("../utils/checkSeat");
-const {
-    extractFirstData,
-    extractSecondData,
-} = require("../utils/extractItems");
+const { extractSecondData } = require("../utils/extractItems");
 const prisma = new PrismaClient();
 
 const getTransaction = async (req, res, next) => {
@@ -75,7 +71,6 @@ const createTransaction = async (req, res, next) => {
         let { flightId } = req.query;
 
         req.body.flightId = flightId;
-        const firstData = extractFirstData(req.body);
         const secondData = extractSecondData(req.body);
 
         req.body.flightId = flightId;
@@ -223,7 +218,7 @@ const createTransaction = async (req, res, next) => {
     }
 };
 
-const notification = async (req, res, next) => {
+const notification = async (req, res) => {
     const data = req.body;
     const ticketTransaction = await prisma.ticketTransaction.findUnique({
         where: {
@@ -359,7 +354,6 @@ const bankTransfer = async (req, res, next) => {
         let { bank, payment_type } = req.body;
         let { flightId } = req.query;
 
-        const firstData = extractFirstData(req.body);
         const secondData = extractSecondData(req.body);
 
         req.body.flightId = flightId;
@@ -589,7 +583,6 @@ const creditCard = async (req, res, next) => {
 
         req.body.flightId = flightId;
 
-        const firstData = extractFirstData(req.body);
         const secondData = extractSecondData(req.body);
 
         req.body.flightId = flightId;
@@ -767,7 +760,6 @@ const gopay = async (req, res, next) => {
 
         req.body.flightId = flightId;
 
-        const firstData = extractFirstData(req.body);
         const secondData = extractSecondData(req.body);
 
         req.body.flightId = flightId;
@@ -919,19 +911,126 @@ const gopay = async (req, res, next) => {
 
 //TODO: dashboard action
 
-const getAllTransaction = async (req, res, next) => {
+const getAllTransactionByUserLoggedIn = async (req, res, next) => {
     // get all transaction data from ticketTransaction & include ticketTransaction detail
 
     try {
-        const ticketTransactions = await prisma.ticketTransaction.findMany({
+        let { dateOfDeparture, returnDate, flightCode } = req.query;
+
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const offset = (page - 1) * limit;
+
+        const parsedDepartureDate = new Date(dateOfDeparture);
+        const parsedReturnDate = new Date(returnDate);
+
+        let flightCondition = {
+            code: {
+                contains: flightCode,
+                mode: "insensitive",
+            },
+        };
+
+        if (dateOfDeparture || returnDate) {
+            if (flightCode) {
+                flightCondition = {
+                    departureDate: {
+                        gte: new Date(parsedDepartureDate.setHours(0, 0, 0, 0)),
+                    },
+                    arrivalDate: {
+                        lt: new Date(parsedReturnDate.setHours(23, 59, 59, 0)),
+                    },
+                    code: {
+                        contains: flightCode,
+                        mode: "insensitive",
+                    },
+                };
+            }
+        }
+
+        const transactions = await prisma.ticketTransaction.findMany({
+            skip: offset,
+            take: limit,
+            include: {
+                Transaction_Detail: {
+                    include: {
+                        flight: {
+                            where: flightCondition,
+                        },
+                    },
+                },
+            },
+            where: {
+                userId: req.user.id,
+            },
+        });
+
+        const count = await prisma.ticketTransaction.count();
+
+        const filteredTransactions = transactions.filter((transaction) =>
+            transaction.Transaction_Detail.some(
+                (detail) => detail.flight !== null
+            )
+        );
+
+        // console.log(filteredTransaction);
+
+        res.status(200).json({
+            status: true,
+            message: "All transaction data retrieved successfully",
+            totalItems: count,
+            pagination: {
+                totalPage: Math.ceil(count / limit),
+                currentPage: page,
+                pageItems: filteredTransactions.length,
+                nextPage: page < Math.ceil(count / limit) ? page + 1 : null,
+                prevPage: page > 1 ? page - 1 : null,
+            },
+            data:
+                filteredTransactions.length !== 0
+                    ? filteredTransactions
+                    : "transaction data is empty",
+        });
+    } catch (error) {
+        next(
+            createHttpError(500, {
+                message: error.message,
+            })
+        );
+    }
+};
+
+const getAllTransaction = async (req, res, next) => {
+    try {
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const offset = (page - 1) * limit;
+
+        const transactions = await prisma.ticketTransaction.findMany({
+            skip: offset,
+            take: limit,
             include: {
                 Transaction_Detail: true,
             },
         });
+
+        const count = await prisma.ticketTransaction.count();
+
         res.status(200).json({
             status: true,
-            message: "ticket transactions data retrieved successfully",
-            data: ticketTransactions,
+            message: "All transaction data retrieved successfully",
+            totalItems: count,
+            pagination: {
+                totalPage: Math.ceil(count / limit),
+                currentPage: page,
+                pageItems: transactions.length,
+                nextPage: page < Math.ceil(count / limit) ? page + 1 : null,
+                prevPage: page > 1 ? page - 1 : null,
+            },
+            data:
+                transactions.length !== 0
+                    ? transactions
+                    : "empty transaction data",
         });
     } catch (error) {
         next(
@@ -1094,6 +1193,7 @@ module.exports = {
     bankTransfer,
     creditCard,
     getAllTransaction,
+    getAllTransactionByUserLoggedIn,
     getTransactionById,
     updateTransaction,
     deleteTransaction,
