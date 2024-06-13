@@ -1,5 +1,5 @@
 const { randomUUID } = require("crypto");
-const { extractFirstData, extractSecondData } = require("./extractItems");
+const { extractSecondData } = require("./extractItems");
 
 const dataCustomerDetail = async (data) => {
     const customer_details = {
@@ -14,7 +14,6 @@ const dataCustomerDetail = async (data) => {
 };
 
 const dataItemDetail = async (data) => {
-    const firstData = extractFirstData(data);
     const secondData = extractSecondData(data);
 
     let item_details;

@@ -12,12 +12,16 @@
         "migrate-refresh": "npx prisma migrate reset",
         "vercel-build": "npx prisma generate && npx prisma migrate deploy",
         "db-seed": "node ./prisma/seeder/seeder",
-        "test": "jest --collectCoverage"
+        "test": "jest --collectCoverage",
+        "lint": "eslint .",
+        "fixlint": "eslint . --fix"
     },
     "keywords": [],
     "author": "Yoga Andhika Rafi Viery Faris Naufal Lowis Falah",
     "license": "ISC",
     "devDependencies": {
+        "eslint": "^9.4.0",
+        "globals": "^15.4.0",
         "morgan": "^1.10.0",
         "nodemon": "^3.1.0"
     },

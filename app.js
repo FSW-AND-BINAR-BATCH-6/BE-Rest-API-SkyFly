@@ -37,7 +37,8 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(router);
 
-//* Error Handler with http-errors
+//* Error Response Handler
+// eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
     res.status(err.status || 500);
     res.json({
