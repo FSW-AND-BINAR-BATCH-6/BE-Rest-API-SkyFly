@@ -215,7 +215,7 @@ describe("Airports API", () => {
             expect(next).toHaveBeenCalledWith(
                 createHttpError(403, {
                     message:
-                        "Airport with the same code already exists in the database",
+                        "Airport with code: AHR already exist!",
                 })
             );
             expect(prisma.airport.create).not.toHaveBeenCalled();

@@ -94,9 +94,9 @@ const createNewAirport = async (req, res, next) => {
         });
         if (getAirport)
             return next(
-                createHttpError(403, {
+                createHttpError(422, {
                     message:
-                        "Airport with the same code already exists in the database",
+                        `Airport with code: ${code} already exist!`,
                 })
             );
 
