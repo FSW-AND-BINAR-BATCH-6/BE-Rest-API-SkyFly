@@ -17,7 +17,8 @@ const getAllFlight = async (req, res, next) => {
       maxPrice,
       facilities,
       hasTransit,
-      hasDiscount
+      hasDiscount,
+      sort
     } = req.query;
 
     const skip = (page - 1) * limit;
@@ -90,10 +91,23 @@ const getAllFlight = async (req, res, next) => {
     }
 
     if (facilities) {
-      const facilityList = facilities.split(',');
+      const facilityList = facilities.split('%20');
       facilityList.forEach(facility => {
         filters.AND.push({ facilities: { contains: facility.trim() } });
       });
+    }
+
+    let orderBy = [];
+    if (sort) {
+      switch (sort) {
+        case 'durasi-terpendek':
+          orderBy = [{ duration: 'asc' }];
+          break;
+        case 'keberangkatan-paling-awal':
+          orderBy = [{ departureDate: 'asc' }];
+          break;
+
+      }
     }
 
     const flights = await prisma.flight.findMany({
