@@ -1,5 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const createHttpError = require("http-errors");
+const { calculateFlightDuration } = require("../utils/calculateDuration");
 
 const prisma = new PrismaClient();
 
@@ -483,7 +484,7 @@ const getFavoriteDestinations = async (req, res, next) => {
         res.status(200).json({
             status: true,
             message: 'Favorite destinations retrieved successfully',
-            data: destinationsWithDetails.slice(0, 5) 
+            data: destinationsWithDetails.slice(0, 5)
         });
     } catch (error) {
         console.error('Error retrieving favorite destinations:', error);
@@ -532,20 +533,6 @@ const removeFlight = async (req, res, next) => {
         next(createHttpError(500, { message: error.message }));
     }
 };
-
-function calculateFlightDuration(departureDate, arrivalDate, transitDepartureDate, transitArrivalDate) {
-    const departureDateTime = new Date(departureDate).getTime();
-    const arrivalDateTime = new Date(arrivalDate).getTime();
-
-    if (transitDepartureDate && transitArrivalDate) {
-        const transitDepartureDateTime = new Date(transitDepartureDate).getTime();
-        const transitArrivalDateTime = new Date(transitArrivalDate).getTime();
-
-        return (arrivalDateTime - departureDateTime) - (transitArrivalDateTime - transitDepartureDateTime);
-    } else {
-        return arrivalDateTime - departureDateTime;
-    }
-}
 
 module.exports = {
     getAllFlight,
