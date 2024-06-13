@@ -1,6 +1,3 @@
-const Joi = require("joi");
-const createHttpError = require("http-errors");
-
 const validator = require("../../lib/validator");
 const {
     LoginSchema,
@@ -493,9 +490,9 @@ describe("User Input Validation", () => {
 //                 schema: createFlightSchema,
 //                 inputData: {
 //                     planeId: "123456",
-//                     departureDate: "2024-01-07T09:30:00Z",
+//                     departureDate: "2024-01-07 09:30:00",
 //                     departureAirportId: "2143091",
-//                     arrivalDate: "2024-01-07T12:30:00Z",
+//                     arrivalDate: "2024-01-07 12:30:00",
 //                     destinationAirportId: "2243091",
 //                     price: 2000000,
 //                     capacity: 72,
@@ -505,13 +502,13 @@ describe("User Input Validation", () => {
 //                 },
 //             },
 //             {
-//                 description: "Invalid Input, there are letters in field planeId",
+//                 description: "Invalid Input, there are letter in field planeId",
 //                 schema: createFlightSchema,
 //                 inputData: {
 //                     planeId: "1234as56",
-//                     departureDate: "2024-01-07T09:30:00Z",
+//                     departureDate: "2024-01-07 09:30:00",
 //                     departureAirportId: "2143091",
-//                     arrivalDate: "2024-01-07T12:30:00Z",
+//                     arrivalDate: "2024-01-07 12:30:00",
 //                     destinationAirportId: "2243091",
 //                     price: 2000000,
 //                     capacity: 72,
@@ -519,7 +516,8 @@ describe("User Input Validation", () => {
 //                 expectedOutcome: {
 //                     success: false,
 //                     status: 422,
-//                     message: '"planeId" with value "1234as56" fails to match the required pattern: /^\\d+$/',
+//                     message:
+//                         '"planeId" with value "1234as56" fails to match the required pattern: /^\\d+$/',
 //                 },
 //             },
 //             {
@@ -529,7 +527,7 @@ describe("User Input Validation", () => {
 //                     planeId: "123456",
 //                     departureDate: "20240107",
 //                     departureAirportId: "2143091",
-//                     arrivalDate: "2024-01-07T12:30:00Z",
+//                     arrivalDate: "2024-01-07 12:30:00",
 //                     destinationAirportId: "2243091",
 //                     price: 2000000,
 //                     capacity: 72,
@@ -537,17 +535,17 @@ describe("User Input Validation", () => {
 //                 expectedOutcome: {
 //                     success: false,
 //                     status: 422,
-//                     message: '"departureDate" must be in ISO format, eg: 2024-01-07 09:30:00',
+//                     message: `"departureDate" must be in ISO format, eg: 2024-01-07 09:30:00`,
 //                 },
 //             },
 //             {
-//                 description: "Invalid Input, capacity must be less than 850",
+//                 description: "Invalid Input, capacity must has less than 850",
 //                 schema: createFlightSchema,
 //                 inputData: {
 //                     planeId: "123456",
-//                     departureDate: "2024-01-07T09:30:00Z",
+//                     departureDate: "2024-01-07 09:30:00",
 //                     departureAirportId: "2143091",
-//                     arrivalDate: "2024-01-07T12:30:00Z",
+//                     arrivalDate: "2024-01-07 12:30:00",
 //                     destinationAirportId: "2243091",
 //                     price: 2000000,
 //                     capacity: 950,
@@ -555,7 +553,7 @@ describe("User Input Validation", () => {
 //                 expectedOutcome: {
 //                     success: false,
 //                     status: 422,
-//                     message: '"capacity" must be less than or equal to 850',
+//                     message: `"capacity" must be less than or equal to 850`,
 //                 },
 //             },
 //         ];
@@ -571,15 +569,14 @@ describe("User Input Validation", () => {
 //         });
 //     });
 
-//     describe("Update Flight Input", () => {
+//     describe("UpdateFlight Input", () => {
 //         const updateFlightInputTest = [
 //             {
 //                 description: "Success Input",
 //                 schema: updateFlightSchema,
 //                 inputData: {
-//                     planeId: "123456",
-//                     departureDate: "2024-01-07T09:30:00Z",
-//                     arrivalDate: "2024-01-07T12:30:00Z",
+//                     departureDate: "2024-01-07 09:30:00",
+//                     arrivalDate: "2024-01-07 12:30:00",
 //                     price: 2000000,
 //                     capacity: 72,
 //                 },
@@ -588,13 +585,13 @@ describe("User Input Validation", () => {
 //                 },
 //             },
 //             {
-//                 description: "Invalid Input, there are letters in field planeId",
+//                 description: "Invalid Input, there are letter in field planeId",
 //                 schema: updateFlightSchema,
 //                 inputData: {
-//                     planeId: "1234as56",
-//                     departureDate: "2024-01-07T09:30:00Z",
+//                     planeId: "1234as56", //input contains letter while JOI only allow number
+//                     departureDate: "2024-01-07 09:30:00",
 //                     departureAirportId: "2143091",
-//                     arrivalDate: "2024-01-07T12:30:00Z",
+//                     arrivalDate: "2024-01-07 12:30:00",
 //                     destinationAirportId: "2243091",
 //                     price: 2000000,
 //                     capacity: 72,
@@ -602,7 +599,8 @@ describe("User Input Validation", () => {
 //                 expectedOutcome: {
 //                     success: false,
 //                     status: 422,
-//                     message: '"planeId" with value "1234as56" fails to match the required pattern: /^\\d+$/',
+//                     message:
+//                         '"planeId" with value "1234as56" fails to match the required pattern: /^\\d+$/',
 //                 },
 //             },
 //             {
@@ -610,9 +608,9 @@ describe("User Input Validation", () => {
 //                 schema: updateFlightSchema,
 //                 inputData: {
 //                     planeId: "123456",
-//                     departureDate: "20240107",
+//                     departureDate: "20240107", //wrong data format
 //                     departureAirportId: "2143091",
-//                     arrivalDate: "2024-01-07T12:30:00Z",
+//                     arrivalDate: "2024-01-07 12:30:00",
 //                     destinationAirportId: "2243091",
 //                     price: 2000000,
 //                     capacity: 72,
@@ -620,25 +618,26 @@ describe("User Input Validation", () => {
 //                 expectedOutcome: {
 //                     success: false,
 //                     status: 422,
-//                     message: '"departureDate" must be in ISO format, eg: 2024-01-07 09:30:00',
+//                     message: `"departureDate" must be in ISO format, eg: 2024-01-07 09:30:00`,
 //                 },
 //             },
 //             {
-//                 description: "Invalid Input, capacity must be greater or equal to 2",
+//                 description:
+//                     "Invalid Input, capacity must has more or equal than 2",
 //                 schema: updateFlightSchema,
 //                 inputData: {
 //                     planeId: "123456",
-//                     departureDate: "2024-01-07T09:30:00Z",
+//                     departureDate: "2024-01-07 09:30:00",
 //                     departureAirportId: "2143091",
-//                     arrivalDate: "2024-01-07T12:30:00Z",
+//                     arrivalDate: "2024-01-07 12:30:00",
 //                     destinationAirportId: "2243091",
 //                     price: 2000000,
-//                     capacity: 1, 
+//                     capacity: 1, //JOI only allow capacity to vbe greater than 1 and less than 851
 //                 },
 //                 expectedOutcome: {
 //                     success: false,
 //                     status: 422,
-//                     message: '"capacity" must be greater than or equal to 2',
+//                     message: `"capacity" must be greater than or equal to 2`,
 //                 },
 //             },
 //         ];

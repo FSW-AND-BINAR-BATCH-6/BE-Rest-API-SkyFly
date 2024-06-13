@@ -71,6 +71,8 @@ describe("Airports API", () => {
                 query: {
                     page: "1",
                     limit: "10",
+                    code: "B17",
+                    name: "Flying Fortress"
                 },
             };
         });
@@ -99,7 +101,9 @@ describe("Airports API", () => {
         });
 
         it("Success, without params", async () => {
-            req.query = {}
+            req.query = {
+                showall: 'true'
+            }
             const totalItems = 1;
 
             prisma.airport.findMany.mockResolvedValue(airportDummyData);
@@ -111,13 +115,7 @@ describe("Airports API", () => {
                 status: true,
                 message: "All airports data retrieved successfully",
                 totalItems,
-                pagination: {
-                    totalPage: 1,
-                    currentPage: 1,
-                    pageItems: 1,
-                    nextPage: null,
-                    prevPage: null,
-                },
+                pagination: null,
                 data: airportDummyData,
             });
         });

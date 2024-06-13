@@ -21,7 +21,7 @@ const smsHandler = (phoneNumber, OTPToken, urlTokenVerification) => {
             chunks.push(chunk);
         });
 
-        res.on("end", function (chunk) {
+        res.on("end", function () {
             let body = Buffer.concat(chunks);
             console.log(body.toString());
         });

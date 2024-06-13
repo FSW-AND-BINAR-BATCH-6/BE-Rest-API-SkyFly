@@ -13,6 +13,7 @@ const {
     getTransactionById,
     deleteTransaction,
     deleteTransactionDetail,
+    getAllTransactionByUserLoggedIn,
 } = require("../controllers/transaction");
 
 const authentication = require("../middlewares/authentication");
@@ -34,6 +35,8 @@ const {
     updateTransactionSchema,
 } = require("../utils/joiValidation");
 
+router.get("/status/:orderId", authentication, getTransaction);
+router.get("/", authentication, getAllTransactionByUserLoggedIn);
 router.post(
     "/payment",
     authentication,
@@ -43,17 +46,27 @@ router.post(
 router.post("/bank", authentication, validator(BankSchema), bankTransfer);
 router.post("/creditcard", authentication, validator(CCSchema), creditCard);
 router.post("/gopay", authentication, validator(GopaySchema), gopay);
-router.get("/status/:orderId", authentication, getTransaction);
 router.post("/notification", notification);
 router.put("/status/:orderId", authentication, updateTransaction);
 
-router.post("/create", createTransaction)
+router.post("/create", createTransaction);
 
 // dashboard action
-router.get("/", authentication, getAllTransaction);
-router.get("/:id", authentication,  getTransactionById)
-router.put("/:id", authentication, checkRole(["ADMIN"]), validator(updateTransactionSchema), updateTransaction)
-router.delete("/:id", authentication, checkRole(["ADMIN"]), deleteTransaction)
-router.delete("/transactionDetail/:id", authentication, checkRole(["ADMIN"]), deleteTransactionDetail)
+router.get("/admin", authentication, checkRole(["ADMIN"]), getAllTransaction);
+router.get("/:id", authentication, getTransactionById);
+router.put(
+    "/:id",
+    authentication,
+    checkRole(["ADMIN"]),
+    validator(updateTransactionSchema),
+    updateTransaction
+);
+router.delete("/:id", authentication, checkRole(["ADMIN"]), deleteTransaction);
+router.delete(
+    "/transactionDetail/:id",
+    authentication,
+    checkRole(["ADMIN"]),
+    deleteTransactionDetail
+);
 
 module.exports = router;
