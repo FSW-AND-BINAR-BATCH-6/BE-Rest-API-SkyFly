@@ -3,7 +3,7 @@ const { randomUUID } = require('crypto');
 const { extractSecondData } = require('../../../utils/extractItems');
 
 jest.mock('crypto', () => ({
-    randomUUID: jest.fn(() => 'mocked-uuid'),
+    randomUUID: jest.fn(),
 }));
 
 jest.mock('../../../utils/extractItems', () => ({
@@ -31,6 +31,7 @@ describe('dataCustomerDetail', () => {
 
 describe('dataItemDetail', () => {
     it('should return item details with one set of data correctly', async () => {
+        randomUUID.mockReturnValue("tigris")
         extractSecondData.mockReturnValue({});
         const input = {
             first_dob: '2022-01-01',
@@ -48,7 +49,7 @@ describe('dataItemDetail', () => {
         const result = await dataItemDetail(input);
         expect(result).toEqual([
             {
-                id: 'mocked-uuid',
+                id: 'tigris',
                 name: 'Mr. Abdur Rohim',
                 dob: '2022-01-01T07:00:00.000Z',
                 validityPeriod: '2024-01-01T07:00:00.000Z',
@@ -94,7 +95,7 @@ describe('dataItemDetail', () => {
         const result = await dataItemDetail(input);
         expect(result).toEqual([
             {
-                id: 'mocked-uuid',
+                id: 'tigris',
                 name: 'Mr. Abdur Rohim',
                 dob: '2022-01-01T07:00:00.000Z',
                 validityPeriod: '2024-01-01T07:00:00.000Z',
@@ -107,7 +108,7 @@ describe('dataItemDetail', () => {
                 seatId: 'seat-123',
             },
             {
-                id: 'mocked-uuid',
+                id: 'tigris',
                 name: 'Ms. Jane Rohim',
                 dob: '2023-01-01T07:00:00.000Z',
                 validityPeriod: '2025-01-01T07:00:00.000Z',
