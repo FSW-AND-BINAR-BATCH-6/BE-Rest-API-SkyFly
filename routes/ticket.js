@@ -3,6 +3,7 @@ const authentication = require("../middlewares/authentication");
 const checkRole = require("../middlewares/checkrole");
 
 const {
+    generateTicket,
     getAllTicket,
     getTicketById,
     createTicket,
@@ -11,6 +12,8 @@ const {
 } = require("../controllers/ticket");
 const validator = require("../lib/validator");
 const { TicketSchema, UpdateTicketSchema } = require("../utils/joiValidation");
+
+router.route("/generate").get(authentication, generateTicket);
 
 router
     .route("/")

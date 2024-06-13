@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Ticket Details</title>
+    </head>
+    <body>
+        <h1>Ticket Details</h1>
+        <% tickets.forEach((ticket) => { %>
+        <div>
+            <h2>Ticket Code: <%= ticket.code %></h2>
+            <p><strong>Flight ID:</strong> <%= ticket.flight.id %></p>
+            <p>
+                <strong>Departure Date:</strong> <%= ticket.flight.departureDate
+                %>
+            </p>
+            <p>
+                <strong>Departure Airport:</strong> <%=
+                ticket.flight.departureAirport %>
+            </p>
+            <p>
+                <strong>Arrival Date:</strong> <%= ticket.flight.arrivalDate %>
+            </p>
+            <p>
+                <strong>Destination Airport:</strong> <%=
+                ticket.flight.destinationAirport %>
+            </p>
+            <p><strong>Price:</strong> <%= ticket.flight.price %></p>
+            <p><strong>User ID:</strong> <%= ticket.user.id %></p>
+            <p><strong>User Name:</strong> <%= ticket.user.name %></p>
+            <p>
+                <strong>User Phone Number:</strong> <%= ticket.user.phoneNumber
+                %>
+            </p>
+            <p><strong>Seat Number:</strong> <%= ticket.seat.seatNumber %></p>
+            <p><strong>Seat Type:</strong> <%= ticket.seat.type %></p>
+            <h3>Transaction Details:</h3>
+            <p>
+                <strong>Order ID:</strong> <%= ticket.ticketTransaction.orderId
+                %>
+            </p>
+            <p>
+                <strong>Total Price:</strong> <%=
+                ticket.ticketTransaction.totalPrice %>
+            </p>
+            <p>
+                <strong>Status:</strong> <%= ticket.ticketTransaction.status %>
+            </p>
+            <p>
+                <strong>Booking Date:</strong> <%=
+                ticket.ticketTransaction.bookingDate %>
+            </p>
+            <h3>Transaction Detail:</h3>
+            <p>
+                <strong>Name:</strong> <%= ticket.ticketTransactionDetail.name
+                %>
+            </p>
+            <p>
+                <strong>Family Name:</strong> <%=
+                ticket.ticketTransactionDetail.familyName %>
+            </p>
+            <p>
+                <strong>DOB:</strong> <%= ticket.ticketTransactionDetail.dob %>
+            </p>
+            <p>
+                <strong>Citizenship:</strong> <%=
+                ticket.ticketTransactionDetail.citizenship %>
+            </p>
+            <p>
+                <strong>Passport:</strong> <%=
+                ticket.ticketTransactionDetail.passport %>
+            </p>
+            <p>
+                <strong>Issuing Country:</strong> <%=
+                ticket.ticketTransactionDetail.issuingCountry %>
+            </p>
+            <p>
+                <strong>Validity Period:</strong> <%=
+                ticket.ticketTransactionDetail.validityPeriod %>
+            </p>
+            <p>
+                <strong>Flight ID:</strong> <%=
+                ticket.ticketTransactionDetail.flightId %>
+            </p>
+            <p>
+                <strong>Seat ID:</strong> <%=
+                ticket.ticketTransactionDetail.seatId %>
+            </p>
+        </div>
+        <% }) %>
+    </body>
+</html>

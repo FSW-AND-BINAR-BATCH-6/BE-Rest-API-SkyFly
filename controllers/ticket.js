@@ -161,7 +161,7 @@ const getTicketById = async (req, res, next) => {
                 },
             },
         });
-
+        console.log("aaa");
         if (!ticket) {
             return next(createHttpError(404, { message: "Ticket not found" }));
         }
@@ -281,6 +281,7 @@ const updateTicket = async (req, res, next) => {
                 ticketTransactionDetail: true,
             },
         });
+        console.log("bbb");
         if (!ticket) {
             return next(createHttpError(404, { message: "Ticket not found" }));
         }
@@ -312,7 +313,7 @@ const deleteTicket = async (req, res, next) => {
         const ticket = await prisma.ticket.findUnique({
             where: { id: req.params.id },
         });
-
+        console.log("ccc");
         if (!ticket) {
             return next(createHttpError(404, { message: "Ticket not found" }));
         }
@@ -329,7 +330,44 @@ const deleteTicket = async (req, res, next) => {
     }
 };
 
+const generateTicket = async (req, res, next) => {
+    try {
+        let data = [];
+
+        const tickets = await prisma.ticket.findMany({
+            where: { userId: req.user.id },
+            include: {
+                user: {
+                    include: {
+                        auth: {
+                            select: {
+                                id: true,
+                                email: true,
+                                isVerified: true,
+                            },
+                        },
+                    },
+                },
+                ticketTransaction: true,
+                seat: true,
+                flight: true,
+            },
+        });
+        data.push(tickets);
+        prisma.await.ticketTransactionDetail.findUnique({
+            where: {
+                orderId: data.transactions.orderID,
+            },
+        });
+
+        res.render("templates/ticket.ejs", { tickets });
+    } catch (error) {
+        next(createHttpError(500, { message: error.message }));
+    }
+};
+
 module.exports = {
+    generateTicket,
     getAllTicket,
     getTicketById,
     createTicket,
