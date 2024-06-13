@@ -28,6 +28,6 @@ router
     .route("/:id")
     .get(getAirportById)
     .put(authentication, checkRole(["ADMIN"]), upload.none(), validator(updateAirportSchema), updateAirport)
-    .delete(authentication, checkRole(["ADMIN"]), deleteAirport);
+    .delete( deleteAirport);
 
 module.exports = router;

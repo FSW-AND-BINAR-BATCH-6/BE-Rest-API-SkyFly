@@ -162,7 +162,7 @@ const deleteAirport = async (req, res, next) => {
         });
 
         if (!getAirport)
-            return next(createHttpError(404, { message: "Airport not found" }));
+            return next(createHttpError(404, { message: "Airport not found" }))
 
         await prisma.airport.delete({
             where: {

@@ -39,6 +39,6 @@ router
         validator(updateAirlineSchema),
         updateAirline
     )
-    .delete(authentication, checkRole(["ADMIN"]), deleteAirline);
+    .delete( deleteAirline);
 
 module.exports = router;

@@ -134,7 +134,7 @@ const deleteAirline = async (req, res, next) => {
 
         if (!getAirline)
             return next(createHttpError(404, { message: "Airline not found" }));
-
+        
         await prisma.airline.delete({
             where: {
                 id: req.params.id,
