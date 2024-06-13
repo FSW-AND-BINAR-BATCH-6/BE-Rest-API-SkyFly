@@ -202,11 +202,9 @@ const getAllFlight = async (req, res, next) => {
         });
     } catch (error) {
         console.error('Error fetching flights:', error);
-        next(createHttpError(500, { message: "Internal Server Error" }));
+        next(createHttpError(500, { message: error.message }));
     }
 };
-
-
 
 const getFlightById = async (req, res, next) => {
     try {
@@ -270,7 +268,7 @@ const getFlightById = async (req, res, next) => {
             data: formattedFlight,
         });
     } catch (error) {
-        next(createHttpError(500, { message: "Internal Server Error" }));
+        next(createHttpError(500, { message: error.message }));
     }
 };
 
@@ -353,7 +351,7 @@ const createFlight = async (req, res, next) => {
             data: newFlight,
         });
     } catch (error) {
-        next(createHttpError(500, { message: "Internal Server Error" }));
+        next(createHttpError(500, { message: error.message }));
     }
 };
 
@@ -437,37 +435,59 @@ const updateFlight = async (req, res, next) => {
 
 const getFavoriteDestinations = async (req, res, next) => {
     try {
-        const favoriteDestinations = await prisma.flight.groupBy({
-            by: ['destinationAirportId'],
-            _count: {
-                ticketTransactionDetail: true,
-            },
-            orderBy: {
-                _count: {
-                    ticketTransactionDetail: 'desc',
-                },
-            },
-            take: 5,
+        const ticketTransactionDetails = await prisma.ticketTransactionDetail.findMany({
+            include: {
+                flight: {
+                    select: {
+                        destinationAirportId: true
+                    }
+                }
+            }
         });
 
-        const destinationsWithDetails = await Promise.all(favoriteDestinations.map(async (destination) => {
-            const airport = await prisma.airport.findUnique({
-                where: { id: destination.destinationAirportId },
-            });
+        const destinationGroups = ticketTransactionDetails.reduce((groups, transaction) => {
+            const destinationAirportId = transaction.flight.destinationAirportId;
+
+            if (!groups[destinationAirportId]) {
+                groups[destinationAirportId] = {
+                    airportId: destinationAirportId,
+                    transactionCount: 0
+                };
+            }
+
+            groups[destinationAirportId].transactionCount++;
+
+            return groups;
+        }, {});
+
+        const destinationAirportIds = Object.keys(destinationGroups);
+        const airports = await prisma.airport.findMany({
+            where: {
+                id: {
+                    in: destinationAirportIds
+                }
+            }
+        });
+
+        const destinationsWithDetails = destinationAirportIds.map(airportId => {
+            const airport = airports.find(a => a.id === airportId);
 
             return {
                 airport,
-                transactionCount: destination._count.ticketTransactionDetail,
+                transactionCount: destinationGroups[airportId].transactionCount
             };
-        }));
+        });
+
+        destinationsWithDetails.sort((a, b) => b.transactionCount - a.transactionCount);
 
         res.status(200).json({
             status: true,
             message: 'Favorite destinations retrieved successfully',
-            data: destinationsWithDetails,
+            data: destinationsWithDetails.slice(0, 5) 
         });
     } catch (error) {
-        next(createHttpError(500, { message: "Internal Server Error" }));
+        console.error('Error retrieving favorite destinations:', error);
+        next(createHttpError(500, { message: error.message }));
     }
 };
 
@@ -509,7 +529,7 @@ const removeFlight = async (req, res, next) => {
             deletedData: deletedFlight,
         });
     } catch (error) {
-        next(createHttpError(500, { message: "Internal Server Error" }));
+        next(createHttpError(500, { message: error.message }));
     }
 };
 

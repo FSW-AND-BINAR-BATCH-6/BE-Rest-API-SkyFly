@@ -19,9 +19,7 @@ const {
 router.route("/")
     .get(getAllFlight)
     .post(
-        authentication,
-        checkRole(["ADMIN"]),
-        validator(createFlightSchema),
+
         createFlight
     );
 
