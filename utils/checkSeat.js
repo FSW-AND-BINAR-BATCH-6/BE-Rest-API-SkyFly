@@ -1,6 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const createHttpError = require("http-errors");
 
 const checkSeatAvailability = async (seats, flightId) => {
     let seatNumber = [];

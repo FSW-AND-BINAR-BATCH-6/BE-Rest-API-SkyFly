@@ -117,8 +117,19 @@ const getSeatsByFlightId = async (req, res, next) => {
 
         const count = await prisma.flightSeat.count({ where: { flightId } });
 
+        const sortedSeats = seats.sort((a, b) => {
+            const [aRow, aCol] = a.seatNumber.match(/(\d+)([A-Z])/).slice(1, 3);
+            const [bRow, bCol] = b.seatNumber.match(/(\d+)([A-Z])/).slice(1, 3);
+            const rowDiff = parseInt(aRow) - parseInt(bRow);
+            if (rowDiff !== 0) {
+                return rowDiff;
+            }
+            return aCol.localeCompare(bCol);
+        });
+
+
         const seatsWithStatus = await Promise.all(
-            seats.map(async (seat) => {
+            sortedSeats.map(async (seat) => {
                 const status = await getSeatStatus(seat.id);
                 return { ...seat, status };
             })
@@ -141,6 +152,7 @@ const getSeatsByFlightId = async (req, res, next) => {
         next(createHttpError(500, { message: error.message }));
     }
 };
+
 
 const decreaseFlightCapacity = async (flightId) => {
     await prisma.flight.update({
