@@ -224,7 +224,11 @@ const createAirportSchema = Joi.object({
         .max(70)
         .regex(/^(?!\s*$)[a-zA-Z\s]+$/)
         .required(),
-    code: Joi.string().min(3).max(3).regex(/^(?!\s*$)[a-zA-Z\s]+$/).required(),
+    code: Joi.string()
+        .min(3)
+        .max(3)
+        .regex(/^(?!\s*$)[a-zA-Z\s]+$/)
+        .required(),
     country: Joi.string()
         .regex(/^(?!\s*$)[a-zA-Z\s]+$/)
         .required(),
@@ -238,7 +242,10 @@ const updateAirportSchema = Joi.object({
         .min(2)
         .max(70)
         .regex(/^(?!\s*$)[a-zA-Z\s]+$/),
-    code: Joi.string().min(3).regex(/^(?!\s*$)[a-zA-Z\s]+$/).max(3),
+    code: Joi.string()
+        .min(3)
+        .regex(/^(?!\s*$)[a-zA-Z\s]+$/)
+        .max(3),
     country: Joi.string()
         .min(3)
         .max(25)
