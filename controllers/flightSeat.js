@@ -275,7 +275,6 @@ const updateSeat = async (req, res, next) => {
                 seatNumber,
                 status,
                 type,
-                price,
             },
         });
 
@@ -288,7 +287,6 @@ const updateSeat = async (req, res, next) => {
         next(createHttpError(500, { message: error.message }));
     }
 };
-
 
 const deleteSeat = async (req, res, next) => {
     try {

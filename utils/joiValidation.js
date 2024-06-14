@@ -183,7 +183,6 @@ const createSeatSchema = Joi.object({
     status: Joi.string()
         .valid("AVAILABLE", "OCCUPIED", "BOOKED")
         .default("AVAILABLE"),
-    price: Joi.number().required(),
 });
 
 const updateSeatSchema = Joi.object({
@@ -191,7 +190,6 @@ const updateSeatSchema = Joi.object({
         .regex(/^[a-zA-Z0-9]*$/)
         .required(),
     status: Joi.string().valid("AVAILABLE", "OCCUPIED", "BOOKED").required(),
-    price: Joi.number().required(),
 });
 
 // Airline
