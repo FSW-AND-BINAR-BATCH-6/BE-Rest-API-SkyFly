@@ -102,9 +102,9 @@ const createNewAirport = async (req, res, next) => {
         });
         if (getAirport)
             return next(
-                createHttpError(403, {
+                createHttpError(422, {
                     message:
-                        "Airport with the same code already exists in the database",
+                        `Airport with code: ${code} already exist!`,
                 })
             );
 
@@ -170,7 +170,7 @@ const deleteAirport = async (req, res, next) => {
         });
 
         if (!getAirport)
-            return next(createHttpError(404, { message: "Airport not found" }));
+            return next(createHttpError(404, { message: "Airport not found" }))
 
         await prisma.airport.delete({
             where: {
