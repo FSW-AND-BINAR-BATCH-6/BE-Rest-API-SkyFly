@@ -3532,6 +3532,175 @@
             }
         },
 
+        "/transactions": {
+            "post": {
+                "tags": ["Transactions"],
+                "summary": "Return result HIT API create bank transaction",
+                "description": "This is an API for creating bank transaction data",
+                "parameters": [
+                    {
+                        "name": "limit",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": 500
+                        },
+                        "description": "Total items per page"
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "integer",
+                            "example": ""
+                        },
+                        "description": "Page Number"
+                    },
+                    {
+                        "name": "dateOfDeparture",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "2024-06-05"
+                        },
+                        "description": "Date of Departure"
+                    },
+                    {
+                        "name": "returnDate",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "2024-06-05"
+                        },
+                        "description": "Return Date"
+                    },
+                    {
+                        "name": "flightCode",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "QG.CGK.SRG"
+                        },
+                        "description": "Flight Code"
+                    }
+                ],
+                "requestBody": {
+                    "description": "This is a request body for create new bank transaction",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "status":{
+                                        "type": "string",
+                                        "example": true
+                                    },
+                                    "message" : {
+                                        "type": "string",
+                                        "example": "All transactions data retrieved successfully"
+                                    },
+                                    "totalItems": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "pagination":{
+                                        "type": "object",
+                                        "example": {
+                                            "totalPage": 1,
+                                            "currentPage": 1,
+                                            "pageItems": 1,
+                                            "nextPage": null,
+                                            "prevPage": null
+                                        }
+                                    },
+                                    "data": {
+                                        "type": "object",
+                                        "example": [
+                                            {
+                                                "id": "clxaj48uo00026n9zdbg2g4sx",
+                                                "orderId": "86059132-20b2-4452-8ab1-f0c25a42f928",
+                                                "totalPrice": 1000,
+                                                "status": "pending",
+                                                "bookingDate": "2024-06-11T15:00:34.192Z",
+                                                "userId": "clx7whtrw0010t1jzp7rv28ft",
+                                                "Transaction_Detail": [
+                                                  {
+                                                    "id": "e2cba369-822f-429b-a352-2f1bbe79a570",
+                                                    "transactionId": "clxaj48uo00026n9zdbg2g4sx",
+                                                    "price": 1000,
+                                                    "seatId": "clx7whuez0024t1jzptuqppo9",
+                                                    "name": "Mr. Mischa",
+                                                    "familyName": "Mudryk",
+                                                    "dob": "2002-05-20T17:00:30.000Z",
+                                                    "citizenship": "Inggris",
+                                                    "passport": "e178814f-5f80-4a48-bb6c-354271572c8c",
+                                                    "issuingCountry": "Ukraine",
+                                                    "validityPeriod": "2024-07-20T17:00:30.000Z",
+                                                    "flightId": "clx7whu6u001rt1jzt1z0cdzx"
+                                                  }
+                                                ]
+                                              }
+                                        ]
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success create new bank transaction data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Bank VA created successfully"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": {
+                                                "flightId": "clwudd7v3001mjj2z5b95yc1r",
+                                                "seatId": [
+                                                "clwudd81m0044jj2zyhhzf94o",
+                                                "clwudd8bl00zejj2zfrxrau5n"
+                                                ],
+                                                "payment_type": "bank_transfer",
+                                                "transaction_id": "7f3b7853-2dba-4c26-94a7-bf6a6e9fbdc5",
+                                                "order_id": "f913fe17-8f9e-401e-a8d0-f6856e35acbe",
+                                                "gross_amount": "2000.00",
+                                                "transaction_time": "2024-05-30 18:13:26",
+                                                "transaction_status": "pending",
+                                                "payment_status": "accept",
+                                                "expiry_time": "2024-05-31 18:13:26",
+                                                "va_numbers": [
+                                                    {
+                                                        "bank": "bri",
+                                                        "va_number": "047586269437312472"
+                                                    }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+
         "/transactions/bank": {
             "post": {
                 "tags": ["Transactions"],
@@ -3544,7 +3713,7 @@
                         "required": true,
                         "schema": {
                             "type": "string",
-                            "example": "clwt39o8b001m11bvi03e7jov"
+                            "example": "clwudd7v3001mjj2z5b95yc1r"
                         },
                         "description": "Flight ID"
                     }
@@ -3668,6 +3837,11 @@
                                         "data": {
                                             "type": "object",
                                             "example": {
+                                                "flightId": "clwudd7v3001mjj2z5b95yc1r",
+                                                "seatId": [
+                                                "clwudd81m0044jj2zyhhzf94o",
+                                                "clwudd8bl00zejj2zfrxrau5n"
+                                                ],
                                                 "payment_type": "bank_transfer",
                                                 "transaction_id": "7f3b7853-2dba-4c26-94a7-bf6a6e9fbdc5",
                                                 "order_id": "f913fe17-8f9e-401e-a8d0-f6856e35acbe",
@@ -3704,7 +3878,7 @@
                         "required": true,
                         "schema": {
                             "type": "string",
-                            "example": "clwt39o8b001m11bvi03e7jov"
+                            "example": "clx7whu6u001rt1jzt1z0cdzx"
                         },
                         "description": "Flight ID"
                     }
@@ -3815,19 +3989,47 @@
                                         },
                                         "message": {
                                             "type": "string",
-                                            "example": "gopay transaction created successfully"
+                                            "example": "Gopay transaction created successfully"
                                         },
                                         "data": {
                                             "type": "object",
                                             "example": {
                                                 "payment_type": "gopay",
-                                                "transaction_id": "a43b5dd0-c522-461a-9c8e-dba55cd11933",
-                                                "order_id": "d53621fb-42b4-48c1-a1ac-6658021157d0",
+                                                "transaction_id": "03647b5e-0fc0-4d1f-90bc-51dd1e9c2a2a",
+                                                "order_id": "c68ec2d6-05dd-4874-ab06-e2c659277184",
                                                 "gross_amount": "2000.00",
                                                 "transaction_time": "2024-05-30 18:23:58",
                                                 "transaction_status": "pending",
                                                 "payment_status": "accept",
                                                 "expiry_time": "2024-05-30 18:38:58",
+                                                "dataItem": [
+                                                    {
+                                                        "id": "af74964a-3cda-44f9-91d0-9ed53964735a",
+                                                        "name": "Mr. Mischa",
+                                                        "dob": "2002-05-20T10:00:30.000Z",
+                                                        "validityPeriod": "2024-05-20T10:00:30.000Z",
+                                                        "familyName": "Mudryk",
+                                                        "flightId": "clwzk52gx001msazokzeyqwkl",
+                                                        "citizenship": "Inggris",
+                                                        "issuingCountry": "Ukraine",
+                                                        "price": 1000,
+                                                        "quantity": 1,
+                                                        "seatId": "clwzk52om00f2sazoo2w28zcu"
+                                                    },
+                                                    {
+                                                        "id": "7cac9e74-51ce-45b4-b332-a97648f5a5e3",
+                                                        "name": "Mr. Anthony",
+                                                        "dob": "2002-10-20T10:00:30.000Z",
+                                                        "validityPeriod": "2024-05-20T10:00:30.000Z",
+                                                        "familyName": "El Gasing",
+                                                        "flightId": "clwzk52gx001msazokzeyqwkl",
+                                                        "citizenship": "Brazil",
+                                                        "issuingCountry": "Inggris",
+                                                        "price": 1000,
+                                                        "quantity": 1,
+                                                        "seatId": "clwzk52om00f3sazor9nzawwl"
+                                                    }
+                                                ],
                                                 "action": [
                                                     {
                                                         "name": "generate-qr-code",
@@ -3861,6 +4063,186 @@
             }
         },
 
+        "/transactions/payment": {
+            "post": {
+                "tags": ["Transactions"],
+                "summary": "Return result HIT API create snap transaction",
+                "description": "This is an API for creating snap transaction data",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "clx7whu6u001rt1jzt1z0cdzx"
+                        },
+                        "description": "Flight ID"
+                    }
+                ],
+                "requestBody": {
+                    "description": "This is a request body for create snap transaction",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "fullName": {
+                                        "type": "string",
+                                        "example": "Harry"
+                                    },
+                                    "lastName": {
+                                        "type": "string",
+                                        "example": "Maguire"
+                                    },
+                                    "phoneNumber": {
+                                        "type": "string",
+                                        "example": "081234567890"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "harrym5@mail.com"
+                                    },
+                                    "first_title": {
+                                        "type": "string",
+                                        "example": "Mr."
+                                    },
+                                    "first_fullName": {
+                                        "type": "string",
+                                        "example": "Mischa"
+                                    },
+                                    "first_familyName": {
+                                        "type": "string",
+                                        "example": "Mudryk"
+                                    },
+                                    "first_ticketId": {
+                                        "type": "string",
+                                        "example": "tiket-1"
+                                    },
+                                    "first_citizenship": {
+                                        "type": "string",
+                                        "example": "Inggris"
+                                    },
+                                    "first_issuingCountry": {
+                                        "type": "string",
+                                        "example": "Ukraine"
+                                    },
+                                    "first_price": {
+                                        "type": "integer",
+                                        "example": 1000
+                                    },
+                                    "first_quantity": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "second_title": {
+                                        "type": "string",
+                                        "example": "Mr."
+                                    },
+                                    "second_fullName": {
+                                        "type": "string",
+                                        "example": "Anthony"
+                                    },
+                                    "second_familyName": {
+                                        "type": "string",
+                                        "example": "El Gasing"
+                                    },
+                                    "second_ticketId": {
+                                        "type": "string",
+                                        "example": "tiket-2"
+                                    },
+                                    "second_citizenship": {
+                                        "type": "string",
+                                        "example": "Brazil"
+                                    },
+                                    "second_issuingCountry": {
+                                        "type": "string",
+                                        "example": "Inggris"
+                                    },
+                                    "second_price": {
+                                        "type": "integer",
+                                        "example": 1000
+                                    },
+                                    "second_quantity": {
+                                        "type": "integer",
+                                        "example": 1
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success create new snap transaction data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Transaction created successfully"
+                                        },
+                                        "_token": {
+                                            "type": "string",
+                                            "example": "0a1e8aac-9511-4591-96ba-af6a3315e30e"
+                                        },
+                                        "redirect_url" :{
+                                            "type": "string",
+                                            "example": "https://app.sandbox.midtrans.com/snap/v2/vtweb/0a1e8aac-9511-4591-96ba-af6a3315e30e"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": {
+                                                "first_name": "Harry",
+                                                "last_name": "Maguire",
+                                                "phone": "081234567890",
+                                                "email": "harrym5@mail.com",
+                                                "bookingDate": "2024-06-04T05:10:37.373Z",
+                                                "dataItem": [
+                                                {
+                                                    "id": "727f832f-aa8c-4f28-aa8f-49e5f74e1825",
+                                                    "name": "Mr. Mischa",
+                                                    "dob": "2002-05-20T07:00:00.000Z",
+                                                    "validityPeriod": "2024-05-20T07:00:00.000Z",
+                                                    "familyName": "Mudryk",
+                                                    "flightId": "clwzk52gx001msazokzeyqwkl",
+                                                    "citizenship": "Inggris",
+                                                    "issuingCountry": "Ukraine",
+                                                    "price": 1000,
+                                                    "quantity": 1,
+                                                    "seatId": "clwzk52om00f2sazoo2w28zcu"
+                                                },
+                                                {
+                                                    "id": "4a1b7be8-34de-487c-b16f-fe825bb5986b",
+                                                    "name": "Mr. Anthony",
+                                                    "dob": "2002-10-20T07:00:00.000Z",
+                                                    "validityPeriod": "2024-05-20T07:00:00.000Z",
+                                                    "familyName": "El Gasing",
+                                                    "flightId": "clwzk52gx001msazokzeyqwkl",
+                                                    "citizenship": "Brazil",
+                                                    "issuingCountry": "Inggris",
+                                                    "price": 1000,
+                                                    "quantity": 1,
+                                                    "seatId": "clwzk52om00f3sazor9nzawwl"
+                                                }
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+
         "/transactions/creditcard": {
             "post": {
                 "tags": ["Transactions"],
@@ -3873,7 +4255,7 @@
                         "required": true,
                         "schema": {
                             "type": "string",
-                            "example": "clwt39o8b001m11bvi03e7jov"
+                            "example": "clx7whu6u001rt1jzt1z0cdzx"
                         },
                         "description": "Flight ID"
                     }
@@ -4045,95 +4427,12 @@
                             "type": "string",
                             "example": "5d68db38-9ecc-4b70-9ad5-7e535b0dfea1"
                         },
-                        "description": "Order ID"
+                        "description": "Transaction ID"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Success getting user data based on Id",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "status": {
-                                            "type": "string",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "user data retrieved successfully"
-                                        },
-                                        "data": {
-                                            "type": "object",
-                                            "example": {
-                                                "status": true,
-                                                "message": "Transaction data retrieved successfully",
-                                                "transaction_status": "expire",
-                                                "payment_status": "accept",
-                                                "transaction_id": "d8fa8827-0a33-4de1-915e-2355dc23bfc7",
-                                                "order_id": "5d68db38-9ecc-4b70-9ad5-7e535b0dfea1",
-                                                "merchant_id": "G600704758",
-                                                "currency": "IDR",
-                                                "gross_amount": "5000.00",
-                                                "payment_type": "bank_transfer",
-                                                "transaction_time": "2024-05-27 14:20:51",
-                                                "expiry_time": "2024-05-28 14:20:51",
-                                                "signature_key": "29bd251103d30168ef9fd2a42adfa5225695cae866938ac30d04743322028ac2cbc3a111823facd78e134a89cd83b315793e002efade94586be912709e70587f",
-                                                "va_numbers": [
-                                                    {
-                                                        "bank": "bri",
-                                                        "va_number": "047587591116037852"
-                                                    }
-                                                ]
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "404": {
-                        "description": "ID not found",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "status": {
-                                            "type": "integer",
-                                            "example": 404
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "Id Not Found"
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            },
-            "put": {
-                "tags": ["Transactions Detail"],
-                "summary": "Return result HIT API update user by Id",
-                "description": "This is an API for updatting user data based on Id",
-                "parameters": [
-                    {
-                        "name": "id",
-                        "in": "path",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "example": "f63de85d-1562-4e1e-bdf2-555854b6d759"
-                        },
-                        "description": "Order ID"
-                    }
-                ],
-                "responses": {
-                    "201": {
-                        "description": "Success update transaction status based on Id",
+                        "description": "Success getting transaction data based on Id",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -4159,10 +4458,10 @@
                                                 "expiry_time": "2024-05-26 22:41:07",
                                                 "signature_key": "2e149d996d4c500a44a1fcd39c312e6eb48d3523f768f5f70ac744d8e144de13d5233251fa2c78aeaa1156f78c29fe8365dec19131ee85926b5c8efef22e8a01",
                                                 "va_numbers": [
-                                                    {
-                                                        "bank": "bca",
-                                                        "va_number": "04758844624"
-                                                    }
+                                                {
+                                                    "bank": "bca",
+                                                    "va_number": "04758844624"
+                                                }
                                                 ]
                                             }
                                         }
@@ -4200,6 +4499,11 @@
                 "tags": ["Users"],
                 "summary": "Return result HIT API get all users data",
                 "description": "This is an API for getting all users data",
+                "security": [
+                    {
+                        "bearerToken": []
+                    }
+                ],
                 "parameters": [
                     {
                         "name": "search",
@@ -4207,7 +4511,7 @@
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "example": "84232417-b548-4e59-b22f-04f586057156"
+                            "example": "Andhika"
                         },
                         "description": "User Name"
                     },
