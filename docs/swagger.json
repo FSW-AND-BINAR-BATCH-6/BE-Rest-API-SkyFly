@@ -3089,70 +3089,80 @@
                                                     "flightId": "clx7whu6u001rt1jzt1z0cdzx",
                                                     "seatNumber": "1A",
                                                     "status": "AVAILABLE",
-                                                    "type": "ECONOMY"
+                                                    "type": "ECONOMY",
+                                                    "price": 1000000
                                                   },
                                                   {
                                                     "id": "clx7whuez0024t1jzptuqppo9",
                                                     "flightId": "clx7whu6u001rt1jzt1z0cdzx",
                                                     "seatNumber": "1B",
                                                     "status": "BOOKED",
-                                                    "type": "ECONOMY"
+                                                    "type": "ECONOMY",
+                                                    "price": 1200000
                                                   },
                                                   {
                                                     "id": "clx7whuez0025t1jzr356g903",
                                                     "flightId": "clx7whu6u001rt1jzt1z0cdzx",
                                                     "seatNumber": "1C",
                                                     "status": "BOOKED",
-                                                    "type": "ECONOMY"
+                                                    "type": "ECONOMY",
+                                                    "price": 1230000
                                                   },
                                                   {
                                                     "id": "clx7whuf00027t1jz27tzhhgw",
                                                     "flightId": "clx7whu6u001rt1jzt1z0cdzx",
                                                     "seatNumber": "1E",
                                                     "status": "AVAILABLE",
-                                                    "type": "ECONOMY"
+                                                    "type": "ECONOMY",
+                                                    "price": 2000000
                                                   },
                                                   {
                                                     "id": "clx7whuf10029t1jzobojeiso",
                                                     "flightId": "clx7whu6u001rt1jzt1z0cdzx",
                                                     "seatNumber": "1D",
                                                     "status": "AVAILABLE",
-                                                    "type": "ECONOMY"
+                                                    "type": "ECONOMY",
+                                                    "price": 1400000
                                                   },
                                                   {
                                                     "id": "clx7whugy002et1jzp8lkwonn",
                                                     "flightId": "clx7whu6u001rt1jzt1z0cdzx",
                                                     "seatNumber": "3C",
                                                     "status": "AVAILABLE",
-                                                    "type": "ECONOMY"
+                                                    "type": "ECONOMY",
+                                                    "price": 1500000
                                                   },
                                                   {
                                                     "id": "clx7whugy002ft1jzcxrrw022",
                                                     "flightId": "clx7whu6u001rt1jzt1z0cdzx",
                                                     "seatNumber": "3E",
                                                     "status": "AVAILABLE",
-                                                    "type": "ECONOMY"
+                                                    "type": "ECONOMY",
+                                                    "price": 2000000
                                                   },
                                                   {
                                                     "id": "clx7whugy002gt1jzqnuj7ln6",
                                                     "flightId": "clx7whu6u001rt1jzt1z0cdzx",
                                                     "seatNumber": "3F",
                                                     "status": "AVAILABLE",
-                                                    "type": "ECONOMY"
+                                                    "type": "ECONOMY",
+                                                    "price": 2100000
                                                   },
                                                   {
                                                     "id": "clx7whugy002ht1jze9bpmy1a",
                                                     "flightId": "clx7whu6u001rt1jzt1z0cdzx",
                                                     "seatNumber": "3D",
                                                     "status": "AVAILABLE",
-                                                    "type": "ECONOMY"
+                                                    "type": "ECONOMY",
+                                                    "price": 2000000
                                                   },
                                                   {
                                                     "id": "clx7whugz002jt1jzavm0e68d",
                                                     "flightId": "clx7whu6u001rt1jzt1z0cdzx",
                                                     "seatNumber": "5E",
                                                     "status": "AVAILABLE",
-                                                    "type": "ECONOMY"
+                                                    "type": "ECONOMY",
+                                                    "price": 3000000
                                                   }
                                             ]
                                         }
@@ -3194,6 +3204,10 @@
                                     "status": {
                                         "type": "string",
                                         "example": "AVAILABLE"
+                                    },
+                                    "price": {
+                                        "type": "integer",
+                                        "example": 30000
                                     }
                                 }
                             }
@@ -3223,7 +3237,8 @@
                                                 "flightId": "63c1eb31-14f0-4069-b5f1-487572f3c886",
                                                 "seatNumber": "6A",
                                                 "status": "AVAILABLE",
-                                                "type": "BUSINESS"
+                                                "type": "BUSINESS",
+                                                "price": 30000
                                             }
                                         }
                                     }
@@ -3345,70 +3360,80 @@
                                                     "flightId": "clx7whu6u001rt1jzt1z0cdzx",
                                                     "seatNumber": "1A",
                                                     "status": "AVAILABLE",
-                                                    "type": "ECONOMY"
+                                                    "type": "ECONOMY",
+                                                    "price": 1000000
                                                   },
                                                   {
                                                     "id": "clx7whuez0024t1jzptuqppo9",
                                                     "flightId": "clx7whu6u001rt1jzt1z0cdzx",
                                                     "seatNumber": "1B",
                                                     "status": "BOOKED",
-                                                    "type": "ECONOMY"
+                                                    "type": "ECONOMY",
+                                                    "price": 1200000
                                                   },
                                                   {
                                                     "id": "clx7whuez0025t1jzr356g903",
                                                     "flightId": "clx7whu6u001rt1jzt1z0cdzx",
                                                     "seatNumber": "1C",
                                                     "status": "BOOKED",
-                                                    "type": "ECONOMY"
+                                                    "type": "ECONOMY",
+                                                    "price": 1300000
                                                   },
                                                   {
                                                     "id": "clx7whuf00027t1jz27tzhhgw",
                                                     "flightId": "clx7whu6u001rt1jzt1z0cdzx",
                                                     "seatNumber": "1E",
                                                     "status": "AVAILABLE",
-                                                    "type": "ECONOMY"
+                                                    "type": "ECONOMY",
+                                                    "price": 1400000
                                                   },
                                                   {
                                                     "id": "clx7whuf10029t1jzobojeiso",
                                                     "flightId": "clx7whu6u001rt1jzt1z0cdzx",
                                                     "seatNumber": "1D",
                                                     "status": "AVAILABLE",
-                                                    "type": "ECONOMY"
+                                                    "type": "ECONOMY",
+                                                    "price": 1500000
                                                   },
                                                   {
                                                     "id": "clx7whugy002et1jzp8lkwonn",
                                                     "flightId": "clx7whu6u001rt1jzt1z0cdzx",
                                                     "seatNumber": "3C",
                                                     "status": "AVAILABLE",
-                                                    "type": "ECONOMY"
+                                                    "type": "ECONOMY",
+                                                    "price": 1600000
                                                   },
                                                   {
                                                     "id": "clx7whugy002ft1jzcxrrw022",
                                                     "flightId": "clx7whu6u001rt1jzt1z0cdzx",
                                                     "seatNumber": "3E",
                                                     "status": "AVAILABLE",
-                                                    "type": "ECONOMY"
+                                                    "type": "ECONOMY",
+                                                    "price": 1700000
                                                   },
                                                   {
                                                     "id": "clx7whugy002gt1jzqnuj7ln6",
                                                     "flightId": "clx7whu6u001rt1jzt1z0cdzx",
                                                     "seatNumber": "3F",
                                                     "status": "AVAILABLE",
-                                                    "type": "ECONOMY"
+                                                    "type": "ECONOMY",
+                                                    "price": 1800000
                                                   },
                                                   {
                                                     "id": "clx7whugy002ht1jze9bpmy1a",
                                                     "flightId": "clx7whu6u001rt1jzt1z0cdzx",
                                                     "seatNumber": "3D",
                                                     "status": "AVAILABLE",
-                                                    "type": "ECONOMY"
+                                                    "type": "ECONOMY",
+                                                    "price": 1900000
                                                   },
                                                   {
                                                     "id": "clx7whugz002jt1jzavm0e68d",
                                                     "flightId": "clx7whu6u001rt1jzt1z0cdzx",
                                                     "seatNumber": "5E",
                                                     "status": "AVAILABLE",
-                                                    "type": "ECONOMY"
+                                                    "type": "ECONOMY",
+                                                    "price": 2000000
                                                   }
                                             ]
                                         }
@@ -3476,6 +3501,10 @@
                                     "status": {
                                         "type": "string",
                                         "example": "AVAILABLE"
+                                    },
+                                    "price": {
+                                        "type": "integer",
+                                        "example": 1000000
                                     }
                                 }
                             }
@@ -3505,7 +3534,8 @@
                                                 "flightId": "clx3nhl5u0003qg62jrvj2yrx",
                                                 "seatNumber": "12D",
                                                 "status": "AVAILABLE",
-                                                "type": "BUSINESS"
+                                                "type": "BUSINESS",
+                                                "price": 1000000
                                             }
                                         }
                                     }
