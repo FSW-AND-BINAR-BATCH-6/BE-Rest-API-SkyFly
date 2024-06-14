@@ -12,6 +12,8 @@ const getAllAirports = async (req, res, next) => {
         const showAll = req.query.showall || "false";
         const code = req.query.code;
         const name = req.query.name;
+        const country = req.query.country;
+        const city = req.query.city;
 
         const conditions = {};
         if (code) {
@@ -19,6 +21,12 @@ const getAllAirports = async (req, res, next) => {
         }
         if (name) {
             conditions.name = { contains: name, mode: "insensitive" };
+        } 
+        if (country) {
+            conditions.country = {contains: country, mode: "insensitive"}
+        }
+        if (city) {
+            conditions.city = {contains: city, mode: "insensitive"}
         }
 
         let getAirports, count;
@@ -94,9 +102,9 @@ const createNewAirport = async (req, res, next) => {
         });
         if (getAirport)
             return next(
-                createHttpError(403, {
+                createHttpError(422, {
                     message:
-                        "Airport with the same code already exists in the database",
+                        `Airport with code: ${code} already exist!`,
                 })
             );
 
@@ -162,7 +170,7 @@ const deleteAirport = async (req, res, next) => {
         });
 
         if (!getAirport)
-            return next(createHttpError(404, { message: "Airport not found" }));
+            return next(createHttpError(404, { message: "Airport not found" }))
 
         await prisma.airport.delete({
             where: {
