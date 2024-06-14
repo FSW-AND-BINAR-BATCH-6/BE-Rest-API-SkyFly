@@ -94,7 +94,7 @@ const userUpdateSchema = Joi.object({
 // flight
 const createFlightSchema = Joi.object({
     planeId: Joi.string()
-        // .regex(/^[a-zA-Z0-9]*$/)
+        .regex(/^[a-zA-Z0-9]*$/)
         .required(),
     departureDate: Joi.date().iso().required().messages({
         "date.format":
