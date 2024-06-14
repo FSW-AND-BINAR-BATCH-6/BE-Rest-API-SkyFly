@@ -161,7 +161,7 @@ const getTicketById = async (req, res, next) => {
                 },
             },
         });
-        console.log("aaa");
+
         if (!ticket) {
             return next(createHttpError(404, { message: "Ticket not found" }));
         }
@@ -281,7 +281,6 @@ const updateTicket = async (req, res, next) => {
                 ticketTransactionDetail: true,
             },
         });
-        console.log("bbb");
         if (!ticket) {
             return next(createHttpError(404, { message: "Ticket not found" }));
         }
@@ -313,7 +312,7 @@ const deleteTicket = async (req, res, next) => {
         const ticket = await prisma.ticket.findUnique({
             where: { id: req.params.id },
         });
-        console.log("ccc");
+
         if (!ticket) {
             return next(createHttpError(404, { message: "Ticket not found" }));
         }
@@ -348,29 +347,41 @@ const generateTicket = async (req, res, next) => {
                         },
                     },
                 },
-                ticketTransaction: true,
+                ticketTransaction: {
+                    include: {
+                        Transaction_Detail: true,
+                    },
+                },
                 seat: true,
-                flight: true,
-            },
-        });
-        data.push(tickets);
-        prisma.await.ticketTransactionDetail.findUnique({
-            where: {
-                orderId: data.transactions.orderID,
+                flight: {
+                    include: {
+                        plane: true,
+                        departureAirport: true,
+                        transitAirport: true,
+                        destinationAirport: true,
+                    },
+                },
             },
         });
 
-        res.render("templates/ticket.ejs", { tickets });
+        data.push(...tickets);
+
+        console.log(data[0]);
+
+        res.render("templates/ticket.ejs", {
+            data: data,
+            tickets: tickets,
+        });
     } catch (error) {
         next(createHttpError(500, { message: error.message }));
     }
 };
 
 module.exports = {
-    generateTicket,
     getAllTicket,
     getTicketById,
     createTicket,
     updateTicket,
     deleteTicket,
+    generateTicket,
 };

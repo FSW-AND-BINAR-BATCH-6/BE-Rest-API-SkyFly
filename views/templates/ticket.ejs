@@ -3,91 +3,109 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Ticket Details</title>
+        <title>Ticket</title>
+        <link rel="stylesheet" href="styles.css" />
     </head>
     <body>
-        <h1>Ticket Details</h1>
-        <% tickets.forEach((ticket) => { %>
+        <input
+            id="printpagebutton"
+            type="button"
+            value="Print Ticket"
+            onclick="printpage()"
+        />
         <div>
-            <h2>Ticket Code: <%= ticket.code %></h2>
-            <p><strong>Flight ID:</strong> <%= ticket.flight.id %></p>
-            <p>
-                <strong>Departure Date:</strong> <%= ticket.flight.departureDate
-                %>
-            </p>
-            <p>
-                <strong>Departure Airport:</strong> <%=
-                ticket.flight.departureAirport %>
-            </p>
-            <p>
-                <strong>Arrival Date:</strong> <%= ticket.flight.arrivalDate %>
-            </p>
-            <p>
-                <strong>Destination Airport:</strong> <%=
-                ticket.flight.destinationAirport %>
-            </p>
-            <p><strong>Price:</strong> <%= ticket.flight.price %></p>
-            <p><strong>User ID:</strong> <%= ticket.user.id %></p>
-            <p><strong>User Name:</strong> <%= ticket.user.name %></p>
-            <p>
-                <strong>User Phone Number:</strong> <%= ticket.user.phoneNumber
-                %>
-            </p>
-            <p><strong>Seat Number:</strong> <%= ticket.seat.seatNumber %></p>
-            <p><strong>Seat Type:</strong> <%= ticket.seat.type %></p>
-            <h3>Transaction Details:</h3>
-            <p>
-                <strong>Order ID:</strong> <%= ticket.ticketTransaction.orderId
-                %>
-            </p>
-            <p>
-                <strong>Total Price:</strong> <%=
-                ticket.ticketTransaction.totalPrice %>
-            </p>
-            <p>
-                <strong>Status:</strong> <%= ticket.ticketTransaction.status %>
-            </p>
-            <p>
-                <strong>Booking Date:</strong> <%=
-                ticket.ticketTransaction.bookingDate %>
-            </p>
-            <h3>Transaction Detail:</h3>
-            <p>
-                <strong>Name:</strong> <%= ticket.ticketTransactionDetail.name
-                %>
-            </p>
-            <p>
-                <strong>Family Name:</strong> <%=
-                ticket.ticketTransactionDetail.familyName %>
-            </p>
-            <p>
-                <strong>DOB:</strong> <%= ticket.ticketTransactionDetail.dob %>
-            </p>
-            <p>
-                <strong>Citizenship:</strong> <%=
-                ticket.ticketTransactionDetail.citizenship %>
-            </p>
-            <p>
-                <strong>Passport:</strong> <%=
-                ticket.ticketTransactionDetail.passport %>
-            </p>
-            <p>
-                <strong>Issuing Country:</strong> <%=
-                ticket.ticketTransactionDetail.issuingCountry %>
-            </p>
-            <p>
-                <strong>Validity Period:</strong> <%=
-                ticket.ticketTransactionDetail.validityPeriod %>
-            </p>
-            <p>
-                <strong>Flight ID:</strong> <%=
-                ticket.ticketTransactionDetail.flightId %>
-            </p>
-            <p>
-                <strong>Seat ID:</strong> <%=
-                ticket.ticketTransactionDetail.seatId %>
-            </p>
+            <div class="ticket">
+                <% data.map((data, index) => { %>
+                <h1>Ticket <%= data.code %></h1>
+                <div>
+                    <h2>Ticket Code: <%= data.code %></h2>
+                    <p><strong>Flight ID:</strong> <%= data.flightId %></p>
+                    <p>
+                        <strong>Departure Date:</strong> <%= new
+                        Date(data.flight.departureDate).toLocaleString() %>
+                    </p>
+                    <p>
+                        <strong>Departure Airport:</strong> <%=
+                        data.flight.departureAirport.name + ' - ' +
+                        data.flight.departureAirport.city + ', ' +
+                        data.flight.departureAirport.country %>
+                    </p>
+                    <p>
+                        <strong>Arrival Date:</strong> <%= new
+                        Date(data.flight.arrivalDate).toLocaleString() %>
+                    </p>
+                    <p>
+                        <strong>Destination Airport:</strong> <%=
+                        data.flight.destinationAirport.name + ' - ' +
+                        data.flight.destinationAirport.city + ', ' +
+                        data.flight.destinationAirport.country %>
+                    </p>
+
+                    <h4>Passenger Detail:</h4>
+                    <p><strong>User Name:</strong> <%= data.user.name %></p>
+                    <p>
+                        <strong>Family Name:</strong> <%= data.user.familyName
+                        %>
+                    </p>
+                    <p>
+                        <strong>Citizenship:</strong> <%=
+                        data.ticketTransaction.Transaction_Detail[0].citizenship
+                        %>
+                    </p>
+                    <p>
+                        <strong>Issuing Country:</strong> <%=
+                        data.ticketTransaction.Transaction_Detail[0].issuingCountry
+                        %>
+                    </p>
+                    <p>
+                        <strong>Passport:</strong> <%=
+                        data.ticketTransaction.Transaction_Detail[0].passport %>
+                    </p>
+
+                    <p>
+                        <strong>Price:</strong> <%=
+                        data.ticketTransaction.Transaction_Detail[0].price %>
+                    </p>
+
+                    <h4>Flight Detail:</h4>
+                    <p>
+                        <strong>Airline:</strong> <%= data.flight.plane.name %>
+                    </p>
+                    <p>
+                        <strong>Seat Number:</strong> <%= data.seat.seatNumber
+                        %>
+                    </p>
+                    <p><strong>Seat Type:</strong> <%= data.seat.type %></p>
+
+                    <h4>Transaction Details:</h4>
+                    <p><strong>Orderer: </strong><%= data.user.name %></p>
+                    <p><strong>Email: </strong><%= data.user.auth.email %></p>
+                    <p>
+                        <strong>Phone Number: </strong><%= data.user.phoneNumber
+                        %>
+                    </p>
+                    <p>
+                        <strong>Order ID:</strong> <%=
+                        data.ticketTransaction.orderId %>
+                    </p>
+                    <p>
+                        <strong>Booking Date:</strong> <%= new
+                        Date(data.ticketTransaction.bookingDate).toLocaleString()
+                        %>
+                    </p>
+                </div>
+                <% }) %>
+            </div>
         </div>
-        <% }) %>
+
+        <script>
+            function printpage() {
+                var printButton = document.getElementById("printpagebutton");
+
+                printButton.style.visibility = "hidden";
+                window.print();
+                printButton.style.visibility = "visible";
+            }
+        </script>
     </body>
 </html>

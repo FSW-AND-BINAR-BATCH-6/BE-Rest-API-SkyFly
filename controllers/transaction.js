@@ -256,82 +256,6 @@ const notification = async (req, res) => {
     let datas = await snap.transaction.notification(notification);
     console.log(datas);
 
-    // ! [start] ticket
-    // TODO: create ticket disini
-    // TODO: kan kalo mau hit endpoint ini harus deploy dulu
-    // TODO: sementara mas lowis bikin aja endpoint sendiri buat get data sama create sesuai logic yang ku bikin. kalo aman bisa di paste lagi kesini
-
-    // user_id ambil aja dari kondisi where find transaction where order Id, terus ambil userId
-    // ? contoh
-    const dataTransaction = await prisma.ticketTransaction.findUnique({
-        where: {
-            orderId: notification.order_id,
-        },
-        include: {
-            Transaction_Detail: true,
-        },
-    });
-
-    const ticketFlightId = dataTransaction.Transaction_Detail.map(
-        (data) => data.flightId
-    );
-    const ticketSeatId = dataTransaction.Transaction_Detail.map(
-        (data) => data.seatId
-    );
-
-    // const flight = await prisma.flight.findUnique({
-    //     where: { id: ticketFlightId },
-    //     include: {
-    //         plane: true,
-    //         departureAirport: true,
-    //     },
-    // });
-
-    // if (!flight) {
-    //     throw createHttpError(404, 'Flight not found');
-    // }
-
-    // const seat = await prisma.flightSeat.findUnique({
-    //     where: { id: ticketSeatId },
-    // });
-
-    // if (!seat) {
-    //     throw createHttpError(404, 'Seat not found');
-    // }
-
-    // const airlineCode = flight.plane.code;
-    // const airportCode = flight.departureAirport.code;
-    // const flightCode = flight.code;
-    // const seatNumber = seat.seatNumber;
-
-    // let uniqueCode = `${airlineCode}-${airportCode}-${flightCode}-${seatNumber}`;
-    //         let isUnique = false;
-
-    //         // Ensure the code is unique
-    //         while (!isUnique) {
-    //             const existingTicket = await prisma.ticket.findUnique({
-    //                 where: { code: uniqueCode },
-    //             });
-
-    //             if (existingTicket) {
-    //                 uniqueCode = `${airlineCode}-${airportCode}-${flightCode}-${seatNumber}-${uuidv4()}`;
-    //             } else {
-    //                 isUnique = true;
-    //             }
-    //         }
-
-    // // create ticket
-    // await prisma.ticket.create({
-    //     data: {
-    //         userId: dataTransaction.userId,
-    //         flightId: ticketFlightId,
-    //         seatId: ticketSeatId,
-    //         code: uniqueCode,
-    //     },
-    // });
-
-    // ! [end] ticket
-
     await prisma.ticketTransaction.update({
         where: {
             orderId: data.order_id,
@@ -352,6 +276,93 @@ const notification = async (req, res) => {
                     status: "BOOKED",
                 },
             });
+
+            const dataTransaction = await prisma.ticketTransaction.findUnique({
+                where: {
+                    orderId: notification.order_id,
+                },
+                include: {
+                    Transaction_Detail: true,
+                },
+            });
+
+            if (!dataTransaction) {
+                return next(createHttpError(404, "Transaction not found"));
+            }
+
+            const ticketFlightIds = dataTransaction.Transaction_Detail.map(
+                (data) => data.flightId
+            );
+            const ticketSeatIds = dataTransaction.Transaction_Detail.map(
+                (data) => data.seatId
+            );
+
+            const flights = await prisma.flight.findMany({
+                where: {
+                    id: {
+                        in: ticketFlightIds,
+                    },
+                },
+                include: {
+                    plane: true,
+                    departureAirport: true,
+                },
+            });
+
+            if (flights.length === 0) {
+                return next(createHttpError(404, "Flight not found"));
+            }
+
+            const seats = await prisma.flightSeat.findMany({
+                where: {
+                    id: {
+                        in: ticketSeatIds,
+                    },
+                },
+            });
+
+            if (seats.length === 0) {
+                return next(createHttpError(404, "Seat not found"));
+            }
+
+            const airlineCode = flights[0].plane.code;
+            const airportCode = flights[0].departureAirport.code;
+            const flightCode = flights[0].code;
+
+            // Create the new ticket
+            seats.map(async (seat) => {
+                let uniqueCode = `${airlineCode}-${airportCode}-${flightCode}-${seat.seatNumber}`;
+
+                const existingTicket = await prisma.ticket.findUnique({
+                    where: { code: uniqueCode },
+                });
+
+                if (existingTicket) {
+                    return next(
+                        createHttpError(422, {
+                            message: "ticket is already exist",
+                        })
+                    );
+                }
+
+                await prisma.ticket.create({
+                    data: {
+                        userId: dataTransaction.userId,
+                        flightId: ticketFlightIds[0],
+                        seatId: seat.id,
+                        code: uniqueCode,
+                        ticketTransactionId: dataTransaction.id,
+                    },
+                    include: {
+                        flight: true,
+                        user: true,
+                        seat: true,
+                        ticketTransaction: true,
+                    },
+                });
+
+                res.status(200).json({ message: "OK" });
+            });
         }
     } else if (datas.transaction_status == "settlement") {
         // TODO set transaction status on your database to 'success'
@@ -361,6 +372,91 @@ const notification = async (req, res) => {
             data: {
                 status: "BOOKED",
             },
+        });
+
+        const dataTransaction = await prisma.ticketTransaction.findUnique({
+            where: {
+                orderId: notification.order_id,
+            },
+            include: {
+                Transaction_Detail: true,
+            },
+        });
+
+        if (!dataTransaction) {
+            return next(createHttpError(404, "Transaction not found"));
+        }
+
+        const ticketFlightIds = dataTransaction.Transaction_Detail.map(
+            (data) => data.flightId
+        );
+        const ticketSeatIds = dataTransaction.Transaction_Detail.map(
+            (data) => data.seatId
+        );
+
+        const flights = await prisma.flight.findMany({
+            where: {
+                id: {
+                    in: ticketFlightIds,
+                },
+            },
+            include: {
+                plane: true,
+                departureAirport: true,
+            },
+        });
+
+        if (flights.length === 0) {
+            return next(createHttpError(404, "Flight not found"));
+        }
+
+        const seats = await prisma.flightSeat.findMany({
+            where: {
+                id: {
+                    in: ticketSeatIds,
+                },
+            },
+        });
+
+        if (seats.length === 0) {
+            return next(createHttpError(404, "Seat not found"));
+        }
+
+        const airlineCode = flights[0].plane.code;
+        const airportCode = flights[0].departureAirport.code;
+        const flightCode = flights[0].code;
+
+        // Create the new ticket
+        seats.map(async (seat) => {
+            let uniqueCode = `${airlineCode}-${airportCode}-${flightCode}-${seat.seatNumber}`;
+
+            const existingTicket = await prisma.ticket.findUnique({
+                where: { code: uniqueCode },
+            });
+
+            if (existingTicket) {
+                return next(
+                    createHttpError(422, { message: "ticket is already exist" })
+                );
+            }
+
+            await prisma.ticket.create({
+                data: {
+                    userId: dataTransaction.userId,
+                    flightId: ticketFlightIds[0],
+                    seatId: seat.id,
+                    code: uniqueCode,
+                    ticketTransactionId: dataTransaction.id,
+                },
+                include: {
+                    flight: true,
+                    user: true,
+                    seat: true,
+                    ticketTransaction: true,
+                },
+            });
+
+            res.status(200).json({ message: "OK" });
         });
     } else if (
         datas.transaction_status == "cancel" ||
@@ -1226,101 +1322,7 @@ const deleteTransactionDetail = async (req, res, next) => {
     }
 };
 
-const createTicketTest = async (req, res, next) => {
-    const dataTransaction = await prisma.ticketTransaction.findUnique({
-        where: {
-            orderId: "f24cecfd-d153-4b01-b513-521223f82183",
-        },
-        include: {
-            Transaction_Detail: true,
-        },
-    });
-
-    if (!dataTransaction) {
-        return next(createHttpError(404, "Transaction not found"));
-    }
-
-    const ticketFlightIds = dataTransaction.Transaction_Detail.map(
-        (data) => data.flightId
-    );
-    const ticketSeatIds = dataTransaction.Transaction_Detail.map(
-        (data) => data.seatId
-    );
-
-    const flights = await prisma.flight.findMany({
-        where: {
-            id: {
-                in: ticketFlightIds,
-            },
-        },
-        include: {
-            plane: true,
-            departureAirport: true,
-        },
-    });
-
-    if (flights.length === 0) {
-        return next(createHttpError(404, "Flight not found"));
-    }
-
-    const seats = await prisma.flightSeat.findMany({
-        where: {
-            id: {
-                in: ticketSeatIds,
-            },
-        },
-    });
-
-    if (seats.length === 0) {
-        return next(createHttpError(404, "Seat not found"));
-    }
-
-    for (let i = 0; i < ticketFlightIds.length; i++) {
-        const flight = flights.find((f) => f.id === ticketFlightIds[i]);
-        const seat = seats.find((s) => s.id === ticketSeatIds[i]);
-
-        if (!flight || !seat) {
-            continue;
-        }
-
-        const airlineCode = flight.plane.code;
-        const airportCode = flight.departureAirport.code;
-        const flightCode = flight.code;
-        const seatNumber = seat.seatNumber;
-
-        let uniqueCode = `${airlineCode}-${airportCode}-${flightCode}-${seatNumber}`;
-
-        const existingTicket = await prisma.ticket.findUnique({
-            where: { code: uniqueCode },
-        });
-
-        if (existingTicket) {
-            return next(
-                createHttpError(422, { message: "ticket is already exist" })
-            );
-        }
-
-        // Create the new ticket
-        const dataTicket = await prisma.ticket.create({
-            data: {
-                userId: dataTransaction.userId,
-                flightId: ticketFlightIds[i],
-                seatId: ticketSeatIds[i],
-                code: uniqueCode,
-                transactionId: dataTransaction.id,
-            },
-            include: {
-                flight: true,
-                user: true,
-                seat: true,
-                ticketTransaction: true,
-            },
-        });
-    }
-};
-
 module.exports = {
-    createTicketTest,
     getTransaction,
     createTransaction,
     notification,

@@ -2,7 +2,6 @@ const router = require("express").Router();
 const checkRole = require("../middlewares/checkrole");
 
 const {
-    createTicketTest,
     bankTransfer,
     creditCard,
     gopay,
@@ -36,7 +35,6 @@ const {
     updateTransactionSchema,
 } = require("../utils/joiValidation");
 
-router.post("/test", createTicketTest);
 router.get("/status/:orderId", authentication, getTransaction);
 router.get("/", authentication, getAllTransactionByUserLoggedIn);
 router.post(
