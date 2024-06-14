@@ -186,7 +186,7 @@ const increaseFlightCapacity = async (flightId) => {
 
 const createSeat = async (req, res, next) => {
     try {
-        const { flightId, seatNumber, type } = req.body;
+        const { flightId, seatNumber, type, price } = req.body;
 
         await decreaseFlightCapacity(flightId);
 
@@ -196,6 +196,7 @@ const createSeat = async (req, res, next) => {
                 seatNumber,
                 type,
                 status: "AVAILABLE",
+                price,
             },
         });
 
@@ -212,7 +213,7 @@ const createSeat = async (req, res, next) => {
 const updateSeat = async (req, res, next) => {
     try {
         const { id } = req.params;
-        const { seatNumber, status } = req.body;
+        const { seatNumber, status, price } = req.body;
 
         const seat = await prisma.flightSeat.findUnique({
             where: { id },
@@ -227,6 +228,7 @@ const updateSeat = async (req, res, next) => {
             data: {
                 seatNumber,
                 status,
+                price,
             },
         });
 

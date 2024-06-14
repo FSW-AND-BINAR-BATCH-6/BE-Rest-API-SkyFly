@@ -94,7 +94,7 @@ const userUpdateSchema = Joi.object({
 // flight
 const createFlightSchema = Joi.object({
     planeId: Joi.string()
-        .regex(/^[a-zA-Z0-9]*$/)
+        // .regex(/^[a-zA-Z0-9]*$/)
         .required(),
     departureDate: Joi.date().iso().required().messages({
         "date.format":
@@ -183,6 +183,7 @@ const createSeatSchema = Joi.object({
     status: Joi.string()
         .valid("AVAILABLE", "OCCUPIED", "BOOKED")
         .default("AVAILABLE"),
+    price: Joi.number().required(),
 });
 
 const updateSeatSchema = Joi.object({
@@ -190,6 +191,7 @@ const updateSeatSchema = Joi.object({
         .regex(/^[a-zA-Z0-9]*$/)
         .required(),
     status: Joi.string().valid("AVAILABLE", "OCCUPIED", "BOOKED").required(),
+    price: Joi.number().required(),
 });
 
 // Airline
