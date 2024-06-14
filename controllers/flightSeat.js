@@ -61,13 +61,17 @@ const getAllSeats = async (req, res, next) => {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const offset = (page - 1) * limit;
+        const type = req.query.type || null;
+
+        const where = type ? { type } : {};
 
         const seats = await prisma.flightSeat.findMany({
+            where,
             skip: offset,
             take: limit,
         });
 
-        const count = await prisma.flightSeat.count();
+        const count = await prisma.flightSeat.count({ where });
 
         const seatsWithStatus = await Promise.all(
             seats.map(async (seat) => {
@@ -100,9 +104,15 @@ const getSeatsByFlightId = async (req, res, next) => {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const offset = (page - 1) * limit;
+        const type = req.query.type || null;
+
+        const where = { flightId };
+        if (type) {
+            where.type = type;
+        }
 
         const seats = await prisma.flightSeat.findMany({
-            where: { flightId },
+            where,
             skip: offset,
             take: limit,
         });
@@ -115,7 +125,7 @@ const getSeatsByFlightId = async (req, res, next) => {
             );
         }
 
-        const count = await prisma.flightSeat.count({ where: { flightId } });
+        const count = await prisma.flightSeat.count({ where });
 
         const sortedSeats = seats.sort((a, b) => {
             const [aRow, aCol] = a.seatNumber.match(/(\d+)([A-Z])/).slice(1, 3);
@@ -126,7 +136,6 @@ const getSeatsByFlightId = async (req, res, next) => {
             }
             return aCol.localeCompare(bCol);
         });
-
 
         const seatsWithStatus = await Promise.all(
             sortedSeats.map(async (seat) => {
@@ -152,7 +161,6 @@ const getSeatsByFlightId = async (req, res, next) => {
         next(createHttpError(500, { message: error.message }));
     }
 };
-
 
 const decreaseFlightCapacity = async (flightId) => {
     await prisma.flight.update({
