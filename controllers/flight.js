@@ -430,7 +430,7 @@ const updateFlight = async (req, res, next) => {
             },
         });
     } catch (error) {
-        next(createHttpError(500, { message: "Internal Server Error" }));
+        next(createHttpError(500, { message: error.message }));
     }
 };
 
