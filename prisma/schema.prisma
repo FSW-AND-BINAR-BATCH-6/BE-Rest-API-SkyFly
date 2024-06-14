@@ -114,18 +114,16 @@ model FlightSeat {
 }
 
 model Ticket {
-    id                        String                   @id @default(cuid())
-    code                      String                   @unique
-    flightId                  String?
-    flight                    Flight?                  @relation(fields: [flightId], references: [id], onDelete: Cascade)
-    userId                    String?
-    user                      User?                    @relation(fields: [userId], references: [id])
-    seatId                    String?                  @unique
-    seat                      FlightSeat?              @relation(fields: [seatId], references: [id], onDelete: Cascade)
-    ticketTransactionId       String?                  @unique
-    ticketTransaction         TicketTransaction?       @relation(fields: [ticketTransactionId], references: [id], onDelete: Cascade)
-    ticketTransactionDetailId String?                  @unique
-    ticketTransactionDetail   TicketTransactionDetail? @relation(fields: [ticketTransactionDetailId], references: [id])
+    id                  String             @id @default(cuid())
+    code                String             @unique
+    flightId            String?
+    flight              Flight?            @relation(fields: [flightId], references: [id])
+    userId              String?
+    user                User?              @relation(fields: [userId], references: [id])
+    seatId              String?            @unique
+    seat                FlightSeat?        @relation(fields: [seatId], references: [id])
+    ticketTransactionId String?
+    ticketTransaction   TicketTransaction? @relation(fields: [ticketTransactionId], references: [id])
 }
 
 model TicketTransaction {
@@ -137,7 +135,7 @@ model TicketTransaction {
     User               User?                     @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId             String?
     Transaction_Detail TicketTransactionDetail[]
-    Ticket             Ticket?
+    Ticket             Ticket[]
 }
 
 model TicketTransactionDetail {
@@ -155,6 +153,5 @@ model TicketTransactionDetail {
     issuingCountry String
     validityPeriod DateTime
     flightId       String
-    flight         Flight?           @relation(fields: [flightId], references: [id], onDelete: Cascade)
-    Ticket         Ticket?
+    flight         Flight?           @relation(fields: [flightId], references: [id])
 }
