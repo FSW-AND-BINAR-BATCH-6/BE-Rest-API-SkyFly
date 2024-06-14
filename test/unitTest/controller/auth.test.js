@@ -9,6 +9,7 @@ const { secretCompare, secretHash } = require("../../../utils/hashSalt");
 const { generateJWT } = require("../../../utils/jwtGenerate");
 const { generateSecretEmail } = require("../../../utils/emailHandler");
 const { authorizationUrl } = require("../../../lib/googleOauth2");
+const cors = require("cors")
 
 const authController = require("../../../controllers/auth");
 const prisma = new PrismaClient();
