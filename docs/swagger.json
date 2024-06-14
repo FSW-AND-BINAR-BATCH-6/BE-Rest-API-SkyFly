@@ -3922,7 +3922,7 @@
                 }
             },
             "post": {
-                "tags": ["Tickets"],
+                "tags": ["Dashboards"],
                 "summary": "Return result HIT API create ticket",
                 "description": "This is an API for creating ticket data",
                 "security": [
@@ -4218,7 +4218,7 @@
                 }
             },
             "put": {
-                "tags": ["Tickets"],
+                "tags": ["Dashboards"],
                 "summary": "Return result HIT API update ticket by Id",
                 "description": "This is an API for updatting ticket data based on Id",
                 "security": [
@@ -4375,6 +4375,31 @@
                             }
                         }
                     }
+                }
+            }
+        },
+        "/tickets/generate": {
+            "get": {
+                "tags": ["Tickets"],
+                "summary": "Return result HIT API generate ticket",
+                "description": "This is an API for generating ticket",
+                "security": [
+                    {
+                        "bearerToken": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success generating",
+                        "content" :{
+                            "text/html": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/generateTicket"
+                                }
+                            }
+                        }
+                    }
+                    
                 }
             }
         },
@@ -6817,6 +6842,13 @@
                 "type": "http",
                 "scheme": "bearer",
                 "bearerFormat": "JWT"
+            }
+        },
+        "schemas":{
+            "generateTicket":{
+                "type": "html",
+                "example": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Ticket</title>\n</head>\n<body>\n<h1>Ticket QG-CGK-QG.CGK.BDO-1B</h1>\n<div>\n<h2>Ticket Code: QG-CGK-QG.CGK.BDO-1B</h2>\n<p>\n<strong>Flight ID:</strong>\nclxe9zos8001z24wgy2l54ofh</p>\n<p>\n<strong>Departure Date:</strong>\n06/06/2024, 20.00.00</p>\n<p>\n<strong>Departure Airport:</strong>\nSoekarno-Hatta International Airport - Jakarta, Indonesia</p>\n<p>\n<strong>Arrival Date:</strong>\n07/06/2024, 00.00.00</p>\n<p>\n<strong>Destination Airport:</strong>\nHusein Sastranegara International Airport - Bandung, Indonesia</p>\n<h4>Passenger Detail:</h4><p>\n<strong>User Name:</strong>\nNaufal</p>\n<p>\n<strong>Family Name:</strong>\nFamily</p>\n<p>\n<strong>Citizenship:</strong>\nPoland</p>\n<p>\n<strong>Issuing Country:</strong>\nEngland</p>\n<p>\n<strong>Passport:</strong>\n73e19184-2392-426b-9b41-62efc4c005de</p>\n<p>\n<strong>Price:</strong>\n1000</p>\n<h4>Flight Detail:</h4><p>\n<strong>Airline:</strong>\nCitilink</p>\n<p>\n<strong>Seat Number:</strong>\n1B</p>\n<p>\n<strong>Seat Type:</strong>\nECONOMY</p>\n<h3>Transaction Details:</h3><p>\n<strong>Orderer:</strong>\nNaufal</p>\n<p>\n<strong>Email:</strong>\nnaufal@test.com</p>\n<p>\n<strong>Phone Number:</strong>\n628123456789</p>\n<p>\n<strong>Order ID:</strong>\n65e91bf8-433f-4747-aa29-565bbc1f25ce</p>\n<p>\n<strong>Booking Date:</strong>\n14/06/2024, 13.02.36</p>\n</div>\n<h1>Ticket QG-CGK-QG.CGK.BDO-1D</h1>\n<div>\n<h2>Ticket Code: QG-CGK-QG.CGK.BDO-1D</h2>\n<p>\n<strong>Flight ID:</strong>\nclxe9zos8001z24wgy2l54ofh</p>\n<p>\n<strong>Departure Date:</strong>\n06/06/2024, 20.00.00</p>\n<p>\n<strong>Departure Airport:</strong>\nSoekarno-Hatta International Airport - Jakarta, Indonesia</p>\n<p>\n<strong>Arrival Date:</strong>\n07/06/2024, 00.00.00</p>\n<p>\n<strong>Destination Airport:</strong>\nHusein Sastranegara International Airport - Bandung, Indonesia</p>\n<h4>Passenger Detail:</h4><p>\n<strong>User Name:</strong>\nNaufal</p>\n<p>\n<strong>Family Name:</strong>\nFamily</p>\n<p>\n<strong>Citizenship:</strong>\nPoland</p>\n<p>\n<strong>Issuing Country:</strong>\nEngland</p>\n<p>\n<strong>Passport:</strong>\n73e19184-2392-426b-9b41-62efc4c005de</p>\n<p>\n<strong>Price:</strong>\n1000</p>\n<h4>Flight Detail:</h4><p>\n<strong>Airline:</strong>\nCitilink</p>\n<p>\n<strong>Seat Number:</strong>\n1D</p>\n<p>\n<strong>Seat Type:</strong>\nECONOMY</p>\n<h3>Transaction Details:</h3><p>\n<strong>Orderer:</strong>\nNaufal</p>\n<p>\n<strong>Email:</strong>\nnaufal@test.com</p>\n<p>\n<strong>Phone Number:</strong>\n628123456789</p>\n<p>\n<strong>Order ID:</strong>\n65e91bf8-433f-4747-aa29-565bbc1f25ce</p>\n<p>\n<strong>Booking Date:</strong>\n14/06/2024, 13.02.36</p>\n</div>\n</body>\n</html>"
+        
             }
         }
     }
