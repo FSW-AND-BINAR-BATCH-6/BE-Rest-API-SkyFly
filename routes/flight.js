@@ -16,8 +16,7 @@ const {
     updateFlightSchema,
 } = require("../utils/joiValidation");
 
-router
-    .route("/")
+router.route("/")
     .get(getAllFlight)
     .post(
         authentication,
@@ -25,8 +24,11 @@ router
         validator(createFlightSchema),
         createFlight
     );
-router
-    .route("/:id")
+
+router.route("/favorite-destination")
+    .get(getFavoriteDestinations);
+
+router.route("/:id")
     .get(getFlightById)
     .put(
         authentication,
@@ -34,7 +36,10 @@ router
         validator(updateFlightSchema),
         updateFlight
     )
-    .delete(authentication, checkRole(["ADMIN"]), removeFlight);
-router.route("/favorite-destination").get(getFavoriteDestinations);
+    .delete(
+        authentication,
+        checkRole(["ADMIN"]),
+        removeFlight
+    );
 
 module.exports = router;

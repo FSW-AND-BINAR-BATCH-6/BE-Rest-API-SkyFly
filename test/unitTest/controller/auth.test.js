@@ -8,8 +8,7 @@ const { generateTOTP, validateTOTP } = require("../../../utils/otp");
 const { secretCompare, secretHash } = require("../../../utils/hashSalt");
 const { generateJWT } = require("../../../utils/jwtGenerate");
 const { generateSecretEmail } = require("../../../utils/emailHandler");
-const { authorizationUrl, oauth2Client } = require("../../../lib/googleOauth2");
-const { google } = require("googleapis");
+const { authorizationUrl } = require("../../../lib/googleOauth2");
 
 const authController = require("../../../controllers/auth");
 const prisma = new PrismaClient();
@@ -835,7 +834,7 @@ describe("Auth API", () => {
 
         it("Failed", async () => {
             secretHash.mockReturnValue("password");
-            prisma.$transaction.mockImplementation(async (callback) => {
+            prisma.$transaction.mockImplementation(async () => {
                 throw new Error("error");
             });
             await authController.updateUserLoggedIn(req, res, next);

@@ -92,7 +92,7 @@ const getUserById = async (req, res, next) => {
                 data: user,
             });
         } else {
-            return next(createHttpError(404, { message: "Id Not Found" }));
+            return next(createHttpError(404, { message: "User Not Found" }));
         }
     } catch (error) {
         next(createHttpError(500, { message: error.message }));
@@ -138,7 +138,7 @@ const updateUser = async (req, res, next) => {
         });
 
         if (!user) {
-            return next(createHttpError(404, { message: "Id Not Found" }));
+            return next(createHttpError(404, { message: "User Not Found" }));
         }
 
         // Check if the new name already exists for a different user
@@ -176,7 +176,7 @@ const deleteUser = async (req, res, next) => {
         });
 
         if (!user) {
-            return next(createHttpError(404, { message: "Id Not Found" }));
+            return next(createHttpError(404, { message: "User Not Found" }));
         }
 
         await prisma.user.delete({

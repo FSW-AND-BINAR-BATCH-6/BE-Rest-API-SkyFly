@@ -1,5 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const createHttpError = require("http-errors");
+const { calculateFlightDuration } = require("../utils/calculateDuration");
 
 const prisma = new PrismaClient();
 
@@ -18,6 +19,7 @@ const getAllFlight = async (req, res, next) => {
             facilities,
             hasTransit,
             hasDiscount,
+            sort,
         } = req.query;
 
         const skip = (page - 1) * limit;
@@ -118,16 +120,42 @@ const getAllFlight = async (req, res, next) => {
         }
 
         if (facilities) {
-            const facilityList = facilities.split(",");
+            const facilityList = facilities.split("%20");
             facilityList.forEach((facility) => {
                 filters.AND.push({ facilities: { contains: facility.trim() } });
             });
+        }
+
+        const sortOptions = {
+            "shortest-duration": {
+                departureDate: "asc",
+                arrivalDate: "asc",
+            },
+            "earliest-departure": { departureDate: "asc" },
+            "latest-departure": { departureDate: "desc" },
+            "earliest-arrival": { arrivalDate: "asc" },
+            "latest-arrival": { arrivalDate: "desc" },
+            "cheapest-price": { price: "asc" },
+        };
+
+        let orderBy = [];
+
+        if (sort) {
+            if (sort === "shortest-duration") {
+                orderBy = [{ departureDate: "asc" }, { arrivalDate: "asc" }];
+            } else {
+                const orderByOption = sortOptions[sort];
+                if (orderByOption) {
+                    orderBy.push(orderByOption);
+                }
+            }
         }
 
         const flights = await prisma.flight.findMany({
             where: filters,
             skip,
             take,
+            orderBy,
             include: {
                 departureAirport: true,
                 transitAirport: true,
@@ -177,7 +205,15 @@ const getAllFlight = async (req, res, next) => {
             discount: flight.discount,
             price: flight.price,
             facilities: flight.facilities,
+            duration: calculateFlightDuration(
+                flight.departureDate,
+                flight.arrivalDate
+            ),
         }));
+
+        if (sort === "shortest-duration") {
+            formattedFlights.sort((a, b) => a.duration - b.duration);
+        }
 
         res.status(200).json({
             status: true,
@@ -186,7 +222,7 @@ const getAllFlight = async (req, res, next) => {
             pagination: {
                 totalPages: totalPages,
                 currentPage: currentPage,
-                pageItems: flights.length,
+                pageItems: formattedFlights.length,
                 nextPage: currentPage < totalPages ? currentPage + 1 : null,
                 prevPage: currentPage > 1 ? currentPage - 1 : null,
             },
@@ -196,15 +232,8 @@ const getAllFlight = async (req, res, next) => {
                     : "No flight data found",
         });
     } catch (error) {
-        if (error.code === "P2025") {
-            return next(
-                createHttpError(409, {
-                    message: "Flight Not Found",
-                })
-            );
-        } else {
-            next(createHttpError(500, { message: "Internal Server Error" }));
-        }
+        console.error("Error fetching flights:", error);
+        next(createHttpError(500, { message: error.message }));
     }
 };
 
@@ -479,39 +508,68 @@ const updateFlight = async (req, res, next) => {
 
 const getFavoriteDestinations = async (req, res, next) => {
     try {
-        const favoriteDestinations = await prisma.flight.groupBy({
-            by: ["destinationAirportId"],
-            _count: {
-                ticketTransactionDetail: true,
+        const ticketTransactionDetails =
+            await prisma.ticketTransactionDetail.findMany({
+                include: {
+                    flight: {
+                        select: {
+                            destinationAirportId: true,
+                        },
+                    },
+                },
+            });
+
+        const destinationGroups = ticketTransactionDetails.reduce(
+            (groups, transaction) => {
+                const destinationAirportId =
+                    transaction.flight.destinationAirportId;
+
+                if (!groups[destinationAirportId]) {
+                    groups[destinationAirportId] = {
+                        airportId: destinationAirportId,
+                        transactionCount: 0,
+                    };
+                }
+
+                groups[destinationAirportId].transactionCount++;
+
+                return groups;
             },
-            orderBy: {
-                _count: {
-                    ticketTransactionDetail: "desc",
+            {}
+        );
+
+        const destinationAirportIds = Object.keys(destinationGroups);
+        const airports = await prisma.airport.findMany({
+            where: {
+                id: {
+                    in: destinationAirportIds,
                 },
             },
-            take: 5,
         });
 
-        const destinationsWithDetails = await Promise.all(
-            favoriteDestinations.map(async (destination) => {
-                const airport = await prisma.airport.findUnique({
-                    where: { id: destination.destinationAirportId },
-                });
+        const destinationsWithDetails = destinationAirportIds.map(
+            (airportId) => {
+                const airport = airports.find((a) => a.id === airportId);
 
                 return {
                     airport,
                     transactionCount:
-                        destination._count.ticketTransactionDetail,
+                        destinationGroups[airportId].transactionCount,
                 };
-            })
+            }
+        );
+
+        destinationsWithDetails.sort(
+            (a, b) => b.transactionCount - a.transactionCount
         );
 
         res.status(200).json({
             status: true,
             message: "Favorite destinations retrieved successfully",
-            data: destinationsWithDetails,
+            data: destinationsWithDetails.slice(0, 5),
         });
     } catch (error) {
+        console.error("Error retrieving favorite destinations:", error);
         next(createHttpError(500, { message: error.message }));
     }
 };
