@@ -188,7 +188,6 @@ const createSeat = async (req, res, next) => {
     try {
         const { flightId, seatNumber, type } = req.body;
 
-        // Check if the seat number already exists for the given flight
         const existingSeat = await prisma.flightSeat.findFirst({
             where: {
                 flightId,
@@ -254,27 +253,13 @@ const updateSeat = async (req, res, next) => {
             return next(createHttpError(404, { message: "Seat not found" }));
         }
 
-        const flight = await prisma.flight.findUnique({
-            where: { id: seat.flightId },
-        });
-
-        if (!flight) {
-            return next(createHttpError(404, { message: "Flight not found" }));
-        }
-
-        let price = flight.price;
-        if (type === "BUSINESS") {
-            price *= 1.5;
-        } else if (type === "FIRST") {
-            price *= 2;
-        }
-
         const updatedSeat = await prisma.flightSeat.update({
             where: { id },
             data: {
                 seatNumber,
                 status,
                 type,
+                // price: newPrice,
             },
         });
 
