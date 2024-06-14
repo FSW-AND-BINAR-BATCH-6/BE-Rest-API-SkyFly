@@ -110,6 +110,7 @@ model FlightSeat {
     type                    TypeSeat
     tickets                 Ticket[]
     TicketTransactionDetail TicketTransactionDetail?
+    price                   Float
 }
 
 model Ticket {
