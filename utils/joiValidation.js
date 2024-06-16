@@ -25,7 +25,7 @@ const RegisterSchema = Joi.object({
             tlds: { allow: ["com", "net", "id"] },
         })
         .required(),
-    phoneNumber: Joi.string().min(11).max(13).required(),
+    phoneNumber: Joi.string().min(10).max(16).required(),
     password: Joi.string().min(8).max(20).required(),
 });
 
@@ -40,7 +40,7 @@ const updateUserLoginSchema = Joi.object({
         maxDomainSegments: 3,
         tlds: { allow: ["com", "net", "id"] },
     }),
-    phoneNumber: Joi.string().min(11).max(13),
+    phoneNumber: Joi.string().min(10).max(16),
     familyName: Joi.string(),
     password: Joi.string().min(8).max(20),
     confirmPassword: Joi.any().valid(Joi.ref("password")).required().messages({
@@ -74,7 +74,7 @@ const userCreateSchema = Joi.object({
     name: Joi.string()
         .regex(/^(?!\s*$)[a-zA-Z\s]+$/)
         .required(),
-    phoneNumber: Joi.string().min(11).max(13).optional(),
+    phoneNumber: Joi.string().min(10).max(16).optional(),
     familyName: Joi.string()
         .regex(/^(?!\s*$)[a-zA-Z\s]+$/)
         .optional(),

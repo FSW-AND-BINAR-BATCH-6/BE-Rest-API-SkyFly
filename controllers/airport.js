@@ -14,19 +14,36 @@ const getAllAirports = async (req, res, next) => {
         const name = req.query.name;
         const country = req.query.country;
         const city = req.query.city;
+        const search = req.query.search;
 
         const conditions = {};
+        if (search) {
+            conditions.OR = [
+                {
+                    code: { contains: search, mode: "insensitive" },
+                },
+                {
+                    name: { contains: search, mode: "insensitive" },
+                },
+                {
+                    country: { contains: search, mode: "insensitive" },
+                },
+                {
+                    city: { contains: search, mode: "insensitive" },
+                },
+            ];
+        }
         if (code) {
             conditions.code = { contains: code, mode: "insensitive" };
         }
         if (name) {
             conditions.name = { contains: name, mode: "insensitive" };
-        } 
+        }
         if (country) {
-            conditions.country = {contains: country, mode: "insensitive"}
+            conditions.country = { contains: country, mode: "insensitive" };
         }
         if (city) {
-            conditions.city = {contains: city, mode: "insensitive"}
+            conditions.city = { contains: city, mode: "insensitive" };
         }
 
         let getAirports, count;
@@ -103,8 +120,7 @@ const createNewAirport = async (req, res, next) => {
         if (getAirport)
             return next(
                 createHttpError(422, {
-                    message:
-                        `Airport with code: ${code} already exist!`,
+                    message: `Airport with code: ${code} already exist!`,
                 })
             );
 
@@ -170,7 +186,7 @@ const deleteAirport = async (req, res, next) => {
         });
 
         if (!getAirport)
-            return next(createHttpError(404, { message: "Airport not found" }))
+            return next(createHttpError(404, { message: "Airport not found" }));
 
         await prisma.airport.delete({
             where: {
