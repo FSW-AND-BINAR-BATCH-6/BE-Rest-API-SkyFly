@@ -27,120 +27,140 @@ async function main() {
             code: "CGK",
             country: "Indonesia",
             city: "Jakarta",
+            continent: "Asia",
         },
         {
             name: "Ngurah Rai International Airport",
             code: "DPS",
             country: "Indonesia",
             city: "Denpasar",
+            continent: "Asia",
         },
         {
             name: "Juanda International Airport",
             code: "SUB",
             country: "Indonesia",
             city: "Surabaya",
+            continent: "Asia",
         },
         {
             name: "Kuala Namu International Airport",
             code: "KNO",
             country: "Indonesia",
             city: "Medan",
+            continent: "Asia",
         },
         {
             name: "Sultan Hasanuddin International Airport",
             code: "UPG",
             country: "Indonesia",
             city: "Makassar",
+            continent: "Asia",
         },
         {
             name: "Ahmad Yani International Airport",
             code: "SRG",
             country: "Indonesia",
             city: "Semarang",
+            continent: "Asia",
         },
         {
             name: "Husein Sastranegara International Airport",
             code: "BDO",
             country: "Indonesia",
             city: "Bandung",
+            continent: "Asia",
         },
         {
             name: "Adisutjipto International Airport",
             code: "JOG",
             country: "Indonesia",
             city: "Yogyakarta",
+            continent: "Asia",
         },
         {
             name: "Sepinggan International Airport",
             code: "BPN",
             country: "Indonesia",
             city: "Balikpapan",
+            continent: "Asia",
         },
         {
             name: "Sultan Syarif Kasim II International Airport",
             code: "PKU",
             country: "Indonesia",
             city: "Pekanbaru",
+            continent: "Asia",
         },
         {
             name: "Los Angeles International Airport",
             code: "LAX",
             country: "USA",
             city: "Los Angeles",
+            continent: "America",
         },
         {
             name: "Heathrow Airport",
             code: "LHR",
             country: "United Kingdom",
             city: "London",
+            continent: "Europe",
         },
         {
             name: "Changi Airport",
             code: "SIN",
             country: "Singapore",
             city: "Singapore",
+            continent: "Asia",
         },
         {
             name: "Haneda Airport",
             code: "HND",
             country: "Japan",
             city: "Tokyo",
+            continent: "Asia",
         },
         {
             name: "Dubai International Airport",
             code: "DXB",
             country: "UAE",
             city: "Dubai",
+            continent: "Asia",
         },
         {
             name: "Charles de Gaulle Airport",
             code: "CDG",
             country: "France",
             city: "Paris",
+            continent: "Europe",
         },
         {
             name: "Frankfurt Airport",
             code: "FRA",
             country: "Germany",
             city: "Frankfurt",
+            continent: "Europe",
         },
         {
             name: "Sydney Kingsford Smith Airport",
             code: "SYD",
             country: "Australia",
             city: "Sydney",
+            continent: "Australia",
         },
         {
             name: "Hong Kong International Airport",
             code: "HKG",
             country: "Hong Kong",
             city: "Hong Kong",
+            continent: "Asia",
         },
         {
             name: "John F. Kennedy International Airport",
             code: "JFK",
             country: "USA",
             city: "New York",
+            continent: "America",
         },
     ];
 
@@ -321,6 +341,7 @@ async function main() {
                 seatNumber: `${i}${letter}`,
                 status: "AVAILABLE",
                 type: "ECONOMY",
+                price: 100000,
             });
         }
     }
@@ -409,35 +430,38 @@ async function main() {
         })
     );
 
+    const users = await prisma.user.findMany();
     const transactions = [
         {
             id: randomUUID(),
-            userId: "user-123", // Replace with actual user ID
+            userId: users[0].id, // Replace with actual user ID
             orderId: "order-123",
             status: "pending",
-            totalPrice: 100.0,
+            totalPrice: 100.00,
             bookingDate: new Date(),
         },
         {
             id: randomUUID(),
-            userId: "user-124", // Replace with actual user ID
+            userId: users[1].id, // Replace with actual user ID
             orderId: "order-124",
             status: "success",
-            totalPrice: 200.0,
+            totalPrice: 200.00,
             bookingDate: new Date(),
         },
     ];
 
+    const flight = await prisma.flight.findMany();
+    const seats = await prisma.flightSeat.findMany();
     // Sample data for ticketTransactionDetail
     const transactionDetails = [
         {
             id: randomUUID(),
             transactionId: transactions[0].id,
-            price: 50.0,
+            price: 50.00,
             name: "Seat A1",
-            seatId: "seat-123",
+            seatId: seats[0].id,
             familyName: "Smith",
-            flightId: "flight-123",
+            flightId: flight[0].id,
             dob: new Date("1990-01-01"),
             citizenship: "USA",
             passport: randomUUID(),
@@ -447,11 +471,11 @@ async function main() {
         {
             id: randomUUID(),
             transactionId: transactions[1].id,
-            price: 100.0,
+            price: 100.00,
             name: "Seat B1",
-            seatId: "seat-124",
+            seatId: seats[1].id,
             familyName: "Johnson",
-            flightId: "flight-124",
+            flightId: flight[0].id,
             dob: new Date("1985-01-01"),
             citizenship: "Canada",
             passport: randomUUID(),

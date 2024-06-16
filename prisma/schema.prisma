@@ -43,19 +43,19 @@ model User {
     familyName        String?
     role              RoleUser            @default(BUYER)
     tickets           Ticket[]
-    auth              Auth?
+    auth              Auth?               
     ticketTransaction TicketTransaction[]
 }
 
 model Auth {
-    id          String  @id @default(cuid())
+    id          String  @id @default(cuid()) 
     userId      String? @unique
     email       String  @unique
     password    String
     otpToken    String?
     secretToken String?
     isVerified  Boolean @default(false)
-    user        User?   @relation(fields: [userId], references: [id])
+    user        User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Airline {
@@ -67,11 +67,12 @@ model Airline {
 }
 
 model Airport {
-    id                 String   @id @default(cuid())
-    name               String
-    code               String   @unique
-    country            String
-    city               String
+    id        String @id @default(cuid())
+    name      String
+    code      String @unique
+    country   String
+    city      String
+    continent String
     departureFlights   Flight[] @relation("DepartureAirport")
     destinationFlights Flight[] @relation("DestinationAirport")
     transitFlights     Flight[] @relation("TransitAirport")
