@@ -43,12 +43,12 @@ model User {
     familyName        String?
     role              RoleUser            @default(BUYER)
     tickets           Ticket[]
-    auth              Auth?               
+    auth              Auth?
     ticketTransaction TicketTransaction[]
 }
 
 model Auth {
-    id          String  @id @default(cuid()) 
+    id          String  @id @default(cuid())
     userId      String? @unique
     email       String  @unique
     password    String
@@ -67,12 +67,12 @@ model Airline {
 }
 
 model Airport {
-    id        String @id @default(cuid())
-    name      String
-    code      String @unique
-    country   String
-    city      String
-    continent String
+    id                 String   @id @default(cuid())
+    name               String
+    code               String   @unique
+    country            String
+    city               String
+    continent          String
     departureFlights   Flight[] @relation("DepartureAirport")
     destinationFlights Flight[] @relation("DestinationAirport")
     transitFlights     Flight[] @relation("TransitAirport")
@@ -155,4 +155,12 @@ model TicketTransactionDetail {
     validityPeriod DateTime
     flightId       String
     flight         Flight?           @relation(fields: [flightId], references: [id])
+}
+
+model Notifications {
+    id                   String   @id @default(cuid())
+    type                 String
+    notificationsTitle   String
+    notificationsContent String
+    date                 DateTime
 }

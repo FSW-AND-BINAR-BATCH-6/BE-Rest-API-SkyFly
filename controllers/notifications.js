@@ -11,9 +11,9 @@ const getNotifications = async (req, res, next) => {
         const offset = (page - 1) * limit;
 
         const getAllNotifications = await prisma.notifications.findMany({
-            where: {
-                uid: req.user.id,
-            },
+            // where: {
+            //     userId: req.user.id,
+            // },
             skip: offset,
             take: limit,
         });
@@ -27,7 +27,7 @@ const getNotifications = async (req, res, next) => {
             pagination: {
                 totalPage: Math.ceil(count / limit),
                 currentPage: page,
-                pageItems: getAirline.length,
+                pageItems: getAllNotifications.length,
                 nextPage: page < Math.ceil(count / limit) ? page + 1 : null,
                 prevPage: page > 1 ? page - 1 : null,
             },
@@ -39,4 +39,121 @@ const getNotifications = async (req, res, next) => {
     } catch (error) {
         next(createHttpError(500, { message: error.message }));
     }
+};
+
+const getNotificationsById = async (req, res, next) => {
+    try {
+        const getNotifications = await prisma.notifications.findUnique({
+            where: {
+                id: req.params.id,
+            },
+        });
+
+        if (!getNotifications)
+            return next(
+                createHttpError(404, { message: "Notification data not found" })
+            );
+
+        res.status(200).json({
+            status: true,
+            message: "Notification data retrived successfully",
+            data: getNotifications,
+        });
+    } catch (error) {
+        next(createHttpError(500, { message: error.message }));
+    }
+};
+
+const createNewNotifications = async (req, res, next) => {
+    try {
+        const { type, notificationsTitle, notificationsContent } = req.body;
+        const createNotifications = await prisma.notifications.create({
+            id: randomUUID(),
+            type: type,
+            notificationsTitle: notificationsTitle,
+            notificationsContent: notificationsContent,
+            date: new Date.now(),
+        });
+
+        res.status(201).json({
+            status: true,
+            message: "Notifications created successfully",
+            data: createNotifications,
+        });
+    } catch (error) {
+        next(createHttpError(500, { message: error.message }));
+    }
+};
+
+const updateNotifications = async (req, res, next) => {
+    try {
+        const { type, notificationsTitle, notificationsContent } = req.body;
+        const notificationId = req.query.id;
+
+        const getNotifications = await prisma.notifications.findUnique({
+            where: {
+                id: notificationId,
+            },
+        });
+
+        if (!getNotifications)
+            return next(
+                createHttpError(404, { message: "Notifications not found" })
+            );
+        const updateNotifications = await prisma.notifications.update({
+            where: {
+                id: notificationId,
+            },
+            data: {
+                type,
+                notificationsTitle,
+                notificationsContent,
+                date: new Date.now(),
+            },
+        });
+
+        res.status(201).json({
+            status: true,
+            message: "Airline updated successfully",
+            data: updateNotifications,
+        });
+    } catch (error) {
+        next(createHttpError(500, { message: error.message }));
+    }
+};
+
+const deleteNotifications = async (req, res, next) => {
+    try {
+        const getNotifications = await prisma.notifications.findUnique({
+            where: {
+                id: req.params.id,
+            },
+        });
+
+        if (!getNotifications)
+            return next(
+                createHttpError(404, { message: "Notifications not found" })
+            );
+
+        await prisma.notifications.delete({
+            where: {
+                id: req.params.id,
+            },
+        });
+
+        res.status(200).json({
+            status: true,
+            message: "Airline deleted successfully",
+        });
+    } catch (error) {
+        next(createHttpError(500, { message: error.message }));
+    }
+};
+
+module.exports = {
+    getNotifications,
+    getNotificationsById,
+    createNewNotifications,
+    updateNotifications,
+    deleteNotifications,
 };
