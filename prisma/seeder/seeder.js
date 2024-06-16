@@ -410,13 +410,19 @@ async function main() {
         flightData.map(async (flight) => {
             await Promise.all(
                 flightSeats.map(async (seat) => {
+                    let price = flight.price;
+                    if (seat.type === "BUSINESS") {
+                        price *= 1.5;
+                    } else if (seat.type === "FIRST") {
+                        price *= 2;
+                    }
                     await prisma.flightSeat.create({
                         data: {
                             flightId: flight.id,
                             seatNumber: seat.seatNumber,
                             isBooked: seat.isBooked,
                             type: seat.type,
-                            price: seat.price,
+                            price: price,
                         },
                     });
                 })

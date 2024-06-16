@@ -258,7 +258,7 @@ const notification = async (req, res) => {
 
     await prisma.ticketTransaction.update({
         where: {
-            orderId: data.order_id,
+            orderId: datas.order_id,
         },
         data: {
             status: datas.transaction_status,
@@ -279,7 +279,7 @@ const notification = async (req, res) => {
 
             const dataTransaction = await prisma.ticketTransaction.findUnique({
                 where: {
-                    orderId: notification.order_id,
+                    orderId: data.order_id,
                 },
                 include: {
                     Transaction_Detail: true,
@@ -336,6 +336,7 @@ const notification = async (req, res) => {
                 const existingTicket = await prisma.ticket.findUnique({
                     where: { code: uniqueCode },
                 });
+                console.log("capture - tiket akan dibuat");
 
                 if (existingTicket) {
                     return next(
@@ -353,14 +354,9 @@ const notification = async (req, res) => {
                         code: uniqueCode,
                         ticketTransactionId: dataTransaction.id,
                     },
-                    include: {
-                        flight: true,
-                        user: true,
-                        seat: true,
-                        ticketTransaction: true,
-                    },
                 });
 
+                console.log("capture - masuk tiket dibuat");
                 res.status(200).json({ message: "OK" });
             });
         }
@@ -376,7 +372,7 @@ const notification = async (req, res) => {
 
         const dataTransaction = await prisma.ticketTransaction.findUnique({
             where: {
-                orderId: notification.order_id,
+                orderId: data.order_id,
             },
             include: {
                 Transaction_Detail: true,
@@ -440,6 +436,8 @@ const notification = async (req, res) => {
                 );
             }
 
+            console.log("settlement - tiket akan dibuat");
+
             await prisma.ticket.create({
                 data: {
                     userId: dataTransaction.userId,
@@ -455,7 +453,7 @@ const notification = async (req, res) => {
                     ticketTransaction: true,
                 },
             });
-
+            console.log("settlement - tiket dibuat");
             res.status(200).json({ message: "OK" });
         });
     } else if (
