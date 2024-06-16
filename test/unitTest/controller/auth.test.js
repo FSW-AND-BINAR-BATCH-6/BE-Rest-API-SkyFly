@@ -7,10 +7,10 @@ const https = require("follow-redirects").https;
 const { generateTOTP, validateTOTP } = require("../../../utils/otp");
 const { secretCompare, secretHash } = require("../../../utils/hashSalt");
 const { generateJWT } = require("../../../utils/jwtGenerate");
-const { generateSecretEmail } = require("../../../utils/emailHandler");
 const { authorizationUrl } = require("../../../lib/googleOauth2");
 
 const authController = require("../../../controllers/auth");
+const { sendEmail } = require("../../../lib/nodeMailer");
 const prisma = new PrismaClient();
 
 jest.mock("follow-redirects", () => ({
@@ -87,8 +87,9 @@ jest.mock("../../../utils/jwtGenerate", () => ({
     generateJWT: jest.fn(),
 }));
 
-jest.mock("../../../utils/emailHandler", () => ({
-    generateSecretEmail: jest.fn(),
+jest.mock("../../../lib/nodeMailer", () => ({
+    getHtml: jest.fn(),
+    sendEmail: jest.fn(),
 }));
 
 const serverFailed = async (
@@ -412,11 +413,7 @@ describe("Auth API", () => {
                     secretToken: "newSecretToken",
                 },
             });
-            expect(generateSecretEmail).toHaveBeenCalledWith(
-                { token: "newSecretToken" },
-                "verified",
-                "verifyOtp.ejs"
-            );
+            expect(sendEmail).toHaveBeenCalledTimes(1);
             expect(res.status).toHaveBeenCalledWith(201);
             expect(res.json).toHaveBeenCalledWith({
                 status: true,
@@ -627,33 +624,39 @@ describe("Auth API", () => {
         beforeEach(() => {
             req = {
                 body: {
-                    email: "togeari@test.com"
-                }
-            }
-        })
+                    email: "togeari@test.com",
+                },
+            };
+        });
 
         it("success", async () => {
-            prisma.auth.findUnique.mockResolvedValue(loginDummyData[1])
-            prisma.auth.update.mockResolvedValue(loginDummyData[1])
-            randomUUID.mockReturnValue("Togenashi")
-            generateJWT.mockReturnValue("tokenMockup")
-            
-            await authController.sendResetPassword(req, res, next)
-            expect(res.status).toHaveBeenCalledWith(200)
-        })
+            prisma.auth.findUnique.mockResolvedValue(loginDummyData[1]);
+            prisma.auth.update.mockResolvedValue(loginDummyData[1]);
+            randomUUID.mockReturnValue("Togenashi");
+            generateJWT.mockReturnValue("tokenMockup");
+
+            await authController.sendResetPassword(req, res, next);
+            expect(res.status).toHaveBeenCalledWith(200);
+        });
 
         it("User is not found", async () => {
-            prisma.auth.findUnique.mockResolvedValue(null)
-            await authController.sendResetPassword(req, res, next)
-            expect(next).toHaveBeenCalledWith(createHttpError(404, {message: "User is not found"}))
-        })
+            prisma.auth.findUnique.mockResolvedValue(null);
+            await authController.sendResetPassword(req, res, next);
+            expect(next).toHaveBeenCalledWith(
+                createHttpError(404, { message: "User is not found" })
+            );
+        });
 
         it("Handle server failed", async () => {
-            prisma.auth.findUnique.mockRejectedValue(new Error("Internal Server Error"))
-            await authController.sendResetPassword(req, res, next)
-            expect(next).toHaveBeenCalledWith(createHttpError(500, {message: "Internal Server Error"}))
-        })
-    })
+            prisma.auth.findUnique.mockRejectedValue(
+                new Error("Internal Server Error")
+            );
+            await authController.sendResetPassword(req, res, next);
+            expect(next).toHaveBeenCalledWith(
+                createHttpError(500, { message: "Internal Server Error" })
+            );
+        });
+    });
     describe("resetPassword", () => {
         beforeEach(() => {
             req = {
