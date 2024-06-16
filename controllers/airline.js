@@ -68,14 +68,14 @@ const createNewAirline = async (req, res, next) => {
             },
         });
 
-        if (getAirline){
+        if (getAirline) {
             return next(
                 createHttpError(422, {
                     message: `Airline with code: ${code} already exist!`,
                 })
             );
         }
-        
+
         let imageUrl;
         file
             ? (imageUrl = await uploadFile(file))
