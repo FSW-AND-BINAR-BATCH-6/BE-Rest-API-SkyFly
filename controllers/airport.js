@@ -8,144 +8,205 @@ const getAllAirports = async (req, res, next) => {
     try {
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
-        const offset = (page - 1) * limit
+        const offset = (page - 1) * limit;
+        const showAll = req.query.showall || "false";
+        const code = req.query.code;
+        const name = req.query.name;
+        const country = req.query.country;
+        const city = req.query.city;
+        const search = req.query.search;
 
-        const getAirports = await prisma.airport.findMany({
-            skip: offset,
-            take: limit
-        });
+        const conditions = {};
+        if (search) {
+            conditions.OR = [
+                {
+                    code: { contains: search, mode: "insensitive" },
+                },
+                {
+                    name: { contains: search, mode: "insensitive" },
+                },
+                {
+                    country: { contains: search, mode: "insensitive" },
+                },
+                {
+                    city: { contains: search, mode: "insensitive" },
+                },
+            ];
+        }
+        if (code) {
+            conditions.code = { contains: code, mode: "insensitive" };
+        }
+        if (name) {
+            conditions.name = { contains: name, mode: "insensitive" };
+        }
+        if (country) {
+            conditions.country = { contains: country, mode: "insensitive" };
+        }
+        if (city) {
+            conditions.city = { contains: city, mode: "insensitive" };
+        }
 
-        const count = await prisma.airport.count()
+        let getAirports, count;
+
+        if (showAll === "true") {
+            getAirports = await prisma.airport.findMany({
+                where: conditions,
+            });
+            count = getAirports.length;
+        } else {
+            getAirports = await prisma.airport.findMany({
+                where: conditions,
+                skip: offset,
+                take: limit,
+            });
+            count = await prisma.airport.count({
+                where: conditions,
+            });
+        }
 
         res.status(200).json({
             status: true,
-            message: "all Airport data retrieved successfully",
+            message: "All airports data retrieved successfully",
             totalItems: count,
-            pagination: {
-                totalPage: Math.ceil(count / limit),
-                currentPage: page,
-                pageItems: getAirports.length,
-                nextPage: page < Math.ceil(count / limit) ? page + 1 : null,
-                prevPage: page > 1 ? page - 1 : null
-            },
-            data: getAirports.length !== 0 ? getAirports : "Empty",
+            pagination:
+                showAll === "true"
+                    ? null
+                    : {
+                          totalPage: Math.ceil(count / limit),
+                          currentPage: page,
+                          pageItems: getAirports.length,
+                          nextPage:
+                              page < Math.ceil(count / limit) ? page + 1 : null,
+                          prevPage: page > 1 ? page - 1 : null,
+                      },
+            data: getAirports.length !== 0 ? getAirports : "empty airport data",
         });
-    } catch (err) {
-        next(createHttpError(500, {message: err.message}));
+    } catch (error) {
+        next(createHttpError(500, { message: error.message }));
     }
-}
+};
 
 const getAirportById = async (req, res, next) => {
-    const id = req.params.id
+    const id = req.params.id;
     try {
         const getAirport = await prisma.airport.findUnique({
             where: {
-                id: id
-            }
-        })
+                id: id,
+            },
+        });
 
-        if (!getAirport) return next(createHttpError(404, { message: "Airport not found" }))
+        if (!getAirport)
+            return next(createHttpError(404, { message: "Airport not found" }));
 
         res.status(200).json({
             status: true,
-            message: "all Airports data retrieved successfully",
-            data: getAirport
-        })
+            message: "All airports data retrieved successfully",
+            data: getAirport,
+        });
     } catch (error) {
-        next(createHttpError(500, { message: error.message }))
+        next(createHttpError(500, { message: error.message }));
     }
-}
+};
 
 const createNewAirport = async (req, res, next) => {
-    const { name, code, country, city } = req.body;
-    console.log(req.body)
-
     try {
+        const { name, code, country, city } = req.body;
+
+        const getAirport = await prisma.airport.findUnique({
+            where: {
+                code: code,
+            },
+        });
+        if (getAirport)
+            return next(
+                createHttpError(422, {
+                    message: `Airport with code: ${code} already exist!`,
+                })
+            );
+
         const newAirport = await prisma.airport.create({
             data: {
                 id: randomUUID(),
                 name: name,
                 code: code,
                 country: country,
-                city: city
-            }
-        })
+                city: city,
+            },
+        });
 
         res.status(201).json({
             status: true,
             message: "Airport created successfully",
-            data: newAirport
-        })
-
+            data: newAirport,
+        });
     } catch (error) {
-        next(createHttpError(500, { message: error.message }))
+        next(createHttpError(500, { message: error.message }));
     }
-}
+};
 
 const updateAirport = async (req, res, next) => {
-    const { name, code, country, city } = req.body;
-
     try {
+        const { name, code, country, city } = req.body;
         const getAirport = await prisma.airport.findUnique({
             where: {
-                id: req.params.id
-            }
-        })
-
-        if (!getAirport) return next(createHttpError(404, { message: "Airport not found" }))
+                id: req.params.id,
+            },
+        });
+        if (!getAirport)
+            return next(createHttpError(404, { message: "Airport not found" }));
 
         const updateAirport = await prisma.airport.update({
             where: {
-                id: req.params.id
+                id: req.params.id,
             },
             data: {
                 code,
                 name,
                 country,
-                city
-            }
+                city,
+            },
         });
 
         res.status(201).json({
             status: true,
             message: "Airport updated successfully",
-            data: updateAirport
-        })
-
+            data: updateAirport,
+        });
     } catch (error) {
-        next(createHttpError(500, { message: error.message }))
+        next(createHttpError(500, { message: error.message }));
     }
-}
+};
 
 const deleteAirport = async (req, res, next) => {
     try {
         const getAirport = await prisma.airport.findFirst({
             where: {
-                id: req.params.id
-            }
-        })
+                id: req.params.id,
+            },
+        });
 
-        if (!getAirport) return next(createHttpError(404, { message: "Airport not found" }))
+        if (!getAirport)
+            return next(createHttpError(404, { message: "Airport not found" }));
 
         await prisma.airport.delete({
             where: {
-                id: req.params.id
-            }
-        })
+                id: req.params.id,
+            },
+        });
 
         res.status(200).json({
             status: true,
-            message: "Airport deleted successfully"
-        })
+            message: "Airport deleted successfully",
+        });
     } catch (error) {
-        next(createHttpError(500, { message: error.message }))
+        next(createHttpError(500, { message: error.message }));
     }
-}
+};
 
 module.exports = {
     createNewAirport,
     updateAirport,
     getAllAirports,
     deleteAirport,
-    getAirportById
-}
+    getAirportById,
+};

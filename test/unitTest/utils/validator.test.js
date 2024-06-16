@@ -1,7 +1,4 @@
-const Joi = require("joi");
-const createHttpError = require("http-errors");
-
-const validator = require("../../lib/validator");
+const validator = require("../../../lib/validator");
 const {
     LoginSchema,
     RegisterSchema,
@@ -12,12 +9,12 @@ const {
     forgetPasswordSchema,
     userCreateSchema,
     userUpdateSchema,
-    createFlightSeatSchema,
+    createSeatSchema,
     createAirlineSchema,
     updateAirlineSchema,
     createAirportSchema,
     updateAirportSchema,
-} = require("../../utils/joiValidation");
+} = require("../../../utils/joiValidation");
 
 const runValidationTest = async (schema, inputData, expectedOutcome) => {
     const res = { status: jest.fn().mockReturnThis(), send: jest.fn() };
@@ -142,7 +139,7 @@ describe("Auth input Validation", () => {
                     success: false,
                     status: 422,
                     message:
-                        '"phoneNumber" length must be less than or equal to 13 characters long',
+                        '"phoneNumber" length must be less than or equal to 16 characters long',
                 },
             },
             {
@@ -370,18 +367,18 @@ describe("User Input Validation", () => {
                 },
             },
             {
-                description: "Invalid Input, phoneNumber has 14 characters",
+                description: "Invalid Input, phoneNumber has 18 characters",
                 schema: userCreateSchema,
                 inputData: {
                     name: "Benito",
-                    phoneNumber: "08982314566723",
+                    phoneNumber: "0898231456672356745",
                     familyName: "Mussolini",
                 },
                 expectedOutcome: {
                     success: false,
                     status: 422,
                     message:
-                        '"phoneNumber" length must be less than or equal to 13 characters long',
+                        '"phoneNumber" length must be less than or equal to 16 characters long',
                 },
             },
             {
@@ -485,83 +482,108 @@ describe("User Input Validation", () => {
     });
 });
 
-describe("Flight Input Validation", () => {
-    describe("Create Flight Input", () => {
-        const FlightInputTest = [
+describe("Flight Schema Validation", () => {
+    describe("createFlightSchema", () => {
+        const createFlightTests = [
             {
-                description: "Success Input",
+                description: "Valid input",
                 schema: createFlightSchema,
                 inputData: {
-                    planeId: "123456",
-                    departureDate: "2024-01-07 09:30:00",
-                    departureAirportId: "2143091",
-                    arrivalDate: "2024-01-07 12:30:00",
-                    destinationAirportId: "2243091",
-                    price: 2000000,
-                    capacity: 72,
+                    planeId: "AB123",
+                    departureDate: "2024-01-07T09:30:00Z",
+                    departureAirportId: "JFK",
+                    arrivalDate: "2024-01-07T15:30:00Z",
+                    destinationAirportId: "LAX",
+                    price: 1000,
+                    discount: 10,
+                    capacity: 150,
+                    facilities: "WiFi",
                 },
-                expectedOutcome: {
-                    success: true,
-                },
+                expectedOutcome: { success: true },
             },
             {
-                description: "Invalid Input, there are letter in field planeId",
+                description: "Invalid input, incorrect planeId format",
                 schema: createFlightSchema,
                 inputData: {
-                    planeId: "1234as56",
-                    departureDate: "2024-01-07 09:30:00",
-                    departureAirportId: "2143091",
-                    arrivalDate: "2024-01-07 12:30:00",
-                    destinationAirportId: "2243091",
-                    price: 2000000,
-                    capacity: 72,
+                    planeId: "AB 123",
+                    departureDate: "2024-01-07T09:30:00Z",
+                    departureAirportId: "JFK",
+                    arrivalDate: "2024-01-07T15:30:00Z",
+                    destinationAirportId: "LAX",
+                    price: 1000,
+                    discount: 10,
+                    capacity: 150,
+                    facilities: "WiFi",
                 },
                 expectedOutcome: {
                     success: false,
                     status: 422,
                     message:
-                        '"planeId" with value "1234as56" fails to match the required pattern: /^\\d+$/',
+                        '\"planeId\" with value \"AB 123\" fails to match the required pattern: /^[a-zA-Z0-9]*$/',
                 },
             },
             {
-                description: "Invalid Input, wrong date format",
+                description: "Invalid input, missing required field",
                 schema: createFlightSchema,
                 inputData: {
-                    planeId: "123456",
-                    departureDate: "20240107",
-                    departureAirportId: "2143091",
-                    arrivalDate: "2024-01-07 12:30:00",
-                    destinationAirportId: "2243091",
-                    price: 2000000,
-                    capacity: 72,
+                    planeId: "AB123",
+                    departureDate: "2024-01-07T09:30:00Z",
+                    arrivalDate: "2024-01-07T15:30:00Z",
+                    destinationAirportId: "LAX",
+                    price: 1000,
+                    discount: 10,
+                    capacity: 150,
+                    facilities: "WiFi",
                 },
                 expectedOutcome: {
                     success: false,
                     status: 422,
-                    message: `"departureDate" must be in ISO format, eg: 2024-01-07 09:30:00`,
+                    message: '"departureAirportId" is required',
                 },
             },
             {
-                description: "Invalid Input, capacity must has less than 850",
+                description: "Valid input with transit information",
                 schema: createFlightSchema,
                 inputData: {
-                    planeId: "123456",
-                    departureDate: "2024-01-07 09:30:00",
-                    departureAirportId: "2143091",
-                    arrivalDate: "2024-01-07 12:30:00",
-                    destinationAirportId: "2243091",
-                    price: 2000000,
-                    capacity: 950,
+                    planeId: "AB123",
+                    departureDate: "2024-01-07T09:30:00Z",
+                    departureAirportId: "JFK",
+                    arrivalDate: "2024-01-07T15:30:00Z",
+                    transitAirportId: "ORD",
+                    transitArrivalDate: "2024-01-07T11:30:00Z",
+                    transitDepartureDate: "2024-01-07T12:30:00Z",
+                    destinationAirportId: "LAX",
+                    price: 1000,
+                    discount: 10,
+                    capacity: 150,
+                    facilities: "WiFi",
+                },
+                expectedOutcome: { success: true },
+            },
+            {
+                description: "Invalid input with missing transit dates",
+                schema: createFlightSchema,
+                inputData: {
+                    planeId: "AB123",
+                    departureDate: "2024-01-07T09:30:00Z",
+                    departureAirportId: "JFK",
+                    arrivalDate: "2024-01-07T15:30:00Z",
+                    transitAirportId: "ORD",
+                    destinationAirportId: "LAX",
+                    price: 1000,
+                    discount: 10,
+                    capacity: 150,
+                    facilities: "WiFi",
                 },
                 expectedOutcome: {
                     success: false,
                     status: 422,
-                    message: `"capacity" must be less than or equal to 850`,
+                    message: '"transitArrivalDate" is required',
                 },
             },
         ];
 
-        FlightInputTest.forEach((test) => {
+        createFlightTests.forEach((test) => {
             it(test.description, async () => {
                 await runValidationTest(
                     test.schema,
@@ -572,79 +594,44 @@ describe("Flight Input Validation", () => {
         });
     });
 
-    describe("UpdateFlight Input", () => {
-        const updateFlightInputTest = [
+    describe("updateFlightSchema", () => {
+        const updateFlightTests = [
             {
-                description: "Success Input",
+                description: "Valid input",
                 schema: updateFlightSchema,
                 inputData: {
-                    departureDate: "2024-01-07 09:30:00",
-                    arrivalDate: "2024-01-07 12:30:00",
-                    price: 2000000,
-                    capacity: 72,
+                    planeId: "AB123",
+                    departureDate: "2024-01-07T09:30:00Z",
+                    arrivalDate: "2024-01-07T15:30:00Z",
+                    destinationAirportId: "LAX",
+                    price: 1000,
+                    discount: 10,
+                    capacity: 150,
+                    facilities: "WiFi",
                 },
-                expectedOutcome: {
-                    success: true,
-                },
+                expectedOutcome: { success: true },
             },
             {
-                description: "Invalid Input, there are letter in field planeId",
+                description: "Invalid input, missing required field",
                 schema: updateFlightSchema,
                 inputData: {
-                    planeId: "1234as56", //input contains letter while JOI only allow number
-                    departureDate: "2024-01-07 09:30:00",
-                    departureAirportId: "2143091",
-                    arrivalDate: "2024-01-07 12:30:00",
-                    destinationAirportId: "2243091",
-                    price: 2000000,
-                    capacity: 72,
+                    planeId: "AB123",
+                    departureDate: "2024-01-07T09:30:00Z",
+                    arrivalDate: "2024-01-07T15:30:00Z",
+                    price: 1000,
+                    discount: 10,
+                    capacity: 150,
+                    facilities: "WiFi",
                 },
                 expectedOutcome: {
                     success: false,
                     status: 422,
-                    message:
-                        '"planeId" with value "1234as56" fails to match the required pattern: /^\\d+$/',
-                },
-            },
-            {
-                description: "Invalid Input, wrong date format",
-                schema: updateFlightSchema,
-                inputData: {
-                    planeId: "123456",
-                    departureDate: "20240107", //wrong data format
-                    departureAirportId: "2143091",
-                    arrivalDate: "2024-01-07 12:30:00",
-                    destinationAirportId: "2243091",
-                    price: 2000000,
-                    capacity: 72,
-                },
-                expectedOutcome: {
-                    success: false,
-                    status: 422,
-                    message: `"departureDate" must be in ISO format, eg: 2024-01-07 09:30:00`,
-                },
-            },
-            {
-                description:
-                    "Invalid Input, capacity must has more or equal than 2",
-                schema: updateFlightSchema,
-                inputData: {
-                    planeId: "123456",
-                    departureDate: "2024-01-07 09:30:00",
-                    departureAirportId: "2143091",
-                    arrivalDate: "2024-01-07 12:30:00",
-                    destinationAirportId: "2243091",
-                    price: 2000000,
-                    capacity: 1, //JOI only allow capacity to vbe greater than 1 and less than 851
-                },
-                expectedOutcome: {
-                    success: false,
-                    status: 422,
-                    message: `"capacity" must be greater than or equal to 2`,
+                    message: '"destinationAirportId" is required',
                 },
             },
         ];
-        updateFlightInputTest.forEach((test) => {
+
+        updateFlightTests.forEach((test) => {
             it(test.description, async () => {
                 await runValidationTest(
                     test.schema,
@@ -661,7 +648,7 @@ describe("FlightSeat Input Validation", () => {
         const updateFlightSeatTest = [
             {
                 description: "Success",
-                schema: createFlightSeatSchema,
+                schema: createSeatSchema,
                 inputData: {
                     flightId: "12345",
                     seatNumber: "12B",
@@ -674,9 +661,9 @@ describe("FlightSeat Input Validation", () => {
             {
                 description:
                     "Invalid Input, there are letters in the flightId input",
-                schema: createFlightSeatSchema,
+                schema: createSeatSchema,
                 inputData: {
-                    flightId: "asd123",
+                    flightId: "asd1231@",
                     seatNumber: "13B",
                     type: "ECONOMY",
                 },
@@ -684,13 +671,13 @@ describe("FlightSeat Input Validation", () => {
                     success: false,
                     status: 422,
                     message:
-                        '"flightId" with value "asd123" fails to match the required pattern: /^\\d+$/',
+                        '"flightId" with value "asd1231@" fails to match the required pattern: /^[a-zA-Z0-9]*$/',
                 },
             },
             {
                 description:
                     "Invalid Input, seatNumber must has less than or equal 5",
-                schema: createFlightSeatSchema,
+                schema: createSeatSchema,
                 inputData: {
                     flightId: "123456",
                     seatNumber: "1234B",
@@ -706,7 +693,7 @@ describe("FlightSeat Input Validation", () => {
             {
                 description:
                     "Invalid Input, input at type doesn't match enum data",
-                schema: createFlightSeatSchema,
+                schema: createSeatSchema,
                 inputData: {
                     flightId: "123456",
                     seatNumber: "123B",
@@ -720,7 +707,7 @@ describe("FlightSeat Input Validation", () => {
             },
             {
                 description: "Invalid Input, wrong data tyoe at flightId",
-                schema: createFlightSeatSchema,
+                schema: createSeatSchema,
                 inputData: {
                     flightId: 12344,
                     seatNumber: "123B",
@@ -872,7 +859,8 @@ describe("Airport Input Validation", () => {
                 },
             },
             {
-                description: "Invalid Input, name can't have any special character",
+                description:
+                    "Invalid Input, name can't have any special character",
                 schema: createAirportSchema,
                 inputData: {
                     name: "Sultan-Hasanuddin-International-Airport",
@@ -883,11 +871,12 @@ describe("Airport Input Validation", () => {
                 expectedOutcome: {
                     success: false,
                     status: 422,
-                    message: `"Sultan-Hasanuddin-International-Airport" fails to match the required pattern: /^(?!\\s*$)[a-zA-Z\\s]+$/`   
-                }
+                    message: `"Sultan-Hasanuddin-International-Airport" fails to match the required pattern: /^(?!\\s*$)[a-zA-Z\\s]+$/`,
+                },
             },
             {
-                description: "Invalid Input, code must has less than or equal 3 ",
+                description:
+                    "Invalid Input, code must has less than or equal 3 ",
                 schema: createAirportSchema,
                 inputData: {
                     name: "Los Angeles International Airport",
@@ -898,8 +887,8 @@ describe("Airport Input Validation", () => {
                 expectedOutcome: {
                     success: false,
                     status: 422,
-                    message: `"code" length must be less than or equal to 3 characters long`   
-                }
+                    message: `"code" length must be less than or equal to 3 characters long`,
+                },
             },
             {
                 description: "Invalid Input, name can't be null",
@@ -907,14 +896,14 @@ describe("Airport Input Validation", () => {
                 inputData: {
                     code: "LAV",
                     country: "USA",
-                    city: "Los Angeles"
+                    city: "Los Angeles",
                 },
                 expectedOutcome: {
                     success: false,
                     status: 422,
-                    message: `"name" is required`
-                }
-            }
+                    message: `"name" is required`,
+                },
+            },
         ];
         createAirportTest.forEach((test) => {
             it(test.description, async () => {
@@ -943,7 +932,8 @@ describe("Airport Input Validation", () => {
                 },
             },
             {
-                description: "Invalid Input, name can't have any special character",
+                description:
+                    "Invalid Input, name can't have any special character",
                 schema: updateAirportSchema,
                 inputData: {
                     name: "Sultan-Hasanuddin-International-Airport",
@@ -954,11 +944,12 @@ describe("Airport Input Validation", () => {
                 expectedOutcome: {
                     success: false,
                     status: 422,
-                    message: `"Sultan-Hasanuddin-International-Airport" fails to match the required pattern: /^(?!\\s*$)[a-zA-Z\\s]+$/`   
-                }
+                    message: `"Sultan-Hasanuddin-International-Airport" fails to match the required pattern: /^(?!\\s*$)[a-zA-Z\\s]+$/`,
+                },
             },
             {
-                description: "Invalid Input, code must has less than or equal 3 ",
+                description:
+                    "Invalid Input, code must has less than or equal 3 ",
                 schema: updateAirportSchema,
                 inputData: {
                     name: "Los Angeles International Airport",
@@ -969,8 +960,8 @@ describe("Airport Input Validation", () => {
                 expectedOutcome: {
                     success: false,
                     status: 422,
-                    message: `"code" length must be less than or equal to 3 characters long`   
-                }
+                    message: `"code" length must be less than or equal to 3 characters long`,
+                },
             },
             {
                 description: "Success, allow null input at name",
@@ -978,12 +969,12 @@ describe("Airport Input Validation", () => {
                 inputData: {
                     code: "LAV",
                     country: "USA",
-                    city: "Los Angeles"
+                    city: "Los Angeles",
                 },
                 expectedOutcome: {
                     success: true,
-                }
-            }
+                },
+            },
         ];
         updateAirportTest.forEach((test) => {
             it(test.description, async () => {

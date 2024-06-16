@@ -24,7 +24,7 @@ router.use(
     })
 );
 
-router.get("/api/v1", (req, res, next) => {
+router.get("/api/v1", (req, res) => {
     res.status(200).json({
         status: true,
         message: "Welcome to API skyfly",

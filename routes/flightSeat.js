@@ -1,30 +1,40 @@
 const router = require("express").Router();
 const validator = require("../lib/validator");
-const {
-    getAllFlightSeats,
-    getAvailableFlightSeats,
-    getFlightSeatById,
-    createFlightSeat,
-    updateFlightSeat,
-    deleteFlightSeat,
-    bookFlightSeat,
-} = require("../controllers/flightSeat");
+const authentication = require("../middlewares/authentication");
+const checkRole = require("../middlewares/checkrole");
 
 const {
-    createFlightSeatSchema,
-    updateFlightSeatSchema,
+    getAllSeats,
+    getSeatsByFlightId,
+    createSeat,
+    updateSeat,
+    deleteSeat,
+} = require("../controllers/flightSeat");
+const {
+    createSeatSchema,
+    updateSeatSchema,
 } = require("../utils/joiValidation");
 
 router
     .route("/")
-    .get(getAllFlightSeats)
-    .post(validator(createFlightSeatSchema), createFlightSeat);
+    .get(getAllSeats)
+    .post(
+        authentication,
+        checkRole(["ADMIN"]),
+        validator(createSeatSchema),
+        createSeat
+    );
+
+router.route("/flight/:flightId").get(getSeatsByFlightId);
+
 router
     .route("/:id")
-    .get(getFlightSeatById)
-    .put(validator(updateFlightSeatSchema), updateFlightSeat)
-    .delete(deleteFlightSeat);
-router.route("/book/:id").put(bookFlightSeat);
-router.route("/available/:flightId").get(getAvailableFlightSeats);
+    .put(
+        authentication,
+        checkRole(["ADMIN"]),
+        validator(updateSeatSchema),
+        updateSeat
+    )
+    .delete(authentication, checkRole(["ADMIN"]), deleteSeat);
 
 module.exports = router;

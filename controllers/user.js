@@ -30,7 +30,7 @@ const getAllUsers = async (req, res, next) => {
                         isVerified: true,
                     },
                 },
-            },
+            }, 
             orderBy: {
                 name: "asc",
             },
@@ -92,15 +92,14 @@ const getUserById = async (req, res, next) => {
                 data: user,
             });
         } else {
-            next(createHttpError(404, { message: "Id Not Found" }));
+            return next(createHttpError(404, { message: "User Not Found" }));
         }
     } catch (error) {
-        next(createHttpError(500, { error: error.message }));
+        next(createHttpError(500, { message: error.message }));
     }
 };
 
 const createUser = async (req, res, next) => {
-    console.log(randomUUID());
     const data = req.body;
 
     try {
@@ -131,16 +130,15 @@ const createUser = async (req, res, next) => {
 };
 
 const updateUser = async (req, res, next) => {
-    // const { name, phoneNumber, role } = value;
-    const data = req.body;
-
+    
     try {
+        const { name, phoneNumber, familyName } = req.body;
         const user = await prisma.user.findUnique({
             where: { id: req.params.id },
         });
 
         if (!user) {
-            return next(createHttpError(404, { message: "Id Not Found" }));
+            return next(createHttpError(404, { message: "User Not Found" }));
         }
 
         // Check if the new name already exists for a different user
@@ -148,9 +146,9 @@ const updateUser = async (req, res, next) => {
         const updatedUser = await prisma.user.update({
             where: { id: req.params.id },
             data: {
-                name: data.name,
-                phoneNumber: data.phoneNumber,
-                familyName: data.familyName,
+                name: name,
+                phoneNumber: phoneNumber,
+                familyName: familyName,
                 role: "BUYER", // Ensures role is always 'BUYER'
             },
         });
@@ -178,7 +176,7 @@ const deleteUser = async (req, res, next) => {
         });
 
         if (!user) {
-            return next(createHttpError(404, { message: "Id Not Found" }));
+            return next(createHttpError(404, { message: "User Not Found" }));
         }
 
         await prisma.user.delete({

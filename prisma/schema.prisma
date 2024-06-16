@@ -25,24 +25,24 @@ enum TypeSeat {
 }
 
 enum StatusTicket {
-    PENDING
-    SUCCESS
-    FAILED
+    PENDING // pending
+    SUCCESS // settlement
+    FAILED // expire
 }
 
 enum StatusFlightSeat {
-    AVAILABLE
-    BOOKED
-    OCCUPIED
+    AVAILABLE // no transaction
+    BOOKED // payment success
+    OCCUPIED // booked, payment pending
 }
 
 model User {
     id                String              @id @default(cuid())
     name              String
     phoneNumber       String?
-    familyName        String? // Optional family name
-    role              RoleUser            @default(BUYER) // Default value for role
-    tickets           Ticket?
+    familyName        String?
+    role              RoleUser            @default(BUYER)
+    tickets           Ticket[]
     auth              Auth?
     ticketTransaction TicketTransaction[]
 }
@@ -80,46 +80,50 @@ model Airport {
 model Flight {
     id                      String                    @id @default(cuid())
     planeId                 String
-    plane                   Airline                   @relation(fields: [planeId], references: [id])
+    plane                   Airline                   @relation(fields: [planeId], references: [id], onDelete: Cascade)
     departureDate           DateTime
     departureAirportId      String
-    departureAirport        Airport                   @relation("DepartureAirport", fields: [departureAirportId], references: [id])
+    departureAirport        Airport                   @relation("DepartureAirport", fields: [departureAirportId], references: [id], onDelete: Cascade)
     arrivalDate             DateTime
     destinationAirportId    String
-    destinationAirport      Airport                   @relation("DestinationAirport", fields: [destinationAirportId], references: [id])
+    destinationAirport      Airport                   @relation("DestinationAirport", fields: [destinationAirportId], references: [id], onDelete: Cascade)
     transitAirportId        String?
-    transitAirport          Airport?                  @relation("TransitAirport", fields: [transitAirportId], references: [id])
+    transitAirport          Airport?                  @relation("TransitAirport", fields: [transitAirportId], references: [id], onDelete: Cascade)
     transitArrivalDate      DateTime?
     transitDepartureDate    DateTime?
     capacity                Int
     price                   Float
+    discount                Float?
     seats                   FlightSeat[]
     tickets                 Ticket[]
     facilities              String?
+    code                    String
     ticketTransactionDetail TicketTransactionDetail[]
 }
 
 model FlightSeat {
     id                      String                   @id @default(cuid())
     flightId                String
-    flight                  Flight                   @relation(fields: [flightId], references: [id])
+    flight                  Flight                   @relation(fields: [flightId], references: [id], onDelete: Cascade)
     seatNumber              String
-    isBooked                Boolean?                 @default(false)
+    status                  StatusFlightSeat         @default(AVAILABLE)
     type                    TypeSeat
     tickets                 Ticket[]
     TicketTransactionDetail TicketTransactionDetail?
+    price                   Float
 }
 
 model Ticket {
-    id          String      @id @default(cuid())
-    code        String      @unique
-    flightId    String?
-    flight      Flight?     @relation(fields: [flightId], references: [id])
-    userId      String?     @unique
-    user        User?       @relation(fields: [userId], references: [id])
-    seatId      String?     @unique
-    seat        FlightSeat? @relation(fields: [seatId], references: [id])
-    bookingDate DateTime
+    id                  String             @id @default(cuid())
+    code                String             @unique
+    flightId            String?
+    flight              Flight?            @relation(fields: [flightId], references: [id])
+    userId              String?
+    user                User?              @relation(fields: [userId], references: [id])
+    seatId              String?            @unique
+    seat                FlightSeat?        @relation(fields: [seatId], references: [id])
+    ticketTransactionId String?
+    ticketTransaction   TicketTransaction? @relation(fields: [ticketTransactionId], references: [id])
 }
 
 model TicketTransaction {
@@ -127,9 +131,11 @@ model TicketTransaction {
     orderId            String                    @unique
     totalPrice         Float
     status             String
-    User               User?                     @relation(fields: [userId], references: [id])
+    bookingDate        DateTime
+    User               User?                     @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId             String?
     Transaction_Detail TicketTransactionDetail[]
+    Ticket             Ticket[]
 }
 
 model TicketTransactionDetail {
@@ -138,7 +144,7 @@ model TicketTransactionDetail {
     transaction    TicketTransaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
     price          Float
     seatId         String            @unique
-    seat           FlightSeat        @relation(fields: [seatId], references: [id])
+    seat           FlightSeat        @relation(fields: [seatId], references: [id], onDelete: Cascade)
     name           String
     familyName     String
     dob            DateTime
