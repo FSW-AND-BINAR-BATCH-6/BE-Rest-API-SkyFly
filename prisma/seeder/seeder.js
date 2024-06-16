@@ -321,6 +321,7 @@ async function main() {
                 seatNumber: `${i}${letter}`,
                 status: "AVAILABLE",
                 type: "ECONOMY",
+                price: 100000,
             });
         }
     }
@@ -395,6 +396,7 @@ async function main() {
                             seatNumber: seat.seatNumber,
                             isBooked: seat.isBooked,
                             type: seat.type,
+                            price: seat.price,
                         },
                     });
                 })
@@ -402,10 +404,11 @@ async function main() {
         })
     );
 
+    const users = await prisma.user.findMany();
     const transactions = [
         {
           id: randomUUID(),
-          userId: "user-123", // Replace with actual user ID
+          userId: users[0].id, // Replace with actual user ID
           orderId: "order-123",
           status: "pending",
           totalPrice: 100.00,
@@ -413,7 +416,7 @@ async function main() {
         },
         {
           id: randomUUID(),
-          userId: "user-124", // Replace with actual user ID
+          userId: users[1].id, // Replace with actual user ID
           orderId: "order-124",
           status: "success",
           totalPrice: 200.00,
@@ -421,6 +424,8 @@ async function main() {
         },
       ];
     
+      const flight = await prisma.flight.findMany();
+      const seats = await prisma.flightSeat.findMany();
       // Sample data for ticketTransactionDetail
       const transactionDetails = [
         {
@@ -428,9 +433,9 @@ async function main() {
           transactionId: transactions[0].id,
           price: 50.00,
           name: "Seat A1",
-          seatId: "seat-123",
+          seatId: seats[0].id,
           familyName: "Smith",
-          flightId: "flight-123",
+          flightId: flight[0].id,
           dob: new Date("1990-01-01"),
           citizenship: "USA",
           passport: randomUUID(),
@@ -442,9 +447,9 @@ async function main() {
           transactionId: transactions[1].id,
           price: 100.00,
           name: "Seat B1",
-          seatId: "seat-124",
+          seatId: seats[1].id,
           familyName: "Johnson",
-          flightId: "flight-124",
+          flightId: flight[0].id,
           dob: new Date("1985-01-01"),
           citizenship: "Canada",
           passport: randomUUID(),

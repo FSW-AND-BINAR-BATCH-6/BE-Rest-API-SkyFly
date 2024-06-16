@@ -2,14 +2,19 @@ const calculateFlightDuration = (departureDate, arrivalDate, transitDepartureDat
     const departureDateTime = new Date(departureDate).getTime();
     const arrivalDateTime = new Date(arrivalDate).getTime();
 
+    let duration;
+
     if (transitDepartureDate && transitArrivalDate) {
         const transitDepartureDateTime = new Date(transitDepartureDate).getTime();
         const transitArrivalDateTime = new Date(transitArrivalDate).getTime();
-
-        return (arrivalDateTime - departureDateTime) - (transitArrivalDateTime - transitDepartureDateTime);
+        duration = (arrivalDateTime - departureDateTime) - (transitArrivalDateTime - transitDepartureDateTime);
     } else {
-        return arrivalDateTime - departureDateTime;
+        duration = arrivalDateTime - departureDateTime;
     }
+
+    const durationHours = Math.floor(duration / (1000 * 60 * 60));
+    const durationMinutes = Math.floor((duration % (1000 * 60 * 60)) / (1000 * 60));
+    return `${durationHours}h ${durationMinutes}m`;
 }
 
 module.exports = { calculateFlightDuration }
