@@ -6,11 +6,11 @@ const { randomUUID } = require("crypto");
 const { generateTOTP, validateTOTP } = require("../utils/otp");
 const { secretCompare, secretHash } = require("../utils/hashSalt");
 const { generateJWT } = require("../utils/jwtGenerate");
-const { generateSecretEmail } = require("../utils/emailHandler");
 
 const { authorizationUrl, oauth2Client } = require("../lib/googleOauth2");
 const { google } = require("googleapis");
 const { smsHandler } = require("../utils/smsHandler");
+const { sendEmail, getHtml } = require("../lib/nodeMailer");
 
 const prisma = new PrismaClient();
 
@@ -26,7 +26,6 @@ const handleRegister = async (req, res, next) => {
         const payload = {
             registerId: randomUUID(),
             email: email,
-            otp: OTPToken,
             emailTitle: "Email Activation",
         };
 
@@ -75,7 +74,14 @@ const handleRegister = async (req, res, next) => {
         });
 
         // sending email
-        await generateSecretEmail(dataUrl, "verified", "verifyOtp.ejs");
+        const urlTokenVerification = `${process.env.BASE_URL}/auth/verified?token=${dataUrl.token}`;
+        let html = await getHtml("verifyOtp.ejs", {
+            email,
+            OTPToken,
+            urlTokenVerification,
+        });
+
+        await sendEmail(email, `${payload.emailTitle} | SkyFly Team C1`, html);
 
         res.status(200).json({
             status: true,
@@ -233,6 +239,7 @@ const resendOTP = async (req, res, next) => {
         // verify jwt token
         const payload = jwt.verify(token, process.env.JWT_SIGNATURE_KEY);
 
+        console.log("masuk");
         // get user data
         const foundUser = await prisma.auth.findUnique({
             where: {
@@ -265,9 +272,7 @@ const resendOTP = async (req, res, next) => {
         const OTPToken = generateTOTP();
         const newPayload = {
             registerId: randomUUID(),
-            userId: foundUser.id,
             email: foundUser.email,
-            otp: OTPToken,
             emailTitle: "Resend Email Activation",
         };
 
@@ -288,7 +293,18 @@ const resendOTP = async (req, res, next) => {
         });
 
         // sending email
-        await generateSecretEmail(dataUrl, "verified", "verifyOtp.ejs");
+        const urlTokenVerification = `${process.env.BASE_URL}/auth/verified?token=${dataUrl.token}`;
+        let html = await getHtml("verifyOtp.ejs", {
+            email: payload.email,
+            OTPToken,
+            urlTokenVerification,
+        });
+
+        await sendEmail(
+            payload.email,
+            `${newPayload.emailTitle} | SkyFly Team C1`,
+            html
+        );
 
         res.status(201).json({
             status: true,
@@ -378,7 +394,7 @@ const sendResetPassword = async (req, res, next) => {
                 user: true,
             },
         });
-    
+
         if (!foundUser) {
             return next(
                 createHttpError(404, {
@@ -396,7 +412,7 @@ const sendResetPassword = async (req, res, next) => {
         const dataUrl = {
             token: generateJWT(payload),
         };
-      
+
         await prisma.auth.update({
             where: {
                 email: payload.email,
@@ -405,17 +421,26 @@ const sendResetPassword = async (req, res, next) => {
                 secretToken: dataUrl.token,
             },
         });
-      
-        await generateSecretEmail(
-            dataUrl,
-            "resetPassword",
-            "resetPassword.ejs"
+
+        // sending email
+        const urlTokenVerification = `${process.env.BASE_URL}/auth/resetPassword?token=${dataUrl.token}`;
+
+        let html = await getHtml("resetPassword.ejs", {
+            email: payload.email,
+            urlTokenVerification,
+        });
+
+        await sendEmail(
+            payload.email,
+            `${payload.emailTitle} | SkyFly Team C1`,
+            html
         );
-        
+
         res.status(200).json({
             status: true,
             message:
                 "Reset password link has been sent, please check your email",
+            _token: dataUrl.token,
         });
     } catch (error) {
         next(createHttpError(500, { message: error.message }));
@@ -531,9 +556,9 @@ const updateUserLoggedIn = async (req, res, next) => {
 
 const redirectAuthorization = (req, res, next) => {
     try {
-        res.redirect(authorizationUrl);        
+        res.redirect(authorizationUrl);
     } catch (error) {
-        next(createHttpError(500, {message: error.message}))
+        next(createHttpError(500, { message: error.message }));
     }
 };
 
