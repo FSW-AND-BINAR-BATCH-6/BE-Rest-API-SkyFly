@@ -143,7 +143,7 @@ const deleteNotifications = async (req, res, next) => {
 
         res.status(200).json({
             status: true,
-            message: "Airline deleted successfully",
+            message: "Notifications deleted successfully",
         });
     } catch (error) {
         next(createHttpError(500, { message: error.message }));
