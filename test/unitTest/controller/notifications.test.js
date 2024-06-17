@@ -1,7 +1,5 @@
-const createHttpError = require("http-errors");
 const notificationsController = require("../../../controllers/notifications");
 const { PrismaClient } = require("@prisma/client");
-const { randomUUID } = require("crypto");
 const prisma = new PrismaClient();
 
 jest.mock("@prisma/client", () => {
@@ -25,23 +23,23 @@ jest.mock("crypto", () => ({
     randomUUID: jest.fn(),
 }));
 
-const serverFailed = async (
-    req,
-    res,
-    next,
-    prismaFunction,
-    controllerFunction
-) => {
-    const errorMessage = "Internal Server Error";
-    prismaFunction.mockRejectedValue(new Error(errorMessage));
-    await controllerFunction(req, res, next);
-    expect(next).toHaveBeenCalledWith(
-        createHttpError(500, { message: errorMessage })
-    );
-};
+// const serverFailed = async (
+//     req,
+//     res,
+//     next,
+//     prismaFunction,
+//     controllerFunction
+// ) => {
+//     const errorMessage = "Internal Server Error";
+//     prismaFunction.mockRejectedValue(new Error(errorMessage));
+//     await controllerFunction(req, res, next);
+//     expect(next).toHaveBeenCalledWith(
+//         createHttpError(500, { message: errorMessage })
+//     );
+// };
 
 describe("Notifications API", () => {
-    let req, res, next;
+    let res, next;
 
     const notificationsDummyData = [
         {
