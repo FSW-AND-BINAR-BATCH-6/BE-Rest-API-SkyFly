@@ -66,13 +66,15 @@ const getNotificationsById = async (req, res, next) => {
 
 const createNewNotifications = async (req, res, next) => {
     try {
-        const { type, notificationsTitle, notificationsContent } = req.body;
+        const { type, title, content } = req.body;
         const createNotifications = await prisma.notifications.create({
-            id: randomUUID(),
-            type: type,
-            notificationsTitle: notificationsTitle,
-            notificationsContent: notificationsContent,
-            date: new Date.now(),
+            data: {
+                id: randomUUID(),
+                type: type,
+                notificationsTitle: title,
+                notificationsContent: content,
+                date: new Date(),
+            },
         });
 
         res.status(201).json({
@@ -87,8 +89,8 @@ const createNewNotifications = async (req, res, next) => {
 
 const updateNotifications = async (req, res, next) => {
     try {
-        const { type, notificationsTitle, notificationsContent } = req.body;
-        const notificationId = req.query.id;
+        const { type, title, content } = req.body;
+        const notificationId = req.params.id;
 
         const getNotifications = await prisma.notifications.findUnique({
             where: {
@@ -105,10 +107,10 @@ const updateNotifications = async (req, res, next) => {
                 id: notificationId,
             },
             data: {
-                type,
-                notificationsTitle,
-                notificationsContent,
-                date: new Date.now(),
+                type: type,
+                notificationsTitle: title,
+                notificationsContent: content,
+                date: new Date(),
             },
         });
 
