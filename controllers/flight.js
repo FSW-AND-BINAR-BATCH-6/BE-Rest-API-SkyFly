@@ -1,6 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
+const { calculateFlightDuration, sortShortestDuration, formatPrice } = require("../utils/calculateDuration");
+const { formatDate, formatTime, toWib } = require("../utils/formatDate");
 const createHttpError = require("http-errors");
-const { calculateFlightDuration, formatPrice } = require("../utils/calculateDuration");
 
 const prisma = new PrismaClient();
 
@@ -12,7 +13,9 @@ const getAllFlight = async (req, res, next) => {
             departureAirport,
             arrivalAirport,
             departureDate,
-            passengers,
+            adults = 1,
+            children = 0,
+            infants = 0,
             seatClass,
             minPrice,
             maxPrice,
@@ -83,10 +86,6 @@ const getAllFlight = async (req, res, next) => {
             });
         }
 
-        if (passengers) {
-            filters.AND.push({ capacity: { gte: parseInt(passengers) } });
-        }
-
         if (seatClass) {
             filters.AND.push({
                 seats: {
@@ -125,7 +124,9 @@ const getAllFlight = async (req, res, next) => {
                 filters.AND.push({ facilities: { contains: facility.trim() } });
             });
         }
-
+        const totalPassengers = parseInt(adults) + parseInt(children) + parseInt(infants);
+        filters.AND.push({ capacity: { gte: totalPassengers } });
+        
         const sortOptions = {
             "shortest-duration": {
                 departureDate: "asc",
@@ -209,6 +210,7 @@ const getAllFlight = async (req, res, next) => {
                 acc[type] = seatPrice;
                 return acc;
             }, {});
+            const duration = calculateFlightDuration(flight.departureDate, flight.arrivalDate);
             return {
                 id: flight.id,
                 planeId: flight.planeId,
@@ -217,7 +219,8 @@ const getAllFlight = async (req, res, next) => {
                     code: flight.plane.code,
                     image: flight.plane.image,
                 },
-                departureDate: flight.departureDate,
+                departureDate: formatDate(flight.departureDate),
+                departureTime: formatTime(flight.departureDate),
                 code: flight.code,
                 departureAirport: {
                     id: flight.departureAirport.id,
@@ -229,8 +232,10 @@ const getAllFlight = async (req, res, next) => {
                 },
                 transit: flight.transitAirport
                     ? {
-                        arrivalDate: flight.transitArrivalDate,
-                        departureDate: flight.transitDepartureDate,
+                        arrivalDate: formatDate(flight.transitArrivalDate),
+                        arrivalTime: formatTime(flight.transitArrivalDate),
+                        departureDate: formatDate(flight.transitDepartureDate),
+                        departureTime: formatTime(flight.transitArrivalDate),
                         transitAirport: {
                             id: flight.transitAirport.id,
                             name: flight.transitAirport.name,
@@ -241,7 +246,8 @@ const getAllFlight = async (req, res, next) => {
                         },
                     }
                     : null,
-                arrivalDate: flight.arrivalDate,
+                arrivalDate: formatDate(flight.arrivalDate),
+                arrivalTime: formatTime(flight.arrivalDate),
                 destinationAirport: {
                     id: flight.destinationAirport.id,
                     name: flight.destinationAirport.name,
@@ -254,14 +260,18 @@ const getAllFlight = async (req, res, next) => {
                 discount: flight.discount,
                 price: flight.price,
                 facilities: flight.facilities,
-                duration: calculateFlightDuration(flight.departureDate, flight.arrivalDate),
+                duration: duration,
                 seatClasses: seatClasses,
                 prices: prices,
             };
         });
 
         if (sort === "shortest-duration") {
-            formattedFlights.sort((a, b) => a.duration - b.duration);
+            formattedFlights.sort((a, b) => {
+                const durationA = sortShortestDuration(a.duration);
+                const durationB = sortShortestDuration(b.duration);
+                return durationA - durationB;
+            });
         }
 
         res.status(200).json({
@@ -282,6 +292,7 @@ const getAllFlight = async (req, res, next) => {
         next(createHttpError(500, { message: error.message }));
     }
 };
+
 
 const getFlightById = async (req, res, next) => {
     try {
@@ -319,7 +330,8 @@ const getFlightById = async (req, res, next) => {
                 code: flight.plane.code,
                 image: flight.plane.image,
             },
-            departureDate: flight.departureDate,
+            departureDate: formatDate(flight.departureDate),
+            departureTime: formatTime(flight.departureDate),
             code: flight.code,
             departureAirport: {
                 id: flight.departureAirport.id,
@@ -331,8 +343,10 @@ const getFlightById = async (req, res, next) => {
             },
             transit: flight.transitAirport
                 ? {
-                    arrivalDate: flight.transitArrivalDate,
-                    departureDate: flight.transitDepartureDate,
+                    arrivalDate: formatDate(flight.transitArrivalDate),
+                    arrivalTime: formatTime(flight.transitArrivalDate),
+                    departureDate: formatDate(flight.transitDepartureDate),
+                    departureTime: formatTime(flight.transitArrivalDate),
                     transitAirport: {
                         id: flight.transitAirport.id,
                         name: flight.transitAirport.name,
@@ -343,7 +357,8 @@ const getFlightById = async (req, res, next) => {
                     },
                 }
                 : null,
-            arrivalDate: flight.arrivalDate,
+            arrivalDate: formatDate(flight.arrivalDate),
+            arrivalTime: formatTime(flight.arrivalDate),
             destinationAirport: {
                 id: flight.destinationAirport.id,
                 name: flight.destinationAirport.name,
@@ -389,31 +404,11 @@ const createFlight = async (req, res, next) => {
         facilities,
     } = req.body;
 
-    const departureDateTime = new Date(departureDate);
-    const arrivalDateTime = new Date(arrivalDate);
-    const transitArrivalDateTime = transitArrivalDate
-        ? new Date(transitArrivalDate)
-        : null;
-    const transitDepartureDateTime = transitDepartureDate
-        ? new Date(transitDepartureDate)
-        : null;
+    const departureDateTimeConvert = toWib(departureDate);
+    const arrivalDateTimeConvert = toWib(arrivalDate);
+    const transitArrivalDateTimeConvert = transitArrivalDate ? toWib(transitArrivalDate) : null;
+    const transitDepartureDateTimeConvert = transitDepartureDate ? toWib(transitDepartureDate) : null;
 
-    const departureDateTimeConvert = new Date(
-        departureDateTime.getTime() + 7 * 60 * 60 * 1000
-    ).toISOString();
-    const arrivalDateTimeConvert = new Date(
-        arrivalDateTime.getTime() + 7 * 60 * 60 * 1000
-    ).toISOString();
-    const transitArrivalDateTimeConvert = transitArrivalDateTime
-        ? new Date(
-            transitArrivalDateTime.getTime() + 7 * 60 * 60 * 1000
-        ).toISOString()
-        : null;
-    const transitDepartureDateTimeConvert = transitDepartureDateTime
-        ? new Date(
-            transitDepartureDateTime.getTime() + 7 * 60 * 60 * 1000
-        ).toISOString()
-        : null;
     try {
         const plane = await prisma.airline.findUnique({
             where: { id: planeId },
@@ -436,11 +431,8 @@ const createFlight = async (req, res, next) => {
         }
 
         const baseCode = `${plane.code}-${departureAirport.code}`;
-
         const lastNumber = counter.get(baseCode) || 0;
-
         const newNumber = lastNumber + 1;
-
         counter.set(baseCode, newNumber);
 
         const code = `${baseCode}-${newNumber}`;
@@ -493,36 +485,16 @@ const updateFlight = async (req, res, next) => {
         facilities,
     } = req.body;
 
-    const departureDateTime = new Date(departureDate);
-    const arrivalDateTime = new Date(arrivalDate);
-    const transitArrivalDateTime = transitArrivalDate
-        ? new Date(transitArrivalDate)
-        : null;
-    const transitDepartureDateTime = transitDepartureDate
-        ? new Date(transitDepartureDate)
-        : null;
-
-    const departureDateTimeConvert = new Date(
-        departureDateTime.getTime() + 7 * 60 * 60 * 1000
-    ).toISOString();
-    const arrivalDateTimeConvert = new Date(
-        arrivalDateTime.getTime() + 7 * 60 * 60 * 1000
-    ).toISOString();
-    const transitArrivalDateTimeConvert = transitArrivalDateTime
-        ? new Date(
-            transitArrivalDateTime.getTime() + 7 * 60 * 60 * 1000
-        ).toISOString()
-        : null;
-    const transitDepartureDateTimeConvert = transitDepartureDateTime
-        ? new Date(
-            transitDepartureDateTime.getTime() + 7 * 60 * 60 * 1000
-        ).toISOString()
-        : null;
+    const departureDateTimeConvert = toWib(departureDate);
+    const arrivalDateTimeConvert = toWib(arrivalDate);
+    const transitArrivalDateTimeConvert = transitArrivalDate ? toWib(transitArrivalDate) : null;
+    const transitDepartureDateTimeConvert = transitDepartureDate ? toWib(transitDepartureDate) : null;
 
     let finalPrice = price;
     if (discount) {
         finalPrice = price - price * (discount / 100);
     }
+
     try {
         const flight = await prisma.flight.findUnique({
             where: { id: req.params.id },
