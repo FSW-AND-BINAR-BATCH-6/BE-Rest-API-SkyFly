@@ -33,8 +33,7 @@ const updateUserLoginSchema = Joi.object({
     name: Joi.string()
         .min(3)
         .max(30)
-        .regex(/^(?!\s*$)[a-zA-Z\s]+$/) //will allow user to input only alphabet and won't accept if there is only blank space
-        .required(),
+        .regex(/^(?!\s*$)[a-zA-Z\s]+$/),
     email: Joi.string().email({
         minDomainSegments: 2,
         maxDomainSegments: 3,
@@ -43,7 +42,7 @@ const updateUserLoginSchema = Joi.object({
     phoneNumber: Joi.string().min(10).max(16),
     familyName: Joi.string(),
     password: Joi.string().min(8).max(20),
-    confirmPassword: Joi.any().valid(Joi.ref("password")).required().messages({
+    confirmPassword: Joi.any().valid(Joi.ref("password")).messages({
         "any.only": "Confirm password does not match password",
     }),
 });

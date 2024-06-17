@@ -785,6 +785,8 @@ describe("Auth API", () => {
                     role: "BUYER",
                     familyName: "Family",
                     phoneNumber: "628123456789",
+                    password: "password",
+                    confirmPassword: "password",
                 },
                 user: {
                     id: "Togenashi",
