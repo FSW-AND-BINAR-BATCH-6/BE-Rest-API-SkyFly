@@ -12,11 +12,11 @@ const checkRole = require("../middlewares/checkrole");
 router
     .route("/")
     .get(authentication, getNotifications)
-    .post(authentication, createNewNotifications);
+    .post(authentication, checkRole(["ADMIN"]), createNewNotifications);
 router
     .route("/:id")
     .get(authentication, getNotificationsById)
-    .delete(authentication, deleteNotifications)
-    .put(authentication, updateNotifications)
+    .delete(authentication, checkRole(["ADMIN"]), deleteNotifications)
+    .put(authentication, checkRole(["ADMIN"]), updateNotifications)
 
 module.exports = router;
