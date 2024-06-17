@@ -28,6 +28,7 @@ async function main() {
             country: "Indonesia",
             city: "Jakarta",
             continent: "Asia",
+            image: "",
         },
         {
             name: "Ngurah Rai International Airport",
@@ -35,6 +36,7 @@ async function main() {
             country: "Indonesia",
             city: "Denpasar",
             continent: "Asia",
+            image: "",
         },
         {
             name: "Juanda International Airport",
@@ -42,6 +44,7 @@ async function main() {
             country: "Indonesia",
             city: "Surabaya",
             continent: "Asia",
+            image: "",
         },
         {
             name: "Kuala Namu International Airport",
@@ -49,6 +52,7 @@ async function main() {
             country: "Indonesia",
             city: "Medan",
             continent: "Asia",
+            image: "",
         },
         {
             name: "Sultan Hasanuddin International Airport",
@@ -56,6 +60,7 @@ async function main() {
             country: "Indonesia",
             city: "Makassar",
             continent: "Asia",
+            image: "",
         },
         {
             name: "Ahmad Yani International Airport",
@@ -63,6 +68,7 @@ async function main() {
             country: "Indonesia",
             city: "Semarang",
             continent: "Asia",
+            image: "",
         },
         {
             name: "Husein Sastranegara International Airport",
@@ -70,6 +76,7 @@ async function main() {
             country: "Indonesia",
             city: "Bandung",
             continent: "Asia",
+            image: "",
         },
         {
             name: "Adisutjipto International Airport",
@@ -77,6 +84,7 @@ async function main() {
             country: "Indonesia",
             city: "Yogyakarta",
             continent: "Asia",
+            image: "",
         },
         {
             name: "Sepinggan International Airport",
@@ -84,6 +92,7 @@ async function main() {
             country: "Indonesia",
             city: "Balikpapan",
             continent: "Asia",
+            image: "",
         },
         {
             name: "Sultan Syarif Kasim II International Airport",
@@ -91,6 +100,7 @@ async function main() {
             country: "Indonesia",
             city: "Pekanbaru",
             continent: "Asia",
+            image: "",
         },
         {
             name: "Los Angeles International Airport",
@@ -98,6 +108,7 @@ async function main() {
             country: "USA",
             city: "Los Angeles",
             continent: "America",
+            image: "",
         },
         {
             name: "Heathrow Airport",
@@ -105,6 +116,7 @@ async function main() {
             country: "United Kingdom",
             city: "London",
             continent: "Europe",
+            image: "",
         },
         {
             name: "Changi Airport",
@@ -112,6 +124,7 @@ async function main() {
             country: "Singapore",
             city: "Singapore",
             continent: "Asia",
+            image: "",
         },
         {
             name: "Haneda Airport",
@@ -119,6 +132,7 @@ async function main() {
             country: "Japan",
             city: "Tokyo",
             continent: "Asia",
+            image: "",
         },
         {
             name: "Dubai International Airport",
@@ -126,6 +140,7 @@ async function main() {
             country: "UAE",
             city: "Dubai",
             continent: "Asia",
+            image: "",
         },
         {
             name: "Charles de Gaulle Airport",
@@ -133,6 +148,7 @@ async function main() {
             country: "France",
             city: "Paris",
             continent: "Europe",
+            image: "",
         },
         {
             name: "Frankfurt Airport",
@@ -140,6 +156,7 @@ async function main() {
             country: "Germany",
             city: "Frankfurt",
             continent: "Europe",
+            image: "",
         },
         {
             name: "Sydney Kingsford Smith Airport",
@@ -147,6 +164,7 @@ async function main() {
             country: "Australia",
             city: "Sydney",
             continent: "Australia",
+            image: "",
         },
         {
             name: "Hong Kong International Airport",
@@ -154,6 +172,7 @@ async function main() {
             country: "Hong Kong",
             city: "Hong Kong",
             continent: "Asia",
+            image: "",
         },
         {
             name: "John F. Kennedy International Airport",
@@ -161,6 +180,7 @@ async function main() {
             country: "USA",
             city: "New York",
             continent: "America",
+            image: "",
         },
     ];
 
@@ -168,52 +188,42 @@ async function main() {
         {
             code: "GA",
             name: "Garuda Indonesia",
-            image: "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/1716536772224.png",
         },
         {
             code: "SJ",
             name: "Sriwijaya Air",
-            image: "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/1716536772224.png",
         },
         {
             code: "QG",
             name: "Citilink",
-            image: "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/1716536772224.png",
         },
         {
             code: "JT",
             name: "Lion Air",
-            image: "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/1716536772224.png",
         },
         {
             code: "ID",
             name: "Batik Air",
-            image: "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/1716536772224.png",
         },
         {
             code: "IN",
             name: "Nam Air",
-            image: "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/1716536772224.png",
         },
         {
             code: "IW",
             name: "Wings Air",
-            image: "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/1716536772224.png",
         },
         {
             code: "KD",
             name: "Kalimantan Airlines",
-            image: "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/1716536772224.png",
         },
         {
             code: "RA",
             name: "Riau Airlines",
-            image: "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/1716536772224.png",
         },
         {
             code: "IE",
             name: "Super Air Jet",
-            image: "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/1716536772224.png",
         },
     ];
 
@@ -347,8 +357,23 @@ async function main() {
     }
 
     // create airports, airlines
+    let airlinesSeederData = []
+    for (const airline of airlines) {
+        const data = {
+            id: randomUUID(),
+            code: airline.code,
+            name: airline.name,
+            terminal: `Terminal ${Math.floor(Math.random() * 3) + 1}`,
+        };
+        airlinesSeederData.push(data)
+    }
+
+    for(const data of airlinesSeederData){
+        await prisma.airline.create({
+            data: data
+        })
+    }
     await prisma.airport.createMany({ data: airports });
-    await prisma.airline.createMany({ data: airlines });
 
     const airlinesMap = await prisma.airline.findMany();
     const airportsMap = await prisma.airport.findMany();
@@ -505,23 +530,27 @@ async function main() {
         {
             type: "Promotions",
             title: "Diskon 50% buat kamu, iya kamu 😘",
-            content: "Dapatkan potongan 50% dalam pembelian tiket!, promo ini berlaku untuk semua penerbangan"
+            content:
+                "Dapatkan potongan 50% dalam pembelian tiket!, promo ini berlaku untuk semua penerbangan",
         },
         {
             type: "Warning",
             title: "Pesawat kamu sudah mau berangkat!",
-            content: "Jangan sampai ketinggalan pesawat! ayo buruan Check-in, pesawat kamu akan berangkat sebentar lagi"
+            content:
+                "Jangan sampai ketinggalan pesawat! ayo buruan Check-in, pesawat kamu akan berangkat sebentar lagi",
         },
         {
             type: "Information",
             title: "Pemberitahuan penerbangan",
-            content: "Penerbangan anda ke Bali akan segera berangkat 2 jam lagi. ayo buruan ke gerbang keberangkatan"
+            content:
+                "Penerbangan anda ke Bali akan segera berangkat 2 jam lagi. ayo buruan ke gerbang keberangkatan",
         },
         {
             type: "Update",
             title: "Pembaruan Aplikasi",
-            content: "Ada update baru loh buat aplikasi kami. Nikmati fitur baru sekarang!"
-        }
+            content:
+                "Ada update baru loh buat aplikasi kami. Nikmati fitur baru sekarang!",
+        },
     ];
 
     if (users.length !== 0) {

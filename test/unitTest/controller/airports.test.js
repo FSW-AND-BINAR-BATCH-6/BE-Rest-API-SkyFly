@@ -3,6 +3,8 @@ const airportController = require("../../../controllers/airport");
 const { PrismaClient } = require("@prisma/client");
 const { randomUUID } = require("crypto");
 const prisma = new PrismaClient();
+const { uploadFile } = require("../../../lib/supabase");
+
 
 jest.mock("@prisma/client", () => {
     const mPrismaClient = {
@@ -20,6 +22,10 @@ jest.mock("@prisma/client", () => {
         PrismaClient: jest.fn(() => mPrismaClient),
     };
 });
+
+jest.mock("../../../lib/supabase", () => ({
+    uploadFile: jest.fn(),
+}));
 
 jest.mock("crypto", () => ({
     randomUUID: jest.fn(),

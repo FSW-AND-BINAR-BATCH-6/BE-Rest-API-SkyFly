@@ -1,4 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
+const { uploadFile } = require("../lib/supabase");
 const { randomUUID } = require("crypto");
 const createHttpError = require("http-errors");
 
@@ -111,6 +112,7 @@ const getAirportById = async (req, res, next) => {
 const createNewAirport = async (req, res, next) => {
     try {
         const { name, code, country, city } = req.body;
+        const file = req.file;
 
         const getAirport = await prisma.airport.findUnique({
             where: {
@@ -124,6 +126,11 @@ const createNewAirport = async (req, res, next) => {
                 })
             );
 
+        let imageUrl;
+        file
+            ? (imageUrl = await uploadFile(file))
+            : (imageUrl = "https://placehold.co/600x400");
+
         const newAirport = await prisma.airport.create({
             data: {
                 id: randomUUID(),
@@ -131,6 +138,7 @@ const createNewAirport = async (req, res, next) => {
                 code: code,
                 country: country,
                 city: city,
+                image: imageUrl
             },
         });
 
@@ -147,6 +155,8 @@ const createNewAirport = async (req, res, next) => {
 const updateAirport = async (req, res, next) => {
     try {
         const { name, code, country, city } = req.body;
+        const file = req.file;
+
         const getAirport = await prisma.airport.findUnique({
             where: {
                 id: req.params.id,
@@ -155,6 +165,11 @@ const updateAirport = async (req, res, next) => {
         if (!getAirport)
             return next(createHttpError(404, { message: "Airport not found" }));
 
+        let imageUrl
+        !file
+            ? (imageUrl = getAirport.image)
+            : (imageUrl = await uploadFile(file));
+        
         const updateAirport = await prisma.airport.update({
             where: {
                 id: req.params.id,
@@ -164,7 +179,8 @@ const updateAirport = async (req, res, next) => {
                 name,
                 country,
                 city,
-            },
+                image: imageUrl
+            }
         });
 
         res.status(201).json({
