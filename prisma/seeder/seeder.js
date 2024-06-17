@@ -358,12 +358,14 @@ async function main() {
         accountAuthData.map((name) =>
             prisma.user.create({
                 data: {
+                    id: randomUUID(),
                     name: name,
                     role: "BUYER",
                     familyName: "Family",
                     phoneNumber: "628123456789",
                     auth: {
                         create: {
+                            id: randomUUID(),
                             email: `${name.toLowerCase()}@test.com`,
                             password: secretHash("password"),
                             isVerified: true,
@@ -437,7 +439,7 @@ async function main() {
             userId: users[0].id, // Replace with actual user ID
             orderId: "order-123",
             status: "pending",
-            totalPrice: 100.00,
+            totalPrice: 100.0,
             bookingDate: new Date(),
         },
         {
@@ -445,7 +447,7 @@ async function main() {
             userId: users[1].id, // Replace with actual user ID
             orderId: "order-124",
             status: "success",
-            totalPrice: 200.00,
+            totalPrice: 200.0,
             bookingDate: new Date(),
         },
     ];
@@ -457,7 +459,7 @@ async function main() {
         {
             id: randomUUID(),
             transactionId: transactions[0].id,
-            price: 50.00,
+            price: 50.0,
             name: "Seat A1",
             seatId: seats[0].id,
             familyName: "Smith",
@@ -471,7 +473,7 @@ async function main() {
         {
             id: randomUUID(),
             transactionId: transactions[1].id,
-            price: 100.00,
+            price: 100.0,
             name: "Seat B1",
             seatId: seats[1].id,
             familyName: "Johnson",
@@ -495,6 +497,48 @@ async function main() {
     for (const detail of transactionDetails) {
         await prisma.ticketTransactionDetail.create({
             data: detail,
+        });
+    }
+
+    let notificationsData = [];
+    const notificationType = [
+        {
+            type: "Promotions",
+            title: "Diskon 50% buat kamu, iya kamu 😘",
+            content: "Dapatkan potongan 50% dalam pembelian tiket!, promo ini berlaku untuk semua penerbangan"
+        },
+        {
+            type: "Warning",
+            title: "Pesawat kamu sudah mau berangkat!",
+            content: "Jangan sampai ketinggalan pesawat! ayo buruan Check-in, pesawat kamu akan berangkat sebentar lagi"
+        },
+        {
+            type: "Information",
+            title: "Pemberitahuan penerbangan",
+            content: "Penerbangan anda ke Bali akan segera berangkat 2 jam lagi. ayo buruan ke gerbang keberangkatan"
+        },
+        {
+            type: "Update",
+            title: "Pembaruan Aplikasi",
+            content: "Ada update baru loh buat aplikasi kami. Nikmati fitur baru sekarang!"
+        }
+    ];
+
+    if (users.length !== 0) {
+        for (const notifications of notificationType) {
+            const data = {
+                id: randomUUID(),
+                type: notifications.type,
+                notificationsTitle: notifications.title,
+                notificationsContent: notifications.content,
+                date: new Date("2030-01-01"),
+            };
+            notificationsData.push(data);
+        }
+    }
+    for (const notifications of notificationsData) {
+        await prisma.notifications.create({
+            data: notifications,
         });
     }
 }
