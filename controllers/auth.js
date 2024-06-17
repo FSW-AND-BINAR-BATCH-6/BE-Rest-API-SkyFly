@@ -509,7 +509,10 @@ const getUserLoggedIn = async (req, res, next) => {
 const updateUserLoggedIn = async (req, res, next) => {
     try {
         const { name, phoneNumber, familyName, password } = req.body;
-        const hashedPassword = secretHash(password);
+        let hashedPassword;
+        if (password) {
+            hashedPassword = secretHash(password);
+        }
 
         try {
             await prisma.$transaction(async (tx) => {

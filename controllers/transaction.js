@@ -1100,7 +1100,11 @@ const getAllTransactionByUserLoggedIn = async (req, res, next) => {
             },
         });
 
-        const count = await prisma.ticketTransaction.count();
+        const count = await prisma.ticketTransaction.count({
+            where: {
+                userId: req.user.id,
+            },
+        });
 
         const filteredTransactions = transactions.filter((transaction) =>
             transaction.Transaction_Detail.some(
