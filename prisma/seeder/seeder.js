@@ -28,7 +28,7 @@ async function main() {
             country: "Indonesia",
             city: "Jakarta",
             continent: "Asia",
-            image: "",
+            image: "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif",
         },
         {
             name: "Ngurah Rai International Airport",
@@ -36,7 +36,7 @@ async function main() {
             country: "Indonesia",
             city: "Denpasar",
             continent: "Asia",
-            image: "",
+            image: "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif",
         },
         {
             name: "Juanda International Airport",
@@ -44,7 +44,7 @@ async function main() {
             country: "Indonesia",
             city: "Surabaya",
             continent: "Asia",
-            image: "",
+            image: "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif",
         },
         {
             name: "Kuala Namu International Airport",
@@ -52,7 +52,7 @@ async function main() {
             country: "Indonesia",
             city: "Medan",
             continent: "Asia",
-            image: "",
+            image: "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif",
         },
         {
             name: "Sultan Hasanuddin International Airport",
@@ -60,7 +60,7 @@ async function main() {
             country: "Indonesia",
             city: "Makassar",
             continent: "Asia",
-            image: "",
+            image: "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif",
         },
         {
             name: "Ahmad Yani International Airport",
@@ -68,7 +68,7 @@ async function main() {
             country: "Indonesia",
             city: "Semarang",
             continent: "Asia",
-            image: "",
+            image: "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif",
         },
         {
             name: "Husein Sastranegara International Airport",
@@ -76,7 +76,7 @@ async function main() {
             country: "Indonesia",
             city: "Bandung",
             continent: "Asia",
-            image: "",
+            image: "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif",
         },
         {
             name: "Adisutjipto International Airport",
@@ -84,7 +84,7 @@ async function main() {
             country: "Indonesia",
             city: "Yogyakarta",
             continent: "Asia",
-            image: "",
+            image: "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif",
         },
         {
             name: "Sepinggan International Airport",
@@ -92,7 +92,7 @@ async function main() {
             country: "Indonesia",
             city: "Balikpapan",
             continent: "Asia",
-            image: "",
+            image: "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif",
         },
         {
             name: "Sultan Syarif Kasim II International Airport",
@@ -100,7 +100,7 @@ async function main() {
             country: "Indonesia",
             city: "Pekanbaru",
             continent: "Asia",
-            image: "",
+            image: "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif",
         },
         {
             name: "Los Angeles International Airport",
@@ -108,7 +108,7 @@ async function main() {
             country: "USA",
             city: "Los Angeles",
             continent: "America",
-            image: "",
+            image: "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif",
         },
         {
             name: "Heathrow Airport",
@@ -116,7 +116,7 @@ async function main() {
             country: "United Kingdom",
             city: "London",
             continent: "Europe",
-            image: "",
+            image: "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif",
         },
         {
             name: "Changi Airport",
@@ -124,7 +124,7 @@ async function main() {
             country: "Singapore",
             city: "Singapore",
             continent: "Asia",
-            image: "",
+            image: "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif",
         },
         {
             name: "Haneda Airport",
@@ -132,7 +132,7 @@ async function main() {
             country: "Japan",
             city: "Tokyo",
             continent: "Asia",
-            image: "",
+            image: "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif",
         },
         {
             name: "Dubai International Airport",
@@ -140,7 +140,7 @@ async function main() {
             country: "UAE",
             city: "Dubai",
             continent: "Asia",
-            image: "",
+            image: "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif",
         },
         {
             name: "Charles de Gaulle Airport",
@@ -148,7 +148,7 @@ async function main() {
             country: "France",
             city: "Paris",
             continent: "Europe",
-            image: "",
+            image: "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif",
         },
         {
             name: "Frankfurt Airport",
@@ -156,7 +156,7 @@ async function main() {
             country: "Germany",
             city: "Frankfurt",
             continent: "Europe",
-            image: "",
+            image: "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif",
         },
         {
             name: "Sydney Kingsford Smith Airport",
@@ -164,7 +164,7 @@ async function main() {
             country: "Australia",
             city: "Sydney",
             continent: "Australia",
-            image: "",
+            image: "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif",
         },
         {
             name: "Hong Kong International Airport",
@@ -172,7 +172,7 @@ async function main() {
             country: "Hong Kong",
             city: "Hong Kong",
             continent: "Asia",
-            image: "",
+            image: "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif",
         },
         {
             name: "John F. Kennedy International Airport",
@@ -180,7 +180,7 @@ async function main() {
             country: "USA",
             city: "New York",
             continent: "America",
-            image: "",
+            image: "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif",
         },
     ];
 
