@@ -204,6 +204,7 @@ const createAirlineSchema = Joi.object({
         .max(2)
         .regex(/^(?!\s*$)[a-zA-Z\s]+$/)
         .required(),
+    terminal: Joi.string().required(),
 });
 
 const updateAirlineSchema = Joi.object({
@@ -215,6 +216,7 @@ const updateAirlineSchema = Joi.object({
         .min(2)
         .max(2)
         .regex(/^(?!\s*$)[a-zA-Z\s]+$/),
+    terminal: Joi.string(),
 });
 
 // Airport
@@ -235,6 +237,7 @@ const createAirportSchema = Joi.object({
     city: Joi.string()
         .regex(/^(?!\s*$)[a-zA-Z\s]+$/)
         .required(),
+    continent: Joi.string().required(),
 });
 
 const updateAirportSchema = Joi.object({
@@ -254,6 +257,7 @@ const updateAirportSchema = Joi.object({
         .min(3)
         .max(40)
         .regex(/^(?!\s*$)[a-zA-Z\s]+$/),
+    continent: Joi.string(),
 });
 
 // transaction

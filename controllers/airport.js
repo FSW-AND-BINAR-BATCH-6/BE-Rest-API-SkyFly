@@ -16,6 +16,7 @@ const getAllAirports = async (req, res, next) => {
         const country = req.query.country;
         const city = req.query.city;
         const search = req.query.search;
+        const continent = req.query.continent;
 
         const conditions = {};
         if (search) {
@@ -32,6 +33,9 @@ const getAllAirports = async (req, res, next) => {
                 {
                     city: { contains: search, mode: "insensitive" },
                 },
+                {
+                    continent: { contains: search, mode: "insensitive" },
+                },
             ];
         }
         if (code) {
@@ -45,6 +49,9 @@ const getAllAirports = async (req, res, next) => {
         }
         if (city) {
             conditions.city = { contains: city, mode: "insensitive" };
+        }
+        if (continent) {
+            conditions.continent = { contains: continent, mode: "insensitive" };
         }
 
         let getAirports, count;
@@ -111,7 +118,7 @@ const getAirportById = async (req, res, next) => {
 
 const createNewAirport = async (req, res, next) => {
     try {
-        const { name, code, country, city } = req.body;
+        const { name, code, country, city, continent } = req.body;
         const file = req.file;
 
         const getAirport = await prisma.airport.findUnique({
@@ -119,6 +126,7 @@ const createNewAirport = async (req, res, next) => {
                 code: code,
             },
         });
+
         if (getAirport)
             return next(
                 createHttpError(422, {
@@ -134,11 +142,12 @@ const createNewAirport = async (req, res, next) => {
         const newAirport = await prisma.airport.create({
             data: {
                 id: randomUUID(),
-                name: name,
-                code: code,
-                country: country,
-                city: city,
-                image: imageUrl
+                name,
+                code,
+                country,
+                city,
+                continent,
+                image: imageUrl,
             },
         });
 
@@ -154,7 +163,7 @@ const createNewAirport = async (req, res, next) => {
 
 const updateAirport = async (req, res, next) => {
     try {
-        const { name, code, country, city } = req.body;
+        const { name, code, country, city, continent } = req.body;
         const file = req.file;
 
         const getAirport = await prisma.airport.findUnique({
@@ -165,11 +174,11 @@ const updateAirport = async (req, res, next) => {
         if (!getAirport)
             return next(createHttpError(404, { message: "Airport not found" }));
 
-        let imageUrl
+        let imageUrl;
         !file
             ? (imageUrl = getAirport.image)
             : (imageUrl = await uploadFile(file));
-        
+
         const updateAirport = await prisma.airport.update({
             where: {
                 id: req.params.id,
@@ -179,8 +188,9 @@ const updateAirport = async (req, res, next) => {
                 name,
                 country,
                 city,
-                image: imageUrl
-            }
+                continent,
+                image: imageUrl,
+            },
         });
 
         res.status(201).json({

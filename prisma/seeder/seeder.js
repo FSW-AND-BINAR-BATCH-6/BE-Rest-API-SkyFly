@@ -685,6 +685,7 @@ async function main() {
             code: airline.code,
             name: airline.name,
             terminal: `Terminal ${Math.floor(Math.random() * 3) + 1}`,
+            image: 'https://placehold.co/200x200'
         };
         airlinesSeederData.push(data)
     }
