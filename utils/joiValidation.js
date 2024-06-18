@@ -93,7 +93,7 @@ const userUpdateSchema = Joi.object({
 // flight
 const createFlightSchema = Joi.object({
     planeId: Joi.string()
-        .regex(/^[a-zA-Z0-9]*$/)
+        .regex(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/)
         .required(),
     departureDate: Joi.date().iso().required().messages({
         "date.format":
@@ -129,17 +129,18 @@ const createFlightSchema = Joi.object({
 });
 
 const updateFlightSchema = Joi.object({
-    planeId: Joi.string(),
+    planeId: Joi.string()
+        .regex(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/),
     departureDate: Joi.date().iso().messages({
         "date.format":
             '"departureDate" must be in ISO format, eg: 2024-01-07 09:30:00',
     }),
-    departureAirportId: Joi.string(),
+    departureAirportId: Joi.string().regex(/^[a-zA-Z0-9]*$/),
     arrivalDate: Joi.date().iso().messages({
         "date.format":
             '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
     }),
-    transitAirportId: Joi.string(),
+    transitAirportId: Joi.string().regex(/^[a-zA-Z0-9]*$/),
     transitArrivalDate: Joi.date().iso().messages({
         "date.format":
             '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
@@ -148,7 +149,7 @@ const updateFlightSchema = Joi.object({
         "date.format":
             '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
     }),
-    destinationAirportId: Joi.string().required(),
+    destinationAirportId: Joi.string().regex(/^[a-zA-Z0-9]*$/),
     discount: Joi.number().min(0).max(100),
     price: Joi.number().required(),
     capacity: Joi.number().min(2).max(850).required(),
@@ -203,6 +204,7 @@ const createAirlineSchema = Joi.object({
         .max(2)
         .regex(/^(?!\s*$)[a-zA-Z\s]+$/)
         .required(),
+    terminal: Joi.string().required(),
 });
 
 const updateAirlineSchema = Joi.object({
@@ -214,6 +216,7 @@ const updateAirlineSchema = Joi.object({
         .min(2)
         .max(2)
         .regex(/^(?!\s*$)[a-zA-Z\s]+$/),
+    terminal: Joi.string(),
 });
 
 // Airport
@@ -234,6 +237,7 @@ const createAirportSchema = Joi.object({
     city: Joi.string()
         .regex(/^(?!\s*$)[a-zA-Z\s]+$/)
         .required(),
+    continent: Joi.string().required(),
 });
 
 const updateAirportSchema = Joi.object({
@@ -253,6 +257,7 @@ const updateAirportSchema = Joi.object({
         .min(3)
         .max(40)
         .regex(/^(?!\s*$)[a-zA-Z\s]+$/),
+    continent: Joi.string(),
 });
 
 // transaction

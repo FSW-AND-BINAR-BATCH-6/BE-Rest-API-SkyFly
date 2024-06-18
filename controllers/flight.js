@@ -13,9 +13,11 @@ const getAllFlight = async (req, res, next) => {
             departureAirport,
             arrivalAirport,
             departureDate,
-            adults = 1,
+            returnDate,
+            airlineName,
+            adult = 1,
             children = 0,
-            infants = 0,
+            baby = 0,
             seatClass,
             minPrice,
             maxPrice,
@@ -29,6 +31,7 @@ const getAllFlight = async (req, res, next) => {
         const take = parseInt(limit);
 
         let filters = { AND: [] };
+        let returnFilters = { AND: [] };
 
         if (departureAirport) {
             filters.AND.push({
@@ -86,6 +89,42 @@ const getAllFlight = async (req, res, next) => {
             });
         }
 
+        if (returnDate) {
+            const parsedReturnDate = new Date(returnDate);
+            returnFilters.AND.push({
+                departureDate: {
+                    gte: new Date(parsedReturnDate.setHours(0, 0, 0, 0)),
+                    lt: new Date(parsedReturnDate.setHours(23, 59, 59, 999)),
+                },
+            });
+        }
+
+        if (airlineName) {
+            const airlineNames = airlineName.split("%20");
+            const airlineFilters = airlineNames.map(name => ({
+                OR: [
+                    {
+                        plane: {
+                            name: {
+                                contains: name,
+                                mode: "insensitive",
+                            },
+                        },
+                    },
+                    {
+                        plane: {
+                            code: {
+                                contains: name.toUpperCase(),
+                                mode: "insensitive",
+                            },
+                        },
+                    },
+                ],
+            }));
+            filters.AND.push({ OR: airlineFilters });
+            returnFilters.AND.push({ OR: airlineFilters });
+        }
+
         if (seatClass) {
             filters.AND.push({
                 seats: {
@@ -124,9 +163,11 @@ const getAllFlight = async (req, res, next) => {
                 filters.AND.push({ facilities: { contains: facility.trim() } });
             });
         }
-        const totalPassengers = parseInt(adults) + parseInt(children) + parseInt(infants);
+
+        const totalPassengers = parseInt(adult) + parseInt(children) + parseInt(baby);
         filters.AND.push({ capacity: { gte: totalPassengers } });
-        
+        returnFilters.AND.push({ capacity: { gte: totalPassengers } });
+
         const sortOptions = {
             "shortest-duration": {
                 departureDate: "asc",
@@ -185,7 +226,7 @@ const getAllFlight = async (req, res, next) => {
             })
         );
 
-        const flights = await prisma.flight.findMany({
+        const flightsDeparture = await prisma.flight.findMany({
             where: filters,
             skip,
             take,
@@ -199,11 +240,100 @@ const getAllFlight = async (req, res, next) => {
             },
         });
 
-        const total = await prisma.flight.count({ where: filters });
+        const flightsReturn = await prisma.flight.findMany({
+            where: returnFilters,
+            skip,
+            take,
+            orderBy,
+            include: {
+                departureAirport: true,
+                transitAirport: true,
+                destinationAirport: true,
+                seats: true,
+                plane: true,
+            },
+        });
+
+        const totalDeparture = await prisma.flight.count({ where: filters });
+        const total = totalDeparture;
         const totalPages = Math.ceil(total / take);
         const currentPage = parseInt(page);
 
-        const formattedFlights = flights.map((flight) => {
+        const formattedFlightsDeparture = flightsDeparture.map((flight) => {
+            const seatClasses = ['ECONOMY', 'BUSINESS', 'FIRST'];
+            const prices = {};
+
+            seatClasses.forEach(type => {
+                const seat = flight.seats.find(seat => seat.type === type);
+                if (seat) {
+                    prices[type] = seat.price !== null ? seat.price : null;
+                } else {
+                    prices[type] = null;
+                }
+            });
+            const duration = calculateFlightDuration(flight.departureDate, flight.arrivalDate);
+            return {
+                id: flight.id,
+                planeId: flight.planeId,
+                plane: {
+                    name: flight.plane.name,
+                    code: flight.plane.code,
+                    image: flight.plane.image,
+                    terminal: flight.plane.terminal
+                },
+                departureDate: formatDate(flight.departureDate),
+                departureTime: formatTime(flight.departureDate),
+                code: flight.code,
+                departureAirport: {
+                    id: flight.departureAirport.id,
+                    name: flight.departureAirport.name,
+                    code: flight.departureAirport.code,
+                    country: flight.departureAirport.country,
+                    city: flight.departureAirport.city,
+                    continent: flight.departureAirport.continent,
+                    image: flight.departureAirport.image,
+                },
+                transit: flight.transitAirport
+                    ? {
+                        status: true,
+                        arrivalDate: formatDate(flight.transitArrivalDate),
+                        arrivalTime: formatTime(flight.transitArrivalDate),
+                        departureDate: formatDate(flight.transitDepartureDate),
+                        departureTime: formatTime(flight.transitArrivalDate),
+                        transitAirport: {
+                            id: flight.transitAirport.id,
+                            name: flight.transitAirport.name,
+                            code: flight.transitAirport.code,
+                            country: flight.transitAirport.country,
+                            city: flight.transitAirport.city,
+                            continent: flight.transitAirport.continent,
+                            image: flight.transitAirport.image,
+                        },
+                    } : {
+                        status: false
+                    },
+                arrivalDate: formatDate(flight.arrivalDate),
+                arrivalTime: formatTime(flight.arrivalDate),
+                destinationAirport: {
+                    id: flight.destinationAirport.id,
+                    name: flight.destinationAirport.name,
+                    code: flight.destinationAirport.code,
+                    country: flight.destinationAirport.country,
+                    city: flight.destinationAirport.city,
+                    continent: flight.destinationAirport.continent,
+                    image: flight.destinationAirport.image,
+                },
+                capacity: flight.capacity,
+                discount: flight.discount,
+                price: flight.price,
+                facilities: flight.facilities,
+                duration: duration,
+                seatClasses: seatClasses,
+                prices: prices,
+            };
+        });
+
+        const formattedFlightsReturn = flightsReturn.map((flight) => {
             const seatClasses = [...new Set(flight.seats.map(seat => seat.type))];
             const prices = seatClasses.reduce((acc, type) => {
                 const seatPrice = flight.seats.find(seat => seat.type === type).price;
@@ -217,7 +347,9 @@ const getAllFlight = async (req, res, next) => {
                 plane: {
                     name: flight.plane.name,
                     code: flight.plane.code,
+                    terminal: flight.plane.terminal,
                     image: flight.plane.image,
+                    terminal: flight.plane.terminal
                 },
                 departureDate: formatDate(flight.departureDate),
                 departureTime: formatTime(flight.departureDate),
@@ -229,6 +361,7 @@ const getAllFlight = async (req, res, next) => {
                     country: flight.departureAirport.country,
                     city: flight.departureAirport.city,
                     continent: flight.departureAirport.continent,
+                    image: flight.departureAirport.image,
                 },
                 transit: flight.transitAirport
                     ? {
@@ -243,9 +376,12 @@ const getAllFlight = async (req, res, next) => {
                             country: flight.transitAirport.country,
                             city: flight.transitAirport.city,
                             continent: flight.transitAirport.continent,
+                            image: flight.transitAirport.image,
                         },
-                    }
-                    : null,
+                        status: true
+                    } : {
+                        status: false
+                    },
                 arrivalDate: formatDate(flight.arrivalDate),
                 arrivalTime: formatTime(flight.arrivalDate),
                 destinationAirport: {
@@ -255,6 +391,7 @@ const getAllFlight = async (req, res, next) => {
                     country: flight.destinationAirport.country,
                     city: flight.destinationAirport.city,
                     continent: flight.destinationAirport.continent,
+                    image: flight.destinationAirport.image,
                 },
                 capacity: flight.capacity,
                 discount: flight.discount,
@@ -266,8 +403,45 @@ const getAllFlight = async (req, res, next) => {
             };
         });
 
+        if (sort === "earliest-departure") {
+            formattedFlightsDeparture.sort((a, b) => {
+                return new Date(a.departureDate) - new Date(b.departureDate);
+            });
+            formattedFlightsReturn.sort((a, b) => {
+                return new Date(a.departureDate) - new Date(b.departureDate);
+            });
+        } else if (sort === "latest-departure") {
+            formattedFlightsDeparture.sort((a, b) => {
+                return new Date(b.departureDate) - new Date(a.departureDate);
+            });
+            formattedFlightsReturn.sort((a, b) => {
+                return new Date(b.departureDate) - new Date(a.departureDate);
+            });
+        }
+
+        if (sort === "earliest-arrival") {
+            formattedFlightsDeparture.sort((a, b) => {
+                return new Date(a.arrivalDate) - new Date(b.arrivalDate);
+            });
+            formattedFlightsReturn.sort((a, b) => {
+                return new Date(a.arrivalDate) - new Date(b.arrivalDate);
+            });
+        } else if (sort === "latest-arrival") {
+            formattedFlightsDeparture.sort((a, b) => {
+                return new Date(b.arrivalDate) - new Date(a.arrivalDate);
+            });
+            formattedFlightsReturn.sort((a, b) => {
+                return new Date(b.arrivalDate) - new Date(a.arrivalDate);
+            });
+        }
+
         if (sort === "shortest-duration") {
-            formattedFlights.sort((a, b) => {
+            formattedFlightsDeparture.sort((a, b) => {
+                const durationA = sortShortestDuration(a.duration);
+                const durationB = sortShortestDuration(b.duration);
+                return durationA - durationB;
+            });
+            formattedFlightsReturn.sort((a, b) => {
                 const durationA = sortShortestDuration(a.duration);
                 const durationB = sortShortestDuration(b.duration);
                 return durationA - durationB;
@@ -281,18 +455,19 @@ const getAllFlight = async (req, res, next) => {
             pagination: {
                 totalPages: totalPages,
                 currentPage: currentPage,
-                pageItems: formattedFlights.length,
+                pageItems: formattedFlightsDeparture.length + formattedFlightsReturn.length,
                 nextPage: currentPage < totalPages ? currentPage + 1 : null,
                 prevPage: currentPage > 1 ? currentPage - 1 : null,
             },
             priceRanges,
-            data: formattedFlights.length !== 0 ? formattedFlights : "No flight data found",
+            data: formattedFlightsDeparture.length !== 0 ? formattedFlightsDeparture : "No departure flight data found",
+            returnFlights: returnDate ? (formattedFlightsReturn.length !== 0 ? formattedFlightsReturn : "No return flight data found") : undefined,
         });
+
     } catch (error) {
         next(createHttpError(500, { message: error.message }));
     }
 };
-
 
 const getFlightById = async (req, res, next) => {
     try {
@@ -329,6 +504,7 @@ const getFlightById = async (req, res, next) => {
                 name: flight.plane.name,
                 code: flight.plane.code,
                 image: flight.plane.image,
+                terminal: flight.plane.terminal
             },
             departureDate: formatDate(flight.departureDate),
             departureTime: formatTime(flight.departureDate),
@@ -340,9 +516,11 @@ const getFlightById = async (req, res, next) => {
                 country: flight.departureAirport.country,
                 city: flight.departureAirport.city,
                 continent: flight.departureAirport.continent,
+                image: flight.departureAirport.image,
             },
             transit: flight.transitAirport
                 ? {
+                    status: true,
                     arrivalDate: formatDate(flight.transitArrivalDate),
                     arrivalTime: formatTime(flight.transitArrivalDate),
                     departureDate: formatDate(flight.transitDepartureDate),
@@ -354,9 +532,11 @@ const getFlightById = async (req, res, next) => {
                         country: flight.transitAirport.country,
                         city: flight.transitAirport.city,
                         continent: flight.transitAirport.continent,
+                        image: flight.transitAirport.image,
                     },
-                }
-                : null,
+                } : {
+                    status: false
+                },
             arrivalDate: formatDate(flight.arrivalDate),
             arrivalTime: formatTime(flight.arrivalDate),
             destinationAirport: {
@@ -366,6 +546,7 @@ const getFlightById = async (req, res, next) => {
                 country: flight.destinationAirport.country,
                 city: flight.destinationAirport.city,
                 continent: flight.destinationAirport.continent,
+                image: flight.destinationAirport.image,
             },
             capacity: flight.capacity,
             discount: flight.discount,
@@ -592,19 +773,20 @@ const getFavoriteDestinations = async (req, res, next) => {
             const flightDetails = {
                 flightId: destination.flight.id,
                 from: {
-                    departureCity: destination.flight.departureAirport.city,
                     departureDate: destination.flight.departureDate,
+                    departureCity: destination.flight.departureAirport.city,
                 },
                 to: {
-                    arrivalCity: destination.flight.destinationAirport.city,
                     arrivalDate: destination.flight.arrivalDate,
+                    arrivalCity: destination.flight.destinationAirport.city,
                     continent: destination.flight.destinationAirport.continent,
+                    image: destination.flight.destinationAirport.image,
                 },
                 plane: {
                     airline: destination.flight.plane.name,
                     price: destination.flight.price,
                     discount: destination.flight.discount,
-                    image: destination.flight.plane.image,
+                    terminal: destination.flight.plane.terminal,
                 },
                 transactionCount: destination.transactionCount,
             };
