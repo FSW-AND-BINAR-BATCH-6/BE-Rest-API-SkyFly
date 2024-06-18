@@ -15,9 +15,9 @@ const getAllFlight = async (req, res, next) => {
             departureDate,
             returnDate,
             airlineName,
-            adults = 1,
+            adult = 1,
             children = 0,
-            infants = 0,
+            baby = 0,
             seatClass,
             minPrice,
             maxPrice,
@@ -164,7 +164,7 @@ const getAllFlight = async (req, res, next) => {
             });
         }
 
-        const totalPassengers = parseInt(adults) + parseInt(children) + parseInt(infants);
+        const totalPassengers = parseInt(adult) + parseInt(children) + parseInt(baby);
         filters.AND.push({ capacity: { gte: totalPassengers } });
         returnFilters.AND.push({ capacity: { gte: totalPassengers } });
 
@@ -447,7 +447,6 @@ const getAllFlight = async (req, res, next) => {
                 return durationA - durationB;
             });
         }
-
 
         res.status(200).json({
             status: true,
