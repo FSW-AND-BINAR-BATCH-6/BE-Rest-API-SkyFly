@@ -12,7 +12,7 @@ const calculateFlightDuration = (departureDate, arrivalDate) => {
 const sortShortestDuration = (duration) => {
     const [hours, minutes] = duration.split('h ');
     return parseInt(hours) * 60 + parseInt(minutes);
-}
+};
 
 const formatPrice = (price) => {
     return price ? price.toLocaleString("en-US", { style: "currency", currency: "IDR" }) : null;
@@ -21,5 +21,5 @@ const formatPrice = (price) => {
 module.exports = {
     calculateFlightDuration,
     sortShortestDuration,
-    formatPrice
+    formatPrice,
 };

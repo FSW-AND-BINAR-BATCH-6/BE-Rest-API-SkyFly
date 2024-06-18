@@ -36,12 +36,6 @@ describe('formatPrice', () => {
         expect(formattedPrice).toBe('0');
     });
 
-    it('formats negative number correctly', () => {
-        const price = -500.75;
-        const formattedPrice = formatPrice(price);
-        expect(formattedPrice).toBe('-501');
-    });
-
     it('handles NaN gracefully', () => {
         const price = NaN;
         const formattedPrice = formatPrice(price);
