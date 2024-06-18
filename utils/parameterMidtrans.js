@@ -13,6 +13,18 @@ const parameterMidtrans = async (body) => {
     data.passengers.map((data) => {
         let dob = new Date(data.dob);
         let validityPeriod = new Date(data.validityPeriod);
+        let price = data.price;
+        let type = data.type.toString().toUpperCase();
+
+        if (type === "CHILD" || type === "CHILDREN") {
+            price = data.price - data.price / 2;
+        } else if (
+            type === "INFRANT" ||
+            type === "BABY" ||
+            type === "INFRANTS"
+        ) {
+            price = 0;
+        }
 
         passengers.push({
             title: data.title,
@@ -26,7 +38,7 @@ const parameterMidtrans = async (body) => {
             familyName: data.familyName,
             citizenship: data.citizenship,
             issuingCountry: data.issuingCountry,
-            price: data.price,
+            price: price,
             quantity: data.quantity,
             seatId: data.seatId,
         });

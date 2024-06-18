@@ -1041,6 +1041,7 @@ const getAllTransactionByUserLoggedIn = async (req, res, next) => {
         let response = [];
         filteredTransactions.map((data) => {
             data.Transaction_Detail.map((detail) => {
+                console.log(detail);
                 const duration = calculateFlightDuration(
                     detail.flight.departureDate,
                     detail.flight.arrivalDate
@@ -1077,14 +1078,13 @@ const getAllTransactionByUserLoggedIn = async (req, res, next) => {
                                     code: detail.flight.plane.code,
                                     name: detail.flight.plane.name,
                                     image: detail.flight.plane.image,
+                                    terminal: detail.flight.plane.terminal,
                                 },
                                 transitAirport: detail.flight.transitAiport,
                                 departureAirport: {
                                     id: detail.flight.departureAirport.id,
                                     code: detail.flight.departureAirport.code,
                                     name: detail.flight.departureAirport.name,
-                                    terminal:
-                                        detail.flight.departureAirport.terminal,
                                 },
                                 destinationAirport: {
                                     id: detail.flight.destinationAirport.id,

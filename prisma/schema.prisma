@@ -24,6 +24,12 @@ enum TypeSeat {
     FIRST
 }
 
+enum PassengerType {
+    ADULT
+    CHILD
+    INFRANT
+}
+
 enum StatusTicket {
     PENDING // pending
     SUCCESS // settlement
@@ -150,6 +156,7 @@ model TicketTransactionDetail {
     seatId         String            @unique
     seat           FlightSeat        @relation(fields: [seatId], references: [id], onDelete: Cascade)
     name           String
+    type           PassengerType     @default(ADULT)
     familyName     String
     dob            DateTime
     citizenship    String
