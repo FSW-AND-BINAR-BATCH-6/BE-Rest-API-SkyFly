@@ -443,7 +443,6 @@ async function main() {
             departureCity: "Jakarta",
             departureCityCode: "CGK",
 
-
             arrivalDate: new Date("2024-06-20T16:00:00Z"),
             destinationCity: "Semarang",
             destinationCityCode: "SRG",
@@ -658,8 +657,8 @@ async function main() {
             destinationCityCode: "PKU",
             capacity: 72,
             price: 1350000,
-        }
-    ]
+        },
+    ];
 
     const flightSeats = [];
 
@@ -678,22 +677,22 @@ async function main() {
     }
 
     // create airports, airlines
-    let airlinesSeederData = []
+    let airlinesSeederData = [];
     for (const airline of airlines) {
         const data = {
             id: randomUUID(),
             code: airline.code,
             name: airline.name,
             terminal: `Terminal ${Math.floor(Math.random() * 3) + 1}`,
-            image: 'https://placehold.co/200x200'
+            image: "https://placehold.co/200x200",
         };
-        airlinesSeederData.push(data)
+        airlinesSeederData.push(data);
     }
 
     for (const data of airlinesSeederData) {
         await prisma.airline.create({
-            data: data
-        })
+            data: data,
+        });
     }
     await prisma.airport.createMany({ data: airports });
 
@@ -724,6 +723,26 @@ async function main() {
             })
         )
     );
+
+    await prisma.user.create({
+        data: {
+            id: randomUUID(),
+            name: "Mimin C1",
+            role: "ADMIN",
+            familyName: "Family",
+            phoneNumber: "628123456789",
+            auth: {
+                create: {
+                    id: randomUUID(),
+                    email: `miminc1@test.com`,
+                    password: secretHash("password"),
+                    isVerified: true,
+                    otpToken: null,
+                    secretToken: null,
+                },
+            },
+        },
+    });
 
     // create flight
     await Promise.all(
@@ -780,72 +799,80 @@ async function main() {
     );
 
     const users = await prisma.user.findMany();
-    const transactions = [
-        {
-            id: randomUUID(),
-            userId: users[0].id, // Replace with actual user ID
-            orderId: "order-123",
-            status: "pending",
-            totalPrice: 100.0,
-            bookingDate: new Date(),
-        },
-        {
-            id: randomUUID(),
-            userId: users[1].id, // Replace with actual user ID
-            orderId: "order-124",
-            status: "success",
-            totalPrice: 200.0,
-            bookingDate: new Date(),
-        },
-    ];
+    //! [START] Transaction
+    // const transactions = [
+    //     {
+    //         id: randomUUID(),
+    //         userId: users[0].id, // Replace with actual user ID
+    //         orderId: "order-123",
+    //         status: "pending",
+    //         totalPrice: 100.0,
+    //         tax: 3,
+    //         bookingDate: new Date(),
+    //         bookingCode: "ABC-12-DE",
+    //     },
+    //     {
+    //         id: randomUUID(),
+    //         userId: users[1].id, // Replace with actual user ID
+    //         orderId: "order-124",
+    //         status: "settlement",
+    //         totalPrice: 200.0,
+    //         tax: 6,
+    //         bookingDate: new Date(),
+    //         bookingCode: "ABC-11-EF",
+    //     },
+    // ];
 
-    const flight = await prisma.flight.findMany();
-    const seats = await prisma.flightSeat.findMany();
+    // const flight = await prisma.flight.findMany();
+    // const seats = await prisma.flightSeat.findMany();
+
     // Sample data for ticketTransactionDetail
-    const transactionDetails = [
-        {
-            id: randomUUID(),
-            transactionId: transactions[0].id,
-            price: 50.0,
-            name: "Seat A1",
-            seatId: seats[0].id,
-            familyName: "Smith",
-            flightId: flight[0].id,
-            dob: new Date("1990-01-01"),
-            citizenship: "USA",
-            passport: randomUUID(),
-            issuingCountry: "USA",
-            validityPeriod: new Date("2030-01-01"),
-        },
-        {
-            id: randomUUID(),
-            transactionId: transactions[1].id,
-            price: 100.0,
-            name: "Seat B1",
-            seatId: seats[1].id,
-            familyName: "Johnson",
-            flightId: flight[0].id,
-            dob: new Date("1985-01-01"),
-            citizenship: "Canada",
-            passport: randomUUID(),
-            issuingCountry: "Canada",
-            validityPeriod: new Date("2030-01-01"),
-        },
-    ];
+    // const transactionDetails = [
+    //     {
+    //         id: randomUUID(),
+    //         transactionId: transactions[0].id,
+    //         price: 100.0,
+    //         name: "Seat A1",
+    //         seatId: seats[0].id,
+    //         familyName: "Smith",
+    //         flightId: flight[0].id,
+    //         dob: new Date("1990-01-01"),
+    //         citizenship: "USA",
+    //         passport: randomUUID(),
+    //         issuingCountry: "USA",
+    //         validityPeriod: new Date("2030-01-01"),
+    //     },
+    //     {
+    //         id: randomUUID(),
+    //         transactionId: transactions[1].id,
+    //         price: 100.0,
+    //         name: "Seat B1",
+    //         seatId: seats[1].id,
+    //         familyName: "Johnson",
+    //         flightId: flight[0].id,
+    //         dob: new Date("1985-01-01"),
+    //         citizenship: "Canada",
+    //         passport: randomUUID(),
+    //         issuingCountry: "Canada",
+    //         validityPeriod: new Date("2030-01-01"),
+    //     },
+    // ];
 
-    // Insert ticketTransaction data
-    for (const transaction of transactions) {
-        await prisma.ticketTransaction.create({
-            data: transaction,
-        });
-    }
+    // // Insert ticketTransaction data
+    // for (const transaction of transactions) {
+    //     await prisma.ticketTransaction.create({
+    //         data: transaction,
+    //     });
+    // }
 
-    // Insert ticketTransactionDetail data
-    for (const detail of transactionDetails) {
-        await prisma.ticketTransactionDetail.create({
-            data: detail,
-        });
-    }
+    // // Insert ticketTransactionDetail data
+    // for (const detail of transactionDetails) {
+    //     await prisma.ticketTransactionDetail.create({
+    //         data: detail,
+    //     });
+    // }
+
+    //! [END] Transaction
 
     let notificationsData = [];
     const notificationType = [
