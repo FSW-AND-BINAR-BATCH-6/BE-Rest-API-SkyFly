@@ -1,92 +1,38 @@
-const { randomUUID } = require("crypto");
-const { extractSecondData } = require("./extractItems");
+const parameterMidtrans = async (body) => {
+    let data = body;
 
-const dataCustomerDetail = async (data) => {
-    const customer_details = {
-        first_name: data.fullName, // req.body.fullname
-        last_name: data.familyName, // req.body.familyName
-        phone: data.phoneNumber, // req.body.phoneNumber
-        email: data.email,
-        bookingDate: new Date().toISOString(),
+    let orderer = {
+        fullName: data.orderer.fullName,
+        familyName: data.orderer.familyName,
+        phoneNumber: data.orderer.phoneNumber,
+        email: data.orderer.email,
     };
 
-    return customer_details;
-};
+    let passengers = [];
 
-const dataItemDetail = async (data) => {
-    const secondData = extractSecondData(data);
+    data.passengers.map((data) => {
+        let dob = new Date(data.dob);
+        let validityPeriod = new Date(data.validityPeriod);
 
-    let item_details;
-    const first = {
-        dob: new Date(data.first_dob),
-        validityPeriod: new Date(data.first_validityPeriod),
-    };
+        passengers.push({
+            title: data.title,
+            name: `${data.title} ${data.fullName}`,
+            fullName: data.fullName,
+            dob: new Date(dob.getTime() + 7 * 60 * 60 * 1000).toISOString(),
+            passport: data.passport,
+            validityPeriod: new Date(
+                validityPeriod.getTime() + 7 * 60 * 60 * 1000
+            ).toISOString(),
+            familyName: data.familyName,
+            citizenship: data.citizenship,
+            issuingCountry: data.issuingCountry,
+            price: data.price,
+            quantity: data.quantity,
+            seatId: data.seatId,
+        });
+    });
 
-    if (Object.keys(secondData).length !== 0) {
-        const second = {
-            dob: new Date(data.second_dob),
-            validityPeriod: new Date(data.second_validityPeriod),
-        };
-
-        item_details = [
-            {
-                id: randomUUID(),
-                name: `${data.first_title} ${data.first_fullName}`,
-                dob: new Date(
-                    first.dob.getTime() + 7 * 60 * 60 * 1000
-                ).toISOString(),
-                validityPeriod: new Date(
-                    first.validityPeriod.getTime() + 7 * 60 * 60 * 1000
-                ).toISOString(),
-                familyName: data.first_familyName,
-                flightId: data.flightId,
-                citizenship: data.first_citizenship,
-                issuingCountry: data.first_issuingCountry,
-                price: data.first_price,
-                quantity: data.first_quantity,
-                seatId: data.first_seatId,
-            },
-            {
-                id: randomUUID(),
-                name: `${data.second_title} ${data.second_fullName}`,
-                dob: new Date(
-                    second.dob.getTime() + 7 * 60 * 60 * 1000
-                ).toISOString(),
-                validityPeriod: new Date(
-                    second.validityPeriod.getTime() + 7 * 60 * 60 * 1000
-                ).toISOString(),
-                familyName: data.second_familyName,
-                flightId: data.flightId,
-                citizenship: data.second_citizenship,
-                issuingCountry: data.second_issuingCountry,
-                price: data.second_price,
-                quantity: data.second_quantity,
-                seatId: data.second_seatId,
-            },
-        ];
-    } else {
-        item_details = [
-            {
-                id: randomUUID(),
-                name: `${data.first_title} ${data.first_fullName}`,
-                dob: new Date(
-                    first.dob.getTime() + 7 * 60 * 60 * 1000
-                ).toISOString(),
-                validityPeriod: new Date(
-                    first.validityPeriod.getTime() + 7 * 60 * 60 * 1000
-                ).toISOString(),
-                familyName: data.first_familyName,
-                flightId: data.flightId,
-                citizenship: data.first_citizenship,
-                issuingCountry: data.first_issuingCountry,
-                price: data.first_price,
-                quantity: data.first_quantity,
-                seatId: data.first_seatId,
-            },
-        ];
-    }
-
-    return item_details;
+    return { passengers, orderer };
 };
 
 const totalPrice = async (itemDetails) => {
@@ -98,7 +44,6 @@ const totalPrice = async (itemDetails) => {
 };
 
 module.exports = {
-    dataCustomerDetail,
-    dataItemDetail,
+    parameterMidtrans,
     totalPrice,
 };
