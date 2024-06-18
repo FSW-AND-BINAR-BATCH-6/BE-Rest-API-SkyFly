@@ -84,8 +84,8 @@ const createNewAirline = async (req, res, next) => {
         const newAirline = await prisma.airline.create({
             data: {
                 id: randomUUID(),
-                name: name,
-                code: code,
+                name,
+                code,
                 terminal,
                 image: imageUrl,
             },
@@ -103,12 +103,13 @@ const createNewAirline = async (req, res, next) => {
 
 const updateAirline = async (req, res, next) => {
     try {
-        const { name, code } = req.body;
+        const { name, code, terminal } = req.body;
+        const id = req.params.id;
 
         const file = req.file;
         const getAirline = await prisma.airline.findUnique({
             where: {
-                id: req.params.id,
+                id: id,
             },
         });
 
@@ -120,11 +121,12 @@ const updateAirline = async (req, res, next) => {
 
         const updateAirline = await prisma.airline.update({
             where: {
-                id: req.params.id,
+                id: id,
             },
             data: {
                 code,
                 name,
+                terminal,
                 image: imageUrl,
             },
         });
