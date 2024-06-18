@@ -357,7 +357,7 @@ async function main() {
     }
 
     // create airports, airlines
-    let airlinesSeederData = []
+    let airlinesSeederData = [];
     for (const airline of airlines) {
         const data = {
             id: randomUUID(),
@@ -365,13 +365,13 @@ async function main() {
             name: airline.name,
             terminal: `Terminal ${Math.floor(Math.random() * 3) + 1}`,
         };
-        airlinesSeederData.push(data)
+        airlinesSeederData.push(data);
     }
 
-    for(const data of airlinesSeederData){
+    for (const data of airlinesSeederData) {
         await prisma.airline.create({
-            data: data
-        })
+            data: data,
+        });
     }
     await prisma.airport.createMany({ data: airports });
 
@@ -465,15 +465,19 @@ async function main() {
             orderId: "order-123",
             status: "pending",
             totalPrice: 100.0,
+            tax: 3,
             bookingDate: new Date(),
+            bookingCode: "ABC-12-DE",
         },
         {
             id: randomUUID(),
             userId: users[1].id, // Replace with actual user ID
             orderId: "order-124",
-            status: "success",
+            status: "settlement",
             totalPrice: 200.0,
+            tax: 6,
             bookingDate: new Date(),
+            bookingCode: "ABC-11-EF",
         },
     ];
 
@@ -484,7 +488,7 @@ async function main() {
         {
             id: randomUUID(),
             transactionId: transactions[0].id,
-            price: 50.0,
+            price: 100.0,
             name: "Seat A1",
             seatId: seats[0].id,
             familyName: "Smith",

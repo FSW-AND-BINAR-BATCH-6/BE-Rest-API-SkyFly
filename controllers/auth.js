@@ -74,7 +74,7 @@ const handleRegister = async (req, res, next) => {
         });
 
         // sending email
-        const urlTokenVerification = `${process.env.BASE_URL}/auth/verified?token=${dataUrl.token}`;
+        const urlTokenVerification = `${process.env.BASE_URL_FRONTEND}/otp?token=${dataUrl.token}`;
         let html = await getHtml("verifyOtp.ejs", {
             email,
             OTPToken,
@@ -207,6 +207,7 @@ const handleLogin = async (req, res, next) => {
             name: userAccount.user.name,
             email: userAccount.email,
             phoneNumber: userAccount.user.phoneNumber,
+            role: userAccount.user.role,
         };
 
         // check password
@@ -293,7 +294,7 @@ const resendOTP = async (req, res, next) => {
         });
 
         // sending email
-        const urlTokenVerification = `${process.env.BASE_URL}/auth/verified?token=${dataUrl.token}`;
+        const urlTokenVerification = `${process.env.BASE_URL_FRONTEND}/otp?token=${dataUrl.token}`;
         let html = await getHtml("verifyOtp.ejs", {
             email: payload.email,
             OTPToken,
@@ -423,7 +424,7 @@ const sendResetPassword = async (req, res, next) => {
         });
 
         // sending email
-        const urlTokenVerification = `${process.env.BASE_URL}/auth/resetPassword?token=${dataUrl.token}`;
+        const urlTokenVerification = `${process.env.BASE_URL_FRONTEND}/resetPassword?token=${dataUrl.token}`;
 
         let html = await getHtml("resetPassword.ejs", {
             email: payload.email,
@@ -615,7 +616,7 @@ const sendOTPSMS = async (req, res, next) => {
             token: generateJWT(newPayload),
         };
 
-        const urlTokenVerification = `${process.env.BASE_URL}/auth/verified?token=${dataUrl.token}`;
+        const urlTokenVerification = `${process.env.BASE_URL_FRONTEND}/otp?token=${dataUrl.token}`;
 
         smsHandler(phoneNumber, OTPToken, urlTokenVerification);
 

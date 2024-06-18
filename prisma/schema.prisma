@@ -132,8 +132,10 @@ model TicketTransaction {
     id                 String                    @id @default(cuid())
     orderId            String                    @unique
     totalPrice         Float
+    tax                Float
     status             String
     bookingDate        DateTime
+    bookingCode        String
     User               User?                     @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId             String?
     Transaction_Detail TicketTransactionDetail[]
@@ -151,9 +153,9 @@ model TicketTransactionDetail {
     familyName     String
     dob            DateTime
     citizenship    String
-    passport       String
-    issuingCountry String
-    validityPeriod DateTime
+    passport       String?
+    issuingCountry String?
+    validityPeriod DateTime?
     flightId       String
     flight         Flight?           @relation(fields: [flightId], references: [id])
 }

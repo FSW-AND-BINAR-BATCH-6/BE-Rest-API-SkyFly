@@ -4,8 +4,11 @@ const { coreApi, snap } = require("../config/coreApiMidtrans");
 const createHttpError = require("http-errors");
 const { totalPrice, parameterMidtrans } = require("../utils/parameterMidtrans");
 const { unescape } = require("querystring");
-const { PrismaClient } = require("@prisma/client");
 const { checkSeatAvailability } = require("../utils/checkSeat");
+const { formatDate, formatTime } = require("../utils/formatDate");
+const { calculateFlightDuration } = require("../utils/calculateDuration");
+const { PrismaClient } = require("@prisma/client");
+const { generateBookingCode } = require("../utils/generateBookingCode");
 const prisma = new PrismaClient();
 
 const getTransaction = async (req, res, next) => {
@@ -377,6 +380,16 @@ const snapPayment = async (req, res, next) => {
         };
 
         try {
+            const bookingCode = await generateBookingCode(passengers);
+
+            // [start] tax
+            let tax =
+                parseFloat(parameter.transaction_details.gross_amount) *
+                (3 / 100);
+            let totalPrice =
+                parseFloat(parameter.transaction_details.gross_amount) - tax;
+            // [end] tax
+
             await prisma.$transaction(async (tx) => {
                 const response = await snap.createTransaction(parameter);
 
@@ -385,10 +398,10 @@ const snapPayment = async (req, res, next) => {
                         userId: req.user.id, // req.user.id (from user loggedIn)
                         orderId: parameter.transaction_details.order_id,
                         status: "pending",
-                        totalPrice: parseFloat(
-                            parameter.transaction_details.gross_amount
-                        ),
+                        totalPrice,
+                        tax: tax,
                         bookingDate: new Date().toISOString(),
+                        bookingCode,
                     },
                 });
 
@@ -566,16 +579,28 @@ const bankTransfer = async (req, res, next) => {
         }
 
         try {
+            const bookingCode = await generateBookingCode(passengers);
+
+            // [start] tax
+            let tax =
+                parseFloat(parameter.transaction_details.gross_amount) *
+                (3 / 100);
+            let totalPrice =
+                parseFloat(parameter.transaction_details.gross_amount) - tax;
+            // [end] tax
+
             await prisma.$transaction(async (tx) => {
-                const response = await coreApi.charge(parameter);
+                const response = await snap.createTransaction(parameter);
 
                 const transaction = await tx.ticketTransaction.create({
                     data: {
                         userId: req.user.id, // req.user.id (from user loggedIn)
-                        orderId: response.order_id,
-                        status: response.transaction_status,
-                        totalPrice: parseFloat(response.gross_amount),
+                        orderId: parameter.transaction_details.order_id,
+                        status: "pending",
+                        totalPrice,
+                        tax: tax,
                         bookingDate: new Date().toISOString(),
+                        bookingCode,
                     },
                 });
 
@@ -712,16 +737,28 @@ const creditCard = async (req, res, next) => {
         };
 
         try {
+            const bookingCode = await generateBookingCode(passengers);
+
+            // [start] tax
+            let tax =
+                parseFloat(parameter.transaction_details.gross_amount) *
+                (3 / 100);
+            let totalPrice =
+                parseFloat(parameter.transaction_details.gross_amount) - tax;
+            // [end] tax
+
             await prisma.$transaction(async (tx) => {
-                const response = await coreApi.charge(parameter);
+                const response = await snap.createTransaction(parameter);
 
                 const transaction = await tx.ticketTransaction.create({
                     data: {
                         userId: req.user.id, // req.user.id (from user loggedIn)
-                        orderId: response.order_id,
-                        status: response.transaction_status,
-                        totalPrice: parseFloat(response.gross_amount),
+                        orderId: parameter.transaction_details.order_id,
+                        status: "pending",
+                        totalPrice,
+                        tax: tax,
                         bookingDate: new Date().toISOString(),
+                        bookingCode,
                     },
                 });
 
@@ -842,16 +879,28 @@ const gopay = async (req, res, next) => {
         };
 
         try {
+            const bookingCode = await generateBookingCode(passengers);
+
+            // [start] tax
+            let tax =
+                parseFloat(parameter.transaction_details.gross_amount) *
+                (3 / 100);
+            let totalPrice =
+                parseFloat(parameter.transaction_details.gross_amount) - tax;
+            // [end] tax
+
             await prisma.$transaction(async (tx) => {
-                const response = await coreApi.charge(parameter);
+                const response = await snap.createTransaction(parameter);
 
                 const transaction = await tx.ticketTransaction.create({
                     data: {
                         userId: req.user.id, // req.user.id (from user loggedIn)
-                        orderId: response.order_id,
-                        status: response.transaction_status,
-                        totalPrice: parseFloat(response.gross_amount),
+                        orderId: parameter.transaction_details.order_id,
+                        status: "pending",
+                        totalPrice,
+                        tax: tax,
                         bookingDate: new Date().toISOString(),
+                        bookingCode,
                     },
                 });
 
@@ -916,8 +965,6 @@ const gopay = async (req, res, next) => {
     }
 };
 
-//TODO: dashboard action
-
 const getAllTransactionByUserLoggedIn = async (req, res, next) => {
     // get all transaction data from ticketTransaction & include ticketTransaction detail
 
@@ -963,7 +1010,14 @@ const getAllTransactionByUserLoggedIn = async (req, res, next) => {
                     include: {
                         flight: {
                             where: flightCondition,
+                            include: {
+                                plane: true,
+                                transitAirport: true,
+                                departureAirport: true,
+                                destinationAirport: true,
+                            },
                         },
+                        seat: true,
                     },
                 },
             },
@@ -984,6 +1038,76 @@ const getAllTransactionByUserLoggedIn = async (req, res, next) => {
             )
         );
 
+        let response = [];
+        filteredTransactions.map((data) => {
+            data.Transaction_Detail.map((detail) => {
+                const duration = calculateFlightDuration(
+                    detail.flight.departureDate,
+                    detail.flight.arrivalDate
+                );
+                let bookingCode = `${detail.flight.code}-${detail.flight.plane.code}-${detail.seat.seatNumber}`;
+
+                response.push({
+                    id: data.id,
+                    orderId: data.orderId,
+                    userId: data.userId,
+                    totalPrice: data.totalPrice,
+                    status: data.status,
+                    bookingDate: formatDate(data.bookingDate),
+                    bookingTime: formatTime(data.bookingDate),
+                    bookingCode,
+                    Transaction_Detail: [
+                        {
+                            id: detail.id,
+                            transactionId: detail.transactionId,
+                            price: detail.price,
+                            name: detail.name,
+                            familyName: detail.familyName,
+                            dob: formatDate(detail.dob),
+                            citizenship: detail.citizenship,
+                            passport: detail.passport,
+                            issuingCountry: detail.issuingCountry,
+                            validityPeriod: formatDate(detail.validityPeriod),
+                            flight: {
+                                id: detail.flight.id,
+                                code: detail.flight.code,
+                                flightDuration: duration,
+                                airline: {
+                                    id: detail.flight.plane.id,
+                                    code: detail.flight.plane.code,
+                                    name: detail.flight.plane.name,
+                                    image: detail.flight.plane.image,
+                                },
+                                transitAirport: detail.flight.transitAiport,
+                                departureAirport: {
+                                    id: detail.flight.departureAirport.id,
+                                    code: detail.flight.departureAirport.code,
+                                    name: detail.flight.departureAirport.name,
+                                    terminal:
+                                        detail.flight.departureAirport.terminal,
+                                },
+                                destinationAirport: {
+                                    id: detail.flight.destinationAirport.id,
+                                    code: detail.flight.destinationAirport.code,
+                                    name: detail.flight.destinationAirport.name,
+                                    terminal:
+                                        detail.flight.destinationAirport
+                                            .terminal,
+                                },
+                            },
+                            seat: {
+                                id: detail.seat.id,
+                                flightId: detail.seat.id,
+                                seatNumber: detail.seat.seatNumber,
+                                status: detail.seat.status,
+                                type: detail.seat.type,
+                                price: detail.seat.price,
+                            },
+                        },
+                    ],
+                });
+            });
+        });
         // console.log(filteredTransaction);
 
         res.status(200).json({
@@ -998,9 +1122,9 @@ const getAllTransactionByUserLoggedIn = async (req, res, next) => {
                 prevPage: page > 1 ? page - 1 : null,
             },
             data:
-                filteredTransactions.length !== 0
-                    ? filteredTransactions
-                    : "transaction data is empty",
+                filteredTransactions.length <= 0
+                    ? "transaction data is empty"
+                    : response,
         });
     } catch (error) {
         next(
@@ -1010,6 +1134,8 @@ const getAllTransactionByUserLoggedIn = async (req, res, next) => {
         );
     }
 };
+
+//TODO: dashboard action
 
 const getAllTransaction = async (req, res, next) => {
     try {
