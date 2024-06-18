@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const authentication = require("../middlewares/authentication");
 const checkRole = require("../middlewares/checkrole");
+const multer = require("multer");
 
 const {
     createNewAirline,
@@ -15,6 +16,8 @@ const {
     updateAirlineSchema,
 } = require("../utils/joiValidation");
 
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
 
 router
     .route("/")
@@ -22,6 +25,7 @@ router
     .post(
         authentication,
         checkRole(["ADMIN"]),
+        upload.single("image"),
         validator(createAirlineSchema),
         createNewAirline
     );
@@ -31,6 +35,7 @@ router
     .put(
         authentication,
         checkRole(["ADMIN"]),
+        upload.single("image"),
         validator(updateAirlineSchema),
         updateAirline
     )

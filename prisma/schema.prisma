@@ -63,6 +63,7 @@ model Airline {
     code     String   @default("ABC-123")
     name     String
     terminal String
+    image    String
     flight   Flight[]
 }
 

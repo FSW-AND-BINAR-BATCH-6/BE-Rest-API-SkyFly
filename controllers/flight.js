@@ -217,6 +217,7 @@ const getAllFlight = async (req, res, next) => {
                 plane: {
                     name: flight.plane.name,
                     code: flight.plane.code,
+                    terminal: flight.plane.terminal,
                     image: flight.plane.image,
                 },
                 departureDate: formatDate(flight.departureDate),
