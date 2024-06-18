@@ -4,6 +4,7 @@ const { PrismaClient } = require("@prisma/client");
 const { randomUUID } = require("crypto");
 const prisma = new PrismaClient();
 
+
 jest.mock("@prisma/client", () => {
     const mPrismaClient = {
         airport: {
@@ -20,6 +21,10 @@ jest.mock("@prisma/client", () => {
         PrismaClient: jest.fn(() => mPrismaClient),
     };
 });
+
+jest.mock("../../../lib/supabase", () => ({
+    uploadFile: jest.fn(),
+}));
 
 jest.mock("crypto", () => ({
     randomUUID: jest.fn(),
