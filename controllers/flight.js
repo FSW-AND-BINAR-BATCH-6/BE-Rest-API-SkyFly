@@ -229,6 +229,7 @@ const getAllFlight = async (req, res, next) => {
                     country: flight.departureAirport.country,
                     city: flight.departureAirport.city,
                     continent: flight.departureAirport.continent,
+                    image: flight.departureAirport.image,
                 },
                 transit: flight.transitAirport
                     ? {
@@ -243,6 +244,7 @@ const getAllFlight = async (req, res, next) => {
                             country: flight.transitAirport.country,
                             city: flight.transitAirport.city,
                             continent: flight.transitAirport.continent,
+                            image: flight.transitAirport.image,
                         },
                     }
                     : null,
@@ -255,6 +257,7 @@ const getAllFlight = async (req, res, next) => {
                     country: flight.destinationAirport.country,
                     city: flight.destinationAirport.city,
                     continent: flight.destinationAirport.continent,
+                    image: flight.destinationAirport.image,
                 },
                 capacity: flight.capacity,
                 discount: flight.discount,
@@ -340,6 +343,7 @@ const getFlightById = async (req, res, next) => {
                 country: flight.departureAirport.country,
                 city: flight.departureAirport.city,
                 continent: flight.departureAirport.continent,
+                image: flight.departureAirport.image,
             },
             transit: flight.transitAirport
                 ? {
@@ -354,6 +358,7 @@ const getFlightById = async (req, res, next) => {
                         country: flight.transitAirport.country,
                         city: flight.transitAirport.city,
                         continent: flight.transitAirport.continent,
+                        image: flight.transitAirport.image,
                     },
                 }
                 : null,
@@ -366,6 +371,7 @@ const getFlightById = async (req, res, next) => {
                 country: flight.destinationAirport.country,
                 city: flight.destinationAirport.city,
                 continent: flight.destinationAirport.continent,
+                image: flight.destinationAirport.image,
             },
             capacity: flight.capacity,
             discount: flight.discount,
@@ -592,19 +598,20 @@ const getFavoriteDestinations = async (req, res, next) => {
             const flightDetails = {
                 flightId: destination.flight.id,
                 from: {
-                    departureCity: destination.flight.departureAirport.city,
                     departureDate: destination.flight.departureDate,
+                    departureCity: destination.flight.departureAirport.city,
                 },
                 to: {
-                    arrivalCity: destination.flight.destinationAirport.city,
                     arrivalDate: destination.flight.arrivalDate,
+                    arrivalCity: destination.flight.destinationAirport.city,
                     continent: destination.flight.destinationAirport.continent,
+                    image: destination.flight.destinationAirport.image,
                 },
                 plane: {
                     airline: destination.flight.plane.name,
                     price: destination.flight.price,
                     discount: destination.flight.discount,
-                    image: destination.flight.plane.image,
+                    terminal: destination.flight.plane.terminal,
                 },
                 transactionCount: destination.transactionCount,
             };

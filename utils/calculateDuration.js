@@ -15,9 +15,8 @@ const sortShortestDuration = (duration) => {
 }
 
 const formatPrice = (price) => {
-    return price.toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    return price ? price.toLocaleString("en-US", { style: "currency", currency: "IDR" }) : null;
 };
-
 module.exports = {
     calculateFlightDuration,
     sortShortestDuration,
