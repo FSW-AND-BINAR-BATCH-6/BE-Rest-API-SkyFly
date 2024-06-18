@@ -665,19 +665,14 @@ async function main() {
 
     const seatRows = 12;
     const seatLetters = ["A", "B", "C", "D", "E", "F"];
-    const seatClasses = ["ECONOMY", "BUSINESS", "FIRST"];
-
-    function getRandomClass() {
-        return seatClasses[Math.floor(Math.random() * seatClasses.length)];
-    }
 
     for (let i = 1; i <= seatRows; i++) {
         for (let letter of seatLetters) {
             flightSeats.push({
                 seatNumber: `${i}${letter}`,
                 status: "AVAILABLE",
-                type: getRandomClass(),
-                price: 100000, 
+                type: "ECONOMY",
+                price: 100000,
             });
         }
     }
