@@ -8,7 +8,6 @@ const { generateTOTP, validateTOTP } = require("../../../utils/otp");
 const { secretCompare, secretHash } = require("../../../utils/hashSalt");
 const { generateJWT } = require("../../../utils/jwtGenerate");
 const { authorizationUrl } = require("../../../lib/googleOauth2");
-const cors = require("cors")
 
 const authController = require("../../../controllers/auth");
 const { sendEmail } = require("../../../lib/nodeMailer");

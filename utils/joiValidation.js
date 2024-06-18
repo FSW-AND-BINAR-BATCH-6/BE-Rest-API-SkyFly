@@ -203,6 +203,7 @@ const createAirlineSchema = Joi.object({
         .max(2)
         .regex(/^(?!\s*$)[a-zA-Z\s]+$/)
         .required(),
+    terminal: Joi.string().required(),
 });
 
 const updateAirlineSchema = Joi.object({
@@ -214,6 +215,7 @@ const updateAirlineSchema = Joi.object({
         .min(2)
         .max(2)
         .regex(/^(?!\s*$)[a-zA-Z\s]+$/),
+    terminal: Joi.string().required(),
 });
 
 // Airport

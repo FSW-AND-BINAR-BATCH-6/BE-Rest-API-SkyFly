@@ -116,7 +116,7 @@ const updateNotifications = async (req, res, next) => {
 
         res.status(201).json({
             status: true,
-            message: "Airline updated successfully",
+            message: "Notifications updated successfully",
             data: updateNotifications,
         });
     } catch (error) {

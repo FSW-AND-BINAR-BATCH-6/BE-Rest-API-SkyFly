@@ -59,7 +59,7 @@ const getAirlineById = async (req, res, next) => {
 
 const createNewAirline = async (req, res, next) => {
     try {
-        const { name, code } = req.body;
+        const { name, code, terminal } = req.body;
         const file = req.file;
 
         const getAirline = await prisma.airline.findFirst({
@@ -86,6 +86,7 @@ const createNewAirline = async (req, res, next) => {
                 id: randomUUID(),
                 name: name,
                 code: code,
+                terminal,
                 image: imageUrl,
             },
         });
