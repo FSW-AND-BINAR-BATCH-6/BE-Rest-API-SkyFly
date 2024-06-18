@@ -1,10 +1,12 @@
+const { randomUUID } = require("crypto");
+
 const parameterMidtrans = async (body) => {
     let data = body;
 
     let orderer = {
-        fullName: data.orderer.fullName,
-        familyName: data.orderer.familyName,
-        phoneNumber: data.orderer.phoneNumber,
+        first_name: data.orderer.fullName,
+        last_name: data.orderer.familyName,
+        phone: data.orderer.phoneNumber,
         email: data.orderer.email,
     };
 
@@ -27,6 +29,7 @@ const parameterMidtrans = async (body) => {
         }
 
         passengers.push({
+            id: randomUUID(),
             title: data.title,
             name: `${data.title} ${data.fullName}`,
             fullName: data.fullName,

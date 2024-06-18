@@ -443,7 +443,6 @@ async function main() {
             departureCity: "Jakarta",
             departureCityCode: "CGK",
 
-
             arrivalDate: new Date("2024-06-20T16:00:00Z"),
             destinationCity: "Semarang",
             destinationCityCode: "SRG",
@@ -658,8 +657,8 @@ async function main() {
             destinationCityCode: "PKU",
             capacity: 72,
             price: 1350000,
-        }
-    ]
+        },
+    ];
 
     const flightSeats = [];
 
@@ -685,7 +684,7 @@ async function main() {
             code: airline.code,
             name: airline.name,
             terminal: `Terminal ${Math.floor(Math.random() * 3) + 1}`,
-            image: 'https://placehold.co/200x200'
+            image: "https://placehold.co/200x200",
         };
         airlinesSeederData.push(data);
     }
@@ -724,6 +723,26 @@ async function main() {
             })
         )
     );
+
+    await prisma.user.create({
+        data: {
+            id: randomUUID(),
+            name: "Mimin C1",
+            role: "ADMIN",
+            familyName: "Family",
+            phoneNumber: "628123456789",
+            auth: {
+                create: {
+                    id: randomUUID(),
+                    email: `miminc1@test.com`,
+                    password: secretHash("password"),
+                    isVerified: true,
+                    otpToken: null,
+                    secretToken: null,
+                },
+            },
+        },
+    });
 
     // create flight
     await Promise.all(
@@ -779,8 +798,8 @@ async function main() {
         })
     );
 
+    const users = await prisma.user.findMany();
     //! [START] Transaction
-    // const users = await prisma.user.findMany();
     // const transactions = [
     //     {
     //         id: randomUUID(),

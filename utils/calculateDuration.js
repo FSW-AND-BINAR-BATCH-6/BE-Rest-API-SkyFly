@@ -20,9 +20,6 @@ const formatPrice = (price) => {
     return price
         ? price.toLocaleString("en-US", { style: "currency", currency: "IDR" })
         : null;
-    return price
-        ? price.toLocaleString("en-US", { style: "currency", currency: "IDR" })
-        : null;
 };
 
 module.exports = {

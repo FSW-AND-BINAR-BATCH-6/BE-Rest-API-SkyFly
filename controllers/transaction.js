@@ -333,6 +333,7 @@ const notification = async (req, res) => {
 const snapPayment = async (req, res, next) => {
     try {
         let { flightId } = req.query;
+        let { type } = req.body;
 
         const { passengers, orderer } = await parameterMidtrans(req.body);
 
@@ -413,6 +414,7 @@ const snapPayment = async (req, res, next) => {
                                 transactionId: transaction.id,
                                 price: parseFloat(passenger.price),
                                 name: passenger.name,
+                                type,
                                 seatId: passenger.seatId,
                                 familyName: passenger.familyName,
                                 flightId,
@@ -555,9 +557,7 @@ const bankTransfer = async (req, res, next) => {
                         gross_amount: await totalPrice(passengers),
                         order_id: randomUUID(),
                     },
-                    customer_details: {
-                        ...orderer,
-                    },
+                    customer_details: orderer,
                     item_details: passengers,
                 };
             }
@@ -571,9 +571,7 @@ const bankTransfer = async (req, res, next) => {
                     gross_amount: await totalPrice(passengers),
                     order_id: randomUUID(),
                 },
-                customer_details: {
-                    ...orderer,
-                },
+                customer_details: orderer,
                 item_details: passengers,
             };
         }
@@ -590,7 +588,7 @@ const bankTransfer = async (req, res, next) => {
             // [end] tax
 
             await prisma.$transaction(async (tx) => {
-                const response = await snap.createTransaction(parameter);
+                const response = await coreApi.charge(parameter);
 
                 const transaction = await tx.ticketTransaction.create({
                     data: {
@@ -612,6 +610,7 @@ const bankTransfer = async (req, res, next) => {
                                 transactionId: transaction.id,
                                 price: parseFloat(passenger.price),
                                 name: passenger.name,
+                                type: data.type,
                                 seatId: passenger.seatId,
                                 familyName: passenger.familyName,
                                 flightId,
@@ -644,8 +643,6 @@ const bankTransfer = async (req, res, next) => {
                     status: true,
                     message: "Bank VA created successfully",
                     data: {
-                        flightId: flightId,
-                        seatId: seatId,
                         payment_type: response.payment_type,
                         transaction_id: response.transaction_id,
                         order_id: response.order_id,
@@ -655,6 +652,8 @@ const bankTransfer = async (req, res, next) => {
                         payment_status: response.fraud_status,
                         expiry_time: response.expiry_time,
                         va_numbers: response.va_numbers,
+                        flightId: flightId,
+                        seatId: seatId,
                         orderer: orderer,
                         passengers: passengers,
                     },
@@ -748,7 +747,7 @@ const creditCard = async (req, res, next) => {
             // [end] tax
 
             await prisma.$transaction(async (tx) => {
-                const response = await snap.createTransaction(parameter);
+                const response = await coreApi.charge(parameter);
 
                 const transaction = await tx.ticketTransaction.create({
                     data: {
@@ -770,6 +769,7 @@ const creditCard = async (req, res, next) => {
                                 transactionId: transaction.id,
                                 price: parseFloat(passenger.price),
                                 name: passenger.name,
+                                type: data.type,
                                 seatId: passenger.seatId,
                                 familyName: passenger.familyName,
                                 flightId,
@@ -810,8 +810,8 @@ const creditCard = async (req, res, next) => {
                         expiry_time: response.expiry_time,
                         redirect_url: response.redirect_url,
                         bank: response.bank,
-                        orderer: orderer,
-                        passengers: passengers,
+                        orderer,
+                        passengers,
                     },
                 });
             });
@@ -834,6 +834,7 @@ const creditCard = async (req, res, next) => {
 const gopay = async (req, res, next) => {
     try {
         let { flightId } = req.query;
+        let { type } = req.body;
 
         const { passengers, orderer } = await parameterMidtrans(req.body);
 
@@ -890,7 +891,7 @@ const gopay = async (req, res, next) => {
             // [end] tax
 
             await prisma.$transaction(async (tx) => {
-                const response = await snap.createTransaction(parameter);
+                const response = await coreApi.charge(parameter);
 
                 const transaction = await tx.ticketTransaction.create({
                     data: {
@@ -912,6 +913,7 @@ const gopay = async (req, res, next) => {
                                 transactionId: transaction.id,
                                 price: parseFloat(passenger.price),
                                 name: passenger.name,
+                                type,
                                 seatId: passenger.seatId,
                                 familyName: passenger.familyName,
                                 flightId,
@@ -949,6 +951,7 @@ const gopay = async (req, res, next) => {
                         payment_status: response.fraud_status,
                         expiry_time: response.expiry_time,
                         action: response.actions,
+                        orderer,
                         passengers,
                     },
                 });
