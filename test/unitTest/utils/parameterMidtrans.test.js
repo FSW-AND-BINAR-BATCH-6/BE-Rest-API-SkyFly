@@ -1,131 +1,77 @@
-const { dataCustomerDetail, dataItemDetail, totalPrice } = require('../../../utils/parameterMidtrans');
-const { randomUUID } = require('crypto');
-const { extractSecondData } = require('../../../utils/extractItems');
+const {
+    totalPrice,
+    parameterMidtrans,
+} = require("../../../utils/parameterMidtrans");
 
-jest.mock('crypto', () => ({
+jest.mock("crypto", () => ({
     randomUUID: jest.fn(),
 }));
 
-jest.mock('../../../utils/extractItems', () => ({
-    extractSecondData: jest.fn(),
-}));
-
-describe('dataCustomerDetail', () => {
-    it('should return customer details correctly', async () => {
-        const input = {
-            fullName: 'Abdur Rohim',
-            familyName: 'Rohim',
-            phoneNumber: '1234567890',
-            email: 'rohimjoinrahmat@example.com',
+describe("parameterMidtrans function", () => {
+    it("should return formatted orderer and passenger data", async () => {
+        const body = {
+            orderer: {
+                fullName: "John Doe",
+                familyName: "Doe",
+                phoneNumber: "+1234567890",
+                email: "john.doe@example.com",
+            },
+            passengers: [
+                {
+                    title: "Mr.",
+                    fullName: "Alice Smith",
+                    dob: "2000-01-01", // Date string or object
+                    passport: "123456789",
+                    validityPeriod: "2025-01-01", // Date string or object
+                    familyName: "Smith",
+                    citizenship: "USA",
+                    issuingCountry: "USA",
+                    price: 100,
+                    quantity: 1,
+                    seatId: "A1",
+                },
+            ],
         };
-        const result = await dataCustomerDetail(input);
-        expect(result).toEqual({
-            first_name: 'Abdur Rohim',
-            last_name: 'Rohim',
-            phone: '1234567890',
-            email: 'rohimjoinrahmat@example.com',
-            bookingDate: expect.any(String),
-        });
+
+        let dob = new Date(body.passengers[0].dob);
+        let validityPeriod = new Date(body.passengers[0].validityPeriod);
+
+        const expectedResult = {
+            orderer: {
+                fullName: "John Doe",
+                familyName: "Doe",
+                phoneNumber: "+1234567890",
+                email: "john.doe@example.com",
+            },
+            passengers: [
+                {
+                    title: "Mr.",
+                    name: "Mr. Alice Smith", // Adjusted name format
+                    fullName: "Alice Smith",
+                    dob: new Date(
+                        dob.getTime() + 7 * 60 * 60 * 1000
+                    ).toISOString(), // Ensured Date object
+                    passport: "123456789",
+                    validityPeriod: new Date(
+                        validityPeriod.getTime() + 7 * 60 * 60 * 1000
+                    ).toISOString(), // Ensured Date object
+                    familyName: "Smith",
+                    citizenship: "USA",
+                    issuingCountry: "USA",
+                    price: 100,
+                    quantity: 1,
+                    seatId: "A1",
+                },
+            ],
+        };
+
+        const actualResult = await parameterMidtrans(body);
+        expect(actualResult).toEqual(expectedResult);
     });
 });
 
-describe('dataItemDetail', () => {
-    it('should return item details with one set of data correctly', async () => {
-        randomUUID.mockReturnValue("tigris")
-        extractSecondData.mockReturnValue({});
-        const input = {
-            first_dob: '2022-01-01',
-            first_validityPeriod: '2024-01-01',
-            first_title: 'Mr.',
-            first_fullName: 'Abdur Rohim',
-            first_familyName: 'Rohim',
-            flightId: 'flight-123',
-            first_citizenship: 'WAKANDA',
-            first_issuingCountry: 'WAKANDA',
-            first_price: 100,
-            first_quantity: 2,
-            first_seatId: 'seat-123',
-        };
-        const result = await dataItemDetail(input);
-        expect(result).toEqual([
-            {
-                id: 'tigris',
-                name: 'Mr. Abdur Rohim',
-                dob: '2022-01-01T07:00:00.000Z',
-                validityPeriod: '2024-01-01T07:00:00.000Z',
-                familyName: 'Rohim',
-                flightId: 'flight-123',
-                citizenship: 'WAKANDA',
-                issuingCountry: 'WAKANDA',
-                price: 100,
-                quantity: 2,
-                seatId: 'seat-123',
-            },
-        ]);
-    });
-
-    it('should return item details with two sets of data correctly', async () => {
-        extractSecondData.mockReturnValue({
-            second_dob: '2023-01-01',
-            second_validityPeriod: '2025-01-01',
-        });
-        const input = {
-            first_dob: '2022-01-01',
-            first_validityPeriod: '2024-01-01',
-            first_title: 'Mr.',
-            first_fullName: 'Abdur Rohim',
-            first_familyName: 'Rohim',
-            flightId: 'flight-123',
-            first_citizenship: 'WAKANDA',
-            first_issuingCountry: 'WAKANDA',
-            first_price: 100,
-            first_quantity: 2,
-            first_seatId: 'seat-123',
-            second_dob: '2023-01-01',
-            second_validityPeriod: '2025-01-01',
-            second_title: 'Ms.',
-            second_fullName: 'Jane Rohim',
-            second_familyName: 'Rohim',
-            second_citizenship: 'Canada',
-            second_issuingCountry: 'Canada',
-            second_price: 150,
-            second_quantity: 1,
-            second_seatId: 'seat-456',
-        };
-        const result = await dataItemDetail(input);
-        expect(result).toEqual([
-            {
-                id: 'tigris',
-                name: 'Mr. Abdur Rohim',
-                dob: '2022-01-01T07:00:00.000Z',
-                validityPeriod: '2024-01-01T07:00:00.000Z',
-                familyName: 'Rohim',
-                flightId: 'flight-123',
-                citizenship: 'WAKANDA',
-                issuingCountry: 'WAKANDA',
-                price: 100,
-                quantity: 2,
-                seatId: 'seat-123',
-            },
-            {
-                id: 'tigris',
-                name: 'Ms. Jane Rohim',
-                dob: '2023-01-01T07:00:00.000Z',
-                validityPeriod: '2025-01-01T07:00:00.000Z',
-                familyName: 'Rohim',
-                flightId: 'flight-123',
-                citizenship: 'Canada',
-                issuingCountry: 'Canada',
-                price: 150,
-                quantity: 1,
-                seatId: 'seat-456',
-            },
-        ]);
-    });
-});
-
-describe('totalPrice', () => {
-    it('should calculate total price correctly', async () => {
+describe("totalPrice", () => {
+    it("should calculate total price correctly", async () => {
         const input = [
             { price: 100, quantity: 2 },
             { price: 150, quantity: 1 },
@@ -134,7 +80,7 @@ describe('totalPrice', () => {
         expect(result).toBe(350);
     });
 
-    it('should return zero for empty input', async () => {
+    it("should return zero for empty input", async () => {
         const input = [];
         const result = await totalPrice(input);
         expect(result).toBe(0);
