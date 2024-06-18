@@ -1,7 +1,6 @@
 const router = require("express").Router();
 const swaggerUI = require("swagger-ui-express");
 const swaggerDocument = require("../docs/swagger.json");
-
 const airline = require("./airline");
 const auth = require("./auth");
 const user = require("./user");
@@ -10,6 +9,7 @@ const flight = require("./flight");
 const airport = require("./airports");
 const flightSeat = require("./flightSeat");
 const ticket = require("./ticket");
+const notifications = require("./notifications")
 
 router.get("/documentation.json", (req, res) => res.send(swaggerDocument));
 router.use(
@@ -40,5 +40,6 @@ router.use("/api/v1/flights", flight);
 router.use("/api/v1/auth", auth);
 router.use("/api/v1/flightSeats", flightSeat);
 router.use("/api/v1/tickets", ticket);
+router.use("/api/v1/notifications", notifications)
 
 module.exports = router;

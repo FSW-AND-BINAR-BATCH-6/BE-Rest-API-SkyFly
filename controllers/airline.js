@@ -62,6 +62,20 @@ const createNewAirline = async (req, res, next) => {
         const { name, code } = req.body;
         const file = req.file;
 
+        const getAirline = await prisma.airline.findFirst({
+            where: {
+                code: code,
+            },
+        });
+
+        if (getAirline) {
+            return next(
+                createHttpError(422, {
+                    message: `Airline with code: ${code} already exist!`,
+                })
+            );
+        }
+
         let imageUrl;
         file
             ? (imageUrl = await uploadFile(file))

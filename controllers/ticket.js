@@ -329,10 +329,59 @@ const deleteTicket = async (req, res, next) => {
     }
 };
 
+const generateTicket = async (req, res, next) => {
+    try {
+        let data = [];
+
+        const tickets = await prisma.ticket.findMany({
+            where: { userId: req.user.id },
+            include: {
+                user: {
+                    include: {
+                        auth: {
+                            select: {
+                                id: true,
+                                email: true,
+                                isVerified: true,
+                            },
+                        },
+                    },
+                },
+                ticketTransaction: {
+                    include: {
+                        Transaction_Detail: true,
+                    },
+                },
+                seat: true,
+                flight: {
+                    include: {
+                        plane: true,
+                        departureAirport: true,
+                        transitAirport: true,
+                        destinationAirport: true,
+                    },
+                },
+            },
+        });
+
+        data.push(...tickets);
+
+        console.log(data[0]);
+
+        res.render("templates/ticket.ejs", {
+            data: data,
+            tickets: tickets,
+        });
+    } catch (error) {
+        next(createHttpError(500, { message: error.message }));
+    }
+};
+
 module.exports = {
     getAllTicket,
     getTicketById,
     createTicket,
     updateTicket,
     deleteTicket,
+    generateTicket,
 };

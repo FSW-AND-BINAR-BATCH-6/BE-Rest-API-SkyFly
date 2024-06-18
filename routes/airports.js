@@ -1,12 +1,8 @@
 const router = require("express").Router();
 const validator = require("../lib/validator");
-const multer = require("multer");
 const authentication = require("../middlewares/authentication");
+const multer = require("multer");
 const checkRole = require("../middlewares/checkrole");
-
-
-const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
 
 const {
     createNewAirport,
@@ -20,14 +16,29 @@ const {
     updateAirportSchema,
 } = require("../utils/joiValidation");
 
+const storage = multer.memoryStorage();
+const upload = multer({ storage: storage });
+
 router
     .route("/")
     .get(getAllAirports)
-    .post(authentication, checkRole(["ADMIN"]), upload.none(), validator(createAirportSchema), createNewAirport);
+    .post(
+        authentication,
+        checkRole(["ADMIN"]),
+        upload.single("image"),
+        validator(createAirportSchema),
+        createNewAirport
+    );
 router
     .route("/:id")
     .get(getAirportById)
-    .put(authentication, checkRole(["ADMIN"]), upload.none(), validator(updateAirportSchema), updateAirport)
+    .put(
+        authentication,
+        checkRole(["ADMIN"]),
+        upload.single("image"),
+        validator(updateAirportSchema),
+        updateAirport
+    )
     .delete(authentication, checkRole(["ADMIN"]), deleteAirport);
 
 module.exports = router;

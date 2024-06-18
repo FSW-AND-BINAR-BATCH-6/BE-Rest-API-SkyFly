@@ -8,9 +8,12 @@ const {
     createTicket,
     updateTicket,
     deleteTicket,
+    generateTicket,
 } = require("../controllers/ticket");
 const validator = require("../lib/validator");
 const { TicketSchema, UpdateTicketSchema } = require("../utils/joiValidation");
+
+router.get("/generate", authentication, generateTicket);
 
 router
     .route("/")

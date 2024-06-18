@@ -139,7 +139,7 @@ describe("Auth input Validation", () => {
                     success: false,
                     status: 422,
                     message:
-                        '"phoneNumber" length must be less than or equal to 13 characters long',
+                        '"phoneNumber" length must be less than or equal to 16 characters long',
                 },
             },
             {
@@ -367,18 +367,18 @@ describe("User Input Validation", () => {
                 },
             },
             {
-                description: "Invalid Input, phoneNumber has 14 characters",
+                description: "Invalid Input, phoneNumber has 18 characters",
                 schema: userCreateSchema,
                 inputData: {
                     name: "Benito",
-                    phoneNumber: "08982314566723",
+                    phoneNumber: "0898231456672356745",
                     familyName: "Mussolini",
                 },
                 expectedOutcome: {
                     success: false,
                     status: 422,
                     message:
-                        '"phoneNumber" length must be less than or equal to 13 characters long',
+                        '"phoneNumber" length must be less than or equal to 16 characters long',
                 },
             },
             {
