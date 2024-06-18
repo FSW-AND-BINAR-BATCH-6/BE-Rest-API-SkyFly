@@ -3,117 +3,124 @@ const {
     parameterMidtrans,
 } = require("../../../utils/parameterMidtrans");
 
-jest.mock("crypto", () => ({
-    randomUUID: jest.fn(),
-}));
-
-describe("parameterMidtrans function", () => {
-    it("should create passenger objects with correct pricing based on type", async () => {
-        const data = {
+describe("parameterMidtrans", () => {
+    it("should return orderer and passengers data", async () => {
+        const body = {
             orderer: {
                 fullName: "John Doe",
                 familyName: "Doe",
-                phoneNumber: "+1234567890",
+                phoneNumber: "08123456789",
                 email: "john.doe@example.com",
             },
             passengers: [
                 {
-                    title: "Mr.",
-                    fullName: "Alice Smith",
-                    dob: "2020-01-01",
-                    passport: "12345678",
-                    validityPeriod: "2025-01-01",
+                    id: "id child",
+                    dob: "1990-01-01T00:00:00.000Z",
+                    validityPeriod: "2024-06-19T00:00:00.000Z",
+                    price: 1000000,
                     type: "CHILD",
-                    price: 1000,
+                    title: "Mr.",
+                    fullName: "John Doe",
+                    familyName: "Doe",
+                    citizenship: "Indonesia",
+                    issuingCountry: "Indonesia",
+                    passport: "1234567890123",
                     quantity: 1,
                     seatId: "A1",
                 },
                 {
-                    title: "Ms.",
-                    fullName: "Bob Johnson",
-                    dob: "2010-01-01",
-                    passport: "87654321",
-                    validityPeriod: "2030-01-01",
+                    id: "id adult",
+                    dob: "1995-01-01T00:00:00.000Z",
+                    validityPeriod: "2024-06-19T00:00:00.000Z",
+                    price: 1500000,
                     type: "ADULT",
-                    price: 1000,
-                    quantity: 2,
+                    title: "Ms.",
+                    fullName: "Jane Doe",
+                    familyName: "Doe",
+                    citizenship: "Indonesia",
+                    issuingCountry: "Indonesia",
+                    passport: "9876543210987",
+                    quantity: 1,
                     seatId: "B2",
                 },
                 {
+                    id: "id baby",
+                    dob: "1995-01-01T00:00:00.000Z",
+                    validityPeriod: "2024-06-19T00:00:00.000Z",
+                    price: 1500000,
+                    type: "INFRANT",
                     title: "Ms.",
-                    fullName: "Jane Miller",
-                    dob: "2018-01-01",
-                    passport: "98765432",
-                    validityPeriod: "2035-01-01",
-                    type: "INFANT",
-                    price: 1000,
+                    fullName: "Baby",
+                    familyName: "Doe",
+                    citizenship: "Indonesia",
+                    issuingCountry: "Indonesia",
+                    passport: "9876543210987",
                     quantity: 1,
-                    seatId: "C3",
+                    seatId: "B2",
                 },
             ],
         };
 
-        const result = await parameterMidtrans(data);
-
-        expect(result.passengers.length).toBe(3); // Check number of passengers
-
-        expect(result.passengers[0].price).toBe(500); // Discounted price for child
-        expect(result.passengers[1].price).toBe(1000); // Full price for adult
-        expect(result.passengers[2].price).toBe(0); // Free for infant
-
-        expect(result.orderer).toEqual({
-            first_name: "John",
-            last_name: "Doe",
-            phone: "+1234567890",
-            email: "john.doe@example.com",
-        });
-    });
-
-    it("should handle unexpected passenger types", async () => {
-        const body = {
-            passengers: [{ type: "UNKNOWN" }],
-        };
-
         const result = await parameterMidtrans(body);
 
-        expect(result.passengers[0].price).toBe(body.passengers[0].price); // No change for unknown types
-    });
-
-    it("should handle missing or invalid DOB and validityPeriod values", async () => {
-        const body = {
+        expect(result).toEqual({
             passengers: [
-                { type: "ADULT", price: 100, quantity: 1, seatId: "A1" }, // Missing DOB and validityPeriod
                 {
+                    id: expect.any(String),
+                    title: "Mr.",
+                    name: "Mr. John Doe",
+                    fullName: "John Doe",
+                    dob: expect.any(String),
+                    passport: null,
+                    validityPeriod: null,
                     type: "CHILD",
-                    price: 150,
+                    familyName: "Doe",
+                    citizenship: "Indonesia",
+                    issuingCountry: "Indonesia",
+                    price: 500000,
+                    quantity: 1,
+                    seatId: "A1",
+                },
+                {
+                    id: expect.any(String),
+                    title: "Ms.",
+                    name: "Ms. Jane Doe",
+                    fullName: "Jane Doe",
+                    dob: expect.any(String),
+                    passport: "9876543210987",
+                    validityPeriod: expect.any(String),
+                    type: "ADULT",
+                    familyName: "Doe",
+                    citizenship: "Indonesia",
+                    issuingCountry: "Indonesia",
+                    price: 1500000,
                     quantity: 1,
                     seatId: "B2",
-                    dob: "invalid-date",
-                }, // Invalid DOB
+                },
                 {
-                    type: "INFANT",
+                    id: expect.any(String),
+                    title: "Ms.",
+                    name: "Ms. Baby",
+                    fullName: "Baby",
+                    dob: expect.any(String),
+                    passport: null,
+                    validityPeriod: null,
+                    type: "INFRANT",
+                    familyName: "Doe",
+                    citizenship: "Indonesia",
+                    issuingCountry: "Indonesia",
                     price: 0,
                     quantity: 1,
-                    seatId: "C3",
-                    validityPeriod: "not-a-date",
-                }, // Invalid validityPeriod
+                    seatId: "B2",
+                },
             ],
-        };
-
-        // Expect no errors to be thrown, but log warnings for missing/invalid values
-        jest.spyOn(console, "warn").mockImplementationOnce(() => {}); // Mock console.warn for testing
-
-        const result = await parameterMidtrans(body);
-
-        expect(result.passengers.length).toBe(3); // All passengers should be processed
-
-        expect(console.warn).toHaveBeenCalledTimes(2); // Expect warnings for invalid DOB and validityPeriod
-        expect(console.warn.mock.calls[0][0]).toContain(
-            "Passenger has missing or invalid DOB"
-        );
-        expect(console.warn.mock.calls[1][0]).toContain(
-            "Passenger has missing or invalid validityPeriod"
-        );
+            orderer: {
+                first_name: "John Doe",
+                last_name: "Doe",
+                phone: "08123456789",
+                email: "john.doe@example.com",
+            },
+        });
     });
 });
 
