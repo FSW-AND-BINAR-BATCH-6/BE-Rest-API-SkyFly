@@ -38,6 +38,7 @@ const parameterMidtrans = async (body) => {
             validityPeriod: new Date(
                 validityPeriod.getTime() + 7 * 60 * 60 * 1000
             ).toISOString(),
+            type,
             familyName: data.familyName,
             citizenship: data.citizenship,
             issuingCountry: data.issuingCountry,

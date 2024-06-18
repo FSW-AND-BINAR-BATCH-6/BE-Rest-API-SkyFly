@@ -333,7 +333,6 @@ const notification = async (req, res) => {
 const snapPayment = async (req, res, next) => {
     try {
         let { flightId } = req.query;
-        let { type } = req.body;
 
         const { passengers, orderer } = await parameterMidtrans(req.body);
 
@@ -414,7 +413,7 @@ const snapPayment = async (req, res, next) => {
                                 transactionId: transaction.id,
                                 price: parseFloat(passenger.price),
                                 name: passenger.name,
-                                type,
+                                type: passenger.type,
                                 seatId: passenger.seatId,
                                 familyName: passenger.familyName,
                                 flightId,
@@ -610,7 +609,7 @@ const bankTransfer = async (req, res, next) => {
                                 transactionId: transaction.id,
                                 price: parseFloat(passenger.price),
                                 name: passenger.name,
-                                type: data.type,
+                                type: passenger.type,
                                 seatId: passenger.seatId,
                                 familyName: passenger.familyName,
                                 flightId,
@@ -834,7 +833,6 @@ const creditCard = async (req, res, next) => {
 const gopay = async (req, res, next) => {
     try {
         let { flightId } = req.query;
-        let { type } = req.body;
 
         const { passengers, orderer } = await parameterMidtrans(req.body);
 
@@ -913,7 +911,7 @@ const gopay = async (req, res, next) => {
                                 transactionId: transaction.id,
                                 price: parseFloat(passenger.price),
                                 name: passenger.name,
-                                type,
+                                type: passenger.type,
                                 seatId: passenger.seatId,
                                 familyName: passenger.familyName,
                                 flightId,
