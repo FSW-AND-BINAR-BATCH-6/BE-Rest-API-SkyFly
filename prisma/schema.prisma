@@ -59,11 +59,11 @@ model Auth {
 }
 
 model Airline {
-    id     String   @id @default(cuid())
-    code   String   @default("ABC-123")
-    name   String
-    image  String
-    flight Flight[]
+    id       String   @id @default(cuid())
+    code     String   @default("ABC-123")
+    name     String
+    terminal String
+    flight   Flight[]
 }
 
 model Airport {
@@ -73,6 +73,7 @@ model Airport {
     country            String
     city               String
     continent          String
+    image              String
     departureFlights   Flight[] @relation("DepartureAirport")
     destinationFlights Flight[] @relation("DestinationAirport")
     transitFlights     Flight[] @relation("TransitAirport")
