@@ -13,6 +13,7 @@ const getAllFlight = async (req, res, next) => {
             departureAirport,
             arrivalAirport,
             departureDate,
+            airlineName,
             adults = 1,
             children = 0,
             infants = 0,
@@ -86,6 +87,31 @@ const getAllFlight = async (req, res, next) => {
             });
         }
 
+        if (airlineName) {
+            const airlineNames = airlineName.split("%20");
+            const airlineFilters = airlineNames.map(name => ({
+                OR: [
+                    {
+                        plane: {
+                            name: {
+                                contains: name,
+                                mode: "insensitive",
+                            },
+                        },
+                    },
+                    {
+                        plane: {
+                            code: {
+                                contains: name.toUpperCase(),
+                                mode: "insensitive",
+                            },
+                        },
+                    },
+                ],
+            }));
+            filters.AND.push({ OR: airlineFilters });
+        }
+
         if (seatClass) {
             filters.AND.push({
                 seats: {
@@ -124,9 +150,10 @@ const getAllFlight = async (req, res, next) => {
                 filters.AND.push({ facilities: { contains: facility.trim() } });
             });
         }
+
         const totalPassengers = parseInt(adults) + parseInt(children) + parseInt(infants);
         filters.AND.push({ capacity: { gte: totalPassengers } });
-        
+
         const sortOptions = {
             "shortest-duration": {
                 departureDate: "asc",
@@ -268,7 +295,27 @@ const getAllFlight = async (req, res, next) => {
                 prices: prices,
             };
         });
+        
+        if (sort === "earliest-departure") {
+            flights.sort((a, b) => {
+                return new Date(a.departureDate) - new Date(b.departureDate);
+            });
+        } else if (sort === "latest-departure") {
+            flights.sort((a, b) => {
+                return new Date(b.departureDate) - new Date(a.departureDate);
+            });
+        }
 
+        if (sort === "earliest-arrival") {
+            flights.sort((a, b) => {
+                return new Date(a.arrivalDate) - new Date(b.arrivalDate);
+            });
+
+        } else if (sort === "latest-arrival") {
+            flights.sort((a, b) => {
+                return new Date(b.arrivalDate) - new Date(a.arrivalDate);
+            });
+        }
         if (sort === "shortest-duration") {
             formattedFlights.sort((a, b) => {
                 const durationA = sortShortestDuration(a.duration);
