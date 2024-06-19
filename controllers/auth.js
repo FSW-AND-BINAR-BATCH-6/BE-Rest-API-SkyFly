@@ -408,21 +408,28 @@ const sendResetPassword = async (req, res, next) => {
             emailTitle: "Reset Password",
         };
 
-        const dataUrl = {
-            token: await generateJWT(payload),
-        };
+        const token = await generateJWT(payload);
 
         await prisma.auth.update({
             where: {
                 email: payload.email,
             },
             data: {
-                secretToken: dataUrl.token,
+                secretToken: token,
+            },
+        });
+
+        const authData = await prisma.auth.findUnique({
+            where: {
+                email: payload.email,
+            },
+            include: {
+                user: true,
             },
         });
 
         // sending email
-        const urlTokenVerification = `${process.env.BASE_URL_FRONTEND}/resetPassword?token=${dataUrl.token}`;
+        const urlTokenVerification = `${process.env.BASE_URL_FRONTEND}/resetPassword?token=${authData.secretToken}`;
 
         let html = await getHtml("resetPassword.ejs", {
             email: payload.email,
@@ -439,7 +446,7 @@ const sendResetPassword = async (req, res, next) => {
             status: true,
             message:
                 "Reset password link has been sent, please check your email",
-            _token: dataUrl.token,
+            _token: authData.secretToken,
         });
     } catch (error) {
         next(createHttpError(500, { message: error.message }));
@@ -609,14 +616,7 @@ const sendOTPSMS = async (req, res, next) => {
             emailTitle: "Resend Email Activation",
         };
 
-        // generate sent data via email
-        const dataUrl = {
-            token: await generateJWT(newPayload),
-        };
-
-        const urlTokenVerification = `${process.env.BASE_URL_FRONTEND}/otp?token=${dataUrl.token}`;
-
-        smsHandler(phoneNumber, OTPToken, urlTokenVerification);
+        const newToken = await generateJWT(newPayload);
 
         // update otp & secretToken user
         await prisma.auth.update({
@@ -625,14 +625,27 @@ const sendOTPSMS = async (req, res, next) => {
             },
             data: {
                 otpToken: OTPToken,
-                secretToken: dataUrl.token,
+                secretToken: newToken,
             },
         });
+
+        const authData = await prisma.auth.findUnique({
+            where: {
+                email: payload.email,
+            },
+            include: {
+                user: true,
+            },
+        });
+
+        const urlTokenVerification = `${process.env.BASE_URL_FRONTEND}/otp?token=${authData.secretToken}`;
+
+        smsHandler(phoneNumber, authData.otpToken, urlTokenVerification);
 
         res.status(200).json({
             status: true,
             message: "SMS verification sent",
-            _token: dataUrl.token,
+            _token: authData.secretToken,
         });
     } catch (error) {
         next(
