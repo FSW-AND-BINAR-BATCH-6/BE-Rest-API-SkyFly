@@ -262,7 +262,6 @@ const getAllFlight = async (req, res, next) => {
         const formattedFlightsDeparture = flightsDeparture.map((flight) => {
             const duration = calculateFlightDuration(flight.departureDate, flight.arrivalDate);
             let classInfo = {};
-            const prices = {};
 
             if (seatClass) {
                 const seat = flight.seats.find(seat => seat.type === seatClass.toUpperCase());
@@ -342,7 +341,6 @@ const getAllFlight = async (req, res, next) => {
 
         const formattedFlightsReturn = flightsReturn.map((flight) => {
             let classInfo = {};
-            const prices = {};
 
             if (seatClass) {
                 const seat = flight.seats.find(seat => seat.type === seatClass.toUpperCase());
