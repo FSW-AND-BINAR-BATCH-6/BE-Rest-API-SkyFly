@@ -174,21 +174,21 @@ npm run start
 
 # Data Team C1
 
+|                   |                                                                                                                                             | **LinkedIn**                                                           | **Github**                                    |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------- | --------------------------------------------- |
+| **FSW**           | _Reinanda Faris_                                                                                                                            | [LinkedIn](https://www.linkedin.com/in/reinanda-faris/)                | [Github](https://github.com/Reinandafaris)    |
+|                   | _Viery Nugroho_                                                                                                                             | [LinkedIn](https://www.linkedin.com/in/viery-nugroho)                  | [Github](https://github.com/vierynugroho)     |
+|                   | _Andhika Rizky Aulia_                                                                                                                       | [LinkedIn](https://www.linkedin.com/in/andhika-rizky/)                 | [Github](https://github.com/ndikrp)           |
+|                   | _Ananda Ias Falah_                                                                                                                          | [LinkedIn](https://www.linkedin.com/in/falahsuryagemilang/)            | [Github](https://github.com/falahsg)          |
+|                   | _Naufal Ady Saputro_                                                                                                                        | [LinkedId](https://www.linkedin.com/in/naufal-ady-saputro-71050b24b/)  | [Github](https://github.com/naufaladysaputro) |
+|                   | _Rizki Mauludin Yoga P._                                                                                                                    | [LinkedId](https://www.linkedin.com/in/riski-mauludin-yoga-8718602b0/) | [Github](https://github.com/RMYP)             |
+|                   | _Rafi Husein Bagaskara_                                                                                                                     | [LinkedId](https://www.linkedin.com/in/rafi-husein-257a76291)          | [Github](https://github.com/raisenbk)         |
+|                   | _Lowis Armando Hutabarat_                                                                                                                   | [LinkedId](www.linkedin.com/in/lowis-armando-hutabarat-80b7612b3)      | [Github](https://github.com/LowisHutabarat)   |
 |                   |                                                                                                                                             |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| **FSW**           | _Reinanda Faris_                                                                                                                            |
-|                   | _Viery Nugroho_                                                                                                                             |
-|                   | _Andhika Rizky Aulia_                                                                                                                       |
-|                   | _Ananda Ias Falah_                                                                                                                          |
-|                   | _Naufal Ady Saputro_                                                                                                                        |
-|                   | _Rizki Mauludin Yoga P._                                                                                                                    |
-|                   | _Rafi Husein Bagaskara_                                                                                                                     |
-|                   | _Lowis Armando Hutabarat_                                                                                                                   |
-|                   |                                                                                                                                             |
-| **AND**           | _Komang Yuda Saputra_                                                                                                                       |
-|                   | _Ihsan Widagdo_                                                                                                                             |
-|                   | _Mochammad Yusuf Pratama_                                                                                                                   |
-|                   | _Bella Febriany Nawangsari_                                                                                                                 |
+| **AND**           | _Komang Yuda Saputra_                                                                                                                       |                                                                        |                                               |
+|                   | _Ihsan Widagdo_                                                                                                                             |                                                                        |                                               |
+|                   | _Mochammad Yusuf Pratama_                                                                                                                   |                                                                        |                                               |
+|                   | _Bella Febriany Nawangsari_                                                                                                                 |                                                                        |                                               |
 |                   |                                                                                                                                             |
 | **Project Title** | _SKY-FLY_                                                                                                                                   |
 |                   |                                                                                                                                             |
