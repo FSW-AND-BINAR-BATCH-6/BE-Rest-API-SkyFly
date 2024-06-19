@@ -334,12 +334,17 @@ const getAllFlight = async (req, res, next) => {
         });
 
         const formattedFlightsReturn = flightsReturn.map((flight) => {
-            const seatClasses = [...new Set(flight.seats.map(seat => seat.type))];
-            const prices = seatClasses.reduce((acc, type) => {
-                const seatPrice = flight.seats.find(seat => seat.type === type).price;
-                acc[type] = seatPrice;
-                return acc;
-            }, {});
+            const seatClasses = ['ECONOMY', 'BUSINESS', 'FIRST'];
+            const prices = {};
+
+            seatClasses.forEach(type => {
+                const seat = flight.seats.find(seat => seat.type === type);
+                if (seat) {
+                    prices[type] = seat.price !== null ? seat.price : null;
+                } else {
+                    prices[type] = null;
+                }
+            });
             const duration = calculateFlightDuration(flight.departureDate, flight.arrivalDate);
             return {
                 id: flight.id,
@@ -447,7 +452,9 @@ const getAllFlight = async (req, res, next) => {
                 return durationA - durationB;
             });
         }
-
+        if (!formattedFlightsDeparture.length && !formattedFlightsReturn.length) {
+            return next(createHttpError(404, { message: "Empty flight data" }));
+        }
         res.status(200).json({
             status: true,
             message: "All flight data retrieved successfully",
@@ -490,12 +497,17 @@ const getFlightById = async (req, res, next) => {
             );
         }
 
-        const seatClasses = [...new Set(flight.seats.map(seat => seat.type))];
-        const prices = seatClasses.reduce((acc, type) => {
-            const seatPrice = flight.seats.find(seat => seat.type === type).price;
-            acc[type] = seatPrice;
-            return acc;
-        }, {});
+        const seatClasses = ['ECONOMY', 'BUSINESS', 'FIRST'];
+            const prices = {};
+
+            seatClasses.forEach(type => {
+                const seat = flight.seats.find(seat => seat.type === type);
+                if (seat) {
+                    prices[type] = seat.price !== null ? seat.price : null;
+                } else {
+                    prices[type] = null;
+                }
+            });
 
         const formattedFlight = {
             id: flight.id,
@@ -640,7 +652,6 @@ const createFlight = async (req, res, next) => {
                 destinationAirport: true,
             },
         });
-
         res.status(201).json({
             status: true,
             message: "Flight created successfully",
@@ -795,6 +806,13 @@ const getFavoriteDestinations = async (req, res, next) => {
                 flightDetails,
             };
         }));
+        if (!formattedDestinations.length) {
+            return next(
+                createHttpError(404, {
+                    message: "Empty favorite destinations data",
+                })
+            );
+        }
         res.status(200).json({
             status: true,
             message: "Favorite destinations retrieved successfully",
