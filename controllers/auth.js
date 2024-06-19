@@ -640,7 +640,7 @@ const sendOTPSMS = async (req, res, next) => {
 
         const urlTokenVerification = `${process.env.BASE_URL_FRONTEND}/otp?token=${authData.secretToken}`;
 
-        smsHandler(phoneNumber, authData.otpToken, urlTokenVerification);
+        await smsHandler(phoneNumber, authData.otpToken, urlTokenVerification);
 
         res.status(200).json({
             status: true,
