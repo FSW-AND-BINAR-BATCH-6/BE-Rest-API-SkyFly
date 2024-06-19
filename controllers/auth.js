@@ -123,7 +123,7 @@ const handleLoginGoogle = async (req, res, next) => {
             );
         }
 
-        const hashedPassword = secretHash(data.id);
+        const hashedPassword = await secretHash(data.id);
         console.log("=====================================================");
         console.log(`Password google login: ${data.id}`);
         console.log("=====================================================");
@@ -160,7 +160,7 @@ const handleLoginGoogle = async (req, res, next) => {
             email: data.email,
         };
 
-        const token = generateJWT(payload);
+        const token = await generateJWT(payload);
 
         return res.status(200).json({
             status: true,
@@ -215,7 +215,7 @@ const handleLogin = async (req, res, next) => {
         // check password
         if (userAccount && secretCompare(password, userAccount.password)) {
             // create jwt token
-            const token = generateJWT(payload);
+            const token = await generateJWT(payload);
 
             res.status(200).json({
                 status: true,
@@ -452,7 +452,7 @@ const resetPassword = async (req, res, next) => {
         const { password } = req.body;
 
         const payload = jwt.verify(token, process.env.JWT_SIGNATURE_KEY);
-        const hashedPassword = secretHash(password);
+        const hashedPassword = await secretHash(password);
 
         const foundUser = await prisma.auth.findUnique({
             where: {
@@ -510,7 +510,7 @@ const updateUserLoggedIn = async (req, res, next) => {
         const { name, phoneNumber, familyName, password } = req.body;
         let hashedPassword;
         if (password) {
-            hashedPassword = secretHash(password);
+            hashedPassword = await secretHash(password);
         }
 
         try {
@@ -611,7 +611,7 @@ const sendOTPSMS = async (req, res, next) => {
 
         // generate sent data via email
         const dataUrl = {
-            token: generateJWT(newPayload),
+            token: await generateJWT(newPayload),
         };
 
         const urlTokenVerification = `${process.env.BASE_URL_FRONTEND}/otp?token=${dataUrl.token}`;
