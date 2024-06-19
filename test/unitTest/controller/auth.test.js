@@ -176,23 +176,23 @@ describe("Auth API", () => {
         },
     ];
 
-    const registerDummyData = [
-        {
-            id: "Togenashi",
-            name: "Togeari",
-            role: "BUYER",
-            familyName: "Family",
-            phoneNumber: "628123456789",
-            auth: {
-                id: "Togenashi",
-                email: `togeari@test.com`,
-                password: "password",
-                isVerified: true,
-                otpToken: "1233",
-                secretToken: "12333",
-            },
-        },
-    ];
+    // const registerDummyData = [
+    //     {
+    //         id: "Togenashi",
+    //         name: "Togeari",
+    //         role: "BUYER",
+    //         familyName: "Family",
+    //         phoneNumber: "628123456789",
+    //         auth: {
+    //             id: "Togenashi",
+    //             email: `togeari@test.com`,
+    //             password: "password",
+    //             isVerified: true,
+    //             otpToken: "1233",
+    //             secretToken: "12333",
+    //         },
+    //     },
+    // ];
 
     beforeEach(() => {
         res = {
