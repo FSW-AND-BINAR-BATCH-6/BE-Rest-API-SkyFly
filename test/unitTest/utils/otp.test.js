@@ -1,5 +1,9 @@
 const OTPAuth = require("otpauth");
-const { generateTOTP, validateTOTP, getSeconds } = require("../../../utils/otp");
+const {
+    generateTOTP,
+    validateTOTP,
+    getSeconds,
+} = require("../../../utils/otp");
 
 jest.mock("otpauth", () => {
     const originalModule = jest.requireActual("otpauth");
@@ -26,11 +30,11 @@ describe("TOTP Functions", () => {
     });
 
     describe("generateTOTP", () => {
-        it("should generate a TOTP token", () => {
+        it("should generate a TOTP token", async () => {
             const mockToken = "123456";
-            totp.generate.mockReturnValue(mockToken);
+            await totp.generate.mockReturnValue(mockToken);
 
-            const token = generateTOTP();
+            const token = await generateTOTP();
 
             expect(totp.generate).toHaveBeenCalled();
             expect(token).toBe(mockToken);
@@ -38,9 +42,9 @@ describe("TOTP Functions", () => {
     });
 
     describe("validateTOTP", () => {
-        it("should validate a TOTP token successfully", () => {
+        it("should validate a TOTP token successfully", async () => {
             const mockToken = "123456";
-            totp.validate.mockReturnValue(true);
+            await totp.validate.mockReturnValue(true);
 
             const isValid = validateTOTP(mockToken);
 
@@ -68,9 +72,10 @@ describe("TOTP Functions", () => {
     describe("getSeconds", () => {
         it("should return the correct number of seconds remaining", () => {
             const now = Date.now();
-            const mockSeconds = (totp.period * (1 - ((now / 1000 / totp.period) % 1))) | 0;
-            
-            jest.spyOn(Date, 'now').mockReturnValue(now);
+            const mockSeconds =
+                (totp.period * (1 - ((now / 1000 / totp.period) % 1))) | 0;
+
+            jest.spyOn(Date, "now").mockReturnValue(now);
 
             const seconds = getSeconds();
 

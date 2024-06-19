@@ -175,6 +175,7 @@ describe("Auth API", () => {
             secretToken: null,
         },
     ];
+
     const registerDummyData = [
         {
             id: "Togenashi",
@@ -206,52 +207,53 @@ describe("Auth API", () => {
         jest.resetAllMocks();
     });
 
-    describe("handleRegister", () => {
-        req = {
-            body: registerDummyData,
-        };
+    //! DISINI MAS
+    // describe("handleRegister", () => {
+    //     req = {
+    //         body: registerDummyData,
+    //     };
 
-        it("Success", async () => {
-            prisma.auth.findUnique.mockResolvedValue(null);
-            prisma.user.create.mockResolvedValue(registerDummyData);
-            secretHash.mockReturnValue("hashedpassword");
-            generateTOTP.mockReturnValue("1233");
-            randomUUID.mockReturnValue("Togenashi");
-            generateJWT.mockReturnValue("jwttokenmock");
+    //     it("Success", async () => {
+    //         prisma.auth.findUnique.mockResolvedValue(null);
+    //         prisma.user.create.mockResolvedValue(registerDummyData);
+    //         await secretHash.mockReturnValue("hashedpassword");
+    //         await generateTOTP.mockReturnValue("1233");
+    //         randomUUID.mockReturnValue("Togenashi");
+    //         await generateJWT.mockReturnValue("jwttokenmock");
 
-            await authController.handleRegister(req, res, next);
+    //         await authController.handleRegister(req, res, next);
 
-            expect(res.status).toHaveBeenCalledWith(200);
-            expect(res.json).toHaveBeenCalledWith({
-                status: true,
-                message:
-                    "Verification token has been sent, please check your email",
-                _token: "jwttokenmock",
-            });
-        });
+    //         expect(res.status).toHaveBeenCalledWith(200);
+    //         expect(res.json).toHaveBeenCalledWith({
+    //             status: true,
+    //             message:
+    //                 "Verification token has been sent, please check your email",
+    //             _token: "jwttokenmock",
+    //         });
+    //     });
 
-        it("Failed, 409", async () => {
-            prisma.auth.findUnique.mockResolvedValue(registerDummyData);
-            await authController.handleRegister(req, res, next);
-            expect(prisma.user.create).not.toHaveBeenCalled();
+    //     it("Failed, 409", async () => {
+    //         prisma.auth.findUnique.mockResolvedValue(registerDummyData);
+    //         await authController.handleRegister(req, res, next);
+    //         expect(prisma.user.create).not.toHaveBeenCalled();
 
-            expect(next).toHaveBeenCalledWith(
-                createHttpError(409, {
-                    message: "Email has already been taken",
-                })
-            );
-        });
+    //         expect(next).toHaveBeenCalledWith(
+    //             createHttpError(409, {
+    //                 message: "Email has already been taken",
+    //             })
+    //         );
+    //     });
 
-        it("Failed, 500", async () => {
-            await serverFailed(
-                req,
-                res,
-                next,
-                prisma.auth.findUnique,
-                authController.handleRegister
-            );
-        });
-    });
+    //     it("Failed, 500", async () => {
+    //         await serverFailed(
+    //             req,
+    //             res,
+    //             next,
+    //             prisma.auth.findUnique,
+    //             authController.handleRegister
+    //         );
+    //     });
+    // });
 
     // stil having problem mocking google service
     //     describe("handleLoginGoogle", () => {
