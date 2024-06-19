@@ -585,7 +585,8 @@ const getFlightById = async (req, res, next) => {
         const formattedFlight = formatFlight(flight);
 
         res.status(200).json({
-            message: "success get flight by id",
+            status: true,
+            message: "Flight data retrieved successfully",
             data: formattedFlight,
         });
     } catch (error) {
