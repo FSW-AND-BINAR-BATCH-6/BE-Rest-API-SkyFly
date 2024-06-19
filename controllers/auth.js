@@ -600,7 +600,7 @@ const sendOTPSMS = async (req, res, next) => {
         }
 
         // generate secret data
-        const OTPToken = generateTOTP();
+        const OTPToken = await generateTOTP();
         const newPayload = {
             registerId: randomUUID(),
             userId: foundUser.id,
