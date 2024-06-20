@@ -24,6 +24,12 @@ enum TypeSeat {
     FIRST
 }
 
+enum PassengerType {
+    ADULT
+    CHILD
+    INFRANT
+}
+
 enum StatusTicket {
     PENDING // pending
     SUCCESS // settlement
@@ -133,8 +139,10 @@ model TicketTransaction {
     id                 String                    @id @default(cuid())
     orderId            String                    @unique
     totalPrice         Float
+    tax                Float
     status             String
     bookingDate        DateTime
+    bookingCode        String
     User               User?                     @relation(fields: [userId], references: [id], onDelete: Cascade)
     userId             String?
     Transaction_Detail TicketTransactionDetail[]
@@ -149,12 +157,13 @@ model TicketTransactionDetail {
     seatId         String            @unique
     seat           FlightSeat        @relation(fields: [seatId], references: [id], onDelete: Cascade)
     name           String
+    type           PassengerType     @default(ADULT)
     familyName     String
     dob            DateTime
     citizenship    String
-    passport       String
-    issuingCountry String
-    validityPeriod DateTime
+    passport       String?
+    issuingCountry String?
+    validityPeriod DateTime?
     flightId       String
     flight         Flight?           @relation(fields: [flightId], references: [id])
 }

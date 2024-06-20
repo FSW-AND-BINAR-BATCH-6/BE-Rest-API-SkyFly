@@ -9,7 +9,7 @@ const totp = new OTPAuth.TOTP({
     secret: "NB2W45DFOIZA",
 });
 
-const generateTOTP = () => {
+const generateTOTP = async () => {
     return totp.generate();
 };
 

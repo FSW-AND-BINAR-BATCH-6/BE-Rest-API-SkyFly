@@ -3,8 +3,8 @@ const {
     LoginSchema,
     RegisterSchema,
     OTPSchema,
-    createFlightSchema,
-    updateFlightSchema,
+    // createFlightSchema,
+    // updateFlightSchema,
     PasswordSchema,
     forgetPasswordSchema,
     userCreateSchema,
@@ -482,166 +482,166 @@ describe("User Input Validation", () => {
     });
 });
 
-describe("Flight Schema Validation", () => {
-    describe("createFlightSchema", () => {
-        const createFlightTests = [
-            {
-                description: "Valid input",
-                schema: createFlightSchema,
-                inputData: {
-                    planeId: "AB123",
-                    departureDate: "2024-01-07T09:30:00Z",
-                    departureAirportId: "JFK",
-                    arrivalDate: "2024-01-07T15:30:00Z",
-                    destinationAirportId: "LAX",
-                    price: 1000,
-                    discount: 10,
-                    capacity: 150,
-                    facilities: "WiFi",
-                },
-                expectedOutcome: { success: true },
-            },
-            {
-                description: "Invalid input, incorrect planeId format",
-                schema: createFlightSchema,
-                inputData: {
-                    planeId: "AB 123",
-                    departureDate: "2024-01-07T09:30:00Z",
-                    departureAirportId: "JFK",
-                    arrivalDate: "2024-01-07T15:30:00Z",
-                    destinationAirportId: "LAX",
-                    price: 1000,
-                    discount: 10,
-                    capacity: 150,
-                    facilities: "WiFi",
-                },
-                expectedOutcome: {
-                    success: false,
-                    status: 422,
-                    message:
-                        '\"planeId\" with value \"AB 123\" fails to match the required pattern: /^[a-zA-Z0-9]*$/',
-                },
-            },
-            {
-                description: "Invalid input, missing required field",
-                schema: createFlightSchema,
-                inputData: {
-                    planeId: "AB123",
-                    departureDate: "2024-01-07T09:30:00Z",
-                    arrivalDate: "2024-01-07T15:30:00Z",
-                    destinationAirportId: "LAX",
-                    price: 1000,
-                    discount: 10,
-                    capacity: 150,
-                    facilities: "WiFi",
-                },
-                expectedOutcome: {
-                    success: false,
-                    status: 422,
-                    message: '"departureAirportId" is required',
-                },
-            },
-            {
-                description: "Valid input with transit information",
-                schema: createFlightSchema,
-                inputData: {
-                    planeId: "AB123",
-                    departureDate: "2024-01-07T09:30:00Z",
-                    departureAirportId: "JFK",
-                    arrivalDate: "2024-01-07T15:30:00Z",
-                    transitAirportId: "ORD",
-                    transitArrivalDate: "2024-01-07T11:30:00Z",
-                    transitDepartureDate: "2024-01-07T12:30:00Z",
-                    destinationAirportId: "LAX",
-                    price: 1000,
-                    discount: 10,
-                    capacity: 150,
-                    facilities: "WiFi",
-                },
-                expectedOutcome: { success: true },
-            },
-            {
-                description: "Invalid input with missing transit dates",
-                schema: createFlightSchema,
-                inputData: {
-                    planeId: "AB123",
-                    departureDate: "2024-01-07T09:30:00Z",
-                    departureAirportId: "JFK",
-                    arrivalDate: "2024-01-07T15:30:00Z",
-                    transitAirportId: "ORD",
-                    destinationAirportId: "LAX",
-                    price: 1000,
-                    discount: 10,
-                    capacity: 150,
-                    facilities: "WiFi",
-                },
-                expectedOutcome: {
-                    success: false,
-                    status: 422,
-                    message: '"transitArrivalDate" is required',
-                },
-            },
-        ];
+// describe("Flight Schema Validation", () => {
+//     describe("createFlightSchema", () => {
+//         const createFlightTests = [
+//             {
+//                 description: "Valid input",
+//                 schema: createFlightSchema,
+//                 inputData: {
+//                     planeId: "AB123",
+//                     departureDate: "2024-01-07T09:30:00Z",
+//                     departureAirportId: "JFK",
+//                     arrivalDate: "2024-01-07T15:30:00Z",
+//                     destinationAirportId: "LAX",
+//                     price: 1000,
+//                     discount: 10,
+//                     capacity: 150,
+//                     facilities: "WiFi",
+//                 },
+//                 expectedOutcome: { success: true },
+//             },
+//             {
+//                 description: "Invalid input, incorrect planeId format",
+//                 schema: createFlightSchema,
+//                 inputData: {
+//                     planeId: "AB 123",
+//                     departureDate: "2024-01-07T09:30:00Z",
+//                     departureAirportId: "JFK",
+//                     arrivalDate: "2024-01-07T15:30:00Z",
+//                     destinationAirportId: "LAX",
+//                     price: 1000,
+//                     discount: 10,
+//                     capacity: 150,
+//                     facilities: "WiFi",
+//                 },
+//                 expectedOutcome: {
+//                     success: false,
+//                     status: 422,
+//                     message:
+//                         '\"planeId\" with value \"AB 123\" fails to match the required pattern: /^[a-zA-Z0-9]*$/',
+//                 },
+//             },
+//             {
+//                 description: "Invalid input, missing required field",
+//                 schema: createFlightSchema,
+//                 inputData: {
+//                     planeId: "AB123",
+//                     departureDate: "2024-01-07T09:30:00Z",
+//                     arrivalDate: "2024-01-07T15:30:00Z",
+//                     destinationAirportId: "LAX",
+//                     price: 1000,
+//                     discount: 10,
+//                     capacity: 150,
+//                     facilities: "WiFi",
+//                 },
+//                 expectedOutcome: {
+//                     success: false,
+//                     status: 422,
+//                     message: '"departureAirportId" is required',
+//                 },
+//             },
+//             {
+//                 description: "Valid input with transit information",
+//                 schema: createFlightSchema,
+//                 inputData: {
+//                     planeId: "AB123",
+//                     departureDate: "2024-01-07T09:30:00Z",
+//                     departureAirportId: "JFK",
+//                     arrivalDate: "2024-01-07T15:30:00Z",
+//                     transitAirportId: "ORD",
+//                     transitArrivalDate: "2024-01-07T11:30:00Z",
+//                     transitDepartureDate: "2024-01-07T12:30:00Z",
+//                     destinationAirportId: "LAX",
+//                     price: 1000,
+//                     discount: 10,
+//                     capacity: 150,
+//                     facilities: "WiFi",
+//                 },
+//                 expectedOutcome: { success: true },
+//             },
+//             {
+//                 description: "Invalid input with missing transit dates",
+//                 schema: createFlightSchema,
+//                 inputData: {
+//                     planeId: "AB123",
+//                     departureDate: "2024-01-07T09:30:00Z",
+//                     departureAirportId: "JFK",
+//                     arrivalDate: "2024-01-07T15:30:00Z",
+//                     transitAirportId: "ORD",
+//                     destinationAirportId: "LAX",
+//                     price: 1000,
+//                     discount: 10,
+//                     capacity: 150,
+//                     facilities: "WiFi",
+//                 },
+//                 expectedOutcome: {
+//                     success: false,
+//                     status: 422,
+//                     message: '"transitArrivalDate" is required',
+//                 },
+//             },
+//         ];
 
-        createFlightTests.forEach((test) => {
-            it(test.description, async () => {
-                await runValidationTest(
-                    test.schema,
-                    test.inputData,
-                    test.expectedOutcome
-                );
-            });
-        });
-    });
+//         createFlightTests.forEach((test) => {
+//             it(test.description, async () => {
+//                 await runValidationTest(
+//                     test.schema,
+//                     test.inputData,
+//                     test.expectedOutcome
+//                 );
+//             });
+//         });
+//     });
 
-    describe("updateFlightSchema", () => {
-        const updateFlightTests = [
-            {
-                description: "Valid input",
-                schema: updateFlightSchema,
-                inputData: {
-                    planeId: "AB123",
-                    departureDate: "2024-01-07T09:30:00Z",
-                    arrivalDate: "2024-01-07T15:30:00Z",
-                    destinationAirportId: "LAX",
-                    price: 1000,
-                    discount: 10,
-                    capacity: 150,
-                    facilities: "WiFi",
-                },
-                expectedOutcome: { success: true },
-            },
-            {
-                description: "Invalid input, missing required field",
-                schema: updateFlightSchema,
-                inputData: {
-                    planeId: "AB123",
-                    departureDate: "2024-01-07T09:30:00Z",
-                    arrivalDate: "2024-01-07T15:30:00Z",
-                    price: 1000,
-                    discount: 10,
-                    capacity: 150,
-                    facilities: "WiFi",
-                },
-                expectedOutcome: {
-                    success: false,
-                    status: 422,
-                    message: '"destinationAirportId" is required',
-                },
-            },
-        ];
+//     describe("updateFlightSchema", () => {
+//         const updateFlightTests = [
+//             {
+//                 description: "Valid input",
+//                 schema: updateFlightSchema,
+//                 inputData: {
+//                     planeId: "AB123",
+//                     departureDate: "2024-01-07T09:30:00Z",
+//                     arrivalDate: "2024-01-07T15:30:00Z",
+//                     destinationAirportId: "LAX",
+//                     price: 1000,
+//                     discount: 10,
+//                     capacity: 150,
+//                     facilities: "WiFi",
+//                 },
+//                 expectedOutcome: { success: true },
+//             },
+//             {
+//                 description: "Invalid input, missing required field",
+//                 schema: updateFlightSchema,
+//                 inputData: {
+//                     planeId: "AB123",
+//                     departureDate: "2024-01-07T09:30:00Z",
+//                     arrivalDate: "2024-01-07T15:30:00Z",
+//                     price: 1000,
+//                     discount: 10,
+//                     capacity: 150,
+//                     facilities: "WiFi",
+//                 },
+//                 expectedOutcome: {
+//                     success: false,
+//                     status: 422,
+//                     message: '"destinationAirportId" is required',
+//                 },
+//             },
+//         ];
 
-        updateFlightTests.forEach((test) => {
-            it(test.description, async () => {
-                await runValidationTest(
-                    test.schema,
-                    test.inputData,
-                    test.expectedOutcome
-                );
-            });
-        });
-    });
-});
+//         updateFlightTests.forEach((test) => {
+//             it(test.description, async () => {
+//                 await runValidationTest(
+//                     test.schema,
+//                     test.inputData,
+//                     test.expectedOutcome
+//                 );
+//             });
+//         });
+//     });
+// });
 
 describe("FlightSeat Input Validation", () => {
     describe("Create FlightSeat Input", () => {

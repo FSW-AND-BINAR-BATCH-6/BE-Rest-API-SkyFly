@@ -2,15 +2,13 @@ require("dotenv/config");
 const { randomUUID } = require("crypto");
 const { coreApi, snap } = require("../config/coreApiMidtrans");
 const createHttpError = require("http-errors");
-const {
-    dataCustomerDetail,
-    dataItemDetail,
-    totalPrice,
-} = require("../utils/parameterMidtrans");
+const { totalPrice, parameterMidtrans } = require("../utils/parameterMidtrans");
 const { unescape } = require("querystring");
-const { PrismaClient } = require("@prisma/client");
 const { checkSeatAvailability } = require("../utils/checkSeat");
-const { extractSecondData } = require("../utils/extractItems");
+const { formatDate, formatTime } = require("../utils/formatDate");
+const { calculateFlightDuration } = require("../utils/calculateDuration");
+const { PrismaClient } = require("@prisma/client");
+const { generateBookingCode } = require("../utils/generateBookingCode");
 const prisma = new PrismaClient();
 
 const getTransaction = async (req, res, next) => {
@@ -61,158 +59,6 @@ const getTransaction = async (req, res, next) => {
                 va_numbers: transaction.va_numbers,
             },
         });
-    } catch (error) {
-        next(createHttpError(500, { message: error.message }));
-    }
-};
-
-const createTransaction = async (req, res, next) => {
-    try {
-        let { flightId } = req.query;
-
-        req.body.flightId = flightId;
-        const secondData = extractSecondData(req.body);
-
-        req.body.flightId = flightId;
-
-        let where = {
-            id: {
-                in: [req.body.first_seatId],
-            },
-        };
-        if (Object.keys(secondData).length !== 0) {
-            where = {
-                id: {
-                    in: [req.body.first_seatId, req.body.second_seatId],
-                },
-            };
-        }
-
-        // Check if the seat exists and is not booked
-        const seats = await prisma.flightSeat.findMany({
-            where,
-        });
-
-        // check seat
-        const { error, seatNumber } = await checkSeatAvailability(
-            seats,
-            flightId
-        );
-
-        if (error.flight) {
-            return next(
-                createHttpError(404, { message: "Flight is not found" })
-            );
-        }
-        if (error.seat) {
-            return next(createHttpError(404, { message: "Seat is not found" }));
-        }
-        if (error.booked) {
-            return next(
-                createHttpError(400, {
-                    message: `Seat in this flight with seat number: ${seatNumber.join(
-                        " & "
-                    )} is booked`,
-                })
-            );
-        }
-
-        const dataCustomer = await dataCustomerDetail(req.body);
-        const dataItem = await dataItemDetail(req.body);
-
-        let parameter = {
-            credit_card: {
-                secure: true,
-            },
-            transaction_details: {
-                gross_amount: await totalPrice(dataItem),
-                order_id: randomUUID(),
-            },
-            item_details: dataItem,
-            customer_details: {
-                ...dataCustomer,
-            },
-        };
-
-        try {
-            await prisma.$transaction(async (tx) => {
-                const response = await snap.createTransaction(parameter);
-
-                const transaction = await tx.ticketTransaction.create({
-                    data: {
-                        userId: req.user.id, // req.user.id (from user loggedIn)
-                        orderId: parameter.transaction_details.order_id,
-                        status: "pending",
-                        totalPrice: parseFloat(
-                            parameter.transaction_details.gross_amount
-                        ),
-                        bookingDate: dataCustomer.bookingDate,
-                    },
-                });
-
-                await Promise.all(
-                    dataItem.map(async (dataItem) => {
-                        await tx.ticketTransactionDetail.create({
-                            data: {
-                                id: randomUUID(),
-                                transactionId: transaction.id,
-                                price: parseFloat(dataItem.price),
-                                name: dataItem.name,
-                                seatId: dataItem.seatId,
-                                familyName: dataItem.familyName,
-                                flightId: req.body.flightId,
-                                dob: dataItem.dob,
-                                citizenship: dataItem.citizenship,
-                                passport: randomUUID(),
-                                issuingCountry: dataItem.issuingCountry,
-                                validityPeriod: dataItem.validityPeriod,
-                            },
-                        });
-                    })
-                );
-
-                let seatId = seats.map((seat) => {
-                    return seat.id;
-                });
-
-                let whereUpdate = {
-                    id: {
-                        in: [seatId[0]],
-                    },
-                };
-                if (Object.keys(secondData).length !== 0) {
-                    whereUpdate = {
-                        id: {
-                            in: [seatId[0], seatId[1]],
-                        },
-                    };
-                }
-
-                await tx.flightSeat.updateMany({
-                    where: whereUpdate,
-                    data: {
-                        status: "OCCUPIED",
-                    },
-                });
-
-                res.status(200).json({
-                    status: true,
-                    message: "Transaction created successfully",
-                    _token: response.token,
-                    redirect_url: `https://app.sandbox.midtrans.com/snap/v2/vtweb/${response.token}`,
-                    data: {
-                        ...dataCustomer,
-                        dataItem,
-                    },
-                });
-            });
-        } catch (error) {
-            return next(
-                createHttpError(422, {
-                    message: error.message,
-                })
-            );
-        }
     } catch (error) {
         next(createHttpError(500, { message: error.message }));
     }
@@ -483,35 +329,20 @@ const notification = async (req, res) => {
     res.status(200).send("OK");
 };
 
-const bankTransfer = async (req, res, next) => {
+const snapPayment = async (req, res, next) => {
     try {
-        let { bank, payment_type } = req.body;
         let { flightId } = req.query;
 
-        const secondData = extractSecondData(req.body);
+        const { passengers, orderer } = await parameterMidtrans(req.body);
 
-        req.body.flightId = flightId;
-
-        let where = {
-            id: {
-                in: [req.body.first_seatId],
-            },
-        };
-
-        if (Object.keys(secondData).length !== 0) {
-            where = {
-                id: {
-                    in: [req.body.first_seatId, req.body.second_seatId],
-                },
-            };
-        }
-
-        // Check if the seat exists and is not booked
         const seats = await prisma.flightSeat.findMany({
-            where,
+            where: {
+                id: {
+                    in: passengers.map((passenger) => passenger.seatId),
+                },
+            },
         });
 
-        // check seat
         const { error, seatNumber } = await checkSeatAvailability(
             seats,
             flightId
@@ -535,11 +366,140 @@ const bankTransfer = async (req, res, next) => {
             );
         }
 
-        const dataCustomer = await dataCustomerDetail(req.body);
-        const dataItem = await dataItemDetail(req.body);
+        let parameter = {
+            credit_card: {
+                secure: true,
+            },
+            transaction_details: {
+                gross_amount: await totalPrice(passengers),
+                order_id: randomUUID(),
+            },
+            item_details: passengers,
+            customer_details: orderer,
+        };
 
-        if (bank) {
-            payment_type = "bank_transfer";
+        try {
+            const bookingCode = await generateBookingCode(passengers);
+
+            // [start] tax
+            let tax =
+                parseFloat(parameter.transaction_details.gross_amount) *
+                (3 / 100);
+            let totalPrice =
+                parseFloat(parameter.transaction_details.gross_amount) - tax;
+            // [end] tax
+
+            await prisma.$transaction(async (tx) => {
+                const response = await snap.createTransaction(parameter);
+
+                const transaction = await tx.ticketTransaction.create({
+                    data: {
+                        userId: req.user.id, // req.user.id (from user loggedIn)
+                        orderId: parameter.transaction_details.order_id,
+                        status: "pending",
+                        totalPrice,
+                        tax: tax,
+                        bookingDate: new Date().toISOString(),
+                        bookingCode,
+                    },
+                });
+
+                await Promise.all(
+                    passengers.map(async (passenger) => {
+                        await tx.ticketTransactionDetail.create({
+                            data: {
+                                id: randomUUID(),
+                                transactionId: transaction.id,
+                                price: parseFloat(passenger.price),
+                                name: passenger.name,
+                                type: passenger.type,
+                                seatId: passenger.seatId,
+                                familyName: passenger.familyName,
+                                flightId,
+                                dob: passenger.dob,
+                                citizenship: passenger.citizenship,
+                                passport: passenger.passport,
+                                issuingCountry: passenger.issuingCountry,
+                                validityPeriod: passenger.validityPeriod,
+                            },
+                        });
+                    })
+                );
+
+                await tx.flightSeat.updateMany({
+                    where: {
+                        id: {
+                            in: passengers.map((passenger) => passenger.seatId),
+                        },
+                    },
+                    data: {
+                        status: "OCCUPIED",
+                    },
+                });
+
+                res.status(200).json({
+                    status: true,
+                    message: "Transaction created successfully",
+                    _token: response.token,
+                    redirect_url: `https://app.sandbox.midtrans.com/snap/v2/vtweb/${response.token}`,
+                    data: {
+                        orderer,
+                        passengers,
+                    },
+                });
+            });
+        } catch (error) {
+            return next(
+                createHttpError(422, {
+                    message: error.message,
+                })
+            );
+        }
+    } catch (error) {
+        next(createHttpError(500, { message: error.message }));
+    }
+};
+
+const bankTransfer = async (req, res, next) => {
+    try {
+        let data = req.body;
+        let { flightId } = req.query;
+
+        const { passengers, orderer } = await parameterMidtrans(req.body);
+
+        const seats = await prisma.flightSeat.findMany({
+            where: {
+                id: {
+                    in: passengers.map((passenger) => passenger.seatId),
+                },
+            },
+        });
+
+        const { error, seatNumber } = await checkSeatAvailability(
+            seats,
+            flightId
+        );
+
+        if (error.flight) {
+            return next(
+                createHttpError(404, { message: "Flight is not found" })
+            );
+        }
+        if (error.seat) {
+            return next(createHttpError(404, { message: "Seat is not found" }));
+        }
+        if (error.booked) {
+            return next(
+                createHttpError(400, {
+                    message: `Seat in this flight with seat number: ${seatNumber.join(
+                        " & "
+                    )} is booked`,
+                })
+            );
+        }
+
+        if (data.bank) {
+            data.payment_type = "bank_transfer";
             const allowedBanks = [
                 "bca",
                 "bni",
@@ -549,7 +509,7 @@ const bankTransfer = async (req, res, next) => {
                 "cimb",
             ];
 
-            if (!allowedBanks.includes(bank)) {
+            if (!allowedBanks.includes(data.bank)) {
                 return next(
                     createHttpError(422, {
                         message: `Allowed Banks: ${allowedBanks.join(", ")}`,
@@ -561,7 +521,7 @@ const bankTransfer = async (req, res, next) => {
         const allowedPaymentTypes = ["bank_transfer", "echannel", "permata"];
         let parameter;
 
-        if (!allowedPaymentTypes.includes(payment_type)) {
+        if (!allowedPaymentTypes.includes(data.payment_type)) {
             return next(
                 createHttpError(422, {
                     message: `Allowed payment types: ${allowedPaymentTypes.join(
@@ -571,19 +531,17 @@ const bankTransfer = async (req, res, next) => {
             );
         }
 
-        if (payment_type !== "bank_transfer") {
+        if (data.payment_type !== "bank_transfer") {
             // permata
-            if (payment_type === "permata") {
+            if (data.payment_type === "permata") {
                 parameter = {
                     payment_type: "permata",
                     transaction_details: {
-                        gross_amount: await totalPrice(dataItem),
+                        gross_amount: await totalPrice(passengers),
                         order_id: randomUUID(),
                     },
-                    customer_details: {
-                        ...dataCustomer,
-                    },
-                    item_details: dataItem,
+                    customer_details: orderer,
+                    item_details: passengers,
                 };
             } else {
                 // mandiri / mandiri bill
@@ -594,62 +552,71 @@ const bankTransfer = async (req, res, next) => {
                         bill_info2: "Online purchase",
                     },
                     transaction_details: {
-                        gross_amount: await totalPrice(dataItem),
+                        gross_amount: await totalPrice(passengers),
                         order_id: randomUUID(),
                     },
-                    customer_details: {
-                        ...dataCustomer,
-                    },
-                    item_details: dataItem,
+                    customer_details: orderer,
+                    item_details: passengers,
                 };
             }
         } else {
             parameter = {
                 payment_type: "bank_transfer",
                 bank_transfer: {
-                    bank,
+                    bank: data.bank,
                 },
                 transaction_details: {
-                    gross_amount: await totalPrice(dataItem),
+                    gross_amount: await totalPrice(passengers),
                     order_id: randomUUID(),
                 },
-                customer_details: {
-                    ...dataCustomer,
-                },
-                item_details: dataItem,
+                customer_details: orderer,
+                item_details: passengers,
             };
         }
 
         try {
+            const bookingCode = await generateBookingCode(passengers);
+
+            // [start] tax
+            let tax =
+                parseFloat(parameter.transaction_details.gross_amount) *
+                (3 / 100);
+            let totalPrice =
+                parseFloat(parameter.transaction_details.gross_amount) - tax;
+            // [end] tax
+
             await prisma.$transaction(async (tx) => {
                 const response = await coreApi.charge(parameter);
 
                 const transaction = await tx.ticketTransaction.create({
                     data: {
                         userId: req.user.id, // req.user.id (from user loggedIn)
-                        orderId: response.order_id,
-                        status: response.transaction_status,
-                        totalPrice: parseFloat(response.gross_amount),
-                        bookingDate: dataCustomer.bookingDate,
+                        orderId: parameter.transaction_details.order_id,
+                        status: "pending",
+                        totalPrice,
+                        tax: tax,
+                        bookingDate: new Date().toISOString(),
+                        bookingCode,
                     },
                 });
 
                 await Promise.all(
-                    dataItem.map(async (dataItem) => {
+                    passengers.map(async (passenger) => {
                         await tx.ticketTransactionDetail.create({
                             data: {
                                 id: randomUUID(),
                                 transactionId: transaction.id,
-                                price: parseFloat(dataItem.price),
-                                name: dataItem.name,
-                                seatId: dataItem.seatId,
-                                familyName: dataItem.familyName,
-                                flightId: req.body.flightId,
-                                dob: dataItem.dob,
-                                citizenship: dataItem.citizenship,
-                                passport: randomUUID(),
-                                issuingCountry: dataItem.issuingCountry,
-                                validityPeriod: dataItem.validityPeriod,
+                                price: parseFloat(passenger.price),
+                                name: passenger.name,
+                                type: passenger.type,
+                                seatId: passenger.seatId,
+                                familyName: passenger.familyName,
+                                flightId,
+                                dob: passenger.dob,
+                                citizenship: passenger.citizenship,
+                                passport: passenger.passport,
+                                issuingCountry: passenger.issuingCountry,
+                                validityPeriod: passenger.validityPeriod,
                             },
                         });
                     })
@@ -659,21 +626,12 @@ const bankTransfer = async (req, res, next) => {
                     return seat.id;
                 });
 
-                let whereUpdate = {
-                    id: {
-                        in: [seatId[0]],
-                    },
-                };
-                if (Object.keys(secondData).length !== 0) {
-                    whereUpdate = {
-                        id: {
-                            in: [seatId[0], seatId[1]],
-                        },
-                    };
-                }
-
                 await tx.flightSeat.updateMany({
-                    where: whereUpdate,
+                    where: {
+                        id: {
+                            in: passengers.map((passenger) => passenger.seatId),
+                        },
+                    },
                     data: {
                         status: "OCCUPIED",
                     },
@@ -683,8 +641,6 @@ const bankTransfer = async (req, res, next) => {
                     status: true,
                     message: "Bank VA created successfully",
                     data: {
-                        flightId: flightId,
-                        seatId: seatId,
                         payment_type: response.payment_type,
                         transaction_id: response.transaction_id,
                         order_id: response.order_id,
@@ -694,7 +650,10 @@ const bankTransfer = async (req, res, next) => {
                         payment_status: response.fraud_status,
                         expiry_time: response.expiry_time,
                         va_numbers: response.va_numbers,
-                        dataItem,
+                        flightId: flightId,
+                        seatId: seatId,
+                        orderer: orderer,
+                        passengers: passengers,
                     },
                 });
             });
@@ -712,33 +671,19 @@ const bankTransfer = async (req, res, next) => {
 
 const creditCard = async (req, res, next) => {
     try {
-        let { card_number, card_exp_month, card_exp_year, card_cvv } = req.body;
+        let data = req.body;
         let { flightId } = req.query;
 
-        req.body.flightId = flightId;
-
-        const secondData = extractSecondData(req.body);
-
-        req.body.flightId = flightId;
-
-        let where = {
-            id: {
-                in: [req.body.first_seatId],
-            },
-        };
-        if (Object.keys(secondData).length !== 0) {
-            where = {
-                id: {
-                    in: [req.body.first_seatId, req.body.second_seatId],
-                },
-            };
-        }
+        const { passengers, orderer } = await parameterMidtrans(req.body);
 
         const seats = await prisma.flightSeat.findMany({
-            where,
+            where: {
+                id: {
+                    in: passengers.map((passenger) => passenger.seatId),
+                },
+            },
         });
 
-        // check seat
         const { error, seatNumber } = await checkSeatAvailability(
             seats,
             flightId
@@ -762,14 +707,11 @@ const creditCard = async (req, res, next) => {
             );
         }
 
-        const dataCustomer = await dataCustomerDetail(req.body);
-        const dataItem = await dataItemDetail(req.body);
-
         let cardParameter = {
-            card_number,
-            card_exp_month,
-            card_exp_year,
-            card_cvv,
+            card_number: data.card_number,
+            card_exp_month: data.card_exp_month,
+            card_exp_year: data.card_exp_year,
+            card_cvv: data.card_cvv,
             client_key: coreApi.apiConfig.clientKey,
         };
 
@@ -784,68 +726,66 @@ const creditCard = async (req, res, next) => {
                 secure: true,
             },
             transaction_details: {
-                gross_amount: await totalPrice(dataItem),
+                gross_amount: await totalPrice(passengers),
                 order_id: randomUUID(),
             },
-            item_details: dataItem,
-            customer_details: {
-                ...dataCustomer,
-            },
+            customer_details: orderer,
+            item_details: passengers,
         };
 
         try {
+            const bookingCode = await generateBookingCode(passengers);
+
+            // [start] tax
+            let tax =
+                parseFloat(parameter.transaction_details.gross_amount) *
+                (3 / 100);
+            let totalPrice =
+                parseFloat(parameter.transaction_details.gross_amount) - tax;
+            // [end] tax
+
             await prisma.$transaction(async (tx) => {
                 const response = await coreApi.charge(parameter);
                 const transaction = await tx.ticketTransaction.create({
                     data: {
                         userId: req.user.id, // req.user.id (from user loggedIn)
-                        orderId: response.order_id,
-                        status: response.transaction_status,
-                        totalPrice: parseFloat(response.gross_amount),
-                        bookingDate: dataCustomer.bookingDate,
+                        orderId: parameter.transaction_details.order_id,
+                        status: "pending",
+                        totalPrice,
+                        tax: tax,
+                        bookingDate: new Date().toISOString(),
+                        bookingCode,
                     },
                 });
 
                 await Promise.all(
-                    dataItem.map(async (dataItem) => {
+                    passengers.map(async (passenger) => {
                         await tx.ticketTransactionDetail.create({
                             data: {
                                 id: randomUUID(),
                                 transactionId: transaction.id,
-                                price: parseFloat(dataItem.price),
-                                name: dataItem.name,
-                                seatId: dataItem.seatId,
-                                familyName: dataItem.familyName,
-                                flightId: req.body.flightId,
-                                dob: dataItem.dob,
-                                citizenship: dataItem.citizenship,
-                                passport: randomUUID(),
-                                issuingCountry: dataItem.issuingCountry,
-                                validityPeriod: dataItem.validityPeriod,
+                                price: parseFloat(passenger.price),
+                                name: passenger.name,
+                                type: data.type,
+                                seatId: passenger.seatId,
+                                familyName: passenger.familyName,
+                                flightId,
+                                dob: passenger.dob,
+                                citizenship: passenger.citizenship,
+                                passport: passenger.passport,
+                                issuingCountry: passenger.issuingCountry,
+                                validityPeriod: passenger.validityPeriod,
                             },
                         });
                     })
                 );
 
-                let seatId = seats.map((seat) => {
-                    return seat.id;
-                });
-
-                let whereUpdate = {
-                    id: {
-                        in: [seatId[0]],
-                    },
-                };
-                if (Object.keys(secondData).length !== 0) {
-                    whereUpdate = {
-                        id: {
-                            in: [seatId[0], seatId[1]],
-                        },
-                    };
-                }
-
                 await tx.flightSeat.updateMany({
-                    where: whereUpdate,
+                    where: {
+                        id: {
+                            in: passengers.map((passenger) => passenger.seatId),
+                        },
+                    },
                     data: {
                         status: "OCCUPIED",
                     },
@@ -867,7 +807,8 @@ const creditCard = async (req, res, next) => {
                         expiry_time: response.expiry_time,
                         redirect_url: response.redirect_url,
                         bank: response.bank,
-                        dataItem,
+                        orderer,
+                        passengers,
                     },
                 });
             });
@@ -891,31 +832,16 @@ const gopay = async (req, res, next) => {
     try {
         let { flightId } = req.query;
 
-        req.body.flightId = flightId;
+        const { passengers, orderer } = await parameterMidtrans(req.body);
 
-        const secondData = extractSecondData(req.body);
-
-        req.body.flightId = flightId;
-
-        let where = {
-            id: {
-                in: [req.body.first_seatId],
-            },
-        };
-        if (Object.keys(secondData).length !== 0) {
-            where = {
-                id: {
-                    in: [req.body.first_seatId, req.body.second_seatId],
-                },
-            };
-        }
-
-        // Check if the seat exists and is not booked
         const seats = await prisma.flightSeat.findMany({
-            where,
+            where: {
+                id: {
+                    in: passengers.map((passenger) => passenger.seatId),
+                },
+            },
         });
 
-        // check seat
         const { error, seatNumber } = await checkSeatAvailability(
             seats,
             flightId
@@ -939,75 +865,70 @@ const gopay = async (req, res, next) => {
             );
         }
 
-        const dataCustomer = await dataCustomerDetail(req.body);
-        const dataItem = await dataItemDetail(req.body);
-
         let parameter = {
             payment_type: "gopay",
             transaction_details: {
-                gross_amount: await totalPrice(dataItem),
+                gross_amount: await totalPrice(passengers),
                 order_id: randomUUID(),
             },
-            item_details: dataItem,
-            customer_details: {
-                ...dataCustomer,
-            },
+            customer_details: orderer,
+            item_details: passengers,
         };
 
         try {
+            const bookingCode = await generateBookingCode(passengers);
+
+            // [start] tax
+            let tax =
+                parseFloat(parameter.transaction_details.gross_amount) *
+                (3 / 100);
+            let totalPrice =
+                parseFloat(parameter.transaction_details.gross_amount) - tax;
+            // [end] tax
+
             await prisma.$transaction(async (tx) => {
                 const response = await coreApi.charge(parameter);
 
                 const transaction = await tx.ticketTransaction.create({
                     data: {
                         userId: req.user.id, // req.user.id (from user loggedIn)
-                        orderId: response.order_id,
-                        status: response.transaction_status,
-                        totalPrice: parseFloat(response.gross_amount),
-                        bookingDate: dataCustomer.bookingDate,
+                        orderId: parameter.transaction_details.order_id,
+                        status: "pending",
+                        totalPrice,
+                        tax: tax,
+                        bookingDate: new Date().toISOString(),
+                        bookingCode,
                     },
                 });
 
                 await Promise.all(
-                    dataItem.map(async (dataItem) => {
+                    passengers.map(async (passenger) => {
                         await tx.ticketTransactionDetail.create({
                             data: {
                                 id: randomUUID(),
                                 transactionId: transaction.id,
-                                price: parseFloat(dataItem.price),
-                                name: dataItem.name,
-                                seatId: dataItem.seatId,
-                                familyName: dataItem.familyName,
-                                flightId: req.body.flightId,
-                                dob: dataItem.dob,
-                                citizenship: dataItem.citizenship,
-                                passport: randomUUID(),
-                                issuingCountry: dataItem.issuingCountry,
-                                validityPeriod: dataItem.validityPeriod,
+                                price: parseFloat(passenger.price),
+                                name: passenger.name,
+                                type: passenger.type,
+                                seatId: passenger.seatId,
+                                familyName: passenger.familyName,
+                                flightId,
+                                dob: passenger.dob,
+                                citizenship: passenger.citizenship,
+                                passport: passenger.passport,
+                                issuingCountry: passenger.issuingCountry,
+                                validityPeriod: passenger.validityPeriod,
                             },
                         });
                     })
                 );
 
-                let seatId = seats.map((seat) => {
-                    return seat.id;
-                });
-
-                let whereUpdate = {
-                    id: {
-                        in: [seatId[0]],
-                    },
-                };
-                if (Object.keys(secondData).length !== 0) {
-                    whereUpdate = {
-                        id: {
-                            in: [seatId[0], seatId[1]],
-                        },
-                    };
-                }
-
                 await tx.flightSeat.updateMany({
-                    where: whereUpdate,
+                    where: {
+                        id: {
+                            in: passengers.map((passenger) => passenger.seatId),
+                        },
+                    },
                     data: {
                         status: "OCCUPIED",
                     },
@@ -1025,8 +946,9 @@ const gopay = async (req, res, next) => {
                         transaction_status: response.transaction_status,
                         payment_status: response.fraud_status,
                         expiry_time: response.expiry_time,
-                        dataItem,
                         action: response.actions,
+                        orderer,
+                        passengers,
                     },
                 });
             });
@@ -1041,8 +963,6 @@ const gopay = async (req, res, next) => {
         next(createHttpError(500, { message: error.message }));
     }
 };
-
-//TODO: dashboard action
 
 const getAllTransactionByUserLoggedIn = async (req, res, next) => {
     // get all transaction data from ticketTransaction & include ticketTransaction detail
@@ -1089,7 +1009,14 @@ const getAllTransactionByUserLoggedIn = async (req, res, next) => {
                     include: {
                         flight: {
                             where: flightCondition,
+                            include: {
+                                plane: true,
+                                transitAirport: true,
+                                departureAirport: true,
+                                destinationAirport: true,
+                            },
                         },
+                        seat: true,
                     },
                 },
             },
@@ -1110,6 +1037,76 @@ const getAllTransactionByUserLoggedIn = async (req, res, next) => {
             )
         );
 
+        let response = [];
+        filteredTransactions.map((data) => {
+            data.Transaction_Detail.map((detail) => {
+                console.log(detail);
+                const duration = calculateFlightDuration(
+                    detail.flight.departureDate,
+                    detail.flight.arrivalDate
+                );
+                let bookingCode = `${detail.flight.code}-${detail.flight.plane.code}-${detail.seat.seatNumber}`;
+
+                response.push({
+                    id: data.id,
+                    orderId: data.orderId,
+                    userId: data.userId,
+                    totalPrice: data.totalPrice,
+                    status: data.status,
+                    bookingDate: formatDate(data.bookingDate),
+                    bookingTime: formatTime(data.bookingDate),
+                    bookingCode,
+                    Transaction_Detail: [
+                        {
+                            id: detail.id,
+                            transactionId: detail.transactionId,
+                            price: detail.price,
+                            name: detail.name,
+                            familyName: detail.familyName,
+                            dob: formatDate(detail.dob),
+                            citizenship: detail.citizenship,
+                            passport: detail.passport,
+                            issuingCountry: detail.issuingCountry,
+                            validityPeriod: formatDate(detail.validityPeriod),
+                            flight: {
+                                id: detail.flight.id,
+                                code: detail.flight.code,
+                                flightDuration: duration,
+                                airline: {
+                                    id: detail.flight.plane.id,
+                                    code: detail.flight.plane.code,
+                                    name: detail.flight.plane.name,
+                                    image: detail.flight.plane.image,
+                                    terminal: detail.flight.plane.terminal,
+                                },
+                                transitAirport: detail.flight.transitAiport,
+                                departureAirport: {
+                                    id: detail.flight.departureAirport.id,
+                                    code: detail.flight.departureAirport.code,
+                                    name: detail.flight.departureAirport.name,
+                                },
+                                destinationAirport: {
+                                    id: detail.flight.destinationAirport.id,
+                                    code: detail.flight.destinationAirport.code,
+                                    name: detail.flight.destinationAirport.name,
+                                    terminal:
+                                        detail.flight.destinationAirport
+                                            .terminal,
+                                },
+                            },
+                            seat: {
+                                id: detail.seat.id,
+                                flightId: detail.seat.id,
+                                seatNumber: detail.seat.seatNumber,
+                                status: detail.seat.status,
+                                type: detail.seat.type,
+                                price: detail.seat.price,
+                            },
+                        },
+                    ],
+                });
+            });
+        });
         // console.log(filteredTransaction);
 
         res.status(200).json({
@@ -1124,9 +1121,9 @@ const getAllTransactionByUserLoggedIn = async (req, res, next) => {
                 prevPage: page > 1 ? page - 1 : null,
             },
             data:
-                filteredTransactions.length !== 0
-                    ? filteredTransactions
-                    : "transaction data is empty",
+                filteredTransactions.length <= 0
+                    ? "transaction data is empty"
+                    : response,
         });
     } catch (error) {
         next(
@@ -1136,6 +1133,8 @@ const getAllTransactionByUserLoggedIn = async (req, res, next) => {
         );
     }
 };
+
+//TODO: dashboard action
 
 const getAllTransaction = async (req, res, next) => {
     try {
@@ -1324,8 +1323,8 @@ const deleteTransactionDetail = async (req, res, next) => {
 
 module.exports = {
     getTransaction,
-    createTransaction,
     notification,
+    snapPayment,
     gopay,
     bankTransfer,
     creditCard,

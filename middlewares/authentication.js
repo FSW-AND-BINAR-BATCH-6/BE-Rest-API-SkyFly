@@ -24,6 +24,7 @@ module.exports = async (req, res, next) => {
                 name: true,
                 role: true,
                 phoneNumber: true,
+                familyName: true,
                 auth: {
                     select: {
                         id: true,

@@ -4,7 +4,7 @@ const { secretHash, secretCompare } = require("../../../utils/hashSalt");
 jest.mock("bcrypt");
 
 describe("secretHash", () => {
-    it("should hash a string with bcrypt", () => {
+    it("should hash a string with bcrypt", async () => {
         const string = "mySecretPassword";
         const saltRounds = 10;
         const hashedString = "hashedPassword";
@@ -12,7 +12,7 @@ describe("secretHash", () => {
 
         bcrypt.hashSync.mockReturnValue(hashedString);
 
-        const result = secretHash(string);
+        const result = await secretHash(string);
 
         expect(bcrypt.hashSync).toHaveBeenCalledWith(string, saltRounds);
         expect(result).toBe(hashedString);
@@ -20,25 +20,25 @@ describe("secretHash", () => {
 });
 
 describe("secretCompare", () => {
-    it("should compare a string with a hashed string using bcrypt", () => {
+    it("should compare a string with a hashed string using bcrypt", async () => {
         const string = "mySecretPassword";
         const hashedString = "hashedPassword";
 
         bcrypt.compareSync.mockReturnValue(true);
 
-        const result = secretCompare(string, hashedString);
+        const result = await secretCompare(string, hashedString);
 
         expect(bcrypt.compareSync).toHaveBeenCalledWith(string, hashedString);
         expect(result).toBe(true);
     });
 
-    it("should return false if the string does not match the hashed string", () => {
+    it("should return false if the string does not match the hashed string", async () => {
         const string = "mySecretPassword";
         const hashedString = "differentHashedPassword";
 
         bcrypt.compareSync.mockReturnValue(false);
 
-        const result = secretCompare(string, hashedString);
+        const result = await secretCompare(string, hashedString);
 
         expect(bcrypt.compareSync).toHaveBeenCalledWith(string, hashedString);
         expect(result).toBe(false);

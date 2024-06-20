@@ -16,9 +16,9 @@ describe("generateJWT", () => {
         jest.clearAllMocks();
     });
 
-    it("success", () => {
+    it("success", async () => {
         jwt.sign.mockReturnValue("tokenMockup");
-        const token = generateJWT(payload);
+        const token = await generateJWT(payload);
         expect(token).toBe("tokenMockup");
     });
 });
