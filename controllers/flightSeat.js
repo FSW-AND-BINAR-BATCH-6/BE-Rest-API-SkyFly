@@ -14,9 +14,9 @@ const getSeatStatus = async (seatId) => {
         throw new Error(`Seat with ID ${seatId} not found`);
     }
 
-    // If the seat is already booked, return "booked" status directly
-    if (seat.status === "BOOKED") {
-        return "BOOKED";
+    // Return the status directly if it's BOOKED or OCCUPIED
+    if (seat.status === "BOOKED" || seat.status === "OCCUPIED") {
+        return seat.status; // convert to lowercase to match response format
     }
 
     // Otherwise, check the transaction details
@@ -57,7 +57,7 @@ const getSeatStatus = async (seatId) => {
 
     switch (transaction_status) {
         case "pending":
-            return "pending";
+            return "OCCUPIED";
         case "settlement":
         case "capture":
         case "success":
