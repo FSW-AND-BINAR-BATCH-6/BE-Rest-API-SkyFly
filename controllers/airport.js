@@ -139,6 +139,7 @@ const createNewAirport = async (req, res, next) => {
             ? (imageUrl = await uploadFile(file))
             : (imageUrl = "https://placehold.co/600x400");
 
+            
         const newAirport = await prisma.airport.create({
             data: {
                 id: randomUUID(),

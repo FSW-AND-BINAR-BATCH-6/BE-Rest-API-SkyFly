@@ -3,6 +3,7 @@ const userController = require("../../../controllers/user");
 const { PrismaClient } = require("@prisma/client");
 const { randomUUID } = require("crypto");
 const prisma = new PrismaClient();
+const { unitTest } = require("./index");
 
 // Mock Function
 
@@ -40,10 +41,9 @@ describe("User API", () => {
                 id: "123",
                 email: "agus@gmail.com",
                 isVerified: true,
-
-            }
-        }
-    ]
+            },
+        },
+    ];
 
     beforeEach(() => {
         res = {
@@ -51,7 +51,6 @@ describe("User API", () => {
             json: jest.fn(),
         };
         next = jest.fn();
-
     });
 
     describe("getAllUser", () => {
@@ -82,15 +81,16 @@ describe("User API", () => {
                     prevPage: null,
                 },
                 data: userDummyData,
-            })
-
+            });
         });
 
         it(" failed, 500", async () => {
-            const errorMessage = "Internal Server Error"
-            prisma.user.findMany.mockRejectedValue(new Error(errorMessage))
-            await userController.getAllUsers(req, res, next)
-            expect(next).toHaveBeenCalledWith(createHttpError(500, { message: errorMessage }))
+            const errorMessage = "Internal Server Error";
+            prisma.user.findMany.mockRejectedValue(new Error(errorMessage));
+            await userController.getAllUsers(req, res, next);
+            expect(next).toHaveBeenCalledWith(
+                createHttpError(500, { message: errorMessage })
+            );
         });
     });
 
@@ -114,15 +114,16 @@ describe("User API", () => {
         });
 
         it(" failed, 500", async () => {
-            const errorMessage = "Internal Server Error"
-            prisma.user.findUnique.mockRejectedValue(new Error(errorMessage))
-            await userController.getUserById(req, res, next)
-            expect(next).toHaveBeenCalledWith(createHttpError(500, { message: errorMessage }))
+            const errorMessage = "Internal Server Error";
+            prisma.user.findUnique.mockRejectedValue(new Error(errorMessage));
+            await userController.getUserById(req, res, next);
+            expect(next).toHaveBeenCalledWith(
+                createHttpError(500, { message: errorMessage })
+            );
         });
     });
 
     describe("createUsers", () => {
-
         beforeEach(() => {
             req = {
                 body: {
@@ -155,16 +156,16 @@ describe("User API", () => {
             });
         });
 
-
         it(" failed, 500", async () => {
-            const errorMessage = "Internal Server Error"
-            prisma.user.create.mockRejectedValue(new Error(errorMessage))
-            await userController.createUser(req, res, next)
-            expect(next).toHaveBeenCalledWith(createHttpError(500, { message: errorMessage }))
+            const errorMessage = "Internal Server Error";
+            prisma.user.create.mockRejectedValue(new Error(errorMessage));
+            await userController.createUser(req, res, next);
+            expect(next).toHaveBeenCalledWith(
+                createHttpError(500, { message: errorMessage })
+            );
         });
     });
 
-    
     describe("UpdateUser", () => {
         beforeEach(() => {
             req = {
@@ -187,8 +188,7 @@ describe("User API", () => {
             phoneNumber: "08962394959",
             familyName: "Anto",
             role: "BUYER",
-        }
-
+        };
 
         it("Success", async () => {
             randomUUID.mockReturnValue("mercy");
@@ -205,10 +205,12 @@ describe("User API", () => {
         });
 
         it(" failed, 500", async () => {
-            const errorMessage = "Internal Server Error"
-            prisma.user.update.mockRejectedValue(new Error(errorMessage))
-            await userController.updateUser(req, res, next)
-            expect(next).toHaveBeenCalledWith(createHttpError(500, { message: errorMessage }))
+            const errorMessage = "Internal Server Error";
+            prisma.user.update.mockRejectedValue(new Error(errorMessage));
+            await userController.updateUser(req, res, next);
+            expect(next).toHaveBeenCalledWith(
+                createHttpError(500, { message: errorMessage })
+            );
         });
     });
 
@@ -231,11 +233,12 @@ describe("User API", () => {
         });
 
         it(" failed, 500", async () => {
-            const errorMessage = "Internal Server Error"
-            prisma.user.delete.mockRejectedValue(new Error(errorMessage))
-            await userController.deleteUser(req, res, next)
-            expect(next).toHaveBeenCalledWith(createHttpError(500, { message: errorMessage }))
+            const errorMessage = "Internal Server Error";
+            prisma.user.delete.mockRejectedValue(new Error(errorMessage));
+            await userController.deleteUser(req, res, next);
+            expect(next).toHaveBeenCalledWith(
+                createHttpError(500, { message: errorMessage })
+            );
         });
     });
 });
-
