@@ -314,14 +314,14 @@ const getAllFlight = async (req, res, next) => {
                 const seat = flight.seats.find(seat => seat.type === seatClass.toUpperCase());
                 classInfo = {
                     seatClass: seat ? seat.type : seatClass.toUpperCase(),
-                    seatPrice: seat ? seat.price : 'Not available'
+                    seatPrice: seat ? seat.price : null
                 };
             } else {
                 classInfo = ['ECONOMY', 'BUSINESS', 'FIRST'].map(type => {
                     const seat = flight.seats.find(seat => seat.type === type);
                     return {
                         seatClass: type,
-                        seatPrice: seat ? seat.price : 'Not available'
+                        seatPrice: seat ? seat.price : null
                     };
                 });
             }
@@ -393,14 +393,14 @@ const getAllFlight = async (req, res, next) => {
                 const seat = flight.seats.find(seat => seat.type === seatClass.toUpperCase());
                 classInfo = {
                     seatClass: seat ? seat.type : seatClass.toUpperCase(),
-                    seatPrice: seat ? seat.price : 'Not available'
+                    seatPrice: seat ? seat.price : null
                 };
             } else {
                 classInfo = ['ECONOMY', 'BUSINESS', 'FIRST'].map(type => {
                     const seat = flight.seats.find(seat => seat.type === type);
                     return {
                         seatClass: type,
-                        seatPrice: seat ? seat.price : 'Not available'
+                        seatPrice: seat ? seat.price : null
                     };
                 });
             }
@@ -563,14 +563,14 @@ const getFlightById = async (req, res, next) => {
                 const seat = flight.seats.find(seat => seat.type === seatClass.toUpperCase());
                 classInfo = [{
                     seatClass: seatClass.toUpperCase(),
-                    seatPrice: seat ? seat.price : 'Not available'
+                    seatPrice: seat ? seat.price : null
                 }];
             } else {
                 classInfo = ['ECONOMY', 'BUSINESS', 'FIRST'].map(type => {
                     const seat = flight.seats.find(seat => seat.type === type);
                     return {
                         seatClass: type,
-                        seatPrice: seat ? seat.price : 'Not available'
+                        seatPrice: seat ? seat.price : null
                     };
                 });
             }
