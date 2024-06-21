@@ -96,7 +96,54 @@ const getAllFlight = async (req, res, next) => {
                     gte: new Date(parsedReturnDate.setHours(0, 0, 0, 0)),
                     lt: new Date(parsedReturnDate.setHours(23, 59, 59, 999)),
                 },
+
             });
+
+            if (departureAirport) {
+                returnFilters.AND.push({
+                    OR: [
+                        {
+                            destinationAirport: {
+                                code: {
+                                    contains: departureAirport.toUpperCase(),
+                                    mode: "insensitive",
+                                },
+                            },
+                        },
+                        {
+                            destinationAirport: {
+                                city: {
+                                    contains: departureAirport,
+                                    mode: "insensitive",
+                                },
+                            },
+                        },
+                    ],
+                });
+            }
+
+            if (arrivalAirport) {
+                returnFilters.AND.push({
+                    OR: [
+                        {
+                            departureAirport: {
+                                code: {
+                                    contains: arrivalAirport.toUpperCase(),
+                                    mode: "insensitive",
+                                },
+                            },
+                        },
+                        {
+                            departureAirport: {
+                                city: {
+                                    contains: arrivalAirport,
+                                    mode: "insensitive",
+                                },
+                            },
+                        },
+                    ],
+                });
+            }
         }
 
         if (airlineName) {
@@ -491,6 +538,7 @@ const getAllFlight = async (req, res, next) => {
 const getFlightById = async (req, res, next) => {
     try {
         const { id } = req.params;
+        const { seatClass } = req.query;
 
         const flight = await prisma.flight.findUnique({
             where: { id },
@@ -511,13 +559,21 @@ const getFlightById = async (req, res, next) => {
             const duration = calculateFlightDuration(flight.departureDate, flight.arrivalDate);
             let classInfo = {};
 
-            classInfo = ['ECONOMY', 'BUSINESS', 'FIRST'].map(type => {
-                const seat = flight.seats.find(seat => seat.type === type);
-                return {
-                    seatClass: type,
+            if (seatClass) {
+                const seat = flight.seats.find(seat => seat.type === seatClass.toUpperCase());
+                classInfo = [{
+                    seatClass: seatClass.toUpperCase(),
                     seatPrice: seat ? seat.price : 'Not available'
-                };
-            });
+                }];
+            } else {
+                classInfo = ['ECONOMY', 'BUSINESS', 'FIRST'].map(type => {
+                    const seat = flight.seats.find(seat => seat.type === type);
+                    return {
+                        seatClass: type,
+                        seatPrice: seat ? seat.price : 'Not available'
+                    };
+                });
+            }
 
             return {
                 id: flight.id,
