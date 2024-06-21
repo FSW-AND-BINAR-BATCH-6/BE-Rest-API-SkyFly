@@ -14,6 +14,7 @@ const {
     deleteTransactionDetail,
     getAllTransactionByUserLoggedIn,
     snapPayment,
+    getAdminTransactionById,
 } = require("../controllers/transaction");
 
 const authentication = require("../middlewares/authentication");
@@ -26,8 +27,9 @@ router.use((req, res, next) => {
     next();
 });
 
-router.get("/status/:orderId", authentication, getTransaction);
 router.get("/", authentication, getAllTransactionByUserLoggedIn);
+router.get("/:id", authentication, getTransactionById);
+router.get("/status/:orderId", authentication, getTransaction);
 
 // payment
 router.post("/payment", authentication, snapPayment);
@@ -40,7 +42,12 @@ router.put("/status/:orderId", authentication, updateTransaction);
 
 // dashboard action
 router.get("/admin", authentication, checkRole(["ADMIN"]), getAllTransaction);
-router.get("/:id", authentication, getTransactionById);
+router.get(
+    "/admin/:id",
+    authentication,
+    checkRole(["ADMIN"]),
+    getAdminTransactionById
+);
 router.put("/:id", authentication, checkRole(["ADMIN"]), updateTransaction);
 router.delete("/:id", authentication, checkRole(["ADMIN"]), deleteTransaction);
 router.delete(
