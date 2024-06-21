@@ -43,6 +43,10 @@
             "description": "this is the API for FLIGHT SEATS resources"
         },
         {
+            "name": "Notifications",
+            "description": "this is the API for NOTIFICATIONS resources"
+        },
+        {
             "name": "Tickets",
             "description": "this is the API for TICKETS resources"
         },
@@ -372,6 +376,10 @@
                                         "message": {
                                             "type": "string",
                                             "example": "Reset password link has been sent, please check your email"
+                                        },
+                                        "_token": {
+                                            "type": "string",
+                                            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZWdpc3RlcklkIjoiMGYyNjM4ZWMtMWRjMC00ZDI1LTlhYmEtZDRiZjk3ZGI0M2QxIiwiZW1haWwiOiJ2aWVyeTE1MTAyMDAyQGdtYWlsLmNvbSIsImVtYWlsVGl0bGUiOiJSZXNldCBQYXNzd29yZCIsImlhdCI6MTcxODU0NTExMCwiZXhwIjoxNzE4NjMxNTEwfQ.ivdEI2qzLAkpnvSlNtYIy5L5wRai5HaSe5waFZTmvWg"
                                         }
                                     }
                                 }
@@ -551,26 +559,9 @@
                                             "type": "string",
                                             "example": "Verification token has been sent, please check your email"
                                         },
-                                        "data": {
-                                            "type": "object",
-                                            "properties": {
-                                                "name": {
-                                                    "type": "string",
-                                                    "example": "skyfly"
-                                                },
-                                                "email": {
-                                                    "type": "string",
-                                                    "example": "skyflyproduction1@gmail.com"
-                                                },
-                                                "phoneNumber": {
-                                                    "type": "string",
-                                                    "example": "0909099091222"
-                                                },
-                                                "role": {
-                                                    "type": "string",
-                                                    "example": "BUYER"
-                                                }
-                                            }
+                                        "_token":{
+                                            "type":"string",
+                                            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyZWdpc3RlcklkIjoiNDc0NGFkNWYtNTdlMy00ODcyLWExMGItY2Y3YmVmODQ2MDg4IiwiZW1haWwiOiJza3lmbHlwcm9kdWN0aW9uMTIyQGdtYWlsLmNvbSIsImVtYWlsVGl0bGUiOiJFbWFpbCBBY3RpdmF0aW9uIiwiaWF0IjoxNzE4ODY4NTA4LCJleHAiOjE3MTg5NTQ5MDh9.oA8aWXkDRQW1PVweM7HJtEwYr6gvr2eGwcGln1b9BB8"
                                         }
                                     }
                                 }
@@ -987,6 +978,7 @@
                                                 "name": "skyfly",
                                                 "role": "BUYER",
                                                 "phoneNumber": "62895638069206",
+                                                "familyName": "Family",
                                                 "Auth": {
                                                     "id": "658b6dfe-19fb-4889-825d-54edde6d38d1",
                                                     "email": "skyflyproduction1@gmail.com",
@@ -2312,7 +2304,7 @@
                 }
             },
             "post": {
-                "tags": ["Flights"],
+                "tags": ["Dashboards"],
                 "summary": "Return result HIT API create flight",
                 "description": "This is an API for creating flight data",
                 "security": [
@@ -2556,24 +2548,26 @@
                                             "type": "object",
                                             "example": [
                                                 {
-                                                    "airport": {
-                                                      "id": "clxcri9vm000311pt6aqovtgw",
-                                                      "name": "Kuala Namu International Airport",
-                                                      "code": "KNO",
-                                                      "country": "Indonesia",
-                                                      "city": "Medan"
-                                                    },
-                                                    "transactionCount": 1
-                                                  },
-                                                  {
-                                                    "airport": {
-                                                      "id": "clxcri9vm000511ptt7dvx1xa",
-                                                      "name": "Ahmad Yani International Airport",
-                                                      "code": "SRG",
-                                                      "country": "Indonesia",
-                                                      "city": "Semarang"
-                                                    },
-                                                    "transactionCount": 1
+                                                    "flightDetails": {
+                                                      "flightId": "clxk1ps0x000pqdcn3iet6e98",
+                                                      "from": {
+                                                        "departureDate": "2024-06-02T09:00:00.000Z",
+                                                        "departureCity": "Jakarta"
+                                                      },
+                                                      "to": {
+                                                        "arrivalDate": "2024-06-02T13:00:00.000Z",
+                                                        "arrivalCity": "Surabaya",
+                                                        "continent": "Asia",
+                                                        "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif"
+                                                      },
+                                                      "plane": {
+                                                        "airline": "Garuda Indonesia",
+                                                        "price": 1200000,
+                                                        "discount": null,
+                                                        "terminal": "Terminal 2"
+                                                      },
+                                                      "transactionCount": 2
+                                                    }
                                                   }
                                             ]
                                         }
@@ -2621,30 +2615,51 @@
                                         "data": {
                                             "type": "object",
                                             "example": {
-                                                "id": "clx43qmf100016qxfhzx241yx",
-                                                "planeId": "clx43nfzg000n4sdazxheyjf9",
-                                                "departureDate": "2024-06-06T10:00:30.000Z",
-                                                "code": "JT-CGK-1",
+                                                "id": "clxkt98yw000njnepyaschw9t",
+                                                "planeId": "ed5025ac-cc90-421e-88b4-efa413472820",
+                                                "plane": {
+                                                "name": "Garuda Indonesia",
+                                                "code": "GA",
+                                                "image": "https://placehold.co/200x200",
+                                                "terminal": "Terminal 3"
+                                                },
+                                                "departureDate": "2024-06-01",
+                                                "departureTime": "08:00",
+                                                "code": "GA.CGK.DPS",
                                                 "departureAirport": {
-                                                "id": "clx43nfz500004sdais1hns9z",
+                                                "id": "clxkt96nc0000jnep3x78psc1",
                                                 "name": "Soekarno-Hatta International Airport",
                                                 "code": "CGK",
                                                 "country": "Indonesia",
-                                                "city": "Jakarta"
+                                                "city": "Jakarta",
+                                                "continent": "Asia",
+                                                "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif"
                                                 },
-                                                "transit": null,
-                                                "arrivalDate": "2024-05-23T11:45:00.000Z",
+                                                "transit": {
+                                                "status": false
+                                                },
+                                                "arrivalDate": "2024-06-01",
+                                                "arrivalTime": "12:00",
                                                 "destinationAirport": {
-                                                "id": "clx43nfz500084sda50n6hdsx",
-                                                "name": "Sepinggan International Airport",
-                                                "code": "BPN",
+                                                "id": "clxkt96nd0001jnep2risax1u",
+                                                "name": "Ngurah Rai International Airport",
+                                                "code": "DPS",
                                                 "country": "Indonesia",
-                                                "city": "Balikpapan"
+                                                "city": "Denpasar",
+                                                "continent": "Asia",
+                                                "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif"
                                                 },
-                                                "capacity": 64,
-                                                "discount": 50,
-                                                "price": 500000,
-                                                "facilities": "In Flight Entertainment"
+                                                "capacity": 72,
+                                                "discount": null,
+                                                "price": 1500000,
+                                                "facilities": null,
+                                                "duration": "4h 0m",
+                                                "seatClasses": [
+                                                "ECONOMY"
+                                                ],
+                                                "prices": {
+                                                "ECONOMY": 1500000
+                                                }
                                             }
                                         }
                                     }
@@ -2675,7 +2690,7 @@
                 }
             },
             "put": {
-                "tags": ["Flights"],
+                "tags": ["Dashboards"],
                 "summary": "Return result HIT API update flight by Id",
                 "description": "This is an API for updatting flight data based on Id",
                 "security": [
@@ -2905,7 +2920,7 @@
                 }
             },
             "delete": {
-                "tags": ["Flights"],
+                "tags": ["Dashboards"],
                 "summary": "Return result HIT API delete flight by Id",
                 "description": "This is an API for deletting flight data based on Id",
                 "security": [
@@ -3174,7 +3189,7 @@
                 }
             },
             "post": {
-                "tags": ["Flight Seats"],
+                "tags": ["Dashboards"],
                 "summary": "Return result HIT API create flight-seat",
                 "description": "This is an API for creating flight-seat data",
                 "security": [
@@ -3467,7 +3482,7 @@
         },
         "/flightSeats/{id}": {
             "put": {
-                "tags": ["Flight Seats"],
+                "tags": ["Dashboards"],
                 "summary": "Return result HIT API for updatting seat by flight seat's id",
                 "description": "This is an API for updatting seat by flight seat's id",
                 "security": [
@@ -3586,7 +3601,7 @@
                 }
             },
             "delete": {
-                "tags": ["Flight Seats"],
+                "tags": ["Dashboards"],
                 "security": [
                     {
                         "bearerToken": []
@@ -3653,7 +3668,7 @@
 
         "/tickets/": {
             "get": {
-                "tags": ["Tickets"],
+                "tags": ["Dashboards"],
                 "summary": "Return result HIT API get all tickets data",
                 "description": "This is an API for getting all tickets data",
                 "parameters": [
@@ -4350,7 +4365,7 @@
                 }
             },
             "delete": {
-                "tags": ["Tickets"],
+                "tags": ["Dashboards"],
                 "summary": "Return result HIT API delete ticket by Id",
                 "description": "This is an API for deletting ticket data based on Id",
                 "security": [
@@ -4423,9 +4438,7 @@
                         "description": "Success generating",
                         "content" :{
                             "text/html": {
-                                "schema": {
-                                    "$ref": "#/components/schemas/generateTicket"
-                                }
+                                "example": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Ticket</title>\n</head>\n<body>\n<h1>Ticket QG-CGK-QG.CGK.BDO-1B</h1>\n<div>\n<h2>Ticket Code: QG-CGK-QG.CGK.BDO-1B</h2>\n<p>\n<strong>Flight ID:</strong>\nclxe9zos8001z24wgy2l54ofh</p>\n<p>\n<strong>Departure Date:</strong>\n06/06/2024, 20.00.00</p>\n<p>\n<strong>Departure Airport:</strong>\nSoekarno-Hatta International Airport - Jakarta, Indonesia</p>\n<p>\n<strong>Arrival Date:</strong>\n07/06/2024, 00.00.00</p>\n<p>\n<strong>Destination Airport:</strong>\nHusein Sastranegara International Airport - Bandung, Indonesia</p>\n<h4>Passenger Detail:</h4><p>\n<strong>User Name:</strong>\nNaufal</p>\n<p>\n<strong>Family Name:</strong>\nFamily</p>\n<p>\n<strong>Citizenship:</strong>\nPoland</p>\n<p>\n<strong>Issuing Country:</strong>\nEngland</p>\n<p>\n<strong>Passport:</strong>\n73e19184-2392-426b-9b41-62efc4c005de</p>\n<p>\n<strong>Price:</strong>\n1000</p>\n<h4>Flight Detail:</h4><p>\n<strong>Airline:</strong>\nCitilink</p>\n<p>\n<strong>Seat Number:</strong>\n1B</p>\n<p>\n<strong>Seat Type:</strong>\nECONOMY</p>\n<h3>Transaction Details:</h3><p>\n<strong>Orderer:</strong>\nNaufal</p>\n<p>\n<strong>Email:</strong>\nnaufal@test.com</p>\n<p>\n<strong>Phone Number:</strong>\n628123456789</p>\n<p>\n<strong>Order ID:</strong>\n65e91bf8-433f-4747-aa29-565bbc1f25ce</p>\n<p>\n<strong>Booking Date:</strong>\n14/06/2024, 13.02.36</p>\n</div>\n<h1>Ticket QG-CGK-QG.CGK.BDO-1D</h1>\n<div>\n<h2>Ticket Code: QG-CGK-QG.CGK.BDO-1D</h2>\n<p>\n<strong>Flight ID:</strong>\nclxe9zos8001z24wgy2l54ofh</p>\n<p>\n<strong>Departure Date:</strong>\n06/06/2024, 20.00.00</p>\n<p>\n<strong>Departure Airport:</strong>\nSoekarno-Hatta International Airport - Jakarta, Indonesia</p>\n<p>\n<strong>Arrival Date:</strong>\n07/06/2024, 00.00.00</p>\n<p>\n<strong>Destination Airport:</strong>\nHusein Sastranegara International Airport - Bandung, Indonesia</p>\n<h4>Passenger Detail:</h4><p>\n<strong>User Name:</strong>\nNaufal</p>\n<p>\n<strong>Family Name:</strong>\nFamily</p>\n<p>\n<strong>Citizenship:</strong>\nPoland</p>\n<p>\n<strong>Issuing Country:</strong>\nEngland</p>\n<p>\n<strong>Passport:</strong>\n73e19184-2392-426b-9b41-62efc4c005de</p>\n<p>\n<strong>Price:</strong>\n1000</p>\n<h4>Flight Detail:</h4><p>\n<strong>Airline:</strong>\nCitilink</p>\n<p>\n<strong>Seat Number:</strong>\n1D</p>\n<p>\n<strong>Seat Type:</strong>\nECONOMY</p>\n<h3>Transaction Details:</h3><p>\n<strong>Orderer:</strong>\nNaufal</p>\n<p>\n<strong>Email:</strong>\nnaufal@test.com</p>\n<p>\n<strong>Phone Number:</strong>\n628123456789</p>\n<p>\n<strong>Order ID:</strong>\n65e91bf8-433f-4747-aa29-565bbc1f25ce</p>\n<p>\n<strong>Booking Date:</strong>\n14/06/2024, 13.02.36</p>\n</div>\n</body>\n</html>"
                             }
                         }
                     }
@@ -4530,26 +4543,108 @@
                                             "type": "object",
                                             "example": [
                                                 {
-                                                    "id": "clxaj48uo00026n9zdbg2g4sx",
-                                                    "orderId": "86059132-20b2-4452-8ab1-f0c25a42f928",
-                                                    "totalPrice": 1000,
+                                                    "id": "clxkh1nso0005ut54e8w4alj7",
+                                                    "orderId": "36cb4f25-1d62-4072-8d4c-40314b33f437",
+                                                    "userId": "9776e9b1-d17d-401c-a5b0-31b00663afe6",
+                                                    "totalPrice": 1940,
                                                     "status": "pending",
-                                                    "bookingDate": "2024-06-11T15:00:34.192Z",
-                                                    "userId": "clx7whtrw0010t1jzp7rv28ft",
+                                                    "bookingDate": "2024-06-18",
+                                                    "bookingTime": "21:00",
+                                                    "bookingCode": "GA.CGK.SUB-GA-1B",
                                                     "Transaction_Detail": [
                                                       {
-                                                        "id": "e2cba369-822f-429b-a352-2f1bbe79a570",
-                                                        "transactionId": "clxaj48uo00026n9zdbg2g4sx",
+                                                        "id": "b1aad6f1-f421-4724-9ae1-769ca5cc6189",
+                                                        "transactionId": "clxkh1nso0005ut54e8w4alj7",
                                                         "price": 1000,
-                                                        "seatId": "clx7whuez0024t1jzptuqppo9",
                                                         "name": "Mr. Mischa",
-                                                        "familyName": "Mudryk",
-                                                        "dob": "2002-05-20T17:00:30.000Z",
+                                                        "familyName": "Purwanto",
+                                                        "dob": "2002-05-20",
                                                         "citizenship": "Inggris",
-                                                        "passport": "e178814f-5f80-4a48-bb6c-354271572c8c",
+                                                        "passport": "passport nih",
                                                         "issuingCountry": "Ukraine",
-                                                        "validityPeriod": "2024-07-20T17:00:30.000Z",
-                                                        "flightId": "clx7whu6u001rt1jzt1z0cdzx"
+                                                        "validityPeriod": "2024-07-20",
+                                                        "flight": {
+                                                          "id": "clxke8qfx000njvhv5hfcmdts",
+                                                          "code": "GA.CGK.SUB",
+                                                          "flightDuration": "4h 0m",
+                                                          "airline": {
+                                                            "id": "aac2ea5e-fdd2-4a77-a38e-2e21547e8353",
+                                                            "code": "GA",
+                                                            "name": "Garuda Indonesia",
+                                                            "terminal": "Terminal 3"
+                                                          },
+                                                          "departureAirport": {
+                                                            "id": "clxke8m2o0000jvhvne7mh08h",
+                                                            "code": "CGK",
+                                                            "name": "Soekarno-Hatta International Airport"
+                                                          },
+                                                          "destinationAirport": {
+                                                            "id": "clxke8m2o0002jvhvvc07yu7n",
+                                                            "code": "SUB",
+                                                            "name": "Juanda International Airport"
+                                                          }
+                                                        },
+                                                        "seat": {
+                                                          "id": "clxke8qt30014jvhvbf9an8e4",
+                                                          "flightId": "clxke8qt30014jvhvbf9an8e4",
+                                                          "seatNumber": "1B",
+                                                          "status": "OCCUPIED",
+                                                          "type": "ECONOMY",
+                                                          "price": 1200000
+                                                        }
+                                                      }
+                                                    ]
+                                                  },
+                                                  {
+                                                    "id": "clxkh1nso0005ut54e8w4alj7",
+                                                    "orderId": "36cb4f25-1d62-4072-8d4c-40314b33f437",
+                                                    "userId": "9776e9b1-d17d-401c-a5b0-31b00663afe6",
+                                                    "totalPrice": 1940,
+                                                    "status": "pending",
+                                                    "bookingDate": "2024-06-18",
+                                                    "bookingTime": "21:00",
+                                                    "bookingCode": "GA.CGK.SUB-GA-1A",
+                                                    "Transaction_Detail": [
+                                                      {
+                                                        "id": "0af2f990-7378-4371-9078-a5735acda096",
+                                                        "transactionId": "clxkh1nso0005ut54e8w4alj7",
+                                                        "price": 1000,
+                                                        "name": "Mr. Asep",
+                                                        "familyName": "Purwanto",
+                                                        "dob": "2002-05-20",
+                                                        "citizenship": "Inggris",
+                                                        "passport": "passport nih",
+                                                        "issuingCountry": "Ukraine",
+                                                        "validityPeriod": "2024-07-20",
+                                                        "flight": {
+                                                          "id": "clxke8qfx000njvhv5hfcmdts",
+                                                          "code": "GA.CGK.SUB",
+                                                          "flightDuration": "4h 0m",
+                                                          "airline": {
+                                                            "id": "aac2ea5e-fdd2-4a77-a38e-2e21547e8353",
+                                                            "code": "GA",
+                                                            "name": "Garuda Indonesia",
+                                                            "terminal": "Terminal 3"
+                                                          },
+                                                          "departureAirport": {
+                                                            "id": "clxke8m2o0000jvhvne7mh08h",
+                                                            "code": "CGK",
+                                                            "name": "Soekarno-Hatta International Airport"
+                                                          },
+                                                          "destinationAirport": {
+                                                            "id": "clxke8m2o0002jvhvvc07yu7n",
+                                                            "code": "SUB",
+                                                            "name": "Juanda International Airport"
+                                                          }
+                                                        },
+                                                        "seat": {
+                                                          "id": "clxke8qt30015jvhvgkzvmphu",
+                                                          "flightId": "clxke8qt30015jvhvgkzvmphu",
+                                                          "seatNumber": "1A",
+                                                          "status": "OCCUPIED",
+                                                          "type": "ECONOMY",
+                                                          "price": 1200000
+                                                        }
                                                       }
                                                     ]
                                                   }
@@ -5146,14 +5241,44 @@
                 ],
                 "parameters": [
                     {
-                        "name": "id",
-                        "in": "path",
+                        "name": "flightId",
+                        "in": "query",
                         "required": true,
                         "schema": {
                             "type": "string",
                             "example": "clx7whu6u001rt1jzt1z0cdzx"
                         },
                         "description": "Flight ID"
+                    },
+                    {
+                        "name": "adult",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "description": "Passanger - Adult"
+                    },
+                    {
+                        "name": "child",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 0
+                        },
+                        "description": "Passanger - Child"
+                    },
+                    {
+                        "name": "baby",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 0
+                        },
+                        "description": "Passanger - Baby"
                     }
                 ],
                 "requestBody": {
@@ -5167,85 +5292,57 @@
                                         "type": "string",
                                         "example": "bri"
                                     },
-                                    "fullName": {
-                                        "type": "string",
-                                        "example": "Harry"
+                                    "orderer": {
+                                        "type": "object",
+                                        "example" : {
+                                            "fullName": "Viery",
+                                            "familyName": "Nugroho",
+                                            "phoneNumber": "081234567890",
+                                            "email": "viery15102002@gmail.com"
+                                        }
                                     },
-                                    "lastName": {
-                                        "type": "string",
-                                        "example": "Maguire"
-                                    },
-                                    "phoneNumber": {
-                                        "type": "string",
-                                        "example": "081234567890"
-                                    },
-                                    "email": {
-                                        "type": "string",
-                                        "example": "harrym5@mail.com"
-                                    },
-                                    "first_title": {
-                                        "type": "string",
-                                        "example": "Mr."
-                                    },
-                                    "first_fullName": {
-                                        "type": "string",
-                                        "example": "Mischa"
-                                    },
-                                    "first_familyName": {
-                                        "type": "string",
-                                        "example": "Mudryk"
-                                    },
-                                    "first_ticketId": {
-                                        "type": "string",
-                                        "example": "tiket-1"
-                                    },
-                                    "first_citizenship": {
-                                        "type": "string",
-                                        "example": "Inggris"
-                                    },
-                                    "first_issuingCountry": {
-                                        "type": "string",
-                                        "example": "Ukraine"
-                                    },
-                                    "first_price": {
-                                        "type": "integer",
-                                        "example": 1000
-                                    },
-                                    "first_quantity": {
-                                        "type": "integer",
-                                        "example": 1
-                                    },
-                                    "second_title": {
-                                        "type": "string",
-                                        "example": "Mr."
-                                    },
-                                    "second_fullName": {
-                                        "type": "string",
-                                        "example": "Anthony"
-                                    },
-                                    "second_familyName": {
-                                        "type": "string",
-                                        "example": "El Gasing"
-                                    },
-                                    "second_ticketId": {
-                                        "type": "string",
-                                        "example": "tiket-2"
-                                    },
-                                    "second_citizenship": {
-                                        "type": "string",
-                                        "example": "Brazil"
-                                    },
-                                    "second_issuingCountry": {
-                                        "type": "string",
-                                        "example": "Inggris"
-                                    },
-                                    "second_price": {
-                                        "type": "integer",
-                                        "example": 1000
-                                    },
-                                    "second_quantity": {
-                                        "type": "integer",
-                                        "example": 1
+                                    "passangers": {
+                                        "type": "object",
+                                        "example": [
+                                            {
+                                                "type": "ADULT",
+                                                "title": "Mr.",
+                                                "fullName": "Mischa",
+                                                "dob": "2002-05-20 10:00:30",
+                                                "validityPeriod": "2024-07-20 10:00:30",
+                                                "familyName": "Purwanto",
+                                                "citizenship": "Inggris",
+                                                "passport": "passport nih",
+                                                "issuingCountry": "Ukraine",
+                                                "price": 1000, 
+                                                "quantity": 1,
+                                                "seatId": "clxkqfrsn002318r5q952rxbs"
+                                            },
+                                            {
+                                                 "type": "INFRANT", 
+                                                "title": "Mr.",
+                                                "fullName": "Asep",
+                                                "dob": "2002-05-20 10:00:30",
+                                                "familyName": "Purwanto",
+                                                "citizenship": "Inggris",
+                                                "issuingCountry": "Ukraine",
+                                                "price": 1000, 
+                                                "quantity": 1,
+                                                "seatId": "clxkqfrso002518r51z08hfge"
+                                            },
+                                            {
+                                                "type": "CHILD", 
+                                                "title": "Mr.",
+                                                "fullName": "Udin",
+                                                "dob": "2002-05-20 10:00:30",
+                                                "familyName": "Purwanto",
+                                                "citizenship": "Inggris",
+                                                "issuingCountry": "Ukraine",
+                                                "price": 1000, 
+                                                "quantity": 1,
+                                                "seatId": "clxkqfrso002718r5psnmjq4s"
+                                            }
+                                        ]
                                     }
                                 }
                             }
@@ -5271,23 +5368,74 @@
                                         "data": {
                                             "type": "object",
                                             "example": {
-                                                "flightId": "clwudd7v3001mjj2z5b95yc1r",
-                                                "seatId": [
-                                                "clwudd81m0044jj2zyhhzf94o",
-                                                "clwudd8bl00zejj2zfrxrau5n"
-                                                ],
                                                 "payment_type": "bank_transfer",
-                                                "transaction_id": "39e85584-0fb8-4cf6-8764-bb79233a41ef",
-                                                "order_id": "ce80d70e-a11d-4694-b6ac-d67d334de658",
-                                                "gross_amount": "2000.00",
-                                                "transaction_time": "2024-05-31 15:05:01",
+                                                "transaction_id": "7d4684e1-40e8-4cde-b081-95e4e93935eb",
+                                                "order_id": "9bc059ed-a32e-45da-bc3a-f75541c8e0a4",
+                                                "gross_amount": "1500.00",
+                                                "transaction_time": "2024-06-19 01:00:12",
                                                 "transaction_status": "pending",
                                                 "payment_status": "accept",
-                                                "expiry_time": "2024-06-01 15:05:01",
+                                                "expiry_time": "2024-06-20 01:00:12",
                                                 "va_numbers": [
                                                 {
                                                     "bank": "bri",
-                                                    "va_number": "047588107281739790"
+                                                    "va_number": "047581339216523798"
+                                                }
+                                                ],
+                                                "flightId": "clxkmpe5s000qsrhmwd4sknra",
+                                                "seatId": [
+                                                "clxkmpec30014srhmnhhdiio9",
+                                                "clxkmpec40018srhmioqptqio",
+                                                "clxkmpec40019srhmyv84d3zd"
+                                                ],
+                                                "orderer": {
+                                                "fullName": "Viery",
+                                                "familyName": "Nugroho",
+                                                "phoneNumber": "081234567890",
+                                                "email": "viery15102002@gmail.com"
+                                                },
+                                                "passengers": [
+                                                {
+                                                    "title": "Mr.",
+                                                    "name": "Mr. Mischa",
+                                                    "fullName": "Mischa",
+                                                    "dob": "2002-05-20T10:00:30.000Z",
+                                                    "passport": "passport nih",
+                                                    "validityPeriod": "2024-07-20T10:00:30.000Z",
+                                                    "familyName": "Purwanto",
+                                                    "citizenship": "Inggris",
+                                                    "issuingCountry": "Ukraine",
+                                                    "price": 1000,
+                                                    "quantity": 1,
+                                                    "seatId": "clxkmpec30014srhmnhhdiio9"
+                                                },
+                                                {
+                                                    "title": "Mr.",
+                                                    "name": "Mr. Asep",
+                                                    "fullName": "Asep",
+                                                    "dob": "2002-05-20T10:00:30.000Z",
+                                                    "passport": "passport nih",
+                                                    "validityPeriod": "2024-07-20T10:00:30.000Z",
+                                                    "familyName": "Purwanto",
+                                                    "citizenship": "Inggris",
+                                                    "issuingCountry": "Ukraine",
+                                                    "price": 0,
+                                                    "quantity": 1,
+                                                    "seatId": "clxkmpec40018srhmioqptqio"
+                                                },
+                                                {
+                                                    "title": "Mr.",
+                                                    "name": "Mr. Udin",
+                                                    "fullName": "Udin",
+                                                    "dob": "2002-05-20T10:00:30.000Z",
+                                                    "passport": "passport nih",
+                                                    "validityPeriod": "2024-07-20T10:00:30.000Z",
+                                                    "familyName": "Purwanto",
+                                                    "citizenship": "Inggris",
+                                                    "issuingCountry": "Ukraine",
+                                                    "price": 500,
+                                                    "quantity": 1,
+                                                    "seatId": "clxkmpec40019srhmyv84d3zd"
                                                 }
                                                 ]
                                             }
@@ -5432,14 +5580,44 @@
                 ],
                 "parameters": [
                     {
-                        "name": "id",
-                        "in": "path",
+                        "name": "flightId",
+                        "in": "query",
                         "required": true,
                         "schema": {
                             "type": "string",
                             "example": "clx7whu6u001rt1jzt1z0cdzx"
                         },
                         "description": "Flight ID"
+                    },
+                    {
+                        "name": "adult",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "description": "Passanger - Adult"
+                    },
+                    {
+                        "name": "child",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 0
+                        },
+                        "description": "Passanger - Child"
+                    },
+                    {
+                        "name": "baby",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 0
+                        },
+                        "description": "Passanger - Baby"
                     }
                 ],
                 "requestBody": {
@@ -5449,85 +5627,57 @@
                             "schema": {
                                 "type": "object",
                                 "properties": {
-                                    "fullName": {
-                                        "type": "string",
-                                        "example": "Harry"
+                                    "orderer": {
+                                        "type": "object",
+                                        "example" : {
+                                            "fullName": "Viery",
+                                            "familyName": "Nugroho",
+                                            "phoneNumber": "081234567890",
+                                            "email": "viery15102002@gmail.com"
+                                        }
                                     },
-                                    "lastName": {
-                                        "type": "string",
-                                        "example": "Maguire"
-                                    },
-                                    "phoneNumber": {
-                                        "type": "string",
-                                        "example": "081234567890"
-                                    },
-                                    "email": {
-                                        "type": "string",
-                                        "example": "harrym5@mail.com"
-                                    },
-                                    "first_title": {
-                                        "type": "string",
-                                        "example": "Mr."
-                                    },
-                                    "first_fullName": {
-                                        "type": "string",
-                                        "example": "Mischa"
-                                    },
-                                    "first_familyName": {
-                                        "type": "string",
-                                        "example": "Mudryk"
-                                    },
-                                    "first_ticketId": {
-                                        "type": "string",
-                                        "example": "tiket-1"
-                                    },
-                                    "first_citizenship": {
-                                        "type": "string",
-                                        "example": "Inggris"
-                                    },
-                                    "first_issuingCountry": {
-                                        "type": "string",
-                                        "example": "Ukraine"
-                                    },
-                                    "first_price": {
-                                        "type": "integer",
-                                        "example": 1000
-                                    },
-                                    "first_quantity": {
-                                        "type": "integer",
-                                        "example": 1
-                                    },
-                                    "second_title": {
-                                        "type": "string",
-                                        "example": "Mr."
-                                    },
-                                    "second_fullName": {
-                                        "type": "string",
-                                        "example": "Anthony"
-                                    },
-                                    "second_familyName": {
-                                        "type": "string",
-                                        "example": "El Gasing"
-                                    },
-                                    "second_ticketId": {
-                                        "type": "string",
-                                        "example": "tiket-2"
-                                    },
-                                    "second_citizenship": {
-                                        "type": "string",
-                                        "example": "Brazil"
-                                    },
-                                    "second_issuingCountry": {
-                                        "type": "string",
-                                        "example": "Inggris"
-                                    },
-                                    "second_price": {
-                                        "type": "integer",
-                                        "example": 1000
-                                    },
-                                    "second_quantity": {
-                                        "type": "integer",
-                                        "example": 1
+                                    "passangers": {
+                                        "type": "object",
+                                        "example": [
+                                            {
+                                                "type": "ADULT",
+                                                "title": "Mr.",
+                                                "fullName": "Mischa",
+                                                "dob": "2002-05-20 10:00:30",
+                                                "validityPeriod": "2024-07-20 10:00:30",
+                                                "familyName": "Purwanto",
+                                                "citizenship": "Inggris",
+                                                "passport": "passport nih",
+                                                "issuingCountry": "Ukraine",
+                                                "price": 1000, 
+                                                "quantity": 1,
+                                                "seatId": "clxkqfrsn002318r5q952rxbs"
+                                            },
+                                            {
+                                                 "type": "INFRANT", 
+                                                "title": "Mr.",
+                                                "fullName": "Asep",
+                                                "dob": "2002-05-20 10:00:30",
+                                                "familyName": "Purwanto",
+                                                "citizenship": "Inggris",
+                                                "issuingCountry": "Ukraine",
+                                                "price": 1000, 
+                                                "quantity": 1,
+                                                "seatId": "clxkqfrso002518r51z08hfge"
+                                            },
+                                            {
+                                                "type": "CHILD", 
+                                                "title": "Mr.",
+                                                "fullName": "Udin",
+                                                "dob": "2002-05-20 10:00:30",
+                                                "familyName": "Purwanto",
+                                                "citizenship": "Inggris",
+                                                "issuingCountry": "Ukraine",
+                                                "price": 1000, 
+                                                "quantity": 1,
+                                                "seatId": "clxkqfrso002718r5psnmjq4s"
+                                            }
+                                        ]
                                     }
                                 }
                             }
@@ -5554,61 +5704,83 @@
                                             "type": "object",
                                             "example": {
                                                 "payment_type": "gopay",
-                                                "transaction_id": "03647b5e-0fc0-4d1f-90bc-51dd1e9c2a2a",
-                                                "order_id": "c68ec2d6-05dd-4874-ab06-e2c659277184",
-                                                "gross_amount": "2000.00",
-                                                "transaction_time": "2024-06-04 08:22:05",
+                                                "transaction_id": "e0d201c5-c1ed-4e1c-a79a-265152b27371",
+                                                "order_id": "8baf19ba-588c-4602-b215-d4f54016822d",
+                                                "gross_amount": "1500.00",
+                                                "transaction_time": "2024-06-19 01:01:54",
                                                 "transaction_status": "pending",
                                                 "payment_status": "accept",
-                                                "expiry_time": "2024-06-04 08:37:05",
-                                                "dataItem": [
-                                                {
-                                                    "id": "af74964a-3cda-44f9-91d0-9ed53964735a",
-                                                    "name": "Mr. Mischa",
-                                                    "dob": "2002-05-20T10:00:30.000Z",
-                                                    "validityPeriod": "2024-05-20T10:00:30.000Z",
-                                                    "familyName": "Mudryk",
-                                                    "flightId": "clwzk52gx001msazokzeyqwkl",
-                                                    "citizenship": "Inggris",
-                                                    "issuingCountry": "Ukraine",
-                                                    "price": 1000,
-                                                    "quantity": 1,
-                                                    "seatId": "clwzk52om00f2sazoo2w28zcu"
-                                                },
-                                                {
-                                                    "id": "7cac9e74-51ce-45b4-b332-a97648f5a5e3",
-                                                    "name": "Mr. Anthony",
-                                                    "dob": "2002-10-20T10:00:30.000Z",
-                                                    "validityPeriod": "2024-05-20T10:00:30.000Z",
-                                                    "familyName": "El Gasing",
-                                                    "flightId": "clwzk52gx001msazokzeyqwkl",
-                                                    "citizenship": "Brazil",
-                                                    "issuingCountry": "Inggris",
-                                                    "price": 1000,
-                                                    "quantity": 1,
-                                                    "seatId": "clwzk52om00f3sazor9nzawwl"
-                                                }
-                                                ],
+                                                "expiry_time": "2024-06-19 01:16:54",
                                                 "action": [
                                                 {
                                                     "name": "generate-qr-code",
                                                     "method": "GET",
-                                                    "url": "https://api.sandbox.midtrans.com/v2/gopay/03647b5e-0fc0-4d1f-90bc-51dd1e9c2a2a/qr-code"
+                                                    "url": "https://api.sandbox.midtrans.com/v2/gopay/e0d201c5-c1ed-4e1c-a79a-265152b27371/qr-code"
                                                 },
                                                 {
                                                     "name": "deeplink-redirect",
                                                     "method": "GET",
-                                                    "url": "https://simulator.sandbox.midtrans.com/gopay/partner/app/payment-pin?id=d2923055-8bf1-45f1-833f-2af54db93c3a"
+                                                    "url": "https://simulator.sandbox.midtrans.com/gopay/partner/app/payment-pin?id=289042d8-ebf1-4218-92f1-eb205c569d29"
                                                 },
                                                 {
                                                     "name": "get-status",
                                                     "method": "GET",
-                                                    "url": "https://api.sandbox.midtrans.com/v2/03647b5e-0fc0-4d1f-90bc-51dd1e9c2a2a/status"
+                                                    "url": "https://api.sandbox.midtrans.com/v2/e0d201c5-c1ed-4e1c-a79a-265152b27371/status"
                                                 },
                                                 {
                                                     "name": "cancel",
                                                     "method": "POST",
-                                                    "url": "https://api.sandbox.midtrans.com/v2/03647b5e-0fc0-4d1f-90bc-51dd1e9c2a2a/cancel"
+                                                    "url": "https://api.sandbox.midtrans.com/v2/e0d201c5-c1ed-4e1c-a79a-265152b27371/cancel"
+                                                }
+                                                ],
+                                                "orderer": {
+                                                "fullName": "Viery",
+                                                "familyName": "Nugroho",
+                                                "phoneNumber": "081234567890",
+                                                "email": "viery15102002@gmail.com"
+                                                },
+                                                "passengers": [
+                                                {
+                                                    "title": "Mr.",
+                                                    "name": "Mr. Mischa",
+                                                    "fullName": "Mischa",
+                                                    "dob": "2002-05-20T10:00:30.000Z",
+                                                    "passport": "passport nih",
+                                                    "validityPeriod": "2024-07-20T10:00:30.000Z",
+                                                    "familyName": "Purwanto",
+                                                    "citizenship": "Inggris",
+                                                    "issuingCountry": "Ukraine",
+                                                    "price": 1000,
+                                                    "quantity": 1,
+                                                    "seatId": "clxkmpecd001dsrhmg3exj8pj"
+                                                },
+                                                {
+                                                    "title": "Mr.",
+                                                    "name": "Mr. Asep",
+                                                    "fullName": "Asep",
+                                                    "dob": "2002-05-20T10:00:30.000Z",
+                                                    "passport": "passport nih",
+                                                    "validityPeriod": "2024-07-20T10:00:30.000Z",
+                                                    "familyName": "Purwanto",
+                                                    "citizenship": "Inggris",
+                                                    "issuingCountry": "Ukraine",
+                                                    "price": 0,
+                                                    "quantity": 1,
+                                                    "seatId": "clxkmpec30015srhm1xglsvzj"
+                                                },
+                                                {
+                                                    "title": "Mr.",
+                                                    "name": "Mr. Udin",
+                                                    "fullName": "Udin",
+                                                    "dob": "2002-05-20T10:00:30.000Z",
+                                                    "passport": "passport nih",
+                                                    "validityPeriod": "2024-07-20T10:00:30.000Z",
+                                                    "familyName": "Purwanto",
+                                                    "citizenship": "Inggris",
+                                                    "issuingCountry": "Ukraine",
+                                                    "price": 500,
+                                                    "quantity": 1,
+                                                    "seatId": "clxkmpech001hsrhms58r22j2"
                                                 }
                                                 ]
                                             }
@@ -5713,14 +5885,44 @@
                 ],
                 "parameters": [
                     {
-                        "name": "id",
-                        "in": "path",
+                        "name": "flightId",
+                        "in": "query",
                         "required": true,
                         "schema": {
                             "type": "string",
                             "example": "clx7whu6u001rt1jzt1z0cdzx"
                         },
                         "description": "Flight ID"
+                    },
+                    {
+                        "name": "adult",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "description": "Passanger - Adult"
+                    },
+                    {
+                        "name": "child",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 0
+                        },
+                        "description": "Passanger - Child"
+                    },
+                    {
+                        "name": "baby",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 0
+                        },
+                        "description": "Passanger - Baby"
                     }
                 ],
                 "requestBody": {
@@ -5730,85 +5932,57 @@
                             "schema": {
                                 "type": "object",
                                 "properties": {
-                                    "fullName": {
-                                        "type": "string",
-                                        "example": "Harry"
+                                    "orderer": {
+                                        "type": "object",
+                                        "example" : {
+                                            "fullName": "Viery",
+                                            "familyName": "Nugroho",
+                                            "phoneNumber": "081234567890",
+                                            "email": "viery15102002@gmail.com"
+                                        }
                                     },
-                                    "lastName": {
-                                        "type": "string",
-                                        "example": "Maguire"
-                                    },
-                                    "phoneNumber": {
-                                        "type": "string",
-                                        "example": "081234567890"
-                                    },
-                                    "email": {
-                                        "type": "string",
-                                        "example": "harrym5@mail.com"
-                                    },
-                                    "first_title": {
-                                        "type": "string",
-                                        "example": "Mr."
-                                    },
-                                    "first_fullName": {
-                                        "type": "string",
-                                        "example": "Mischa"
-                                    },
-                                    "first_familyName": {
-                                        "type": "string",
-                                        "example": "Mudryk"
-                                    },
-                                    "first_ticketId": {
-                                        "type": "string",
-                                        "example": "tiket-1"
-                                    },
-                                    "first_citizenship": {
-                                        "type": "string",
-                                        "example": "Inggris"
-                                    },
-                                    "first_issuingCountry": {
-                                        "type": "string",
-                                        "example": "Ukraine"
-                                    },
-                                    "first_price": {
-                                        "type": "integer",
-                                        "example": 1000
-                                    },
-                                    "first_quantity": {
-                                        "type": "integer",
-                                        "example": 1
-                                    },
-                                    "second_title": {
-                                        "type": "string",
-                                        "example": "Mr."
-                                    },
-                                    "second_fullName": {
-                                        "type": "string",
-                                        "example": "Anthony"
-                                    },
-                                    "second_familyName": {
-                                        "type": "string",
-                                        "example": "El Gasing"
-                                    },
-                                    "second_ticketId": {
-                                        "type": "string",
-                                        "example": "tiket-2"
-                                    },
-                                    "second_citizenship": {
-                                        "type": "string",
-                                        "example": "Brazil"
-                                    },
-                                    "second_issuingCountry": {
-                                        "type": "string",
-                                        "example": "Inggris"
-                                    },
-                                    "second_price": {
-                                        "type": "integer",
-                                        "example": 1000
-                                    },
-                                    "second_quantity": {
-                                        "type": "integer",
-                                        "example": 1
+                                    "passangers": {
+                                        "type": "object",
+                                        "example": [
+                                            {
+                                                "type": "ADULT",
+                                                "title": "Mr.",
+                                                "fullName": "Mischa",
+                                                "dob": "2002-05-20 10:00:30",
+                                                "validityPeriod": "2024-07-20 10:00:30",
+                                                "familyName": "Purwanto",
+                                                "citizenship": "Inggris",
+                                                "passport": "passport nih",
+                                                "issuingCountry": "Ukraine",
+                                                "price": 1000, 
+                                                "quantity": 1,
+                                                "seatId": "clxkqfrsn002318r5q952rxbs"
+                                            },
+                                            {
+                                                 "type": "INFRANT", 
+                                                "title": "Mr.",
+                                                "fullName": "Asep",
+                                                "dob": "2002-05-20 10:00:30",
+                                                "familyName": "Purwanto",
+                                                "citizenship": "Inggris",
+                                                "issuingCountry": "Ukraine",
+                                                "price": 1000, 
+                                                "quantity": 1,
+                                                "seatId": "clxkqfrso002518r51z08hfge"
+                                            },
+                                            {
+                                                "type": "CHILD", 
+                                                "title": "Mr.",
+                                                "fullName": "Udin",
+                                                "dob": "2002-05-20 10:00:30",
+                                                "familyName": "Purwanto",
+                                                "citizenship": "Inggris",
+                                                "issuingCountry": "Ukraine",
+                                                "price": 1000, 
+                                                "quantity": 1,
+                                                "seatId": "clxkqfrso002718r5psnmjq4s"
+                                            }
+                                        ]
                                     }
                                 }
                             }
@@ -5842,37 +6016,54 @@
                                         "data": {
                                             "type": "object",
                                             "example": {
-                                                "first_name": "Harry",
-                                                "last_name": "Maguire",
-                                                "phone": "081234567890",
-                                                "email": "harrym5@mail.com",
-                                                "bookingDate": "2024-06-04T05:10:37.373Z",
-                                                "dataItem": [
+                                                "orderer": {
+                                                "fullName": "Viery",
+                                                "familyName": "Nugroho",
+                                                "phoneNumber": "081234567890",
+                                                "email": "viery15102002@gmail.com"
+                                                },
+                                                "passengers": [
                                                 {
-                                                    "id": "727f832f-aa8c-4f28-aa8f-49e5f74e1825",
+                                                    "title": "Mr.",
                                                     "name": "Mr. Mischa",
-                                                    "dob": "2002-05-20T07:00:00.000Z",
-                                                    "validityPeriod": "2024-05-20T07:00:00.000Z",
-                                                    "familyName": "Mudryk",
-                                                    "flightId": "clwzk52gx001msazokzeyqwkl",
+                                                    "fullName": "Mischa",
+                                                    "dob": "2002-05-20T10:00:30.000Z",
+                                                    "passport": "passport nih",
+                                                    "validityPeriod": "2024-07-20T10:00:30.000Z",
+                                                    "familyName": "Purwanto",
                                                     "citizenship": "Inggris",
                                                     "issuingCountry": "Ukraine",
                                                     "price": 1000,
                                                     "quantity": 1,
-                                                    "seatId": "clwzk52om00f2sazoo2w28zcu"
+                                                    "seatId": "clxkmpech001hsrhms58r22j2"
                                                 },
                                                 {
-                                                    "id": "4a1b7be8-34de-487c-b16f-fe825bb5986b",
-                                                    "name": "Mr. Anthony",
-                                                    "dob": "2002-10-20T07:00:00.000Z",
-                                                    "validityPeriod": "2024-05-20T07:00:00.000Z",
-                                                    "familyName": "El Gasing",
-                                                    "flightId": "clwzk52gx001msazokzeyqwkl",
-                                                    "citizenship": "Brazil",
-                                                    "issuingCountry": "Inggris",
-                                                    "price": 1000,
+                                                    "title": "Mr.",
+                                                    "name": "Mr. Asep",
+                                                    "fullName": "Asep",
+                                                    "dob": "2002-05-20T10:00:30.000Z",
+                                                    "passport": "passport nih",
+                                                    "validityPeriod": "2024-07-20T10:00:30.000Z",
+                                                    "familyName": "Purwanto",
+                                                    "citizenship": "Inggris",
+                                                    "issuingCountry": "Ukraine",
+                                                    "price": 0,
                                                     "quantity": 1,
-                                                    "seatId": "clwzk52om00f3sazor9nzawwl"
+                                                    "seatId": "clxkmpec30015srhm1xglsvzj"
+                                                },
+                                                {
+                                                    "title": "Mr.",
+                                                    "name": "Mr. Udin",
+                                                    "fullName": "Udin",
+                                                    "dob": "2002-05-20T10:00:30.000Z",
+                                                    "passport": "passport nih",
+                                                    "validityPeriod": "2024-07-20T10:00:30.000Z",
+                                                    "familyName": "Purwanto",
+                                                    "citizenship": "Inggris",
+                                                    "issuingCountry": "Ukraine",
+                                                    "price": 500,
+                                                    "quantity": 1,
+                                                    "seatId": "clxkmpecd001dsrhmg3exj8pj"
                                                 }
                                                 ]
                                             }
@@ -5978,14 +6169,44 @@
                 ],
                 "parameters": [
                     {
-                        "name": "id",
-                        "in": "path",
+                        "name": "flightId",
+                        "in": "query",
                         "required": true,
                         "schema": {
                             "type": "string",
                             "example": "clx7whu6u001rt1jzt1z0cdzx"
                         },
                         "description": "Flight ID"
+                    },
+                    {
+                        "name": "adult",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "description": "Passanger - Adult"
+                    },
+                    {
+                        "name": "child",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 0
+                        },
+                        "description": "Passanger - Child"
+                    },
+                    {
+                        "name": "baby",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 0
+                        },
+                        "description": "Passanger - Baby"
                     }
                 ],
                 "requestBody": {
@@ -6011,85 +6232,57 @@
                                         "type": "string",
                                         "example": "123"
                                     },
-                                    "fullName": {
-                                        "type": "string",
-                                        "example": "Harry"
+                                    "orderer": {
+                                        "type": "object",
+                                        "example" : {
+                                            "fullName": "Viery",
+                                            "familyName": "Nugroho",
+                                            "phoneNumber": "081234567890",
+                                            "email": "viery15102002@gmail.com"
+                                        }
                                     },
-                                    "lastName": {
-                                        "type": "string",
-                                        "example": "Maguire"
-                                    },
-                                    "phoneNumber": {
-                                        "type": "string",
-                                        "example": "081234567890"
-                                    },
-                                    "email": {
-                                        "type": "string",
-                                        "example": "harrym5@mail.com"
-                                    },
-                                    "first_title": {
-                                        "type": "string",
-                                        "example": "Mr."
-                                    },
-                                    "first_fullName": {
-                                        "type": "string",
-                                        "example": "Mischa"
-                                    },
-                                    "first_familyName": {
-                                        "type": "string",
-                                        "example": "Mudryk"
-                                    },
-                                    "first_ticketId": {
-                                        "type": "string",
-                                        "example": "tiket-1"
-                                    },
-                                    "first_citizenship": {
-                                        "type": "string",
-                                        "example": "Inggris"
-                                    },
-                                    "first_issuingCountry": {
-                                        "type": "string",
-                                        "example": "Ukraine"
-                                    },
-                                    "first_price": {
-                                        "type": "integer",
-                                        "example": 1000
-                                    },
-                                    "first_quantity": {
-                                        "type": "integer",
-                                        "example": 1
-                                    },
-                                    "second_title": {
-                                        "type": "string",
-                                        "example": "Mr."
-                                    },
-                                    "second_fullName": {
-                                        "type": "string",
-                                        "example": "Anthony"
-                                    },
-                                    "second_familyName": {
-                                        "type": "string",
-                                        "example": "El Gasing"
-                                    },
-                                    "second_ticketId": {
-                                        "type": "string",
-                                        "example": "tiket-2"
-                                    },
-                                    "second_citizenship": {
-                                        "type": "string",
-                                        "example": "Brazil"
-                                    },
-                                    "second_issuingCountry": {
-                                        "type": "string",
-                                        "example": "Inggris"
-                                    },
-                                    "second_price": {
-                                        "type": "integer",
-                                        "example": 1000
-                                    },
-                                    "second_quantity": {
-                                        "type": "integer",
-                                        "example": 1
+                                    "passangers": {
+                                        "type": "object",
+                                        "example": [
+                                            {
+                                                "type": "ADULT",
+                                                "title": "Mr.",
+                                                "fullName": "Mischa",
+                                                "dob": "2002-05-20 10:00:30",
+                                                "validityPeriod": "2024-07-20 10:00:30",
+                                                "familyName": "Purwanto",
+                                                "citizenship": "Inggris",
+                                                "passport": "passport nih",
+                                                "issuingCountry": "Ukraine",
+                                                "price": 1000, 
+                                                "quantity": 1,
+                                                "seatId": "clxkqfrsn002318r5q952rxbs"
+                                            },
+                                            {
+                                                 "type": "INFRANT", 
+                                                "title": "Mr.",
+                                                "fullName": "Asep",
+                                                "dob": "2002-05-20 10:00:30",
+                                                "familyName": "Purwanto",
+                                                "citizenship": "Inggris",
+                                                "issuingCountry": "Ukraine",
+                                                "price": 1000, 
+                                                "quantity": 1,
+                                                "seatId": "clxkqfrso002518r51z08hfge"
+                                            },
+                                            {
+                                                "type": "CHILD", 
+                                                "title": "Mr.",
+                                                "fullName": "Udin",
+                                                "dob": "2002-05-20 10:00:30",
+                                                "familyName": "Purwanto",
+                                                "citizenship": "Inggris",
+                                                "issuingCountry": "Ukraine",
+                                                "price": 1000, 
+                                                "quantity": 1,
+                                                "seatId": "clxkqfrso002718r5psnmjq4s"
+                                            }
+                                        ]
                                     }
                                 }
                             }
@@ -6121,15 +6314,65 @@
                                             "example": {
                                                 "payment_type": "credit_card",
                                                 "card_type": "debit",
-                                                "transaction_id": "3b28bffd-9d4e-41a4-9703-22a8fb0646db",
-                                                "order_id": "c9789af7-0374-490d-8baf-983b318638b4",
-                                                "gross_amount": "2000.00",
-                                                "transaction_time": "2024-06-03 10:55:05",
+                                                "transaction_id": "6ed2ee93-2dae-414d-b074-fd111aa3be1f",
+                                                "order_id": "44bfc9ea-1eb9-4d8f-b100-419e54288bab",
+                                                "gross_amount": "1500.00",
+                                                "transaction_time": "2024-06-19 00:55:59",
                                                 "transaction_status": "pending",
                                                 "payment_status": "accept",
-                                                "expiry_time": "2024-06-11 10:55:05",
-                                                "redirect_url": "https://api.sandbox.midtrans.com/v2/3ds/redirect/3b28bffd-9d4e-41a4-9703-22a8fb0646db",
-                                                "bank": "bni"
+                                                "expiry_time": "2024-06-27 00:55:58",
+                                                "redirect_url": "https://api.sandbox.midtrans.com/v2/3ds/redirect/6ed2ee93-2dae-414d-b074-fd111aa3be1f",
+                                                "bank": "bni",
+                                                "orderer": {
+                                                "fullName": "Viery",
+                                                "familyName": "Nugroho",
+                                                "phoneNumber": "081234567890",
+                                                "email": "viery15102002@gmail.com"
+                                                },
+                                                "passengers": [
+                                                {
+                                                    "title": "Mr.",
+                                                    "name": "Mr. Mischa",
+                                                    "fullName": "Mischa",
+                                                    "dob": "2002-05-20T10:00:30.000Z",
+                                                    "passport": "passport nih",
+                                                    "validityPeriod": "2024-07-20T10:00:30.000Z",
+                                                    "familyName": "Purwanto",
+                                                    "citizenship": "Inggris",
+                                                    "issuingCountry": "Ukraine",
+                                                    "price": 1000,
+                                                    "quantity": 1,
+                                                    "seatId": "clxkmpecd001dsrhmg3exj8pj"
+                                                },
+                                                {
+                                                    "title": "Mr.",
+                                                    "name": "Mr. Asep",
+                                                    "fullName": "Asep",
+                                                    "dob": "2002-05-20T10:00:30.000Z",
+                                                    "passport": "passport nih",
+                                                    "validityPeriod": "2024-07-20T10:00:30.000Z",
+                                                    "familyName": "Purwanto",
+                                                    "citizenship": "Inggris",
+                                                    "issuingCountry": "Ukraine",
+                                                    "price": 0,
+                                                    "quantity": 1,
+                                                    "seatId": "clxkmpec30015srhm1xglsvzj"
+                                                },
+                                                {
+                                                    "title": "Mr.",
+                                                    "name": "Mr. Udin",
+                                                    "fullName": "Udin",
+                                                    "dob": "2002-05-20T10:00:30.000Z",
+                                                    "passport": "passport nih",
+                                                    "validityPeriod": "2024-07-20T10:00:30.000Z",
+                                                    "familyName": "Purwanto",
+                                                    "citizenship": "Inggris",
+                                                    "issuingCountry": "Ukraine",
+                                                    "price": 500,
+                                                    "quantity": 1,
+                                                    "seatId": "clxkmpech001hsrhms58r22j2"
+                                                }
+                                                ]
                                             }
                                         }
                                     }
@@ -6864,6 +7107,418 @@
                     }
                 }
             }
+        },
+
+        "/notifications/": {
+            "get": {
+                "tags": ["Notifications"],
+                "summary": "Return result HIT API get all notifications data",
+                "description": "This is an API for getting all notifications data",
+                "security": [
+                    {
+                        "bearerToken": []
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success getting all notifications data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "All notification data retrieved successfully"
+                                        },
+                                        "totalItems": {
+                                            "type": "integer",
+                                            "example": 3
+                                        },
+                                        "pagination": {
+                                            "type": "object",
+                                            "example": {
+                                                "totalPages": 1,
+                                                "currentPage": 1,
+                                                "pageItems": 3,
+                                                "nextPage": null,
+                                                "prevPage": null
+                                            }
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": [
+                                                {
+                                                    "id": "4d535c39-bf50-45ac-829f-005be5d046a7",
+                                                    "type": "Information",
+                                                    "notificationsTitle": "Pemberitahuan penerbangan",
+                                                    "notificationsContent": "Penerbangan anda ke Bali akan segera berangkat 2 jam lagi. ayo buruan ke gerbang keberangkatan",
+                                                    "date": "2030-01-01T00:00:00.000Z"
+                                                  },
+                                                  {
+                                                    "id": "8da5aff1-8700-4322-80a9-d70213582f17",
+                                                    "type": "Promotions",
+                                                    "notificationsTitle": "Diskon 50% buat kamu, iya kamu 😘",
+                                                    "notificationsContent": "Dapatkan potongan 50% dalam pembelian tiket!, promo ini berlaku untuk semua penerbangan",
+                                                    "date": "2030-01-01T00:00:00.000Z"
+                                                  },
+                                                  {
+                                                    "id": "e91539fe-bf86-43cf-8105-c7f20dcad962",
+                                                    "type": "Warning",
+                                                    "notificationsTitle": "Pesawat kamu sudah mau berangkat!",
+                                                    "notificationsContent": "Jangan sampai ketinggalan pesawat! ayo buruan Check-in, pesawat kamu akan berangkat sebentar lagi",
+                                                    "date": "2030-01-01T00:00:00.000Z"
+                                                  }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": ["Notifications"],
+                "summary": "Return result HIT API create notification",
+                "description": "This is an API for creating notification data",
+                "security": [
+                    {
+                        "bearerToken": []
+                    }
+                ],
+                "requestBody": {
+                    "description": "This is a request body for create new notification",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": "string",
+                                        "example": "D-day"
+                                    },
+                                    "title": {
+                                        "type": "string",
+                                        "example": "Pembaruan Aplikasi"
+                                    },
+                                    "content": {
+                                        "type": "string",
+                                        "example": "Ada update baru loh buat aplikasi kami. Nikmati fitur baru sekarang!"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Success create new notification data",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Notification created successfully"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": {
+                                                "id": "f50ba19a-a485-497b-838c-69f01ca3b8f6",
+                                                "type": "D-day",
+                                                "notificationsTitle": "Pembaruan Aplikasi",
+                                                "notificationsContent": "Ada update baru loh buat aplikasi kami. Nikmati fitur baru sekarang!",
+                                                "date": "2024-06-18T06:43:28.525Z"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Field error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 422
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "\"name\" is required"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "System Error",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 500
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "\nInvalid `prisma.notification.create()` invocation in\nC:\\Notifications\\ASUS\\Documents\\Kuliah\\Semester 6\\final-project\\BE-Rest-API-SkyFly\\controllers\\notification.js:80:43\n\n  77 \n  78 try {\n  79 \n→ 80     const newNotification = await prisma.notification.create({\n           data: {\n             id: \"1430fdf4-b13b-487c-addc-9ad1e7a16734\",\n             name: \"skyflyproduction\",\n             phoneNumber: undefined,\n             role: \"ADMI\"\n                   ~~~~~~\n           }\n         })\n\nInvalid value for argument `role`. Expected RoleNotification."
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+
+        "/notifications/{id}": {
+            "get": {
+                "tags": ["Notifications"],
+                "summary": "Return result HIT API get notification by id",
+                "description": "This is an API for getting notification data based on Id",
+                "security": [
+                    {
+                        "bearerToken": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "4d535c39-bf50-45ac-829f-005be5d046a7"
+                        },
+                        "description": "Notification ID"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success getting notification data based on Id",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Notification data retrieved successfully"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": {
+                                                "id": "4d535c39-bf50-45ac-829f-005be5d046a7",
+                                                "type": "Information",
+                                                "notificationsTitle": "Pemberitahuan penerbangan",
+                                                "notificationsContent": "Penerbangan anda ke Bali akan segera berangkat 2 jam lagi. ayo buruan ke gerbang keberangkatan",
+                                                "date": "2030-01-01T00:00:00.000Z"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "ID not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 404
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Id Not Found"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "put": {
+                "tags": ["Notifications"],
+                "summary": "Return result HIT API update notification by Id",
+                "description": "This is an API for updatting notification data based on Id",
+                "security": [
+                    {
+                        "bearerToken": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "f50ba19a-a485-497b-838c-69f01ca3b8f6"
+                        },
+                        "description": "Notification ID"
+                    }
+                ],
+                "requestBody": {
+                    "description": "This is a request body for update notification",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "type": {
+                                        "type": "string",
+                                        "example": "Update"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Success editting notification data based on Id",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Notification updated successfully"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": {
+                                                "id": "f50ba19a-a485-497b-838c-69f01ca3b8f6",
+                                                "type": "Update",
+                                                "notificationsTitle": "Pembaruan Aplikasi",
+                                                "notificationsContent": "Ada update baru loh buat aplikasi kami. Nikmati fitur baru sekarang!",
+                                                "date": "2024-06-18T06:46:14.952Z"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "ID not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 404
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Id Not Found"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": ["Notifications"],
+                "summary": "Return result HIT API delete notification by Id",
+                "description": "This is an API for deletting notification data based on Id",
+                "security": [
+                    {
+                        "bearerToken": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "f50ba19a-a485-497b-838c-69f01ca3b8f6"
+                        },
+                        "description": "Notification ID"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success deletting notification data based on Id",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Notification deleted successfully"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "ID not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "example": 404
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Id Not Found"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     },
     "components": {
@@ -6872,13 +7527,6 @@
                 "type": "http",
                 "scheme": "bearer",
                 "bearerFormat": "JWT"
-            }
-        },
-        "schemas":{
-            "generateTicket":{
-                "type": "html",
-                "example": "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">\n<title>Ticket</title>\n</head>\n<body>\n<h1>Ticket QG-CGK-QG.CGK.BDO-1B</h1>\n<div>\n<h2>Ticket Code: QG-CGK-QG.CGK.BDO-1B</h2>\n<p>\n<strong>Flight ID:</strong>\nclxe9zos8001z24wgy2l54ofh</p>\n<p>\n<strong>Departure Date:</strong>\n06/06/2024, 20.00.00</p>\n<p>\n<strong>Departure Airport:</strong>\nSoekarno-Hatta International Airport - Jakarta, Indonesia</p>\n<p>\n<strong>Arrival Date:</strong>\n07/06/2024, 00.00.00</p>\n<p>\n<strong>Destination Airport:</strong>\nHusein Sastranegara International Airport - Bandung, Indonesia</p>\n<h4>Passenger Detail:</h4><p>\n<strong>User Name:</strong>\nNaufal</p>\n<p>\n<strong>Family Name:</strong>\nFamily</p>\n<p>\n<strong>Citizenship:</strong>\nPoland</p>\n<p>\n<strong>Issuing Country:</strong>\nEngland</p>\n<p>\n<strong>Passport:</strong>\n73e19184-2392-426b-9b41-62efc4c005de</p>\n<p>\n<strong>Price:</strong>\n1000</p>\n<h4>Flight Detail:</h4><p>\n<strong>Airline:</strong>\nCitilink</p>\n<p>\n<strong>Seat Number:</strong>\n1B</p>\n<p>\n<strong>Seat Type:</strong>\nECONOMY</p>\n<h3>Transaction Details:</h3><p>\n<strong>Orderer:</strong>\nNaufal</p>\n<p>\n<strong>Email:</strong>\nnaufal@test.com</p>\n<p>\n<strong>Phone Number:</strong>\n628123456789</p>\n<p>\n<strong>Order ID:</strong>\n65e91bf8-433f-4747-aa29-565bbc1f25ce</p>\n<p>\n<strong>Booking Date:</strong>\n14/06/2024, 13.02.36</p>\n</div>\n<h1>Ticket QG-CGK-QG.CGK.BDO-1D</h1>\n<div>\n<h2>Ticket Code: QG-CGK-QG.CGK.BDO-1D</h2>\n<p>\n<strong>Flight ID:</strong>\nclxe9zos8001z24wgy2l54ofh</p>\n<p>\n<strong>Departure Date:</strong>\n06/06/2024, 20.00.00</p>\n<p>\n<strong>Departure Airport:</strong>\nSoekarno-Hatta International Airport - Jakarta, Indonesia</p>\n<p>\n<strong>Arrival Date:</strong>\n07/06/2024, 00.00.00</p>\n<p>\n<strong>Destination Airport:</strong>\nHusein Sastranegara International Airport - Bandung, Indonesia</p>\n<h4>Passenger Detail:</h4><p>\n<strong>User Name:</strong>\nNaufal</p>\n<p>\n<strong>Family Name:</strong>\nFamily</p>\n<p>\n<strong>Citizenship:</strong>\nPoland</p>\n<p>\n<strong>Issuing Country:</strong>\nEngland</p>\n<p>\n<strong>Passport:</strong>\n73e19184-2392-426b-9b41-62efc4c005de</p>\n<p>\n<strong>Price:</strong>\n1000</p>\n<h4>Flight Detail:</h4><p>\n<strong>Airline:</strong>\nCitilink</p>\n<p>\n<strong>Seat Number:</strong>\n1D</p>\n<p>\n<strong>Seat Type:</strong>\nECONOMY</p>\n<h3>Transaction Details:</h3><p>\n<strong>Orderer:</strong>\nNaufal</p>\n<p>\n<strong>Email:</strong>\nnaufal@test.com</p>\n<p>\n<strong>Phone Number:</strong>\n628123456789</p>\n<p>\n<strong>Order ID:</strong>\n65e91bf8-433f-4747-aa29-565bbc1f25ce</p>\n<p>\n<strong>Booking Date:</strong>\n14/06/2024, 13.02.36</p>\n</div>\n</body>\n</html>"
-        
             }
         }
     }
