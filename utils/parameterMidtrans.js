@@ -51,7 +51,7 @@ const parameterMidtrans = async (body) => {
             citizenship: data.citizenship,
             issuingCountry: data.issuingCountry,
             price: price,
-            quantity: data.quantity,
+            quantity: 1,
             seatId: data.seatId,
         });
     });

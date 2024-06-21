@@ -5,22 +5,31 @@ const fetch = require("node-fetch");
 const prisma = new PrismaClient();
 
 const getSeatStatus = async (seatId) => {
+    // Check the seat status from the flightSeat table first
+    const seat = await prisma.flightSeat.findUnique({
+        where: { id: seatId },
+    });
+
+    if (!seat) {
+        throw new Error(`Seat with ID ${seatId} not found`);
+    }
+
+    // Return the status directly if it's BOOKED or OCCUPIED
+    if (seat.status === "BOOKED" || seat.status === "OCCUPIED") {
+        return seat.status; // convert to lowercase to match response format
+    }
+
+    // Otherwise, check the transaction details
     const transactionDetail = await prisma.ticketTransactionDetail.findFirst({
-        where: {
-            seatId,
-        },
+        where: { seatId },
         orderBy: {
-            transaction: {
-                bookingDate: "desc",
-            },
+            transaction: { bookingDate: "desc" },
         },
-        include: {
-            transaction: true,
-        },
+        include: { transaction: true },
     });
 
     if (!transactionDetail || !transactionDetail.transaction) {
-        return "available";
+        return "AVAILABLE";
     }
 
     const { orderId } = transactionDetail.transaction;
@@ -41,18 +50,24 @@ const getSeatStatus = async (seatId) => {
     const transaction = await response.json();
 
     if (transaction.status_code === "404") {
-        return "available";
+        return "AVAILABLE";
     }
 
     const { transaction_status } = transaction;
 
     switch (transaction_status) {
         case "pending":
-            return "pending";
+            return "OCCUPIED";
         case "settlement":
-            return "settlement";
+        case "capture":
+        case "success":
+            return "BOOKED";
+        case "cancel":
+        case "deny":
+        case "expire":
+        case "failure":
         default:
-            return "available";
+            return "AVAILABLE";
     }
 };
 
@@ -259,7 +274,6 @@ const updateSeat = async (req, res, next) => {
                 seatNumber,
                 status,
                 type,
-                // price: newPrice,
             },
         });
 

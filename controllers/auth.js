@@ -123,7 +123,7 @@ const handleLoginGoogle = async (req, res, next) => {
             );
         }
 
-        const hashedPassword = secretHash(data.id);
+        const hashedPassword = await secretHash(data.id);
         console.log("=====================================================");
         console.log(`Password google login: ${data.id}`);
         console.log("=====================================================");
@@ -160,7 +160,7 @@ const handleLoginGoogle = async (req, res, next) => {
             email: data.email,
         };
 
-        const token = generateJWT(payload);
+        const token = await generateJWT(payload);
 
         return res.status(200).json({
             status: true,
@@ -215,7 +215,7 @@ const handleLogin = async (req, res, next) => {
         // check password
         if (userAccount && secretCompare(password, userAccount.password)) {
             // create jwt token
-            const token = generateJWT(payload);
+            const token = await generateJWT(payload);
 
             res.status(200).json({
                 status: true,
@@ -408,21 +408,28 @@ const sendResetPassword = async (req, res, next) => {
             emailTitle: "Reset Password",
         };
 
-        const dataUrl = {
-            token: await generateJWT(payload),
-        };
+        const token = await generateJWT(payload);
 
         await prisma.auth.update({
             where: {
                 email: payload.email,
             },
             data: {
-                secretToken: dataUrl.token,
+                secretToken: token,
+            },
+        });
+
+        const authData = await prisma.auth.findUnique({
+            where: {
+                email: payload.email,
+            },
+            include: {
+                user: true,
             },
         });
 
         // sending email
-        const urlTokenVerification = `${process.env.BASE_URL_FRONTEND}/resetPassword?token=${dataUrl.token}`;
+        const urlTokenVerification = `${process.env.BASE_URL_FRONTEND}/resetPassword?token=${authData.secretToken}`;
 
         let html = await getHtml("resetPassword.ejs", {
             email: payload.email,
@@ -439,7 +446,7 @@ const sendResetPassword = async (req, res, next) => {
             status: true,
             message:
                 "Reset password link has been sent, please check your email",
-            _token: dataUrl.token,
+            _token: authData.secretToken,
         });
     } catch (error) {
         next(createHttpError(500, { message: error.message }));
@@ -452,7 +459,7 @@ const resetPassword = async (req, res, next) => {
         const { password } = req.body;
 
         const payload = jwt.verify(token, process.env.JWT_SIGNATURE_KEY);
-        const hashedPassword = secretHash(password);
+        const hashedPassword = await secretHash(password);
 
         const foundUser = await prisma.auth.findUnique({
             where: {
@@ -510,7 +517,7 @@ const updateUserLoggedIn = async (req, res, next) => {
         const { name, phoneNumber, familyName, password } = req.body;
         let hashedPassword;
         if (password) {
-            hashedPassword = secretHash(password);
+            hashedPassword = await secretHash(password);
         }
 
         try {
@@ -600,7 +607,7 @@ const sendOTPSMS = async (req, res, next) => {
         }
 
         // generate secret data
-        const OTPToken = generateTOTP();
+        const OTPToken = await generateTOTP();
         const newPayload = {
             registerId: randomUUID(),
             userId: foundUser.id,
@@ -609,14 +616,7 @@ const sendOTPSMS = async (req, res, next) => {
             emailTitle: "Resend Email Activation",
         };
 
-        // generate sent data via email
-        const dataUrl = {
-            token: generateJWT(newPayload),
-        };
-
-        const urlTokenVerification = `${process.env.BASE_URL_FRONTEND}/otp?token=${dataUrl.token}`;
-
-        smsHandler(phoneNumber, OTPToken, urlTokenVerification);
+        const newToken = await generateJWT(newPayload);
 
         // update otp & secretToken user
         await prisma.auth.update({
@@ -625,14 +625,27 @@ const sendOTPSMS = async (req, res, next) => {
             },
             data: {
                 otpToken: OTPToken,
-                secretToken: dataUrl.token,
+                secretToken: newToken,
             },
         });
+
+        const authData = await prisma.auth.findUnique({
+            where: {
+                email: payload.email,
+            },
+            include: {
+                user: true,
+            },
+        });
+
+        const urlTokenVerification = `${process.env.BASE_URL_FRONTEND}/otp?token=${authData.secretToken}`;
+
+        await smsHandler(phoneNumber, authData.otpToken, urlTokenVerification);
 
         res.status(200).json({
             status: true,
             message: "SMS verification sent",
-            _token: dataUrl.token,
+            _token: authData.secretToken,
         });
     } catch (error) {
         next(

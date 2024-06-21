@@ -6,7 +6,7 @@ const secretHash = async (string) => {
     return hashed;
 };
 
-const secretCompare = async (data, hashed) => {
+const secretCompare = (data, hashed) => {
     return bcrypt.compareSync(data, hashed);
 };
 
