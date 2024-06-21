@@ -1045,106 +1045,10 @@ const getAllTransactionByUserLoggedIn = async (req, res, next) => {
 
         let response = [];
 
-        // filteredTransactions.map((data) => {
-        //     data.Transaction_Detail.map((detail) => {
-        //         const duration = calculateFlightDuration(
-        //             detail.flight.departureDate,
-        //             detail.flight.arrivalDate
-        //         );
-        //         let bookingCode = `${detail.flight.code}-${detail.flight.plane.code}-${detail.seat.seatNumber}`;
-
-        //         let responseTransaction = {
-        //             date: formatMonthAndYear(data.bookingDate), // header date
-        //             transactions: [],
-        //         };
-
-        //         responseTransaction.transactions.push({
-        //             id: data.id,
-        //             orderId: data.orderId,
-        //             userId: data.userId,
-        //             tax: data.tax,
-        //             totalPrice: data.totalPrice,
-        //             status: data.status,
-        //             bookingDate: formatDate(data.bookingDate),
-        //             bookingTime: formatTime(data.bookingDate),
-        //             bookingCode,
-        //             date: formatMonthAndYear(data.bookingDate), // header date
-        //             Transaction_Detail: [
-        //                 {
-        //                     id: detail.id,
-        //                     transactionId: detail.transactionId,
-        //                     totalPrice: detail.price,
-        //                     name: detail.name,
-        //                     passengerCategory: detail.type,
-        //                     familyName: detail.familyName,
-        //                     dob: formatDate(detail.dob),
-        //                     citizenship: detail.citizenship,
-        //                     passport: detail.passport,
-        //                     issuingCountry: detail.issuingCountry,
-        //                     validityPeriod: formatDate(detail.validityPeriod),
-        //                     flight: {
-        //                         id: detail.flight.id,
-        //                         code: detail.flight.code,
-        //                         departureDate: detail.flight.departureDate,
-        //                         arrivalDate: detail.flight.arrivalDate,
-        //                         flightPrice: detail.flight.price,
-        //                         flightDuration: duration,
-        //                         airline: {
-        //                             id: detail.flight.plane.id,
-        //                             code: detail.flight.plane.code,
-        //                             name: detail.flight.plane.name,
-        //                             image: detail.flight.plane.image,
-        //                             terminal: detail.flight.plane.terminal,
-        //                         },
-        //                         transitAirport: detail.flight.transitAiport,
-        //                         departureAirport: {
-        //                             id: detail.flight.departureAirport.id,
-        //                             code: detail.flight.departureAirport.code,
-        //                             name: detail.flight.departureAirport.name,
-        //                             city: detail.flight.departureAirport.city,
-        //                             country:
-        //                                 detail.flight.departureAirport.country,
-        //                             continent:
-        //                                 detail.flight.departureAirport
-        //                                     .continent,
-        //                             image: detail.flight.departureAirport.image,
-        //                         },
-        //                         destinationAirport: {
-        //                             id: detail.flight.destinationAirport.id,
-        //                             code: detail.flight.destinationAirport.code,
-        //                             name: detail.flight.destinationAirport.name,
-        //                             city: detail.flight.destinationAirport.city,
-        //                             country:
-        //                                 detail.flight.destinationAirport
-        //                                     .country,
-        //                             continent:
-        //                                 detail.flight.destinationAirport
-        //                                     .continent,
-        //                             image: detail.flight.destinationAirport
-        //                                 .image,
-        //                         },
-        //                     },
-        //                     seat: {
-        //                         id: detail.seat.id,
-        //                         flightId: detail.seat.id,
-        //                         seatNumber: detail.seat.seatNumber,
-        //                         status: detail.seat.status,
-        //                         type: detail.seat.type,
-        //                         seatPrice: detail.seat.price,
-        //                     },
-        //                 },
-        //             ],
-        //         });
-
-        //         response.push(responseTransaction);
-        //     });
-        // });
-        // console.log(filteredTransaction);
-
         filteredTransactions.forEach((data) => {
             data.Transaction_Detail.map((detail) => {
                 const currentDate = formatMonthAndYear(data.bookingDate);
-                let bookingCode = `${detail.flight.code}-${detail.flight.plane.code}-${detail.seat.seatNumber}`;
+
                 if (!response[currentDate]) {
                     response.push(
                         (response[currentDate] = {
@@ -1163,7 +1067,7 @@ const getAllTransactionByUserLoggedIn = async (req, res, next) => {
                     booking: {
                         date: formatDate(data.bookingDate),
                         time: formatTime(data.bookingDate),
-                        code: bookingCode,
+                        code: data.bookingCode,
                     },
                     Transaction_Detail: [
                         {
@@ -1271,6 +1175,126 @@ const getAllTransactionByUserLoggedIn = async (req, res, next) => {
     }
 };
 
+const getTransactionById = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const ticketTransaction = await prisma.ticketTransaction.findUnique({
+            where: {
+                id,
+                userId: req.user.id,
+            },
+            include: {
+                Transaction_Detail: {
+                    include: {
+                        flight: {
+                            include: {
+                                plane: true,
+                                transitAirport: true,
+                                departureAirport: true,
+                                destinationAirport: true,
+                            },
+                        },
+                        seat: true,
+                    },
+                },
+            },
+        });
+
+        if (!ticketTransaction) {
+            return next(createHttpError(404, "Transaction not found"));
+        }
+
+        let response = {
+            id: ticketTransaction.id,
+            orderId: ticketTransaction.orderId,
+            userId: ticketTransaction.userId,
+            tax: ticketTransaction.tax,
+            totalPrice: ticketTransaction.totalPrice,
+            status: ticketTransaction.status,
+            booking: {
+                date: formatDate(ticketTransaction.bookingDate),
+                time: formatTime(ticketTransaction.bookingDate),
+                code: ticketTransaction.bookingCode,
+            },
+            Transaction_Detail: [],
+        };
+
+        ticketTransaction.Transaction_Detail.map((detail) => {
+            response.Transaction_Detail.push({
+                id: detail.id,
+                transactionId: detail.transactionId,
+                totalPrice: detail.price,
+                name: detail.name,
+                passengerCategory: detail.type,
+                familyName: detail.familyName,
+                dob: formatDate(detail.dob),
+                citizenship: detail.citizenship,
+                passport: detail.passport,
+                issuingCountry: detail.issuingCountry,
+                validityPeriod: formatDate(detail.validityPeriod),
+                flight: {
+                    id: detail.flight.id,
+                    code: detail.flight.code,
+                    departure: {
+                        date: formatDate(detail.flight.departureDate),
+                        time: formatTime(detail.flight.departureDate),
+                    },
+                    arrival: {
+                        date: formatDate(detail.flight.arrivalDate),
+                        time: formatTime(detail.flight.arrivalDate),
+                    },
+                    flightPrice: detail.flight.price,
+                    flightDuration: calculateFlightDuration(
+                        detail.flight.departureDate,
+                        detail.flight.arrivalDate
+                    ),
+                    airline: {
+                        id: detail.flight.plane.id,
+                        code: detail.flight.plane.code,
+                        name: detail.flight.plane.name,
+                        image: detail.flight.plane.image,
+                        terminal: detail.flight.plane.terminal,
+                    },
+                    departureAirport: {
+                        id: detail.flight.departureAirport.id,
+                        code: detail.flight.departureAirport.code,
+                        name: detail.flight.departureAirport.name,
+                        city: detail.flight.departureAirport.city,
+                        country: detail.flight.departureAirport.country,
+                        continent: detail.flight.departureAirport.continent,
+                        image: detail.flight.departureAirport.image,
+                    },
+                    destinationAirport: {
+                        id: detail.flight.destinationAirport.id,
+                        code: detail.flight.destinationAirport.code,
+                        name: detail.flight.destinationAirport.name,
+                        city: detail.flight.destinationAirport.city,
+                        country: detail.flight.destinationAirport.country,
+                        continent: detail.flight.destinationAirport.continent,
+                        image: detail.flight.destinationAirport.image,
+                    },
+                },
+                seat: {
+                    id: detail.seat.id,
+                    flightId: detail.seat.id,
+                    seatNumber: detail.seat.seatNumber,
+                    status: detail.seat.status,
+                    type: detail.seat.type,
+                    seatPrice: detail.seat.price,
+                },
+            });
+        });
+
+        res.status(200).json({
+            status: true,
+            message: "ticket transaction data retrieved successfully",
+            data: response,
+        });
+    } catch (error) {
+        next(createHttpError(500, error.message));
+    }
+};
+
 //TODO: dashboard action
 
 const getAllTransaction = async (req, res, next) => {
@@ -1314,25 +1338,118 @@ const getAllTransaction = async (req, res, next) => {
     }
 };
 
-const getTransactionById = async (req, res, next) => {
+const getAdminTransactionById = async (req, res, next) => {
     // get transaction data by id from ticketTransaction & include ticketTransaction detail
     try {
         const { id } = req.params;
-        const ticketTransactions = await prisma.ticketTransaction.findUnique({
+        const ticketTransaction = await prisma.ticketTransaction.findUnique({
             where: { id },
             include: {
-                Transaction_Detail: true,
+                Transaction_Detail: {
+                    include: {
+                        flight: {
+                            include: {
+                                plane: true,
+                                transitAirport: true,
+                                departureAirport: true,
+                                destinationAirport: true,
+                            },
+                        },
+                        seat: true,
+                    },
+                },
             },
         });
 
-        if (!ticketTransactions) {
+        if (!ticketTransaction) {
             return next(createHttpError(404, "Transaction not found"));
         }
 
+        let response = {
+            id: ticketTransaction.id,
+            orderId: ticketTransaction.orderId,
+            userId: ticketTransaction.userId,
+            tax: ticketTransaction.tax,
+            totalPrice: ticketTransaction.totalPrice,
+            status: ticketTransaction.status,
+            booking: {
+                date: formatDate(ticketTransaction.bookingDate),
+                time: formatTime(ticketTransaction.bookingDate),
+                code: ticketTransaction.bookingCode,
+            },
+            Transaction_Detail: [],
+        };
+
+        ticketTransaction.Transaction_Detail.map((detail) => {
+            response.Transaction_Detail.push({
+                id: detail.id,
+                transactionId: detail.transactionId,
+                totalPrice: detail.price,
+                name: detail.name,
+                passengerCategory: detail.type,
+                familyName: detail.familyName,
+                dob: formatDate(detail.dob),
+                citizenship: detail.citizenship,
+                passport: detail.passport,
+                issuingCountry: detail.issuingCountry,
+                validityPeriod: formatDate(detail.validityPeriod),
+                flight: {
+                    id: detail.flight.id,
+                    code: detail.flight.code,
+                    departure: {
+                        date: formatDate(detail.flight.departureDate),
+                        time: formatTime(detail.flight.departureDate),
+                    },
+                    arrival: {
+                        date: formatDate(detail.flight.arrivalDate),
+                        time: formatTime(detail.flight.arrivalDate),
+                    },
+                    flightPrice: detail.flight.price,
+                    flightDuration: calculateFlightDuration(
+                        detail.flight.departureDate,
+                        detail.flight.arrivalDate
+                    ),
+                    airline: {
+                        id: detail.flight.plane.id,
+                        code: detail.flight.plane.code,
+                        name: detail.flight.plane.name,
+                        image: detail.flight.plane.image,
+                        terminal: detail.flight.plane.terminal,
+                    },
+                    departureAirport: {
+                        id: detail.flight.departureAirport.id,
+                        code: detail.flight.departureAirport.code,
+                        name: detail.flight.departureAirport.name,
+                        city: detail.flight.departureAirport.city,
+                        country: detail.flight.departureAirport.country,
+                        continent: detail.flight.departureAirport.continent,
+                        image: detail.flight.departureAirport.image,
+                    },
+                    destinationAirport: {
+                        id: detail.flight.destinationAirport.id,
+                        code: detail.flight.destinationAirport.code,
+                        name: detail.flight.destinationAirport.name,
+                        city: detail.flight.destinationAirport.city,
+                        country: detail.flight.destinationAirport.country,
+                        continent: detail.flight.destinationAirport.continent,
+                        image: detail.flight.destinationAirport.image,
+                    },
+                },
+                seat: {
+                    id: detail.seat.id,
+                    flightId: detail.seat.id,
+                    seatNumber: detail.seat.seatNumber,
+                    status: detail.seat.status,
+                    type: detail.seat.type,
+                    seatPrice: detail.seat.price,
+                },
+            });
+        });
+
         res.status(200).json({
             status: true,
-            message: "ticket transactions data retrieved successfully",
-            data: ticketTransactions,
+            message: "ticket transaction data retrieved successfully",
+            data: response,
         });
     } catch (error) {
         next(createHttpError(500, error.message));
@@ -1468,6 +1585,7 @@ module.exports = {
     getAllTransaction,
     getAllTransactionByUserLoggedIn,
     getTransactionById,
+    getAdminTransactionById,
     updateTransaction,
     deleteTransaction,
     deleteTransactionDetail,
