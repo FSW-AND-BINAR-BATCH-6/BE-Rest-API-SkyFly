@@ -382,7 +382,7 @@ const getAllFlight = async (req, res, next) => {
                 price: flight.price,
                 facilities: flight.facilities,
                 duration: duration,
-                class: classInfo,
+                classInfo: classInfo,
             };
         });
 
@@ -463,7 +463,7 @@ const getAllFlight = async (req, res, next) => {
                 price: flight.price,
                 facilities: flight.facilities,
                 duration: duration,
-                class: classInfo,
+                classInfo: classInfo,
             };
         });
 
@@ -632,7 +632,7 @@ const getFlightById = async (req, res, next) => {
                 price: flight.price,
                 facilities: flight.facilities,
                 duration: duration,
-                class: classInfo,
+                classInfo: classInfo,
             };
         };
 
