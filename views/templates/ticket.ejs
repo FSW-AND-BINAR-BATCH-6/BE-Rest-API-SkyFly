@@ -4,7 +4,73 @@
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Ticket</title>
-        <link rel="stylesheet" href="styles.css" />
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+            integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+            crossorigin="anonymous"
+        />
+        <style>
+            body {
+                font-family: "Arial", sans-serif;
+                background-color: #f5f5f5;
+                padding: 20px;
+                color: black;
+            }
+            .ticket {
+                background-color: whitesmoke;
+                border: 1px solid pink;
+                border-radius: 8px;
+                padding: 20px;
+                margin-bottom: 20px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                max-width: 700px;
+                margin: auto;
+                width: 100%;
+                min-height: 90vh;
+            }
+            .ticket-header {
+                border-bottom: 1px solid #ccc;
+                padding-bottom: 10px;
+                margin-bottom: 20px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .ticket-header h1 {
+                margin: 0;
+                font-size: 1.5rem;
+            }
+            .ticket-header img {
+                height: 40px;
+            }
+            .ticket-section {
+                margin-bottom: 20px;
+            }
+            .ticket-section h4 {
+                margin-bottom: 10px;
+                font-size: 1.1rem;
+                border-bottom: 1px solid #ccc;
+                padding-bottom: 5px;
+            }
+            .ticket p {
+                margin: 5px 0;
+            }
+            #printpagebutton {
+                margin-bottom: 20px;
+                display: block;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .ticket-details {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+            }
+            .ticket-details div {
+                width: 48%;
+            }
+        </style>
     </head>
     <body>
         <input
@@ -15,10 +81,14 @@
         />
         <div>
             <div class="ticket">
+                <div class="ticket-header">
+                    <h1>Boarding Pass</h1>
+                    <img src="public/assets/airplane.jpg" alt="Logo" />
+                </div>
                 <% data.map((data, index) => { %>
-                <h1>Ticket <%= data.code %></h1>
-                <div>
+                <div class="ticket-section">
                     <h2>Ticket Code: <%= data.code %></h2>
+                    <h4>Flight Information</h4>
                     <p><strong>Flight ID:</strong> <%= data.flightId %></p>
                     <p>
                         <strong>Departure Date:</strong> <%= new
@@ -40,43 +110,51 @@
                         data.flight.destinationAirport.city + ', ' +
                         data.flight.destinationAirport.country %>
                     </p>
+                </div>
+                <div class="ticket-section ticket-details">
+                    <div>
+                        <h4>Passenger Detail:</h4>
+                        <p><strong>User Name:</strong> <%= data.user.name %></p>
+                        <p>
+                            <strong>Family Name:</strong> <%=
+                            data.user.familyName %>
+                        </p>
+                        <p>
+                            <strong>Citizenship:</strong> <%=
+                            data.ticketTransaction.Transaction_Detail[0].citizenship
+                            %>
+                        </p>
+                        <p>
+                            <strong>Issuing Country:</strong> <%=
+                            data.ticketTransaction.Transaction_Detail[0].issuingCountry
+                            %>
+                        </p>
+                        <p>
+                            <strong>Passport:</strong> <%=
+                            data.ticketTransaction.Transaction_Detail[0].passport
+                            %>
+                        </p>
+                        <p>
+                            <strong>Price:</strong> <%=
+                            data.ticketTransaction.Transaction_Detail[0].price
+                            %>
+                        </p>
+                    </div>
 
-                    <h4>Passenger Detail:</h4>
-                    <p><strong>User Name:</strong> <%= data.user.name %></p>
-                    <p>
-                        <strong>Family Name:</strong> <%= data.user.familyName
-                        %>
-                    </p>
-                    <p>
-                        <strong>Citizenship:</strong> <%=
-                        data.ticketTransaction.Transaction_Detail[0].citizenship
-                        %>
-                    </p>
-                    <p>
-                        <strong>Issuing Country:</strong> <%=
-                        data.ticketTransaction.Transaction_Detail[0].issuingCountry
-                        %>
-                    </p>
-                    <p>
-                        <strong>Passport:</strong> <%=
-                        data.ticketTransaction.Transaction_Detail[0].passport %>
-                    </p>
-
-                    <p>
-                        <strong>Price:</strong> <%=
-                        data.ticketTransaction.Transaction_Detail[0].price %>
-                    </p>
-
-                    <h4>Flight Detail:</h4>
-                    <p>
-                        <strong>Airline:</strong> <%= data.flight.plane.name %>
-                    </p>
-                    <p>
-                        <strong>Seat Number:</strong> <%= data.seat.seatNumber
-                        %>
-                    </p>
-                    <p><strong>Seat Type:</strong> <%= data.seat.type %></p>
-
+                    <div>
+                        <h4>Flight Detail:</h4>
+                        <p>
+                            <strong>Airline:</strong> <%= data.flight.plane.name
+                            %>
+                        </p>
+                        <p>
+                            <strong>Seat Number:</strong> <%=
+                            data.seat.seatNumber %>
+                        </p>
+                        <p><strong>Seat Type:</strong> <%= data.seat.type %></p>
+                    </div>
+                </div>
+                <div class="ticket-section">
                     <h4>Transaction Details:</h4>
                     <p><strong>Orderer: </strong><%= data.user.name %></p>
                     <p><strong>Email: </strong><%= data.user.auth.email %></p>
@@ -95,13 +173,32 @@
                     </p>
                 </div>
                 <% }) %>
+                <div class="row">
+                    <div class="col-4">
+                        <img
+                            src="/BE-Rest-API-SkyFly/public/assets/airplane.png"
+                        />
+                        <p>Show e-ticket and ID during check-in</p>
+                    </div>
+                    <div class="col-4">
+                        <img
+                            src="/BE-Rest-API-SkyFly/public/assets/clock.png"
+                        />
+                        <p>Check-in at least 90 minutes before departure</p>
+                    </div>
+                    <div class="col-4">
+                        <img
+                            src="/BE-Rest-API-SkyFly/public/assets/about.png"
+                        />
+                        <p>Time indicated is local airport time</p>
+                    </div>
+                </div>
             </div>
         </div>
 
         <script>
             function printpage() {
                 var printButton = document.getElementById("printpagebutton");
-
                 printButton.style.visibility = "hidden";
                 window.print();
                 printButton.style.visibility = "visible";
