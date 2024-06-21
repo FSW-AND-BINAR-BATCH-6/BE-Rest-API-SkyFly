@@ -696,8 +696,7 @@ async function main() {
     }
     await prisma.airport.createMany({ data: airports });
 
-    const airlinesMap = await prisma.airline.findMany();
-    const airportsMap = await prisma.airport.findMany();
+    const hashedPassword = await secretHash("password");
 
     // create user, auth
     await Promise.all(
@@ -713,7 +712,7 @@ async function main() {
                         create: {
                             id: randomUUID(),
                             email: `${name.toLowerCase()}@test.com`,
-                            password: secretHash("password"),
+                            password: hashedPassword,
                             isVerified: true,
                             otpToken: null,
                             secretToken: null,
@@ -735,7 +734,7 @@ async function main() {
                 create: {
                     id: randomUUID(),
                     email: `miminc1@test.com`,
-                    password: secretHash("password"),
+                    password: hashedPassword,
                     isVerified: true,
                     otpToken: null,
                     secretToken: null,
@@ -744,38 +743,82 @@ async function main() {
         },
     });
 
-    // create flight
-    await Promise.all(
-        flights.map(async (flight) => {
-            const plane = airlinesMap.find((a) => a.code === flight.planeCode);
-            const departureAirport = airportsMap.find(
-                (a) => a.code === flight.departureCityCode
-            );
-            const destinationAirport = airportsMap.find(
-                (a) => a.code === flight.destinationCityCode
-            );
+    
+    const airlinesMap = await prisma.airline.findMany();
+    const airportsMap = await prisma.airport.findMany();
 
-            if (plane && departureAirport && destinationAirport) {
-                await prisma.flight.create({
-                    data: {
-                        planeId: plane.id,
-                        departureDate: flight.departureDate,
-                        departureAirportId: departureAirport.id,
-                        arrivalDate: flight.arrivalDate,
-                        destinationAirportId: destinationAirport.id,
-                        capacity: flight.capacity,
-                        price: flight.price,
-                        code: `${flight.planeCode}.${flight.departureCityCode}.${flight.destinationCityCode}`,
-                    },
-                });
+    const maxFlights = 2000;
+    const daysInRange = 60; // Total number of days from June 1 to July 31
+
+    const AirlinesArray = airlinesMap.map((data) => data);
+    const AirportArray = airportsMap.map((data) => data);
+
+    const flightData = new Set();
+
+    const generateFlights = () => {
+        const capacity = 72;
+        const price = 1500000;
+        const startDate = new Date("2024-06-01T08:00:00Z");
+        const msPerDay = 24 * 60 * 60 * 1000;
+
+        let currentDate = new Date(startDate);
+
+        while (currentDate < new Date("2024-07-31T08:00:00Z") && flightData.size < maxFlights) {
+            for (const departureAirport of AirportArray) {
+                // Ensure at least one flight for each airport as departure and arrival each day
+                const shuffledAirlines = AirlinesArray.sort(() => 0.5 - Math.random());
+
+                // Departure flight
+                const airline = shuffledAirlines[0];
+                const destinationAirport = AirportArray.filter(airport => airport.id !== departureAirport.id)[Math.floor(Math.random() * (AirportArray.length - 1))];
+                const departureDate = new Date(currentDate);
+                const arrivalDate = new Date(departureDate.getTime() + 4 * 60 * 60 * 1000); // 4 hours later
+                const forwardFlight = {
+                    planeId: airline.id,
+                    departureDate: departureDate,
+                    departureAirportId: departureAirport.id,
+                    arrivalDate: arrivalDate,
+                    destinationAirportId: destinationAirport.id,
+                    capacity: capacity,
+                    price: price,
+                    code: `${airline.code}.${departureAirport.code}.${destinationAirport.code}`,
+                };
+
+                // Return flight
+                const returnAirline = shuffledAirlines[1] || airline; // Ensure a different airline if available
+                const returnDepartureDate = new Date(departureDate.getTime() + msPerDay);
+                const returnArrivalDate = new Date(returnDepartureDate.getTime() + 4 * 60 * 60 * 1000);
+                const returnFlight = {
+                    planeId: returnAirline.id,
+                    departureDate: returnDepartureDate,
+                    departureAirportId: destinationAirport.id,
+                    arrivalDate: returnArrivalDate,
+                    destinationAirportId: departureAirport.id,
+                    capacity: capacity,
+                    price: price,
+                    code: `${returnAirline.code}.${destinationAirport.code}.${departureAirport.code}`,
+                };
+
+                flightData.add(JSON.stringify(forwardFlight));
+                if (flightData.size < maxFlights) {
+                    flightData.add(JSON.stringify(returnFlight));
+                }
+
+                if (flightData.size >= maxFlights) break;
             }
-        })
-    );
+            currentDate = new Date(currentDate.getTime() + msPerDay); // Increment by one day
+        }
+    };
 
-    const flightData = await prisma.flight.findMany();
+    generateFlights();
 
+    for (const flight of flightData) {
+        await prisma.flight.create({ data: JSON.parse(flight) });
+    }
+
+    const flight = await prisma.flight.findMany()
     await Promise.all(
-        flightData.map(async (flight) => {
+        flight.map(async (flight) => {
             await Promise.all(
                 flightSeats.map(async (seat) => {
                     let price = flight.price;
