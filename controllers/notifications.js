@@ -1,7 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
 const { randomUUID } = require("crypto");
 const createHttpError = require("http-errors");
-const { formatDate, formatTime, toWib } = require("../utils/formatDate");
+const { formatDate, formatTime } = require("../utils/formatDate");
 
 const prisma = new PrismaClient();
 
