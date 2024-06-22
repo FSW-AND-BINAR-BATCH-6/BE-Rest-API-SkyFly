@@ -447,6 +447,7 @@ const snapPayment = async (req, res, next) => {
                     message: "Transaction created successfully",
                     _token: response.token,
                     redirect_url: `https://app.sandbox.midtrans.com/snap/v2/vtweb/${response.token}`,
+                    transactionId: transaction.id,
                     data: {
                         orderer,
                         passengers,
