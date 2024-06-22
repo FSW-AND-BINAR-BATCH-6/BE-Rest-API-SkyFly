@@ -1,6 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
 const { randomUUID } = require("crypto");
 const createHttpError = require("http-errors");
+const { formatDate, formatTime } = require("../utils/formatDate");
 
 const prisma = new PrismaClient();
 
@@ -20,6 +21,24 @@ const getNotifications = async (req, res, next) => {
 
         const count = await prisma.notifications.count();
 
+        const notificationsFormat = (notifications) => {
+            return {
+                id: notifications.id,
+                type: notifications.type,
+                notificationsTitle: notifications.notificationsTitle,
+                notificationsContent: notifications.notificationsContent,
+                date: formatDate(notifications.date),
+                time: formatTime(notifications.date),
+            };
+        };
+
+        const notificationData =
+            getAllNotifications.length > 0
+                ? getAllNotifications.map((notification) =>
+                      notificationsFormat(notification)
+                  )
+                : [];
+                
         res.status(200).json({
             status: true,
             message: "All notifications data retrived successfully",
@@ -31,10 +50,7 @@ const getNotifications = async (req, res, next) => {
                 nextPage: page < Math.ceil(count / limit) ? page + 1 : null,
                 prevPage: page > 1 ? page - 1 : null,
             },
-            data:
-                getAllNotifications.length !== 0
-                    ? getAllNotifications
-                    : "empty notifications data",
+            data: notificationData,
         });
     } catch (error) {
         next(createHttpError(500, { message: error.message }));
