@@ -1,5 +1,4 @@
 const { PrismaClient } = require("@prisma/client");
-const { secretHash } = require("../../utils/hashSalt");
 const { randomUUID } = require("crypto");
 
 const prisma = new PrismaClient();
