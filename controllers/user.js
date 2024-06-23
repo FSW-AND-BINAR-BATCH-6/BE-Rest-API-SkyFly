@@ -133,7 +133,7 @@ const updateUser = async (req, res, next) => {
     try {
         const { name, phoneNumber, familyName, role, password } = req.body;
         const userId = req.params.id;
-
+        console.log("uhuy");
         // Hash kata sandi baru jika ada
         let hashedPassword;
         if (password) {
