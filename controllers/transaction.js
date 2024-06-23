@@ -371,12 +371,15 @@ const snapPayment = async (req, res, next) => {
             );
         }
 
+        let totalTicketPrice = await totalPrice(passengers);
+        let tax = parseFloat(totalTicketPrice) * (3 / 100);
+
         let parameter = {
             credit_card: {
                 secure: true,
             },
             transaction_details: {
-                gross_amount: await totalPrice(passengers),
+                gross_amount: totalTicketPrice + tax,
                 order_id: randomUUID(),
             },
             item_details: passengers,
@@ -385,15 +388,6 @@ const snapPayment = async (req, res, next) => {
 
         try {
             const bookingCode = await generateBookingCode(passengers);
-
-            // [start] tax
-            let tax =
-                parseFloat(parameter.transaction_details.gross_amount) *
-                (3 / 100);
-            let totalPrice =
-                parseFloat(parameter.transaction_details.gross_amount) + tax;
-            // [end] tax
-
             await prisma.$transaction(async (tx) => {
                 const response = await snap.createTransaction(parameter);
 
@@ -402,7 +396,7 @@ const snapPayment = async (req, res, next) => {
                         userId: req.user.id, // req.user.id (from user loggedIn)
                         orderId: parameter.transaction_details.order_id,
                         status: "pending",
-                        totalPrice,
+                        totalPrice: parameter.transaction_details.gross_amount,
                         tax: tax,
                         bookingDate: new Date().toISOString(),
                         bookingCode,
@@ -526,6 +520,8 @@ const bankTransfer = async (req, res, next) => {
 
         const allowedPaymentTypes = ["bank_transfer", "echannel", "permata"];
         let parameter;
+        let totalTicketPrice = await totalPrice(passengers);
+        let tax = parseFloat(totalTicketPrice) * (3 / 100);
 
         if (!allowedPaymentTypes.includes(data.payment_type)) {
             return next(
@@ -543,7 +539,7 @@ const bankTransfer = async (req, res, next) => {
                 parameter = {
                     payment_type: "permata",
                     transaction_details: {
-                        gross_amount: await totalPrice(passengers),
+                        gross_amount: totalTicketPrice + tax,
                         order_id: randomUUID(),
                     },
                     customer_details: orderer,
@@ -558,7 +554,7 @@ const bankTransfer = async (req, res, next) => {
                         bill_info2: "Online purchase",
                     },
                     transaction_details: {
-                        gross_amount: await totalPrice(passengers),
+                        gross_amount: totalTicketPrice + tax,
                         order_id: randomUUID(),
                     },
                     customer_details: orderer,
@@ -572,7 +568,7 @@ const bankTransfer = async (req, res, next) => {
                     bank: data.bank,
                 },
                 transaction_details: {
-                    gross_amount: await totalPrice(passengers),
+                    gross_amount: totalTicketPrice + tax,
                     order_id: randomUUID(),
                 },
                 customer_details: orderer,
@@ -583,14 +579,6 @@ const bankTransfer = async (req, res, next) => {
         try {
             const bookingCode = await generateBookingCode(passengers);
 
-            // [start] tax
-            let tax =
-                parseFloat(parameter.transaction_details.gross_amount) *
-                (3 / 100);
-            let totalPrice =
-                parseFloat(parameter.transaction_details.gross_amount) + tax;
-            // [end] tax
-
             await prisma.$transaction(async (tx) => {
                 const response = await coreApi.charge(parameter);
 
@@ -599,7 +587,7 @@ const bankTransfer = async (req, res, next) => {
                         userId: req.user.id, // req.user.id (from user loggedIn)
                         orderId: parameter.transaction_details.order_id,
                         status: "pending",
-                        totalPrice,
+                        totalPrice: parameter.transaction_details.gross_amount,
                         tax: tax,
                         bookingDate: new Date().toISOString(),
                         bookingCode,
@@ -724,6 +712,11 @@ const creditCard = async (req, res, next) => {
         const cardResponse = await coreApi.cardToken(cardParameter);
         const cardToken = cardResponse.token_id;
 
+        // [start] tax
+
+        let totalTicketPrice = await totalPrice(passengers);
+        let tax = parseFloat(totalTicketPrice) * (3 / 100);
+
         let parameter = {
             payment_type: "credit_card",
             credit_card: {
@@ -732,7 +725,7 @@ const creditCard = async (req, res, next) => {
                 secure: true,
             },
             transaction_details: {
-                gross_amount: await totalPrice(passengers),
+                gross_amount: totalTicketPrice + tax,
                 order_id: randomUUID(),
             },
             customer_details: orderer,
@@ -742,14 +735,6 @@ const creditCard = async (req, res, next) => {
         try {
             const bookingCode = await generateBookingCode(passengers);
 
-            // [start] tax
-            let tax =
-                parseFloat(parameter.transaction_details.gross_amount) *
-                (3 / 100);
-            let totalPrice =
-                parseFloat(parameter.transaction_details.gross_amount) + tax;
-            // [end] tax
-
             await prisma.$transaction(async (tx) => {
                 const response = await coreApi.charge(parameter);
 
@@ -758,7 +743,7 @@ const creditCard = async (req, res, next) => {
                         userId: req.user.id, // req.user.id (from user loggedIn)
                         orderId: parameter.transaction_details.order_id,
                         status: "pending",
-                        totalPrice,
+                        totalPrice: parameter.transaction_details.gross_amount,
                         tax: tax,
                         bookingDate: new Date().toISOString(),
                         bookingCode,
@@ -872,10 +857,13 @@ const gopay = async (req, res, next) => {
             );
         }
 
+        let totalTicketPrice = await totalPrice(passengers);
+        let tax = parseFloat(totalTicketPrice) * (3 / 100);
+
         let parameter = {
             payment_type: "gopay",
             transaction_details: {
-                gross_amount: await totalPrice(passengers),
+                gross_amount: totalTicketPrice + tax,
                 order_id: randomUUID(),
             },
             customer_details: orderer,
@@ -885,14 +873,6 @@ const gopay = async (req, res, next) => {
         try {
             const bookingCode = await generateBookingCode(passengers);
 
-            // [start] tax
-            let tax =
-                parseFloat(parameter.transaction_details.gross_amount) *
-                (3 / 100);
-            let totalPrice =
-                parseFloat(parameter.transaction_details.gross_amount) + tax;
-            // [end] tax
-
             await prisma.$transaction(async (tx) => {
                 const response = await coreApi.charge(parameter);
 
@@ -901,7 +881,7 @@ const gopay = async (req, res, next) => {
                         userId: req.user.id, // req.user.id (from user loggedIn)
                         orderId: parameter.transaction_details.order_id,
                         status: "pending",
-                        totalPrice,
+                        totalPrice: parameter.transaction_details.gross_amount,
                         tax: tax,
                         bookingDate: new Date().toISOString(),
                         bookingCode,
