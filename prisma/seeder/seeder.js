@@ -701,7 +701,7 @@ async function main() {
 
     // create user, auth
     await Promise.all(
-        accountAuthData.map((name) =>
+        accountAuthData.map(async (name) =>
             prisma.user.create({
                 data: {
                     id: randomUUID(),
@@ -713,7 +713,7 @@ async function main() {
                         create: {
                             id: randomUUID(),
                             email: `${name.toLowerCase()}@test.com`,
-                            password: secretHash("password"),
+                            password: await secretHash("password"),
                             isVerified: true,
                             otpToken: null,
                             secretToken: null,
@@ -735,7 +735,7 @@ async function main() {
                 create: {
                     id: randomUUID(),
                     email: `miminc1@test.com`,
-                    password: secretHash("password"),
+                    password: await secretHash("password"),
                     isVerified: true,
                     otpToken: null,
                     secretToken: null,

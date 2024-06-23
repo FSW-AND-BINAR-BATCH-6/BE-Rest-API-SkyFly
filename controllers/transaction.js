@@ -496,7 +496,7 @@ const snapPayment = async (req, res, next) => {
                             data: {
                                 id: randomUUID(),
                                 transactionId: transaction.id,
-                                price: parseFloat(passenger.price),
+                                price: parseFloat(passenger.normalPrice),
                                 name: passenger.name,
                                 type: passenger.type,
                                 seatId: passenger.seatId,
@@ -687,7 +687,7 @@ const bankTransfer = async (req, res, next) => {
                             data: {
                                 id: randomUUID(),
                                 transactionId: transaction.id,
-                                price: parseFloat(passenger.price),
+                                price: parseFloat(passenger.normalPrice),
                                 name: passenger.name,
                                 type: passenger.type,
                                 seatId: passenger.seatId,
@@ -840,7 +840,7 @@ const creditCard = async (req, res, next) => {
                             data: {
                                 id: randomUUID(),
                                 transactionId: transaction.id,
-                                price: parseFloat(passenger.price),
+                                price: parseFloat(passenger.normalPrice),
                                 name: passenger.name,
                                 type: data.type,
                                 seatId: passenger.seatId,
@@ -977,7 +977,7 @@ const gopay = async (req, res, next) => {
                             data: {
                                 id: randomUUID(),
                                 transactionId: transaction.id,
-                                price: parseFloat(passenger.price),
+                                price: parseFloat(passenger.normalPrice),
                                 name: passenger.name,
                                 type: passenger.type,
                                 seatId: passenger.seatId,
