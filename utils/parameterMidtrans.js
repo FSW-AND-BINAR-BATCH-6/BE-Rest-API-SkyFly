@@ -50,7 +50,8 @@ const parameterMidtrans = async (body) => {
             familyName: data.familyName,
             citizenship: data.citizenship,
             issuingCountry: data.issuingCountry,
-            price: price,
+            price: price !== 0 ? price + price * (3 / 100) : 0,
+            normalPrice: price,
             quantity: 1,
             seatId: data.seatId,
         });
@@ -67,7 +68,17 @@ const totalPrice = async (itemDetails) => {
     return totalPrice;
 };
 
+const totalNormalPrice = async (itemDetails) => {
+    let totalNormalPrice = 0;
+    for (let i = 0; i < itemDetails.length; i++) {
+        totalNormalPrice +=
+            itemDetails[i].normalPrice * itemDetails[i].quantity;
+    }
+    return totalNormalPrice;
+};
+
 module.exports = {
     parameterMidtrans,
     totalPrice,
+    totalNormalPrice,
 };
