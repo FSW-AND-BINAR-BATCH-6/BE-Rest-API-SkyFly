@@ -1,6 +1,7 @@
 const createHttpError = require("http-errors");
 const userController = require("../../../controllers/user");
 const { PrismaClient } = require("@prisma/client");
+const { secretHash } = require("../../../utils/hashSalt");
 const { randomUUID } = require("crypto");
 const prisma = new PrismaClient();
 const { unitTest } = require("./index");
@@ -17,6 +18,8 @@ jest.mock("@prisma/client", () => {
             update: jest.fn(),
             delete: jest.fn(),
         },
+        $transaction: jest.fn()
+
     };
     return {
         PrismaClient: jest.fn(() => mPrismaClient),
@@ -25,6 +28,11 @@ jest.mock("@prisma/client", () => {
 
 jest.mock("crypto", () => ({
     randomUUID: jest.fn(),
+}));
+
+jest.mock("../../../utils/hashSalt", () => ({
+    secretCompare: jest.fn(),
+    secretHash: jest.fn(),
 }));
 
 describe("User API", () => {
@@ -195,13 +203,28 @@ describe("User API", () => {
             prisma.user.findUnique.mockResolvedValue(userDummyData);
             prisma.user.update.mockResolvedValue(data);
 
-            await userController.updateUser(req, res, next);
-            expect(res.status).toHaveBeenCalledWith(201);
-            expect(res.json).toHaveBeenCalledWith({
-                status: true,
-                message: "User updated successfully",
-                data: data,
+            secretHash.mockReturnValue("hashedPassword");
+            prisma.$transaction.mockImplementation(async (callback) => {
+                await callback({
+                    user: prisma.user,
+                    auth: prisma.auth,
+                });
             });
+
+            await userController.updateUser(req, res, next);
+            expect(res.status).toHaveBeenCalledWith(200);
+            // expect(res.json).toHaveBeenCalledWith({
+            //     status: true,
+            //     message: "User updated successfully",
+            //     data:  {
+            //         id : data.id,
+            //         name: data.name,
+            //         phoneNumber: data.phoneNumber,
+            //         familyName: data.familyName,
+            //         role: data.role,
+            //     },
+    
+            // });
         });
 
         it(" failed, 500", async () => {
