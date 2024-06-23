@@ -81,14 +81,18 @@ const userCreateSchema = Joi.object({
 });
 
 const userUpdateSchema = Joi.object({
-    id: Joi.string(),
     name: Joi.string().regex(/^(?!\s*$)[a-zA-Z\s]+$/),
-    phoneNumber: Joi.string().optional(),
+    phoneNumber: Joi.string().min(10).max(16),
     familyName: Joi.string()
         .regex(/^(?!\s*$)[a-zA-Z\s]+$/)
         .optional(),
-    role: Joi.forbidden(), // Ensure role is not allowed in request body
+    password: Joi.string().min(8).max(20),
+    confirmPassword: Joi.any().valid(Joi.ref("password")).messages({
+        "any.only": "Confirm password does not match password",
+    }),
+    role: Joi.string().valid('ADMIN', 'BUYER').optional(),
 });
+
 
 // flight
 const createFlightSchema = Joi.object({

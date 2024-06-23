@@ -111,14 +111,14 @@ model Flight {
 }
 
 model FlightSeat {
-    id                      String                   @id @default(cuid())
+    id                      String                    @id @default(cuid())
     flightId                String
-    flight                  Flight                   @relation(fields: [flightId], references: [id], onDelete: Cascade)
+    flight                  Flight                    @relation(fields: [flightId], references: [id], onDelete: Cascade)
     seatNumber              String
-    status                  StatusFlightSeat         @default(AVAILABLE)
+    status                  StatusFlightSeat          @default(AVAILABLE)
     type                    TypeSeat
     tickets                 Ticket[]
-    TicketTransactionDetail TicketTransactionDetail?
+    TicketTransactionDetail TicketTransactionDetail[]
     price                   Float
 }
 
@@ -154,7 +154,7 @@ model TicketTransactionDetail {
     transactionId  String
     transaction    TicketTransaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
     price          Float
-    seatId         String            @unique
+    seatId         String
     seat           FlightSeat        @relation(fields: [seatId], references: [id], onDelete: Cascade)
     name           String
     type           PassengerType     @default(ADULT)
