@@ -130,34 +130,44 @@ const createUser = async (req, res, next) => {
 };
 
 const updateUser = async (req, res, next) => {
-    
     try {
-        const { name, phoneNumber, familyName } = req.body;
-        const user = await prisma.user.findUnique({
-            where: { id: req.params.id },
-        });
+        const { name, phoneNumber, familyName, role, password } = req.body;
+        const userId = req.params.id;
 
-        if (!user) {
-            return next(createHttpError(404, { message: "User Not Found" }));
+        // Hash kata sandi baru jika ada
+        let hashedPassword;
+        if (password) {
+            hashedPassword = await secretHash(password);
         }
 
-        // Check if the new name already exists for a different user
+        // Lakukan transaksi untuk memastikan konsistensi data
+        const updatedUser = await prisma.$transaction(async (tx) => {
+            // Perbarui data pengguna
+            const userUpdate = await tx.user.update({
+                where: { id: userId },
+                data: {
+                    name,
+                    phoneNumber,
+                    familyName,
+                    role,
+                },
+            });
 
-        const updatedUser = await prisma.user.update({
-            where: { id: req.params.id },
-            data: {
-                name: name,
-                phoneNumber: phoneNumber,
-                familyName: familyName,
-                role: "BUYER", // Ensures role is always 'BUYER'
-            },
+            // Perbarui kata sandi jika ada
+            if (hashedPassword) {
+                await tx.auth.update({
+                    where: { userId: userId },
+                    data: { password: hashedPassword },
+                });
+            }
+
+            return userUpdate;
         });
 
-        res.status(201).json({
+        res.status(200).json({
             status: true,
             message: "User updated successfully",
             data: {
-                id: updatedUser.id,
                 name: updatedUser.name,
                 phoneNumber: updatedUser.phoneNumber,
                 familyName: updatedUser.familyName,
