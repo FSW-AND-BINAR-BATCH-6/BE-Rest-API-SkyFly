@@ -1,6 +1,7 @@
 const {
     totalPrice,
     parameterMidtrans,
+    totalNormalPrice,
 } = require("../../../utils/parameterMidtrans");
 
 describe("parameterMidtrans", () => {
@@ -17,7 +18,7 @@ describe("parameterMidtrans", () => {
                     id: "id child",
                     dob: "1990-01-01T00:00:00.000Z",
                     validityPeriod: "2024-06-19T00:00:00.000Z",
-                    price: 1000000,
+                    price: 1000,
                     type: "CHILD",
                     title: "Mr.",
                     fullName: "John Doe",
@@ -32,7 +33,7 @@ describe("parameterMidtrans", () => {
                     id: "id adult",
                     dob: "1995-01-01T00:00:00.000Z",
                     validityPeriod: "2024-06-19T00:00:00.000Z",
-                    price: 1500000,
+                    price: 1000,
                     type: "ADULT",
                     title: "Ms.",
                     fullName: "Jane Doe",
@@ -47,7 +48,7 @@ describe("parameterMidtrans", () => {
                     id: "id baby",
                     dob: "1995-01-01T00:00:00.000Z",
                     validityPeriod: "2024-06-19T00:00:00.000Z",
-                    price: 1500000,
+                    price: 1000,
                     type: "INFRANT",
                     title: "Ms.",
                     fullName: "Baby",
@@ -77,7 +78,8 @@ describe("parameterMidtrans", () => {
                     familyName: "Doe",
                     citizenship: "Indonesia",
                     issuingCountry: "Indonesia",
-                    price: 500000,
+                    price: 515,
+                    normalPrice: 500,
                     quantity: 1,
                     seatId: "A1",
                 },
@@ -93,7 +95,8 @@ describe("parameterMidtrans", () => {
                     familyName: "Doe",
                     citizenship: "Indonesia",
                     issuingCountry: "Indonesia",
-                    price: 1500000,
+                    price: 1030,
+                    normalPrice: 1000,
                     quantity: 1,
                     seatId: "B2",
                 },
@@ -110,6 +113,7 @@ describe("parameterMidtrans", () => {
                     citizenship: "Indonesia",
                     issuingCountry: "Indonesia",
                     price: 0,
+                    normalPrice: 0,
                     quantity: 1,
                     seatId: "B2",
                 },
@@ -127,16 +131,37 @@ describe("parameterMidtrans", () => {
 describe("totalPrice", () => {
     it("should calculate total price correctly", async () => {
         const input = [
-            { price: 100, quantity: 2 },
-            { price: 150, quantity: 1 },
+            { price: 1030, quantity: 1 },
+            { price: 515, quantity: 1 },
         ];
         const result = await totalPrice(input);
-        expect(result).toBe(350);
+        expect(result).toBe(1545);
     });
 
     it("should return zero for empty input", async () => {
         const input = [];
         const result = await totalPrice(input);
+        expect(result).toBe(0);
+    });
+});
+
+describe("totalNormalPrice", () => {
+    it("should return the total normal price", async () => {
+        const itemDetails = [
+            { normalPrice: 1000, quantity: 1 },
+            { normalPrice: 500, quantity: 1 },
+        ];
+
+        const result = await totalNormalPrice(itemDetails);
+
+        expect(result).toBe(1500);
+    });
+
+    it("should handle empty itemDetails", async () => {
+        const itemDetails = [];
+
+        const result = await totalNormalPrice(itemDetails);
+
         expect(result).toBe(0);
     });
 });

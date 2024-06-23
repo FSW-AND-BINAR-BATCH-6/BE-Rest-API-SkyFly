@@ -15,6 +15,7 @@ const {
     getAllTransactionByUserLoggedIn,
     snapPayment,
     getAdminTransactionById,
+    cancelTransaction,
 } = require("../controllers/transaction");
 
 const authentication = require("../middlewares/authentication");
@@ -39,6 +40,7 @@ router.post("/gopay", authentication, gopay);
 router.post("/notification", notification);
 
 router.put("/status/:orderId", authentication, updateTransaction);
+router.post("/cancel/:orderId", authentication, cancelTransaction);
 
 // dashboard action
 router.get("/admin", authentication, checkRole(["ADMIN"]), getAllTransaction);

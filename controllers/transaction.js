@@ -2,8 +2,11 @@ require("dotenv/config");
 const { randomUUID } = require("crypto");
 const { coreApi, snap } = require("../config/coreApiMidtrans");
 const createHttpError = require("http-errors");
-const { totalPrice, parameterMidtrans } = require("../utils/parameterMidtrans");
-const { unescape } = require("querystring");
+const {
+    totalPrice,
+    parameterMidtrans,
+    totalNormalPrice,
+} = require("../utils/parameterMidtrans");
 const { checkSeatAvailability } = require("../utils/checkSeat");
 const {
     formatDate,
@@ -20,9 +23,7 @@ const getTransaction = async (req, res, next) => {
         const { orderId } = req.params;
 
         // encode serverKey for authorization get transaction status
-        const encodedServerKey = btoa(
-            unescape(encodeURIComponent(`${process.env.SANDBOX_SERVER_KEY}:`))
-        );
+        const encodedServerKey = btoa(`${process.env.SANDBOX_SERVER_KEY}:`);
 
         const url = `https://api.sandbox.midtrans.com/v2/${orderId}/status`;
         const options = {
@@ -46,9 +47,95 @@ const getTransaction = async (req, res, next) => {
 
         res.status(200).json({
             status: true,
+            message: "Transaction data retrieved successfully",
             data: {
-                status: true,
-                message: "Transaction data retrieved successfully",
+                transaction_status: transaction.transaction_status,
+                payment_status: transaction.fraud_status,
+                transaction_id: transaction.transaction_id,
+                order_id: transaction.order_id,
+                merchant_id: transaction.merchant_id,
+                currency: transaction.currency,
+                gross_amount: transaction.gross_amount,
+                payment_type: transaction.payment_type,
+                transaction_time: transaction.transaction_time,
+                expiry_time: transaction.expiry_time,
+                signature_key: transaction.signature_key,
+                va_numbers: transaction.va_numbers,
+            },
+        });
+    } catch (error) {
+        next(createHttpError(500, { message: error.message }));
+    }
+};
+
+const cancelTransaction = async (req, res, next) => {
+    try {
+        const { orderId } = req.params;
+
+        // encode serverKey for authorization get transaction status
+        const encodedServerKey = btoa(`${process.env.SANDBOX_SERVER_KEY}:`);
+
+        const url = `https://api.sandbox.midtrans.com/v2/${orderId}/cancel`;
+        const options = {
+            method: "POST",
+            headers: {
+                accept: "application/json",
+                authorization: `Basic ${encodedServerKey}`,
+            },
+        };
+
+        const response = await fetch(url, options);
+        const transaction = await response.json();
+
+        if (transaction.status_code === "404") {
+            return next(
+                createHttpError(422, {
+                    message: "Transaction doesn't exist",
+                })
+            );
+        }
+        const ticketTransaction = await prisma.ticketTransaction.findUnique({
+            where: {
+                orderId,
+            },
+            include: {
+                Transaction_Detail: true,
+            },
+        });
+
+        const seatIds = ticketTransaction.Transaction_Detail.map(
+            (data) => data.seatId
+        );
+
+        let where = {
+            id: {
+                in: seatIds,
+            },
+        };
+
+        await prisma.$transaction(async (tx) => {
+            // and response with 200 OK
+            await tx.ticketTransaction.update({
+                where: {
+                    orderId,
+                },
+                data: {
+                    status: "cancel",
+                },
+            });
+
+            await tx.flightSeat.updateMany({
+                where,
+                data: {
+                    status: "AVAILABLE",
+                },
+            });
+        });
+
+        res.status(200).json({
+            status: true,
+            message: "Transaction canceled successfully",
+            data: {
                 transaction_status: transaction.transaction_status,
                 payment_status: transaction.fraud_status,
                 transaction_id: transaction.transaction_id,
@@ -371,15 +458,12 @@ const snapPayment = async (req, res, next) => {
             );
         }
 
-        let totalTicketPrice = await totalPrice(passengers);
-        let tax = parseFloat(totalTicketPrice) * (3 / 100);
-
         let parameter = {
             credit_card: {
                 secure: true,
             },
             transaction_details: {
-                gross_amount: totalTicketPrice + tax,
+                gross_amount: await totalPrice(passengers),
                 order_id: randomUUID(),
             },
             item_details: passengers,
@@ -388,6 +472,9 @@ const snapPayment = async (req, res, next) => {
 
         try {
             const bookingCode = await generateBookingCode(passengers);
+            let normalPrice = await totalNormalPrice(passengers);
+            let tax = parameter.transaction_details.gross_amount - normalPrice;
+
             await prisma.$transaction(async (tx) => {
                 const response = await snap.createTransaction(parameter);
 
@@ -520,8 +607,6 @@ const bankTransfer = async (req, res, next) => {
 
         const allowedPaymentTypes = ["bank_transfer", "echannel", "permata"];
         let parameter;
-        let totalTicketPrice = await totalPrice(passengers);
-        let tax = parseFloat(totalTicketPrice) * (3 / 100);
 
         if (!allowedPaymentTypes.includes(data.payment_type)) {
             return next(
@@ -539,7 +624,7 @@ const bankTransfer = async (req, res, next) => {
                 parameter = {
                     payment_type: "permata",
                     transaction_details: {
-                        gross_amount: totalTicketPrice + tax,
+                        gross_amount: await totalPrice(passengers),
                         order_id: randomUUID(),
                     },
                     customer_details: orderer,
@@ -554,7 +639,7 @@ const bankTransfer = async (req, res, next) => {
                         bill_info2: "Online purchase",
                     },
                     transaction_details: {
-                        gross_amount: totalTicketPrice + tax,
+                        gross_amount: await totalPrice(passengers),
                         order_id: randomUUID(),
                     },
                     customer_details: orderer,
@@ -568,7 +653,7 @@ const bankTransfer = async (req, res, next) => {
                     bank: data.bank,
                 },
                 transaction_details: {
-                    gross_amount: totalTicketPrice + tax,
+                    gross_amount: await totalPrice(passengers),
                     order_id: randomUUID(),
                 },
                 customer_details: orderer,
@@ -578,6 +663,8 @@ const bankTransfer = async (req, res, next) => {
 
         try {
             const bookingCode = await generateBookingCode(passengers);
+            let normalPrice = await totalNormalPrice(passengers);
+            let tax = parameter.transaction_details.gross_amount - normalPrice;
 
             await prisma.$transaction(async (tx) => {
                 const response = await coreApi.charge(parameter);
@@ -588,7 +675,7 @@ const bankTransfer = async (req, res, next) => {
                         orderId: parameter.transaction_details.order_id,
                         status: "pending",
                         totalPrice: parameter.transaction_details.gross_amount,
-                        tax: tax,
+                        tax,
                         bookingDate: new Date().toISOString(),
                         bookingCode,
                     },
@@ -712,11 +799,6 @@ const creditCard = async (req, res, next) => {
         const cardResponse = await coreApi.cardToken(cardParameter);
         const cardToken = cardResponse.token_id;
 
-        // [start] tax
-
-        let totalTicketPrice = await totalPrice(passengers);
-        let tax = parseFloat(totalTicketPrice) * (3 / 100);
-
         let parameter = {
             payment_type: "credit_card",
             credit_card: {
@@ -725,7 +807,7 @@ const creditCard = async (req, res, next) => {
                 secure: true,
             },
             transaction_details: {
-                gross_amount: totalTicketPrice + tax,
+                gross_amount: await totalPrice(passengers),
                 order_id: randomUUID(),
             },
             customer_details: orderer,
@@ -734,6 +816,8 @@ const creditCard = async (req, res, next) => {
 
         try {
             const bookingCode = await generateBookingCode(passengers);
+            let normalPrice = await totalNormalPrice(passengers);
+            let tax = parameter.transaction_details.gross_amount - normalPrice;
 
             await prisma.$transaction(async (tx) => {
                 const response = await coreApi.charge(parameter);
@@ -744,7 +828,7 @@ const creditCard = async (req, res, next) => {
                         orderId: parameter.transaction_details.order_id,
                         status: "pending",
                         totalPrice: parameter.transaction_details.gross_amount,
-                        tax: tax,
+                        tax,
                         bookingDate: new Date().toISOString(),
                         bookingCode,
                     },
@@ -857,13 +941,10 @@ const gopay = async (req, res, next) => {
             );
         }
 
-        let totalTicketPrice = await totalPrice(passengers);
-        let tax = parseFloat(totalTicketPrice) * (3 / 100);
-
         let parameter = {
             payment_type: "gopay",
             transaction_details: {
-                gross_amount: totalTicketPrice + tax,
+                gross_amount: await totalPrice(passengers),
                 order_id: randomUUID(),
             },
             customer_details: orderer,
@@ -872,6 +953,8 @@ const gopay = async (req, res, next) => {
 
         try {
             const bookingCode = await generateBookingCode(passengers);
+            let normalPrice = await totalNormalPrice(passengers);
+            let tax = parameter.transaction_details.gross_amount - normalPrice;
 
             await prisma.$transaction(async (tx) => {
                 const response = await coreApi.charge(parameter);
@@ -882,7 +965,7 @@ const gopay = async (req, res, next) => {
                         orderId: parameter.transaction_details.order_id,
                         status: "pending",
                         totalPrice: parameter.transaction_details.gross_amount,
-                        tax: tax,
+                        tax,
                         bookingDate: new Date().toISOString(),
                         bookingCode,
                     },
@@ -1558,6 +1641,7 @@ const deleteTransactionDetail = async (req, res, next) => {
 
 module.exports = {
     getTransaction,
+    cancelTransaction,
     notification,
     snapPayment,
     gopay,
