@@ -391,7 +391,7 @@ const snapPayment = async (req, res, next) => {
                 parseFloat(parameter.transaction_details.gross_amount) *
                 (3 / 100);
             let totalPrice =
-                parseFloat(parameter.transaction_details.gross_amount) - tax;
+                parseFloat(parameter.transaction_details.gross_amount) + tax;
             // [end] tax
 
             await prisma.$transaction(async (tx) => {
@@ -588,7 +588,7 @@ const bankTransfer = async (req, res, next) => {
                 parseFloat(parameter.transaction_details.gross_amount) *
                 (3 / 100);
             let totalPrice =
-                parseFloat(parameter.transaction_details.gross_amount) - tax;
+                parseFloat(parameter.transaction_details.gross_amount) + tax;
             // [end] tax
 
             await prisma.$transaction(async (tx) => {
@@ -747,7 +747,7 @@ const creditCard = async (req, res, next) => {
                 parseFloat(parameter.transaction_details.gross_amount) *
                 (3 / 100);
             let totalPrice =
-                parseFloat(parameter.transaction_details.gross_amount) - tax;
+                parseFloat(parameter.transaction_details.gross_amount) + tax;
             // [end] tax
 
             await prisma.$transaction(async (tx) => {
@@ -890,7 +890,7 @@ const gopay = async (req, res, next) => {
                 parseFloat(parameter.transaction_details.gross_amount) *
                 (3 / 100);
             let totalPrice =
-                parseFloat(parameter.transaction_details.gross_amount) - tax;
+                parseFloat(parameter.transaction_details.gross_amount) + tax;
             // [end] tax
 
             await prisma.$transaction(async (tx) => {
