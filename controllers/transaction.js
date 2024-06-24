@@ -496,7 +496,7 @@ const snapPayment = async (req, res, next) => {
                             data: {
                                 id: randomUUID(),
                                 transactionId: transaction.id,
-                                price: parseFloat(passenger.price),
+                                price: parseFloat(passenger.normalPrice),
                                 name: passenger.name,
                                 type: passenger.type,
                                 seatId: passenger.seatId,
@@ -687,7 +687,7 @@ const bankTransfer = async (req, res, next) => {
                             data: {
                                 id: randomUUID(),
                                 transactionId: transaction.id,
-                                price: parseFloat(passenger.price),
+                                price: parseFloat(passenger.normalPrice),
                                 name: passenger.name,
                                 type: passenger.type,
                                 seatId: passenger.seatId,
@@ -840,7 +840,7 @@ const creditCard = async (req, res, next) => {
                             data: {
                                 id: randomUUID(),
                                 transactionId: transaction.id,
-                                price: parseFloat(passenger.price),
+                                price: parseFloat(passenger.normalPrice),
                                 name: passenger.name,
                                 type: data.type,
                                 seatId: passenger.seatId,
@@ -977,7 +977,7 @@ const gopay = async (req, res, next) => {
                             data: {
                                 id: randomUUID(),
                                 transactionId: transaction.id,
-                                price: parseFloat(passenger.price),
+                                price: parseFloat(passenger.normalPrice),
                                 name: passenger.name,
                                 type: passenger.type,
                                 seatId: passenger.seatId,
@@ -1225,10 +1225,7 @@ const getAllTransactionByUserLoggedIn = async (req, res, next) => {
                 nextPage: page < Math.ceil(count / limit) ? page + 1 : null,
                 prevPage: page > 1 ? page - 1 : null,
             },
-            data:
-                filteredTransactions.length <= 0
-                    ? "transaction data is empty"
-                    : response,
+            data: response,
         });
     } catch (error) {
         next(
@@ -1388,10 +1385,7 @@ const getAllTransaction = async (req, res, next) => {
                 nextPage: page < Math.ceil(count / limit) ? page + 1 : null,
                 prevPage: page > 1 ? page - 1 : null,
             },
-            data:
-                transactions.length !== 0
-                    ? transactions
-                    : "empty transaction data",
+            data: transactions,
         });
     } catch (error) {
         next(
