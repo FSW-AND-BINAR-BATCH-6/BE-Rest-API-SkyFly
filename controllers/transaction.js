@@ -1225,10 +1225,7 @@ const getAllTransactionByUserLoggedIn = async (req, res, next) => {
                 nextPage: page < Math.ceil(count / limit) ? page + 1 : null,
                 prevPage: page > 1 ? page - 1 : null,
             },
-            data:
-                filteredTransactions.length <= 0
-                    ? "transaction data is empty"
-                    : response,
+            data: response,
         });
     } catch (error) {
         next(
@@ -1388,10 +1385,7 @@ const getAllTransaction = async (req, res, next) => {
                 nextPage: page < Math.ceil(count / limit) ? page + 1 : null,
                 prevPage: page > 1 ? page - 1 : null,
             },
-            data:
-                transactions.length !== 0
-                    ? transactions
-                    : "empty transaction data",
+            data: transactions,
         });
     } catch (error) {
         next(
