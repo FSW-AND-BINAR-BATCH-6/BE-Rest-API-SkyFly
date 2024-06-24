@@ -8,6 +8,7 @@ const { generateTOTP, validateTOTP } = require("../../../utils/otp");
 const { secretCompare, secretHash } = require("../../../utils/hashSalt");
 const { generateJWT } = require("../../../utils/jwtGenerate");
 const { authorizationUrl } = require("../../../lib/googleOauth2");
+const { google } = require("googleapis");
 
 const authController = require("../../../controllers/auth");
 const { sendEmail } = require("../../../lib/nodeMailer");
@@ -41,29 +42,23 @@ jest.mock("@prisma/client", () => {
 });
 
 jest.mock("googleapis", () => {
-    const mockOauth2Client = {
+    const oauth2Mock = {
         getToken: jest.fn(),
         setCredentials: jest.fn(),
+        userinfo: {
+            get: jest.fn(),
+        },
+        generateAuthUrl: jest.fn(),
     };
-    const mockGoogle = {
-        oauth2: {
-            userinfo: {
-                get: jest.fn(),
+
+    return {
+        google: {
+            auth: {
+                OAuth2: jest.fn(() => oauth2Mock),
             },
         },
-        auth: {
-            OAuth2: jest.fn().mockReturnValue(mockOauth2Client),
-        },
     };
-    return { google: mockGoogle };
 });
-
-jest.mock("../../../lib/googleOauth2", () => ({
-    oauth2Client: {
-        getToken: jest.fn(),
-        setCredentials: jest.fn(),
-    },
-}));
 
 jest.mock("jsonwebtoken", () => ({
     verify: jest.fn(),
@@ -108,7 +103,7 @@ const serverFailed = async (
 };
 
 describe("Auth API", () => {
-    let req, res, next;
+    let req, res, next, oauth2Client;
 
     const loginDummyData = [
         {
@@ -176,23 +171,23 @@ describe("Auth API", () => {
         },
     ];
 
-    // const registerDummyData = [
-    //     {
-    //         id: "Togenashi",
-    //         name: "Togeari",
-    //         role: "BUYER",
-    //         familyName: "Family",
-    //         phoneNumber: "628123456789",
-    //         auth: {
-    //             id: "Togenashi",
-    //             email: `togeari@test.com`,
-    //             password: "password",
-    //             isVerified: true,
-    //             otpToken: "1233",
-    //             secretToken: "12333",
-    //         },
-    //     },
-    // ];
+    const registerDummyData = [
+        {
+            id: "Togenashi",
+            name: "Togeari",
+            role: "BUYER",
+            familyName: "Family",
+            phoneNumber: "628123456789",
+            auth: {
+                id: "Togenashi",
+                email: `togeari@test.com`,
+                password: "password",
+                isVerified: true,
+                otpToken: "1233",
+                secretToken: "12333",
+            },
+        },
+    ];
 
     beforeEach(() => {
         res = {
@@ -201,113 +196,125 @@ describe("Auth API", () => {
             redirect: jest.fn(),
         };
         next = jest.fn();
+        oauth2Client = new google.auth.OAuth2();
     });
 
     afterEach(() => {
         jest.resetAllMocks();
     });
 
-    //! DISINI MAS
-    // describe("handleRegister", () => {
-    //     req = {
-    //         body: registerDummyData,
-    //     };
+    describe("handleRegister", () => {
+        req = {
+            body: {
+                name: "Togeari",
+                phoneNumber: "628123456789",
+                password: "password",
+                email: `togeari@test.com`,
+            },
+        };
 
-    //     it("Success", async () => {
-    //         prisma.auth.findUnique.mockResolvedValue(null);
-    //         prisma.user.create.mockResolvedValue(registerDummyData);
-    //         await secretHash.mockReturnValue("hashedpassword");
-    //         await generateTOTP.mockReturnValue("1233");
-    //         randomUUID.mockReturnValue("Togenashi");
-    //         await generateJWT.mockReturnValue("jwttokenmock");
+        it("Success", async () => {
+            prisma.auth.findUnique.mockImplementationOnce(() =>
+                Promise.resolve(null)
+            );
+            prisma.auth.findUnique.mockImplementationOnce(() =>
+                Promise.resolve(loginDummyData[0])
+            );
+            prisma.user.create.mockResolvedValue(registerDummyData);
+            await secretHash.mockReturnValue("hashedpassword");
+            await generateTOTP.mockReturnValue("1233");
+            randomUUID.mockReturnValue("Togenashi");
+            await generateJWT.mockReturnValue("tokenMockup");
 
-    //         await authController.handleRegister(req, res, next);
+            await authController.handleRegister(req, res, next);
 
-    //         expect(res.status).toHaveBeenCalledWith(200);
-    //         expect(res.json).toHaveBeenCalledWith({
-    //             status: true,
-    //             message:
-    //                 "Verification token has been sent, please check your email",
-    //             _token: "jwttokenmock",
-    //         });
-    //     });
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith({
+                status: true,
+                message:
+                    "Verification token has been sent, please check your email",
+                _token: "tokenMockup",
+            });
+        });
 
-    //     it("Failed, 409", async () => {
-    //         prisma.auth.findUnique.mockResolvedValue(registerDummyData);
-    //         await authController.handleRegister(req, res, next);
-    //         expect(prisma.user.create).not.toHaveBeenCalled();
+        it("Failed, 409", async () => {
+            prisma.auth.findUnique.mockResolvedValue(registerDummyData);
+            await authController.handleRegister(req, res, next);
+            expect(prisma.user.create).not.toHaveBeenCalled();
 
-    //         expect(next).toHaveBeenCalledWith(
-    //             createHttpError(409, {
-    //                 message: "Email has already been taken",
-    //             })
-    //         );
-    //     });
+            expect(next).toHaveBeenCalledWith(
+                createHttpError(409, {
+                    message: "Email has already been taken",
+                })
+            );
+        });
 
-    //     it("Failed, 500", async () => {
-    //         await serverFailed(
-    //             req,
-    //             res,
-    //             next,
-    //             prisma.auth.findUnique,
-    //             authController.handleRegister
-    //         );
-    //     });
-    // });
+        it("Failed, 500", async () => {
+            await serverFailed(
+                req,
+                res,
+                next,
+                prisma.auth.findUnique,
+                authController.handleRegister
+            );
+        });
+    });
 
     // stil having problem mocking google service
-    //     describe("handleLoginGoogle", () => {
-    //         beforeEach(() => {
-    //             req = {
-    //                 query: {
-    //                     code: "testCode",
-    //                 },
-    //             };
-    //         });
+    describe("handleLoginGoogle", () => {
+        beforeEach(() => {
+            req = {
+                query: {
+                    code: "testCode",
+                },
+            };
+        });
 
-    //         it("Success", async () => {
-    //             const tokens = {
-    //                 tokens: {
-    //                     access_token: "ya29.a0AfH6SMBN9VzJZP",
-    //                     expires_in: 3599,
-    //                     refresh_token: "1//04iH0Mn",
-    //                     scope: "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile",
-    //                     token_type: "Bearer",
-    //                     id_token: "eyJhbGciOiJSUzI1NiIsImtpZCI6IjM4OWRjNjhjM",
-    //                 },
-    //             };
+        it("Success", async () => {
+            const tokens = {
+                tokens: {
+                    access_token: "ya29.a0AfH6SMBN9VzJZP",
+                    expires_in: 3599,
+                    refresh_token: "1//04iH0Mn",
+                    scope: "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile",
+                    token_type: "Bearer",
+                    id_token: "eyJhbGciOiJSUzI1NiIsImtpZCI6IjM4OWRjNjhjM",
+                },
+            };
 
-    //             const userData = {
-    //                 data: {
-    //                 id: "12345678901234567890",
-    //                 email: "user@example.com",
-    //                 verified_email: true,
-    //                 name: "John Doe",
-    //                 given_name: "John",
-    //                 family_name: "Doe",
-    //                 picture: "https://lh3.googleusercontent.com/a-/AOh14Gg8h8",
-    //                 locale: "en"
-    //   }
-    //             };
+            const userData = {
+                data: {
+                    id: "12345678901234567890",
+                    email: "user@example.com",
+                    verified_email: true,
+                    name: "John Doe",
+                    given_name: "John",
+                    family_name: "Doe",
+                    picture: "https://lh3.googleusercontent.com/a-/AOh14Gg8h8",
+                    locale: "en",
+                },
+            };
 
-    //             oauth2Client.getToken.mockResolvedValue(tokens);
-    //             google.oauth2.userinfo.get.mockResolvedValue(userData);
-    //             secretHash.mockReturnThis("12345678901234567890");
-    //             randomUUID.mockReturnThis("uuid");
-    //             generateJWT.mockReturnThis("jwtToken");
+            oauth2Client.getToken.mockResolvedValue(tokens);
+            oauth2Client.userinfo.get.mockResolvedValue(userData);
+            secretHash.mockReturnValue("hashedpassword");
+            randomUUID.mockReturnValue("uuid");
+            generateJWT.mockReturnValue("jwtToken");
 
-    //             await authController.handleLoginGoogle(req, res, next);
+            await authController.handleLoginGoogle(req, res, next);
 
-    //             expect(oauth2Client.getToken).toHaveBeenCalledWith(req.query.code);
-    //             expect(oauth2Client.setCredentials).toHaveBeenCalled();
-    //             expect(res.status).toHaveBeenCalledWith(200);
-    //             expect(res.json).toHaveBeenCalledWith({
-    //                 status: true,
-    //                 message: "User logged in successfully",
-    //                 _token: "jwt_token",
-    //             });
-    //         });
-    //     });
+            expect(oauth2Client.getToken).toHaveBeenCalledWith(req.query.code);
+            expect(oauth2Client.setCredentials).toHaveBeenCalledWith(
+                tokens.tokens
+            );
+            expect(res.status).toHaveBeenCalledWith(200);
+            expect(res.json).toHaveBeenCalledWith({
+                status: true,
+                message: "User logged in successfully",
+                _token: "jwtToken",
+            });
+        });
+    });
 
     describe("handleLogin", () => {
         beforeEach(() => {

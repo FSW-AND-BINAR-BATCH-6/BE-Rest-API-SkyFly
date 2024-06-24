@@ -156,7 +156,7 @@ const updateFlightSchema = Joi.object({
     destinationAirportId: Joi.string().regex(/^[a-zA-Z0-9]*$/),
     discount: Joi.number().min(0).max(100),
     price: Joi.number().required(),
-    capacity: Joi.number().min(2).max(850).required(),
+    capacity: Joi.number().min(2).max(850),
     facilities: Joi.string(),
 });
 

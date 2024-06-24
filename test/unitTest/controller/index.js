@@ -46,4 +46,22 @@ const unitTest = async (
     }
 };
 
-module.exports = { unitTest };
+const serverFailed = async (
+    req,
+    prismaFunction,
+    controllerFunction
+) => {
+    res = {
+        status: jest.fn().mockReturnThis(),
+        jeson: jest.fn(),
+    };
+    next = jest.fn();
+    
+    const errorMessage = "Internal Server Error";
+    prismaFunction.mockRejectedValue(new Error(errorMessage));
+    await controllerFunction(req, res, next);
+    expect(next).toHaveBeenCalledWith(
+        createHttpError(500, { message: errorMessage })
+    );
+};
+module.exports = { unitTest, serverFailed };
