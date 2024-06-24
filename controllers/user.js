@@ -30,7 +30,7 @@ const getAllUsers = async (req, res, next) => {
                         isVerified: true,
                     },
                 },
-            }, 
+            },
             orderBy: {
                 name: "asc",
             },
@@ -58,7 +58,7 @@ const getAllUsers = async (req, res, next) => {
                 nextPage: page < Math.ceil(count / limit) ? page + 1 : null,
                 prevPage: page > 1 ? page - 1 : null,
             },
-            data: users.length !== 0 ? users : "No user data found",
+            data: users,
         });
     } catch (error) {
         next(createHttpError(500, { message: error.message }));

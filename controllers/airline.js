@@ -29,7 +29,7 @@ const getAllAirline = async (req, res, next) => {
                 nextPage: page < Math.ceil(count / limit) ? page + 1 : null,
                 prevPage: page > 1 ? page - 1 : null,
             },
-            data: getAirline.length !== 0 ? getAirline : "empty airline data",
+            data: getAirline,
         });
     } catch (error) {
         next(createHttpError(500, { message: error.message }));
