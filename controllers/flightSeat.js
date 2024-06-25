@@ -1,7 +1,6 @@
 const { PrismaClient } = require("@prisma/client");
 const createHttpError = require("http-errors");
 const fetch = require("node-fetch");
-const { copy } = require("../routes/flight");
 
 const prisma = new PrismaClient();
 

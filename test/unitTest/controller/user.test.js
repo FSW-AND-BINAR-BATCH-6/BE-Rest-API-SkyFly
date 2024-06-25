@@ -1,4 +1,3 @@
-const createHttpError = require("http-errors");
 const userController = require("../../../controllers/user");
 const { PrismaClient } = require("@prisma/client");
 const { secretHash } = require("../../../utils/hashSalt");

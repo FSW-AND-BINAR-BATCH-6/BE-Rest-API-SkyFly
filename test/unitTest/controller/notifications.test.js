@@ -40,7 +40,6 @@ jest.mock("crypto", () => ({
 // };
 
 describe("Notifications API", () => {
-    let res, next;
 
     const notificationsDummyData = [
         {

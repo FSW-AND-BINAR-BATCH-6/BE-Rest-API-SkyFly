@@ -103,7 +103,7 @@ const serverFailed = async (
 };
 
 describe("Auth API", () => {
-    let req, res, next, oauth2Client;
+    let req, res, next;
 
     const loginDummyData = [
         {
