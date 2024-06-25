@@ -1038,37 +1038,25 @@ const getAllTransactionByUserLoggedIn = async (req, res, next) => {
     // get all transaction data from ticketTransaction & include ticketTransaction detail
 
     try {
-        let { dateOfDeparture, returnDate, flightCode } = req.query;
+        let { startDate, endDate } = req.query;
 
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const offset = (page - 1) * limit;
 
-        const parsedDepartureDate = new Date(dateOfDeparture);
-        const parsedReturnDate = new Date(returnDate);
+        const parseStartDate = new Date(startDate);
+        const parseEndDate = new Date(endDate);
 
-        let flightCondition = {
-            code: {
-                contains: flightCode,
-                mode: "insensitive",
-            },
-        };
+        let transactionCondition;
 
-        if (dateOfDeparture || returnDate) {
-            if (flightCode) {
-                flightCondition = {
-                    departureDate: {
-                        gte: new Date(parsedDepartureDate.setHours(0, 0, 0, 0)),
-                    },
-                    arrivalDate: {
-                        lt: new Date(parsedReturnDate.setHours(23, 59, 59, 0)),
-                    },
-                    code: {
-                        contains: flightCode,
-                        mode: "insensitive",
-                    },
-                };
-            }
+        if (startDate || endDate) {
+            transactionCondition = {
+                userId: req.user.id,
+                bookingDate: {
+                    gte: new Date(parseStartDate.setHours(0, 0, 0, 0)),
+                    lt: new Date(parseEndDate.setHours(23, 59, 59, 0)),
+                },
+            };
         }
 
         const transactions = await prisma.ticketTransaction.findMany({
@@ -1078,7 +1066,6 @@ const getAllTransactionByUserLoggedIn = async (req, res, next) => {
                 Transaction_Detail: {
                     include: {
                         flight: {
-                            where: flightCondition,
                             include: {
                                 plane: true,
                                 transitAirport: true,
@@ -1090,9 +1077,7 @@ const getAllTransactionByUserLoggedIn = async (req, res, next) => {
                     },
                 },
             },
-            where: {
-                userId: req.user.id,
-            },
+            where: transactionCondition,
         });
 
         const count = await prisma.ticketTransaction.count({
