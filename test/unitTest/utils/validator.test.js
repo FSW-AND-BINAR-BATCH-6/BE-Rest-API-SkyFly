@@ -14,6 +14,8 @@ const {
     updateAirlineSchema,
     createAirportSchema,
     updateAirportSchema,
+    createNotificationsSchema,
+    updateNotificationsSchema
 } = require("../../../utils/joiValidation");
 
 const runValidationTest = async (schema, inputData, expectedOutcome) => {
@@ -970,4 +972,86 @@ describe("Airport Input Validation", () => {
             });
         });
     });
+
+    describe("Create Notification", () => {
+        const createNotifications = [
+            {
+                description: "Success",
+                schema: createNotificationsSchema,
+                inputData: {
+                    type: "Warning",
+                    title: "Test warning",
+                    content: "Test content"
+                },
+                expectedOutcome: {
+                    success: true
+                }
+            },
+            {
+                description: "Invalid type input",
+                schema: createNotificationsSchema,
+                inputData: {
+                    type: "Hail",
+                    title: "Test invalid",
+                    content: "Test invalid"
+                },
+                expectedOutcome: {
+                    success: false,
+                    status: 422,
+                    message: `"type" must be one of [Warning, Information, Update, Promotions]`
+                }
+            }
+        ]
+
+        createNotifications.forEach((test) => {
+            it(test.description, async () => {
+                await runValidationTest(
+                    test.schema,
+                    test.inputData,
+                    test.expectedOutcome
+                );
+            });
+        });
+    })
+
+    describe("Update Notification", () => {
+        const updateNotifications = [
+            {
+                description: "Success",
+                schema: updateNotificationsSchema,
+                inputData: {
+                    type: "Warning",
+                    title: "Test warning",
+                    content: "Test content"
+                },
+                expectedOutcome: {
+                    success: true
+                }
+            },
+            {
+                description: "Invalid type input",
+                schema: updateNotificationsSchema,
+                inputData: {
+                    type: "Hail",
+                    title: "Test invalid",
+                    content: "Test invalid"
+                },
+                expectedOutcome: {
+                    success: false,
+                    status: 422,
+                    message: `"type" must be one of [Warning, Information, Update, Promotions]`
+                }
+            }
+        ]
+
+        updateNotifications.forEach((test) => {
+            it(test.description, async () => {
+                await runValidationTest(
+                    test.schema,
+                    test.inputData,
+                    test.expectedOutcome
+                );
+            });
+        });
+    })
 });

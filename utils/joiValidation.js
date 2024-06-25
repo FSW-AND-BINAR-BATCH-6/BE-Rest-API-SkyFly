@@ -413,6 +413,20 @@ const updateTransactionSchema = Joi.object({
     status: Joi.string().valid("pending", "paid").required(),
 });
 
+// Notifications
+
+const createNotificationsSchema = Joi.object({
+    type: Joi.string().valid('Warning', 'Information', 'Update', 'Promotions').required(),
+    title: Joi.string().required(),
+    content: Joi.string().required(),
+})
+
+const updateNotificationsSchema = Joi.object({
+    type: Joi.string().valid('Warning', 'Information', 'Update', 'Promotions'),
+    title: Joi.string(),
+    content: Joi.string(),
+})
+
 module.exports = {
     LoginSchema,
     RegisterSchema,
@@ -437,4 +451,6 @@ module.exports = {
     CCSchema,
     SnapSchema,
     updateTransactionSchema,
+    createNotificationsSchema,
+    updateNotificationsSchema
 };
