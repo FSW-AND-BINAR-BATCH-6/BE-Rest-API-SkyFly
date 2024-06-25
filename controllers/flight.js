@@ -579,6 +579,8 @@ const getFlightById = async (req, res, next) => {
             return res.status(404).json({ message: "Flight not found" });
         }
 
+        console.log(flight)
+
         const formatFlight = (flight) => {
             const duration = calculateFlightDuration(
                 flight.departureDate,

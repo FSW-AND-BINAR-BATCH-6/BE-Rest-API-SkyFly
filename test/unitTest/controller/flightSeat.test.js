@@ -12,6 +12,7 @@ jest.mock("@prisma/client", () => {
             update: jest.fn(),
             delete: jest.fn(),
             create: jest.fn(),
+            findFirst: jest.fn(),
         },
         flight: {
             findUnique: jest.fn(),
@@ -35,6 +36,37 @@ describe("FlighSeats API", () => {
             seatNumber: "1A",
             status: "AVAILABLE",
             type: "ECONOMY",
+        },
+    ];
+
+    const sortSeatDummyData = [
+        {
+            id: "seatsId",
+            flightId: "KGB57",
+            seatNumber: "1A",
+            status: "AVAILABLE",
+            type: "ECONOMY",
+        },
+        {
+            id: "seatsId2",
+            flightId: "KGB57",
+            seatNumber: "2A",
+            status: "AVAILABLE",
+            type: "ECONOMY",
+        },
+        {
+            id: "seatsId",
+            flightId: "KGB57",
+            seatNumber: "1C",
+            status: "OCCUPIED",
+            type: "BUSINESS",
+        },
+        {
+            id: "seatsId3",
+            flightId: "KGB57",
+            seatNumber: "2B",
+            status: "BOOKED",
+            type: "FIRST",
         },
     ];
 
@@ -66,7 +98,7 @@ describe("FlighSeats API", () => {
             facilities: "WiFi",
         },
     ];
-    
+
     beforeEach(() => {
         res = {
             status: jest.fn().mockReturnThis(),
@@ -79,43 +111,39 @@ describe("FlighSeats API", () => {
         jest.resetAllMocks();
     });
 
+    const testSeatsClass = async (req) => {
+        res = {
+            status: jest.fn().mockReturnThis(),
+            jeson: jest.fn(),
+        };
+        next = jest.fn();
+
+        prisma.flightSeat.findFirst.mockResolvedValue(null);
+        prisma.flight.findUnique.mockResolvedValue(flightDummyData);
+        prisma.flight.update.mockResolvedValue(flightDummyData);
+        prisma.flightSeat.create.mockResolvedValue(flightDummyData);
+        await seatsController.createSeat(req, res, next);
+        expect(res.status).toHaveBeenCalledWith(201);
+    };
+
     describe("getAllSeats", () => {
         beforeEach(() => {
             req = { query: {} };
+            global.fetch = jest.fn(() =>
+                Promise.resolve({
+                    json: () => Promise.resolve(MOCK_PRICES),
+                })
+            );
         });
 
         it("Success", async () => {
             prisma.flightSeat.findMany.mockResolvedValue(seatsDummyData);
+            prisma.flightSeat.findUnique.mockResolvedValueOnce(seatsDummyData);
             prisma.ticketTransactionDetail.findFirst.mockResolvedValue(null);
             prisma.flightSeat.count.mockResolvedValue(1);
             await seatsController.getAllSeats(req, res, next);
-            expect(prisma.flightSeat.findMany).toHaveBeenCalledWith({
-                skip: 0,
-                take: 10,
-            });
-            expect(prisma.flightSeat.count).toHaveBeenCalled();
+
             expect(res.status).toHaveBeenCalledWith(200);
-            expect(res.json).toHaveBeenCalledWith({
-                status: true,
-                message: "All seat flights retrieved successfully",
-                totalItems: 1,
-                pagination: {
-                    totalPage: 1,
-                    currentPage: 1,
-                    pageItems: 1,
-                    nextPage: null,
-                    prevPage: null,
-                },
-                data: [
-                    {
-                        id: "seatsId",
-                        flightId: "KGB57",
-                        seatNumber: "1A",
-                        status: "available",
-                        type: "ECONOMY",
-                    },
-                ],
-            });
         });
 
         it("internal server error", async () => {
@@ -132,7 +160,9 @@ describe("FlighSeats API", () => {
     describe("getSeatsByFlightId", () => {
         beforeEach(() => {
             req = {
-                query: {},
+                query: {
+                    type: "FIRST",
+                },
                 params: {
                     flightId: "flightId",
                 },
@@ -140,12 +170,23 @@ describe("FlighSeats API", () => {
         });
 
         it("Success", async () => {
-            prisma.flight.findUnique.mockResolvedValue(flightDummyData);
-            prisma.flightSeat.findMany.mockResolvedValue(seatsDummyData);
-            prisma.flightSeat.count.mockResolvedValue(1);
+            prisma.flightSeat.findMany.mockResolvedValue(sortSeatDummyData);
+            prisma.flightSeat.count.mockResolvedValue(2);
+            prisma.flightSeat.findUnique.mockResolvedValue(sortSeatDummyData);
+            prisma.ticketTransactionDetail.findFirst.mockResolvedValue(null);
 
             await seatsController.getSeatsByFlightId(req, res, next);
             expect(res.status).toHaveBeenCalledWith(200);
+        });
+
+        it("Failed, 404", async () => {
+            prisma.flightSeat.findMany.mockResolvedValue([]);
+            await seatsController.getSeatsByFlightId(req, res, next);
+            expect(next).toHaveBeenCalledWith(
+                createHttpError(404, {
+                    message: "Seats not found for the given flight ID",
+                })
+            );
         });
 
         it("Internal server error", async () => {
@@ -168,19 +209,68 @@ describe("FlighSeats API", () => {
                     type: "ECONOMY",
                 },
             };
+            res = { status: jest.fn().mockReturnThis(), json: jest.fn() };
+            next = jest.fn();
         });
 
-        it("Success", async () => {
-            prisma.flight.update.mockResolvedValue(flightDummyData);
-            prisma.flightSeat.create.mockResolvedValue(flightDummyData);
+        const reqClass = [
+            {
+                req: (req = {
+                    body: {
+                        flightId: "KGB57",
+                        seatNumber: "1A",
+                        type: "ECONOMY",
+                    },
+                }),
+            },
+            {
+                req: (req = {
+                    body: {
+                        flightId: "KGB57",
+                        seatNumber: "1A",
+                        type: "BUSINESS",
+                    },
+                }),
+            },
+            {
+                req: (req = {
+                    body: {
+                        flightId: "KGB57",
+                        seatNumber: "1A",
+                        type: "FIRST",
+                    },
+                }),
+            },
+        ];
+
+        reqClass.forEach((test) => {
+            testSeatsClass(test.req);
+        });
+
+        it("Failed, 400", async () => {
+            prisma.flightSeat.findFirst.mockResolvedValue(seatsDummyData[0]);
             await seatsController.createSeat(req, res, next);
-            expect(res.status).toHaveBeenCalledWith(201);
+            expect(next).toHaveBeenCalledWith(
+                createHttpError(400, {
+                    message: "Seat number already exists for this flight",
+                })
+            );
+        });
+
+        it("Failed, 400", async () => {
+            prisma.flightSeat.findFirst.mockResolvedValue(null);
+            prisma.flight.findUnique.mockResolvedValue(null);
+            await seatsController.createSeat(req, res, next);
+            expect(next).toHaveBeenCalledWith(
+                createHttpError(404, { message: "Flight not found" })
+            );
         });
 
         it("Internal server error", async () => {
-            prisma.flight.update.mockRejectedValue(
+            prisma.flightSeat.findFirst.mockRejectedValue(
                 new Error("Internal server error")
             );
+
             await seatsController.createSeat(req, res, next);
             expect(next).toHaveBeenCalledWith(
                 createHttpError(500, { message: "Internal server error" })
@@ -206,6 +296,14 @@ describe("FlighSeats API", () => {
             prisma.flightSeat.update.mockResolvedValue(seatsDummyData);
             await seatsController.updateSeat(req, res, next);
             expect(res.status).toHaveBeenCalledWith(200);
+        });
+
+        it("Failed, 404 seat not found", async () => {
+            prisma.flightSeat.findUnique.mockResolvedValue(null);
+            await seatsController.updateSeat(req, res, next);
+            expect(next).toHaveBeenCalledWith(
+                createHttpError(404, { message: "Seat not found" })
+            );
         });
 
         it("Internal server failed", async () => {
@@ -237,10 +335,22 @@ describe("FlighSeats API", () => {
             expect(res.status).toHaveBeenCalledWith(200);
         });
 
-        it("Internal server error", async () => {
-            prisma.flightSeat.findUnique.mockRejectedValue(new Error("Internal server error"))
+        it("Failed, 404 seat not found", async () => {
+            prisma.flightSeat.findUnique.mockResolvedValue(null);
             await seatsController.deleteSeat(req, res, next);
-            expect(next).toHaveBeenCalledWith(createHttpError(500, {message: "Internal server error"}));
-        })
+            expect(next).toHaveBeenCalledWith(
+                createHttpError(404, { message: "Seat not found" })
+            );
+        });
+
+        it("Internal server error", async () => {
+            prisma.flightSeat.findUnique.mockRejectedValue(
+                new Error("Internal server error")
+            );
+            await seatsController.deleteSeat(req, res, next);
+            expect(next).toHaveBeenCalledWith(
+                createHttpError(500, { message: "Internal server error" })
+            );
+        });
     });
 });

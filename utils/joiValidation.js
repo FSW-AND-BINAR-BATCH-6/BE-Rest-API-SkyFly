@@ -156,7 +156,7 @@ const updateFlightSchema = Joi.object({
     destinationAirportId: Joi.string().regex(/^[a-zA-Z0-9]*$/),
     discount: Joi.number().min(0).max(100),
     price: Joi.number().required(),
-    capacity: Joi.number().min(2).max(850).required(),
+    capacity: Joi.number().min(2).max(850),
     facilities: Joi.string(),
 });
 
@@ -413,6 +413,20 @@ const updateTransactionSchema = Joi.object({
     status: Joi.string().valid("pending", "paid").required(),
 });
 
+// Notifications
+
+const createNotificationsSchema = Joi.object({
+    type: Joi.string().valid('Warning', 'Information', 'Update', 'Promotions').required(),
+    title: Joi.string().required(),
+    content: Joi.string().required(),
+})
+
+const updateNotificationsSchema = Joi.object({
+    type: Joi.string().valid('Warning', 'Information', 'Update', 'Promotions'),
+    title: Joi.string(),
+    content: Joi.string(),
+})
+
 module.exports = {
     LoginSchema,
     RegisterSchema,
@@ -437,4 +451,6 @@ module.exports = {
     CCSchema,
     SnapSchema,
     updateTransactionSchema,
+    createNotificationsSchema,
+    updateNotificationsSchema
 };

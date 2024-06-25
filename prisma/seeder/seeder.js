@@ -226,439 +226,7 @@ async function main() {
             name: "Super Air Jet",
         },
     ];
-    const flights = [
-        {
-            planeCode: "GA",
-            departureDate: new Date("2024-06-01T08:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-06-01T12:00:00Z"),
-            destinationCity: "Bali",
-            destinationCityCode: "DPS",
-            capacity: 72,
-            price: 1500000,
-        },
-        {
-            planeCode: "GA",
-            departureDate: new Date("2024-06-02T09:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-06-02T13:00:00Z"),
-            destinationCity: "Surabaya",
-            destinationCityCode: "SUB",
-            capacity: 72,
-            price: 1200000,
-        },
-        {
-            planeCode: "SJ",
-            departureDate: new Date("2024-06-03T10:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-06-03T14:00:00Z"),
-            destinationCity: "Medan",
-            destinationCityCode: "KNO",
-            capacity: 72,
-            price: 1300000,
-        },
-        {
-            planeCode: "SJ",
-            departureDate: new Date("2024-06-04T11:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-06-04T15:00:00Z"),
-            destinationCity: "Makassar",
-            destinationCityCode: "UPG",
-            capacity: 72,
-            price: 1400000,
-        },
-        {
-            planeCode: "QG",
-            departureDate: new Date("2024-06-05T12:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-06-05T16:00:00Z"),
-            destinationCity: "Semarang",
-            destinationCityCode: "SRG",
-            capacity: 72,
-            price: 1100000,
-        },
-        {
-            planeCode: "QG",
-            departureDate: new Date("2024-06-06T13:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-06-06T17:00:00Z"),
-            destinationCity: "Bandung",
-            destinationCityCode: "BDO",
-            capacity: 72,
-            price: 1000000,
-        },
-        {
-            planeCode: "JT",
-            departureDate: new Date("2024-06-07T14:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-06-07T18:00:00Z"),
-            destinationCity: "Yogyakarta",
-            destinationCityCode: "JOG",
-            capacity: 72,
-            price: 1150000,
-        },
-        {
-            planeCode: "JT",
-            departureDate: new Date("2024-06-08T15:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-06-08T19:00:00Z"),
-            destinationCity: "Balikpapan",
-            destinationCityCode: "BPN",
-            capacity: 72,
-            price: 1250000,
-        },
-        {
-            planeCode: "ID",
-            departureDate: new Date("2024-06-09T16:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-06-09T20:00:00Z"),
-            destinationCity: "Pekanbaru",
-            destinationCityCode: "PKU",
-            capacity: 72,
-            price: 1350000,
-        },
-        {
-            planeCode: "ID",
-            departureDate: new Date("2024-06-10T17:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-06-10T21:00:00Z"),
-            destinationCity: "Padang",
-            destinationCityCode: "PDG",
-            capacity: 72,
-            price: 1450000,
-        },
-        // Add 40 more flight objects here
-        {
-            planeCode: "IN",
-            departureDate: new Date("2024-06-11T18:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-06-11T22:00:00Z"),
-            destinationCity: "Palembang",
-            destinationCityCode: "PLM",
-            capacity: 72,
-            price: 1250000,
-        },
-        {
-            planeCode: "IW",
-            departureDate: new Date("2024-06-12T19:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-06-12T23:00:00Z"),
-            destinationCity: "Pontianak",
-            destinationCityCode: "PNK",
-            capacity: 72,
-            price: 1100000,
-        },
-        {
-            planeCode: "KD",
-            departureDate: new Date("2024-06-13T20:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-06-14T00:00:00Z"),
-            destinationCity: "Samarinda",
-            destinationCityCode: "SRI",
-            capacity: 72,
-            price: 1000000,
-        },
-        {
-            planeCode: "RA",
-            departureDate: new Date("2024-06-14T21:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-06-15T01:00:00Z"),
-            destinationCity: "Palangkaraya",
-            destinationCityCode: "PKY",
-            capacity: 72,
-            price: 1150000,
-        },
-        {
-            planeCode: "IE",
-            departureDate: new Date("2024-06-15T22:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-06-16T02:00:00Z"),
-            destinationCity: "Manado",
-            destinationCityCode: "MDC",
-            capacity: 72,
-            price: 1250000,
-        },
-        {
-            planeCode: "GA",
-            departureDate: new Date("2024-06-16T08:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-06-16T12:00:00Z"),
-            destinationCity: "Bali",
-            destinationCityCode: "DPS",
-            capacity: 72,
-            price: 1500000,
-        },
-        {
-            planeCode: "GA",
-            departureDate: new Date("2024-06-17T09:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-06-17T13:00:00Z"),
-            destinationCity: "Surabaya",
-            destinationCityCode: "SUB",
-            capacity: 72,
-            price: 1200000,
-        },
-        {
-            planeCode: "SJ",
-            departureDate: new Date("2024-06-18T10:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-06-18T14:00:00Z"),
-            destinationCity: "Medan",
-            destinationCityCode: "KNO",
-            capacity: 72,
-            price: 1300000,
-        },
-        {
-            planeCode: "SJ",
-            departureDate: new Date("2024-06-19T11:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-06-19T15:00:00Z"),
-            destinationCity: "Makassar",
-            destinationCityCode: "UPG",
-            capacity: 72,
-            price: 1400000,
-        },
-        {
-            planeCode: "QG",
-            departureDate: new Date("2024-06-20T12:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
 
-            arrivalDate: new Date("2024-06-20T16:00:00Z"),
-            destinationCity: "Semarang",
-            destinationCityCode: "SRG",
-            capacity: 72,
-            price: 1100000,
-        },
-        {
-            planeCode: "QG",
-            departureDate: new Date("2024-06-21T13:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-06-21T17:00:00Z"),
-            destinationCity: "Bandung",
-            destinationCityCode: "BDO",
-            capacity: 72,
-            price: 1000000,
-        },
-        {
-            planeCode: "JT",
-            departureDate: new Date("2024-06-22T14:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-06-22T18:00:00Z"),
-            destinationCity: "Yogyakarta",
-            destinationCityCode: "JOG",
-            capacity: 72,
-            price: 1150000,
-        },
-        {
-            planeCode: "JT",
-            departureDate: new Date("2024-06-23T15:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-06-23T19:00:00Z"),
-            destinationCity: "Balikpapan",
-            destinationCityCode: "BPN",
-            capacity: 72,
-            price: 1250000,
-        },
-        {
-            planeCode: "ID",
-            departureDate: new Date("2024-06-24T16:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-06-24T20:00:00Z"),
-            destinationCity: "Pekanbaru",
-            destinationCityCode: "PKU",
-            capacity: 72,
-            price: 1350000,
-        },
-        {
-            planeCode: "ID",
-            departureDate: new Date("2024-06-25T17:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-06-25T21:00:00Z"),
-            destinationCity: "Padang",
-            destinationCityCode: "PDG",
-            capacity: 72,
-            price: 1450000,
-        },
-        {
-            planeCode: "IN",
-            departureDate: new Date("2024-06-26T18:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-06-26T22:00:00Z"),
-            destinationCity: "Palembang",
-            destinationCityCode: "PLM",
-            capacity: 72,
-            price: 1250000,
-        },
-        {
-            planeCode: "IW",
-            departureDate: new Date("2024-06-27T19:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-06-27T23:00:00Z"),
-            destinationCity: "Pontianak",
-            destinationCityCode: "PNK",
-            capacity: 72,
-            price: 1100000,
-        },
-        {
-            planeCode: "KD",
-            departureDate: new Date("2024-06-28T20:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-06-29T00:00:00Z"),
-            destinationCity: "Samarinda",
-            destinationCityCode: "SRI",
-            capacity: 72,
-            price: 1000000,
-        },
-        {
-            planeCode: "RA",
-            departureDate: new Date("2024-06-29T21:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-06-30T01:00:00Z"),
-            destinationCity: "Palangkaraya",
-            destinationCityCode: "PKY",
-            capacity: 72,
-            price: 1150000,
-        },
-        {
-            planeCode: "IE",
-            departureDate: new Date("2024-06-30T22:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-07-01T02:00:00Z"),
-            destinationCity: "Manado",
-            destinationCityCode: "MDC",
-            capacity: 72,
-            price: 1250000,
-        },
-        {
-            planeCode: "GA",
-            departureDate: new Date("2024-07-01T08:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-07-01T12:00:00Z"),
-            destinationCity: "Bali",
-            destinationCityCode: "DPS",
-            capacity: 72,
-            price: 1500000,
-        },
-        {
-            planeCode: "GA",
-            departureDate: new Date("2024-07-02T09:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-07-02T13:00:00Z"),
-            destinationCity: "Surabaya",
-            destinationCityCode: "SUB",
-            capacity: 72,
-            price: 1200000,
-        },
-        {
-            planeCode: "SJ",
-            departureDate: new Date("2024-07-03T10:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-07-03T14:00:00Z"),
-            destinationCity: "Medan",
-            destinationCityCode: "KNO",
-            capacity: 72,
-            price: 1300000,
-        },
-        {
-            planeCode: "SJ",
-            departureDate: new Date("2024-07-04T11:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-07-04T15:00:00Z"),
-            destinationCity: "Makassar",
-            destinationCityCode: "UPG",
-            capacity: 72,
-            price: 1400000,
-        },
-        {
-            planeCode: "QG",
-            departureDate: new Date("2024-07-05T12:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-07-05T16:00:00Z"),
-            destinationCity: "Semarang",
-            destinationCityCode: "SRG",
-            capacity: 72,
-            price: 1100000,
-        },
-        {
-            planeCode: "QG",
-            departureDate: new Date("2024-07-06T13:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-07-06T17:00:00Z"),
-            destinationCity: "Bandung",
-            destinationCityCode: "BDO",
-            capacity: 72,
-            price: 1000000,
-        },
-        {
-            planeCode: "JT",
-            departureDate: new Date("2024-07-07T14:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-07-07T18:00:00Z"),
-            destinationCity: "Yogyakarta",
-            destinationCityCode: "JOG",
-            capacity: 72,
-            price: 1150000,
-        },
-        {
-            planeCode: "JT",
-            departureDate: new Date("2024-07-08T15:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-07-08T19:00:00Z"),
-            destinationCity: "Balikpapan",
-            destinationCityCode: "BPN",
-            capacity: 72,
-            price: 1250000,
-        },
-        {
-            planeCode: "ID",
-            departureDate: new Date("2024-07-09T16:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-07-09T20:00:00Z"),
-            destinationCity: "Pekanbaru",
-            destinationCityCode: "PKU",
-            capacity: 72,
-            price: 1350000,
-        },
-    ];
 
     const flightSeats = [];
 
@@ -696,8 +264,7 @@ async function main() {
     }
     await prisma.airport.createMany({ data: airports });
 
-    const airlinesMap = await prisma.airline.findMany();
-    const airportsMap = await prisma.airport.findMany();
+    const hashedPassword = await secretHash("password");
 
     // create user, auth
     await Promise.all(
@@ -713,7 +280,7 @@ async function main() {
                         create: {
                             id: randomUUID(),
                             email: `${name.toLowerCase()}@test.com`,
-                            password: await secretHash("password"),
+                            password: hashedPassword,
                             isVerified: true,
                             otpToken: null,
                             secretToken: null,
@@ -735,7 +302,7 @@ async function main() {
                 create: {
                     id: randomUUID(),
                     email: `miminc1@test.com`,
-                    password: await secretHash("password"),
+                    password: hashedPassword,
                     isVerified: true,
                     otpToken: null,
                     secretToken: null,
@@ -744,38 +311,78 @@ async function main() {
         },
     });
 
-    // create flight
-    await Promise.all(
-        flights.map(async (flight) => {
-            const plane = airlinesMap.find((a) => a.code === flight.planeCode);
-            const departureAirport = airportsMap.find(
-                (a) => a.code === flight.departureCityCode
-            );
-            const destinationAirport = airportsMap.find(
-                (a) => a.code === flight.destinationCityCode
-            );
+    
+    const airlinesMap = await prisma.airline.findMany();
+    const airportsMap = await prisma.airport.findMany();
 
-            if (plane && departureAirport && destinationAirport) {
-                await prisma.flight.create({
-                    data: {
-                        planeId: plane.id,
-                        departureDate: flight.departureDate,
-                        departureAirportId: departureAirport.id,
-                        arrivalDate: flight.arrivalDate,
-                        destinationAirportId: destinationAirport.id,
-                        capacity: flight.capacity,
-                        price: flight.price,
-                        code: `${flight.planeCode}.${flight.departureCityCode}.${flight.destinationCityCode}`,
-                    },
-                });
+    const maxFlights = 2000;
+
+    const AirlinesArray = airlinesMap.map((data) => data);
+    const AirportArray = airportsMap.map((data) => data);
+
+    const flightData = new Set();
+
+    const generateFlights = () => {
+        const capacity = 72;
+        const price = 1500000;
+        const startDate = new Date("2024-06-01T08:00:00Z");
+        const msPerDay = 24 * 60 * 60 * 1000;
+
+        let currentDate = new Date(startDate);
+
+        while (currentDate < new Date("2024-07-31T08:00:00Z") && flightData.size < maxFlights) {
+            for (const departureAirport of AirportArray) {
+                const shuffledAirlines = AirlinesArray.sort(() => 0.5 - Math.random());
+
+                const airline = shuffledAirlines[0];
+                const destinationAirport = AirportArray.filter(airport => airport.id !== departureAirport.id)[Math.floor(Math.random() * (AirportArray.length - 1))];
+                const departureDate = new Date(currentDate);
+                const arrivalDate = new Date(departureDate.getTime() + 4 * 60 * 60 * 1000);
+                const forwardFlight = {
+                    planeId: airline.id,
+                    departureDate: departureDate,
+                    departureAirportId: departureAirport.id,
+                    arrivalDate: arrivalDate,
+                    destinationAirportId: destinationAirport.id,
+                    capacity: capacity,
+                    price: price,
+                    code: `${airline.code}.${departureAirport.code}.${destinationAirport.code}`,
+                };
+
+                const returnAirline = shuffledAirlines[1] || airline; 
+                const returnDepartureDate = new Date(departureDate.getTime() + msPerDay);
+                const returnArrivalDate = new Date(returnDepartureDate.getTime() + 4 * 60 * 60 * 1000);
+                const returnFlight = {
+                    planeId: returnAirline.id,
+                    departureDate: returnDepartureDate,
+                    departureAirportId: destinationAirport.id,
+                    arrivalDate: returnArrivalDate,
+                    destinationAirportId: departureAirport.id,
+                    capacity: capacity,
+                    price: price,
+                    code: `${returnAirline.code}.${destinationAirport.code}.${departureAirport.code}`,
+                };
+
+                flightData.add(JSON.stringify(forwardFlight));
+                if (flightData.size < maxFlights) {
+                    flightData.add(JSON.stringify(returnFlight));
+                }
+
+                if (flightData.size >= maxFlights) break;
             }
-        })
-    );
+            currentDate = new Date(currentDate.getTime() + msPerDay); 
+        }
+    };
 
-    const flightData = await prisma.flight.findMany();
+    generateFlights();
 
+    for (const flight of flightData) {
+        await prisma.flight.create({ data: JSON.parse(flight) });
+    }
+
+    const flight = await prisma.flight.findMany()
     await Promise.all(
-        flightData.map(async (flight) => {
+        flight.map(async (flight) => {
             await Promise.all(
                 flightSeats.map(async (seat) => {
                     let price = flight.price;
