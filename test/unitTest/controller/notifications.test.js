@@ -1,6 +1,7 @@
 const notificationsController = require("../../../controllers/notifications");
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
+const {unitTest} = require("./index.js")
 
 jest.mock("@prisma/client", () => {
     const mPrismaClient = {
@@ -39,7 +40,6 @@ jest.mock("crypto", () => ({
 // };
 
 describe("Notifications API", () => {
-    let res, next;
 
     const notificationsDummyData = [
         {
@@ -88,35 +88,7 @@ describe("Notifications API", () => {
         jest.resetAllMocks();
     });
 
-    const unitTest = async (
-        prisma,
-        controller,
-        dummyData,
-        req,
-        statusOutcome,
-        code,
-        json
-    ) => {
-        res = {
-            status: jest.fn().mockReturnThis(),
-            jeson: jest.fn(),
-        };
-        next = jest.fn();
-        let count = 0;
-
-        if (statusOutcome) {
-            for (const prismaModel of prisma) {
-                prismaModel.mockResolvedValue(dummyData[count]);
-                count++;
-                console.log(count);
-            }
-            await controller(req, res, next);
-            expect(res.status).toHaveBeenCalledWith(code);
-            if (json) {
-                expect(res.json).toHaveBeenCalledWith(json);
-            }
-        }
-    };
+    
 
     describe("getNotifications", () => {
         const getNotifications = [

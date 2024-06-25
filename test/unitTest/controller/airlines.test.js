@@ -4,6 +4,7 @@ const { PrismaClient } = require("@prisma/client");
 const { randomUUID } = require("crypto");
 const { uploadFile } = require("../../../lib/supabase");
 const prisma = new PrismaClient();
+const { unitTest } = require("./index");
 
 jest.mock("@prisma/client", () => {
     const mPrismaClient = {
@@ -70,36 +71,37 @@ describe("Airline API", () => {
     });
 
     describe("GetAllAirlines", () => {
-        beforeEach(() => {
-            req = {
-                query: {
-                    page: "1",
-                    limit: "10",
-                },
-            };
-        });
+        const req = {
+            query: {
+                page: "1",
+                limit: "10",
+            },
+        };
 
-        it("Success", async () => {
-            const totalItems = 1;
+        const getAllAirlines = [
+            {
+                description: "success",
+                prisma: [prisma.airline.findMany, prisma.airline.count],
+                dummyData: [airlineDummyData, 1],
+                controller: airlineController.getAllAirline,
+                req: req,
+                statusOutcome: { status: true },
+                code: 200,
+            },
+        ];
 
-            prisma.airline.findMany.mockResolvedValue(airlineDummyData);
-            prisma.airline.count.mockResolvedValue(totalItems);
-
-            await airlineController.getAllAirline(req, res, next);
-            expect(res.status).toHaveBeenCalledWith(200),
-                expect(res.json).toHaveBeenCalledWith({
-                    status: true,
-                    message: "All airline data retrieved successfully",
-                    totalItems,
-                    pagination: {
-                        totalPage: 1,
-                        currentPage: 1,
-                        pageItems: 1,
-                        nextPage: null,
-                        prevPage: null,
-                    },
-                    data: airlineDummyData,
-                });
+        getAllAirlines.forEach((test) => {
+            it(test.description, async () => {
+                await unitTest(
+                    test.prisma,
+                    test.controller,
+                    test.dummyData,
+                    test.req,
+                    test.statusOutcome,
+                    test.code,
+                    null
+                );
+            });
         });
 
         it("Failed, 500", async () => {
@@ -114,33 +116,46 @@ describe("Airline API", () => {
     });
 
     describe("getAirlineById", () => {
-        beforeEach(() => {
-            req = {
-                params: {
-                    id: "1",
-                },
-            };
-        });
+        const req = {
+            params: {
+                id: "1",
+            },
+        };
+        const getAllAirlines = [
+            {
+                description: "success",
+                prisma: [prisma.airline.findUnique],
+                dummyData: [airlineDummyData],
+                controller: airlineController.getAirlineById,
+                req: req,
+                statusOutcome: { status: true },
+                code: 200,
+            },
+            {
+                description: "Airline not found",
+                prisma: [prisma.airline.findUnique],
+                dummyData: [null],
+                controller: airlineController.getAirlineById,
+                req: req,
+                statusOutcome: { status: false },
+                code: 404,
+                errorMessage: "Airline not found",
+            },
+        ];
 
-        it("Success", async () => {
-            prisma.airline.findUnique.mockResolvedValue(airlineDummyData);
-
-            await airlineController.getAirlineById(req, res, next);
-            expect(res.status).toHaveBeenCalledWith(200);
-            expect(res.json).toHaveBeenCalledWith({
-                status: true,
-                message: "All airline data retrieved successfully",
-                data: airlineDummyData,
+        getAllAirlines.forEach((test) => {
+            it(test.description, async () => {
+                await unitTest(
+                    test.prisma,
+                    test.controller,
+                    test.dummyData,
+                    test.req,
+                    test.statusOutcome,
+                    test.code,
+                    null,
+                    test.errorMessage
+                );
             });
-        });
-
-        it("Failed, 404", async () => {
-            prisma.airline.findUnique.mockResolvedValue(null);
-
-            await airlineController.getAirlineById(req, res, next);
-            expect(next).toHaveBeenCalledWith(
-                createHttpError(404, { message: "Airline not found" })
-            );
         });
 
         it("Failed, 500", async () => {
@@ -208,24 +223,57 @@ describe("Airline API", () => {
             };
         });
 
-        it("Success", async () => {
-            prisma.airline.findUnique.mockResolvedValue(airlineDummyData);
-            prisma.airline.update.mockResolvedValue(airlineDummyData);
+        const updateAirline = [
+            {
+                description: "success",
+                prisma: [prisma.airline.findUnique, prisma.airline.update],
+                dummyData: [airlineDummyData[0], airlineDummyData[0]],
+                controller: airlineController.updateAirline,
+                req: (req = {
+                    body: {
+                        code: "GA",
+                        name: "Garuda Indonesia",
+                    },
+                    params: {
+                        id: "1",
+                    },
+                }),
+                statusOutcome: { status: true },
+                code: 201,
+            },
+            {
+                description: "Failed",
+                prisma: [prisma.airline.findUnique],
+                dummyData: [null],
+                controller: airlineController.updateAirline,
+                req: (req = {
+                    body: {
+                        code: "GA",
+                        name: "Garuda Indonesia",
+                    },
+                    params: {
+                        id: "1",
+                    },
+                }),
+                statusOutcome: { status: false },
+                code: 404,
+                errorMessage: "Airline not found",
+            },
+        ];
 
-            await airlineController.updateAirline(req, res, next);
-            expect(uploadFile).not.toHaveBeenCalled();
-            expect(res.status).toHaveBeenCalledWith(201);
-        });
-
-        it("Failed, 404", async () => {
-            prisma.airline.findUnique.mockResolvedValue(null);
-
-            await airlineController.updateAirline(req, res, next);
-            expect(prisma.airline.update).not.toHaveBeenCalled();
-            expect(uploadFile).not.toHaveBeenCalled();
-            expect(next).toHaveBeenCalledWith(
-                createHttpError(404, { message: "Airline not found" })
-            );
+        updateAirline.forEach((test) => {
+            it(test.description, async () => {
+                await unitTest(
+                    test.prisma,
+                    test.controller,
+                    test.dummyData,
+                    test.req,
+                    test.statusOutcome,
+                    test.code,
+                    null,
+                    test.errorMessage
+                );
+            });
         });
 
         it("Failed, 500", async () => {
@@ -240,20 +288,36 @@ describe("Airline API", () => {
     });
 
     describe("deleteAirline", () => {
-        beforeEach(() => {
-            req = {
-                params: {
-                    id: "GFL",
-                },
-            };
-        });
+        const req = {
+            params: {
+                id: "GFL",
+            },
+        };
 
-        it("Success", async () => {
-            prisma.airline.findUnique.mockResolvedValue(airlineDummyData);
-            prisma.airline.findUnique.mockReturnThis();
+        const deleteAirlines = [
+            {
+                description: "success",
+                prisma: [prisma.airline.findUnique, prisma.airline.delete],
+                dummyData: [airlineDummyData, true],
+                controller: airlineController.deleteAirline,
+                req: req,
+                statusOutcome: { status: true },
+                code: 200,
+            },
+        ];
 
-            await airlineController.deleteAirline(req, res, next);
-            expect(res.status).toHaveBeenCalledWith(200);
+        deleteAirlines.forEach((test) => {
+            it(test.description, async () => {
+                await unitTest(
+                    test.prisma,
+                    test.controller,
+                    test.dummyData,
+                    test.req,
+                    test.statusOutcome,
+                    test.code,
+                    null
+                );
+            });
         });
 
         it("Failed, 500", async () => {
