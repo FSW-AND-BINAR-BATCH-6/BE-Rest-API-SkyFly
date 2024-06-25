@@ -283,15 +283,15 @@ async function main() {
             price: 1100000,
         },
         {
-            planeCode: "QG",
-            departureDate: new Date("2024-06-06T13:00:00Z"),
-            departureCity: "Jakarta",
-            departureCityCode: "CGK",
-            arrivalDate: new Date("2024-06-06T17:00:00Z"),
-            destinationCity: "Bandung",
-            destinationCityCode: "BDO",
-            capacity: 72,
-            price: 1000000,
+                planeCode: "QG",
+                departureDate: new Date("2024-06-06T13:00:00Z"),
+                departureCity: "Jakarta",
+                departureCityCode: "CGK",
+                arrivalDate: new Date("2024-06-06T17:00:00Z"),
+                destinationCity: "Bandung",
+                destinationCityCode: "BDO",
+                capacity: 72,
+                price: 1000000,
         },
         {
             planeCode: "JT",
@@ -748,7 +748,6 @@ async function main() {
     const airportsMap = await prisma.airport.findMany();
 
     const maxFlights = 2000;
-    const daysInRange = 60; // Total number of days from June 1 to July 31
 
     const AirlinesArray = airlinesMap.map((data) => data);
     const AirportArray = airportsMap.map((data) => data);
@@ -765,14 +764,12 @@ async function main() {
 
         while (currentDate < new Date("2024-07-31T08:00:00Z") && flightData.size < maxFlights) {
             for (const departureAirport of AirportArray) {
-                // Ensure at least one flight for each airport as departure and arrival each day
                 const shuffledAirlines = AirlinesArray.sort(() => 0.5 - Math.random());
 
-                // Departure flight
                 const airline = shuffledAirlines[0];
                 const destinationAirport = AirportArray.filter(airport => airport.id !== departureAirport.id)[Math.floor(Math.random() * (AirportArray.length - 1))];
                 const departureDate = new Date(currentDate);
-                const arrivalDate = new Date(departureDate.getTime() + 4 * 60 * 60 * 1000); // 4 hours later
+                const arrivalDate = new Date(departureDate.getTime() + 4 * 60 * 60 * 1000);
                 const forwardFlight = {
                     planeId: airline.id,
                     departureDate: departureDate,
@@ -784,8 +781,7 @@ async function main() {
                     code: `${airline.code}.${departureAirport.code}.${destinationAirport.code}`,
                 };
 
-                // Return flight
-                const returnAirline = shuffledAirlines[1] || airline; // Ensure a different airline if available
+                const returnAirline = shuffledAirlines[1] || airline; 
                 const returnDepartureDate = new Date(departureDate.getTime() + msPerDay);
                 const returnArrivalDate = new Date(returnDepartureDate.getTime() + 4 * 60 * 60 * 1000);
                 const returnFlight = {
@@ -806,7 +802,7 @@ async function main() {
 
                 if (flightData.size >= maxFlights) break;
             }
-            currentDate = new Date(currentDate.getTime() + msPerDay); // Increment by one day
+            currentDate = new Date(currentDate.getTime() + msPerDay); 
         }
     };
 
