@@ -700,7 +700,7 @@ async function main() {
 
     // create user, auth
     await Promise.all(
-        accountAuthData.map((name) =>
+        accountAuthData.map(async (name) =>
             prisma.user.create({
                 data: {
                     id: randomUUID(),

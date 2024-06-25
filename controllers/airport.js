@@ -87,7 +87,7 @@ const getAllAirports = async (req, res, next) => {
                               page < Math.ceil(count / limit) ? page + 1 : null,
                           prevPage: page > 1 ? page - 1 : null,
                       },
-            data: getAirports.length !== 0 ? getAirports : "empty airport data",
+            data: getAirports,
         });
     } catch (error) {
         next(createHttpError(500, { message: error.message }));

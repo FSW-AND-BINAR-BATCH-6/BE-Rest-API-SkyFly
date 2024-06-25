@@ -495,7 +495,7 @@ const snapPayment = async (req, res, next) => {
                             data: {
                                 id: randomUUID(),
                                 transactionId: transaction.id,
-                                price: parseFloat(passenger.price),
+                                price: parseFloat(passenger.normalPrice),
                                 name: passenger.name,
                                 type: passenger.type,
                                 seatId: passenger.seatId,
@@ -686,7 +686,7 @@ const bankTransfer = async (req, res, next) => {
                             data: {
                                 id: randomUUID(),
                                 transactionId: transaction.id,
-                                price: parseFloat(passenger.price),
+                                price: parseFloat(passenger.normalPrice),
                                 name: passenger.name,
                                 type: passenger.type,
                                 seatId: passenger.seatId,
@@ -838,7 +838,7 @@ const creditCard = async (req, res, next) => {
                             data: {
                                 id: randomUUID(),
                                 transactionId: transaction.id,
-                                price: parseFloat(passenger.price),
+                                price: parseFloat(passenger.normalPrice),
                                 name: passenger.name,
                                 type: data.type,
                                 seatId: passenger.seatId,
@@ -975,7 +975,7 @@ const gopay = async (req, res, next) => {
                             data: {
                                 id: randomUUID(),
                                 transactionId: transaction.id,
-                                price: parseFloat(passenger.price),
+                                price: parseFloat(passenger.normalPrice),
                                 name: passenger.name,
                                 type: passenger.type,
                                 seatId: passenger.seatId,
@@ -1036,31 +1036,28 @@ const getAllTransactionByUserLoggedIn = async (req, res, next) => {
     // get all transaction data from ticketTransaction & include ticketTransaction detail
 
     try {
-        let { dateOfDeparture, returnDate, flightCode } = req.query;
+        let { startDate, endDate, flightCode } = req.query;
 
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const offset = (page - 1) * limit;
 
-        const parsedDepartureDate = new Date(dateOfDeparture);
-        const parsedReturnDate = new Date(returnDate);
+        const parseStartDate = new Date(startDate);
+        const parseEndDate = new Date(endDate);
 
-        let flightCondition = {
-            code: {
-                contains: flightCode,
-                mode: "insensitive",
-            },
-        };
+        let transactionCondition;
+        let flightCondition;
 
-        if (dateOfDeparture || returnDate) {
+        if (startDate || endDate) {
+            transactionCondition = {
+                userId: req.user.id,
+                bookingDate: {
+                    gte: new Date(parseStartDate.setHours(0, 0, 0, 0)),
+                    lt: new Date(parseEndDate.setHours(23, 59, 59, 0)),
+                },
+            };
             if (flightCode) {
                 flightCondition = {
-                    departureDate: {
-                        gte: new Date(parsedDepartureDate.setHours(0, 0, 0, 0)),
-                    },
-                    arrivalDate: {
-                        lt: new Date(parsedReturnDate.setHours(23, 59, 59, 0)),
-                    },
                     code: {
                         contains: flightCode,
                         mode: "insensitive",
@@ -1088,9 +1085,7 @@ const getAllTransactionByUserLoggedIn = async (req, res, next) => {
                     },
                 },
             },
-            where: {
-                userId: req.user.id,
-            },
+            where: transactionCondition,
         });
 
         const count = await prisma.ticketTransaction.count({
@@ -1223,10 +1218,7 @@ const getAllTransactionByUserLoggedIn = async (req, res, next) => {
                 nextPage: page < Math.ceil(count / limit) ? page + 1 : null,
                 prevPage: page > 1 ? page - 1 : null,
             },
-            data:
-                filteredTransactions.length <= 0
-                    ? "transaction data is empty"
-                    : response,
+            data: response,
         });
     } catch (error) {
         next(
@@ -1386,10 +1378,7 @@ const getAllTransaction = async (req, res, next) => {
                 nextPage: page < Math.ceil(count / limit) ? page + 1 : null,
                 prevPage: page > 1 ? page - 1 : null,
             },
-            data:
-                transactions.length !== 0
-                    ? transactions
-                    : "empty transaction data",
+            data: transactions,
         });
     } catch (error) {
         next(
