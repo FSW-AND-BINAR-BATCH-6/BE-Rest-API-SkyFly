@@ -910,7 +910,7 @@ const gopay = async (req, res, next) => {
         let { flightId } = req.query;
 
         const { passengers, orderer } = await parameterMidtrans(req.body);
-
+        console.log(passengers);
         const seats = await prisma.flightSeat.findMany({
             where: {
                 id: {
