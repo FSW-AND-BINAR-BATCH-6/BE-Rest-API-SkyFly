@@ -191,7 +191,6 @@ const notification = async (req, res) => {
     };
 
     let datas = await snap.transaction.notification(notification);
-    console.log(datas);
 
     await prisma.ticketTransaction.update({
         where: {
@@ -824,7 +823,6 @@ const creditCard = async (req, res, next) => {
 
             await prisma.$transaction(async (tx) => {
                 const response = await coreApi.charge(parameter);
-
                 const transaction = await tx.ticketTransaction.create({
                     data: {
                         userId: req.user.id, // req.user.id (from user loggedIn)

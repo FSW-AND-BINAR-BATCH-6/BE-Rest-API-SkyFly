@@ -3,7 +3,7 @@ const airportController = require("../../../controllers/airport");
 const { PrismaClient } = require("@prisma/client");
 const { randomUUID } = require("crypto");
 const prisma = new PrismaClient();
-
+const { unitTest } = require("./index");
 
 jest.mock("@prisma/client", () => {
     const mPrismaClient = {
@@ -22,12 +22,12 @@ jest.mock("@prisma/client", () => {
     };
 });
 
-jest.mock("../../../lib/supabase", () => ({
-    uploadFile: jest.fn(),
-}));
-
 jest.mock("crypto", () => ({
     randomUUID: jest.fn(),
+}));
+
+jest.mock("../../../lib/supabase", () => ({
+    uploadFile: jest.fn(),
 }));
 
 const serverFailed = async (
@@ -77,51 +77,54 @@ describe("Airports API", () => {
                     page: "1",
                     limit: "10",
                     code: "B17",
-                    name: "Flying Fortress"
+                    name: "Flying Fortress",
                 },
             };
         });
 
-        it("Success", async () => {
-            const totalItems = 1;
+        const getAllAirports = [
+            {
+                description: "success",
+                prisma: [prisma.airport.findMany, prisma.airport.count],
+                dummyData: [airportDummyData, 1],
+                controller: airportController.getAllAirports,
+                req: (req = {
+                    query: {
+                        page: "1",
+                        limit: "10",
+                        code: "B17",
+                        name: "Flying Fortress",
+                    },
+                }),
+                statusOutcome: { status: true },
+                code: 200,
+            },
+            {
+                description: "success",
+                prisma: [prisma.airport.findMany],
+                dummyData: [airportDummyData],
+                controller: airportController.getAllAirports,
+                req: (req = {
+                    query: {
+                        showall: "true",
+                    },
+                }),
+                statusOutcome: { status: true },
+                code: 200,
+            },
+        ];
 
-            prisma.airport.findMany.mockResolvedValue(airportDummyData);
-            prisma.airport.count.mockResolvedValue(totalItems);
-
-            await airportController.getAllAirports(req, res, next);
-            expect(res.status).toHaveBeenCalledWith(200);
-            expect(res.json).toHaveBeenCalledWith({
-                status: true,
-                message: "All airports data retrieved successfully",
-                totalItems,
-                pagination: {
-                    totalPage: 1,
-                    currentPage: 1,
-                    pageItems: 1,
-                    nextPage: null,
-                    prevPage: null,
-                },
-                data: airportDummyData,
-            });
-        });
-
-        it("Success, without params", async () => {
-            req.query = {
-                showall: 'true'
-            }
-            const totalItems = 1;
-
-            prisma.airport.findMany.mockResolvedValue(airportDummyData);
-            prisma.airport.count.mockResolvedValue(totalItems);
-
-            await airportController.getAllAirports(req, res, next);
-            expect(res.status).toHaveBeenCalledWith(200);
-            expect(res.json).toHaveBeenCalledWith({
-                status: true,
-                message: "All airports data retrieved successfully",
-                totalItems,
-                pagination: null,
-                data: airportDummyData,
+        getAllAirports.forEach((test) => {
+            it(test.description, async () => {
+                await unitTest(
+                    test.prisma,
+                    test.controller,
+                    test.dummyData,
+                    test.req,
+                    test.statusOutcome,
+                    test.code,
+                    null
+                );
             });
         });
 
@@ -145,23 +148,49 @@ describe("Airports API", () => {
             };
         });
 
-        it("Success", async () => {
-            prisma.airport.findUnique.mockResolvedValue(airportDummyData[0]);
-            await airportController.getAirportById(req, res, next);
-            expect(res.status).toHaveBeenCalledWith(200);
-            expect(res.json).toHaveBeenCalledWith({
-                status: true,
-                message: "All airports data retrieved successfully",
-                data: airportDummyData[0],
-            });
-        });
+        const getAirportById = [
+            {
+                description: "success",
+                prisma: [prisma.airport.findUnique],
+                dummyData: [airportDummyData],
+                controller: airportController.getAirportById,
+                req: (req = {
+                    params: {
+                        id: 1,
+                    },
+                }),
+                statusOutcome: { status: true },
+                code: 200,
+            },
+            {
+                description: "success",
+                prisma: [prisma.airport.findUnique],
+                dummyData: [null],
+                controller: airportController.getAirportById,
+                req: (req = {
+                    params: {
+                        id: 1,
+                    },
+                }),
+                statusOutcome: { status: false },
+                code: 404,
+                errorMessage: "Airport not found",
+            },
+        ];
 
-        it("Failed, 404", async () => {
-            prisma.airport.findUnique.mockResolvedValue(null);
-            await airportController.getAirportById(req, res, next);
-            expect(next).toHaveBeenCalledWith(
-                createHttpError(404, { message: "Airport not found" })
-            );
+        getAirportById.forEach((test) => {
+            it(test.description, async () => {
+                await unitTest(
+                    test.prisma,
+                    test.controller,
+                    test.dummyData,
+                    test.req,
+                    test.statusOutcome,
+                    test.code,
+                    null,
+                    test.errorMessage
+                );
+            });
         });
 
         it("Failed, 500", async () => {
@@ -219,8 +248,7 @@ describe("Airports API", () => {
             });
             expect(next).toHaveBeenCalledWith(
                 createHttpError(403, {
-                    message:
-                        "Airport with code: AHR already exist!",
+                    message: "Airport with code: AHR already exist!",
                 })
             );
             expect(prisma.airport.create).not.toHaveBeenCalled();
@@ -252,34 +280,57 @@ describe("Airports API", () => {
             };
         });
 
-        const body = {
-            id: "Porche",
-            name: "Ferdinand",
-            code: "AHR",
-            country: "German",
-            city: "Berlin",
-        };
+        const updateAirports = [
+            {
+                description: "success",
+                prisma: [prisma.airport.findUnique, prisma.airport.update],
+                dummyData: [airportDummyData[0], airportDummyData[0]],
+                controller: airportController.updateAirport,
+                req: (req = {
+                    body: {
+                        name: "Ferdinand",
+                        code: "AHR",
+                    },
+                    params: {
+                        id: "1",
+                    },
+                }),
+                statusOutcome: { status: true },
+                code: 201,
+            },
+            {
+                description: "Failed",
+                prisma: [prisma.airport.findUnique],
+                dummyData: [null],
+                controller: airportController.updateAirport,
+                req: (req = {
+                    body: {
+                        name: "Ferdinand",
+                        code: "AHR",
+                    },
+                    params: {
+                        id: "1",
+                    },
+                }),
+                statusOutcome: { status: false },
+                code: 404,
+                errorMessage: "Airport not found",
+            },
+        ];
 
-        it("Success", async () => {
-            prisma.airport.findUnique.mockResolvedValue(body);
-            prisma.airport.update.mockResolvedValue(body);
-
-            await airportController.updateAirport(req, res, next);
-            expect(res.status).toHaveBeenCalledWith(201);
-            expect(res.json).toHaveBeenCalledWith({
-                status: true,
-                message: "Airport updated successfully",
-                data: body,
+        updateAirports.forEach((test) => {
+            it(test.description, async () => {
+                await unitTest(
+                    test.prisma,
+                    test.controller,
+                    test.dummyData,
+                    test.req,
+                    test.statusOutcome,
+                    test.code,
+                    null,
+                    test.errorMessage
+                );
             });
-        });
-
-        it("Failed, 404", async () => {
-            prisma.airport.findUnique.mockResolvedValue(null);
-            await airportController.updateAirport(req, res, next);
-            expect(next).toHaveBeenCalledWith(
-                createHttpError(404, { message: "Airport not found" })
-            );
-            expect(prisma.airport.update).not.toHaveBeenCalled();
         });
 
         it("Failed, 500", async () => {
@@ -302,32 +353,50 @@ describe("Airports API", () => {
             };
         });
 
-        const body = {
-            id: "Porche",
-            name: "Ferdinand",
-            code: "AHR",
-            country: "German",
-            city: "Berlin",
-        };
+        
+        const deleteAirport = [
+            {
+                description: "success",
+                prisma: [prisma.airport.findFirst, prisma.airport.delete],
+                dummyData: [airportDummyData[0], true],
+                controller: airportController.deleteAirport,
+                req: (req = {
+                    params: {
+                        id: "Porche",
+                    },
+                }),
+                statusOutcome: { status: true },
+                code: 200,
+            },
+            {
+                description: "success",
+                prisma: [prisma.airport.findFirst],
+                dummyData: [null],
+                controller: airportController.deleteAirport,
+                req: (req = {
+                    params: {
+                        id: "Porche",
+                    },
+                }),
+                statusOutcome: { status: false },
+                code: 404,
+                errorMessage: "Airport not found",
+            }
+        ];
 
-        it("Success", async () => {
-            prisma.airport.findFirst.mockResolvedValue(body);
-            prisma.airport.delete.mockResolvedValue({ id: "Porche" });
-
-            await airportController.deleteAirport(req, res, next);
-            expect(res.status).toHaveBeenCalledWith(200);
-            expect(res.json).toHaveBeenCalledWith({
-                status: true,
-                message: "Airport deleted successfully",
+        deleteAirport.forEach((test) => {
+            it(test.description, async () => {
+                await unitTest(
+                    test.prisma,
+                    test.controller,
+                    test.dummyData,
+                    test.req,
+                    test.statusOutcome,
+                    test.code,
+                    null,
+                    test.errorMessage
+                );
             });
-        });
-
-        it("Failed, 404", async () => {
-            prisma.airport.delete.mockResolvedValue(null);
-            await airportController.deleteAirport(req, res, next);
-            expect(next).toHaveBeenCalledWith(
-                createHttpError(404, { message: "Airport not found" })
-            );
         });
 
         it("Failed, 500", async () => {
