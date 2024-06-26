@@ -1,13 +1,14 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
 
-const checkSeatAvailability = async (seats, flightId) => {
+const checkSeatAvailability = async (seats, flightId, passengers) => {
     let seatNumber = [];
     let error = {
         flight: false,
         seat: false,
         booked: false,
     };
+    let countPassengerSeat = passengers.map((passenger) => passenger.seatId);
 
     const flight = await prisma.flight.findUnique({
         where: {
@@ -19,7 +20,7 @@ const checkSeatAvailability = async (seats, flightId) => {
         error.flight = true;
     }
 
-    if (seats.length <= 0) {
+    if (countPassengerSeat.length !== seats.length) {
         error.seat = true;
     }
 
