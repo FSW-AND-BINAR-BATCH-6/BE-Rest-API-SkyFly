@@ -48,6 +48,7 @@ model User {
     phoneNumber       String?
     familyName        String?
     role              RoleUser            @default(BUYER)
+    isVerified        Boolean             @default(false)
     tickets           Ticket[]
     auth              Auth?
     ticketTransaction TicketTransaction[]
