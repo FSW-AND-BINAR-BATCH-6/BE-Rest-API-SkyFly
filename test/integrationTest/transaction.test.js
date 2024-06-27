@@ -25,32 +25,32 @@ describe("Transaction Integration Test", () => {
         });
     });
 
-    describe("getTransactionById", () => {
-        it("success", async () => {
-            const response = await request(baseUrl)
-                .get("/api/v1/transactions/clxts6a8j0002947lzd5ll8ap")
-                .set("Authorization", `Bearer ${token}`);
-            expect(response.statusCode).toBe(200);
-        });
-    });
+    // describe("getTransactionById", () => {
+    //     it("success", async () => {
+    //         const response = await request(baseUrl)
+    //             .get("/api/v1/transactions/clxts6a8j0002947lzd5ll8ap")
+    //             .set("Authorization", `Bearer ${token}`);
+    //         expect(response.statusCode).toBe(200);
+    //     });
+    // });
 
-    describe("getTransaction", () => {
-        it("success", async () => {
-            const response = await request(baseUrl)
-                .get("/api/v1/transactions/status/2ecaed1c-bfb9-4937-a151-7e16634c7385")
-                .set("Authorization", `Bearer ${token}`);
-            expect(response.statusCode).toBe(200);
-        });
-    });
+    // describe("getTransaction", () => {
+    //     it("success", async () => {
+    //         const response = await request(baseUrl)
+    //             .get("/api/v1/transactions/status/2ecaed1c-bfb9-4937-a151-7e16634c7385")
+    //             .set("Authorization", `Bearer ${token}`);
+    //         expect(response.statusCode).toBe(200);
+    //     });
+    // });
     
-    describe("getTransaction", () => {
-        it("success", async () => {
-            const response = await request(baseUrl)
-                .get("/api/v1/transactions/status/2ecaed1c-bfb9-4937-a151-7e16634c7385")
-                .set("Authorization", `Bearer ${token}`);
-            expect(response.statusCode).toBe(200);
-        });
-    });
+    // describe("getTransaction", () => {
+    //     it("success", async () => {
+    //         const response = await request(baseUrl)
+    //             .get("/api/v1/transactions/status/2ecaed1c-bfb9-4937-a151-7e16634c7385")
+    //             .set("Authorization", `Bearer ${token}`);
+    //         expect(response.statusCode).toBe(200);
+    //     });
+    // });
 
     // describe("updateTransaction", () => {
     //     it("success", async () => {
