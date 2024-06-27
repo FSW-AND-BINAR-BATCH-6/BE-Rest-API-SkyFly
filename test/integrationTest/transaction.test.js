@@ -28,7 +28,7 @@ describe("Transaction Integration Test", () => {
     describe("getTransactionById", () => {
         it("success", async () => {
             const response = await request(baseUrl)
-                .get("/api/v1/transactions/clxwjh8qm00029k0vpeiu1u10")
+                .get("/api/v1/transactions/clxts6a8j0002947lzd5ll8ap")
                 .set("Authorization", `Bearer ${token}`);
             expect(response.statusCode).toBe(200);
         });
