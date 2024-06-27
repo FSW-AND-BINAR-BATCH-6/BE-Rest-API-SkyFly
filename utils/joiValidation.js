@@ -79,6 +79,11 @@ const userCreateSchema = Joi.object({
         .optional(),
     role: Joi.string().valid("BUYER", "ADMIN").default("BUYER"), // Set default value for role
     isVerified: Joi.boolean().optional(),
+    email: Joi.string().email().required(),
+    password: Joi.string().min(8).max(20),
+    confirmPassword: Joi.any().valid(Joi.ref("password")).messages({
+        "any.only": "Confirm password does not match password",
+    }),
 });
 
 const userUpdateSchema = Joi.object({

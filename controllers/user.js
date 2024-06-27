@@ -2,6 +2,7 @@ const { PrismaClient } = require("@prisma/client");
 const createHttpError = require("http-errors");
 const { randomUUID } = require("crypto");
 const prisma = new PrismaClient();
+const bcrypt = require('bcrypt');
 
 const getAllUsers = async (req, res, next) => {
     try {
@@ -101,16 +102,43 @@ const getUserById = async (req, res, next) => {
 
 const createUser = async (req, res, next) => {
     try {
-        const { name, phoneNumber, familyName, role, isVerified } = req.body;
-        const newUser = await prisma.user.create({
-            data: {
-                id: randomUUID(),
-                name: name,
-                phoneNumber: phoneNumber,
-                familyName: familyName,
-                role: role || "BUYER", // Nilai default untuk role
-                isVerified: isVerified,
-            },
+        const { name, phoneNumber, familyName, role, email, password, isVerified } = req.body;
+
+        const checkEmail = await prisma.auth.findUnique({
+            where: { email },
+            include: { user: true },
+        });
+
+        if (checkEmail) {
+            return next(createHttpError(409, { message: "Email has already been taken" }));
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10); // Menggunakan bcrypt langsung tanpa perlu fungsi async secretHash
+
+        const newUser = await prisma.$transaction(async (tx) => {
+            const user = await tx.user.create({
+                data: {
+                    id: randomUUID(), // Generate random UUID for user ID
+                    name,
+                    phoneNumber,
+                    familyName,
+                    role: role, 
+                    auth: {
+                        create: {
+                            id: randomUUID(), // Generate random UUID for auth ID
+                            email,
+                            password: hashedPassword,
+                            otpToken: null,
+                            isVerified: isVerified , 
+                            secretToken: null,
+                        },
+                    },
+                },
+                include: {
+                    auth: true, // Sertakan informasi auth untuk mendapatkan isVerified
+                },
+            });
+            return user;
         });
 
         res.status(201).json({
@@ -122,7 +150,7 @@ const createUser = async (req, res, next) => {
                 phoneNumber: newUser.phoneNumber,
                 familyName: newUser.familyName,
                 role: newUser.role,
-                isVerified: newUser.isVerified,
+                isVerified: newUser.auth.isVerified, // Ambil isVerified dari informasi auth
             },
         });
     } catch (err) {
