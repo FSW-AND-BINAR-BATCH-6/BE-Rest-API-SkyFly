@@ -361,26 +361,26 @@ const getAllFlight = async (req, res, next) => {
                 },
                 transit: flight.transitAirport
                     ? {
-                          status: true,
-                          arrivalDate: formatDate(flight.transitArrivalDate),
-                          arrivalTime: formatTime(flight.transitArrivalDate),
-                          departureDate: formatDate(
-                              flight.transitDepartureDate
-                          ),
-                          departureTime: formatTime(flight.transitArrivalDate),
-                          transitAirport: {
-                              id: flight.transitAirport.id,
-                              name: flight.transitAirport.name,
-                              code: flight.transitAirport.code,
-                              country: flight.transitAirport.country,
-                              city: flight.transitAirport.city,
-                              continent: flight.transitAirport.continent,
-                              image: flight.transitAirport.image,
-                          },
-                      }
+                        status: true,
+                        arrivalDate: formatDate(flight.transitArrivalDate),
+                        arrivalTime: formatTime(flight.transitArrivalDate),
+                        departureDate: formatDate(
+                            flight.transitDepartureDate
+                        ),
+                        departureTime: formatTime(flight.transitArrivalDate),
+                        transitAirport: {
+                            id: flight.transitAirport.id,
+                            name: flight.transitAirport.name,
+                            code: flight.transitAirport.code,
+                            country: flight.transitAirport.country,
+                            city: flight.transitAirport.city,
+                            continent: flight.transitAirport.continent,
+                            image: flight.transitAirport.image,
+                        },
+                    }
                     : {
-                          status: false,
-                      },
+                        status: false,
+                    },
                 arrivalDate: formatDate(flight.arrivalDate),
                 arrivalTime: formatTime(flight.arrivalDate),
                 destinationAirport: {
@@ -452,26 +452,26 @@ const getAllFlight = async (req, res, next) => {
                 },
                 transit: flight.transitAirport
                     ? {
-                          arrivalDate: formatDate(flight.transitArrivalDate),
-                          arrivalTime: formatTime(flight.transitArrivalDate),
-                          departureDate: formatDate(
-                              flight.transitDepartureDate
-                          ),
-                          departureTime: formatTime(flight.transitArrivalDate),
-                          transitAirport: {
-                              id: flight.transitAirport.id,
-                              name: flight.transitAirport.name,
-                              code: flight.transitAirport.code,
-                              country: flight.transitAirport.country,
-                              city: flight.transitAirport.city,
-                              continent: flight.transitAirport.continent,
-                              image: flight.transitAirport.image,
-                          },
-                          status: true,
-                      }
+                        arrivalDate: formatDate(flight.transitArrivalDate),
+                        arrivalTime: formatTime(flight.transitArrivalDate),
+                        departureDate: formatDate(
+                            flight.transitDepartureDate
+                        ),
+                        departureTime: formatTime(flight.transitArrivalDate),
+                        transitAirport: {
+                            id: flight.transitAirport.id,
+                            name: flight.transitAirport.name,
+                            code: flight.transitAirport.code,
+                            country: flight.transitAirport.country,
+                            city: flight.transitAirport.city,
+                            continent: flight.transitAirport.continent,
+                            image: flight.transitAirport.image,
+                        },
+                        status: true,
+                    }
                     : {
-                          status: false,
-                      },
+                        status: false,
+                    },
                 arrivalDate: formatDate(flight.arrivalDate),
                 arrivalTime: formatTime(flight.arrivalDate),
                 destinationAirport: {
@@ -633,28 +633,28 @@ const getFlightById = async (req, res, next) => {
                 },
                 transit: flight.transitAirport
                     ? {
-                          status: true,
-                          arrivalDate: formatDate(flight.transitArrivalDate),
-                          arrivalTime: formatTime(flight.transitArrivalDate),
-                          departureDate: formatDate(
-                              flight.transitDepartureDate
-                          ),
-                          departureTime: formatTime(
-                              flight.transitDepartureDate
-                          ),
-                          transitAirport: {
-                              id: flight.transitAirport.id,
-                              name: flight.transitAirport.name,
-                              code: flight.transitAirport.code,
-                              country: flight.transitAirport.country,
-                              city: flight.transitAirport.city,
-                              continent: flight.transitAirport.continent,
-                              image: flight.transitAirport.image,
-                          },
-                      }
+                        status: true,
+                        arrivalDate: formatDate(flight.transitArrivalDate),
+                        arrivalTime: formatTime(flight.transitArrivalDate),
+                        departureDate: formatDate(
+                            flight.transitDepartureDate
+                        ),
+                        departureTime: formatTime(
+                            flight.transitDepartureDate
+                        ),
+                        transitAirport: {
+                            id: flight.transitAirport.id,
+                            name: flight.transitAirport.name,
+                            code: flight.transitAirport.code,
+                            country: flight.transitAirport.country,
+                            city: flight.transitAirport.city,
+                            continent: flight.transitAirport.continent,
+                            image: flight.transitAirport.image,
+                        },
+                    }
                     : {
-                          status: false,
-                      },
+                        status: false,
+                    },
                 arrivalDate: formatDate(flight.arrivalDate),
                 arrivalTime: formatTime(flight.arrivalDate),
                 destinationAirport: {
@@ -915,13 +915,14 @@ const getFavoriteDestinations = async (req, res, next) => {
                         departureDate: formatDate(destination.flight.departureDate),
                         departureTime: formatTime(destination.flight.departureDate),
                         departureCity: destination.flight.departureAirport.city,
+                        code: destination.flight.departureAirport.code,
                     },
                     to: {
                         arrivalDate: formatDate(destination.flight.arrivalDate),
                         arrivalTime: formatTime(destination.flight.arrivalDate),
                         arrivalCity: destination.flight.destinationAirport.city,
-                        continent:
-                            destination.flight.destinationAirport.continent,
+                        continent: destination.flight.destinationAirport.continent,
+                        code: destination.flight.destinationAirport.code,
                         image: destination.flight.destinationAirport.image,
                     },
                     plane: {
