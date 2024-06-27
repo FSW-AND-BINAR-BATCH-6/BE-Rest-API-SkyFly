@@ -101,14 +101,14 @@ const getUserById = async (req, res, next) => {
 
 const createUser = async (req, res, next) => {
     try {
-        const data = req.body;
+        const { name, phoneNumber, familyName, role } = req.body;
         const newUser = await prisma.user.create({
             data: {
                 id: randomUUID(),
-                name: data.name,
-                phoneNumber: data.phoneNumber,
-                familyName: data.familyName,
-                role: data.role || "BUYER", // Default value for role
+                name: name,
+                phoneNumber: phoneNumber,
+                familyName: familyName,
+                role: role || "BUYER", // Default value for role
             },
         });
 
@@ -121,6 +121,7 @@ const createUser = async (req, res, next) => {
                 phoneNumber: newUser.phoneNumber,
                 familyName: newUser.familyName,
                 role: newUser.role,
+                isVerified: true,
             },
         });
     } catch (err) {
@@ -170,6 +171,7 @@ const updateUser = async (req, res, next) => {
                 phoneNumber: updatedUser.phoneNumber,
                 familyName: updatedUser.familyName,
                 role: updatedUser.role,
+                isVerified: true,
             },
         });
     } catch (error) {
