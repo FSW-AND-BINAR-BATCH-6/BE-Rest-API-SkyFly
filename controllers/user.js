@@ -109,7 +109,7 @@ const createUser = async (req, res, next) => {
                 phoneNumber: phoneNumber,
                 familyName: familyName,
                 role: role || "BUYER", // Nilai default untuk role
-                isVerified: isVerified || false, // Mengambil nilai dari body permintaan, default ke false
+                isVerified: isVerified,
             },
         });
 
@@ -130,10 +130,13 @@ const createUser = async (req, res, next) => {
     }
 };
 
+
+
 const updateUser = async (req, res, next) => {
     try {
-        const { name, phoneNumber, familyName, role, password } = req.body;
+        const { name, phoneNumber, familyName, role, password, isVerified } = req.body;
         const userId = req.params.id;
+
         // Hash kata sandi baru jika ada
         let hashedPassword;
         if (password) {
@@ -150,7 +153,7 @@ const updateUser = async (req, res, next) => {
                     phoneNumber,
                     familyName,
                     role,
-                    isVerified: true,
+                    isVerified, // Memasukkan isVerified dari body permintaan
                 },
             });
 
@@ -169,11 +172,12 @@ const updateUser = async (req, res, next) => {
             status: true,
             message: "User updated successfully",
             data: {
+                id: updatedUser.id,
                 name: updatedUser.name,
                 phoneNumber: updatedUser.phoneNumber,
                 familyName: updatedUser.familyName,
                 role: updatedUser.role,
-                isVerified: true,
+                isVerified: updatedUser.isVerified,
             },
         });
     } catch (error) {
