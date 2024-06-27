@@ -912,11 +912,13 @@ const getFavoriteDestinations = async (req, res, next) => {
                 const flightDetails = {
                     flightId: destination.flight.id,
                     from: {
-                        departureDate: destination.flight.departureDate,
+                        departureDate: formatDate(destination.flight.departureDate),
+                        departureTime: formatTime(destination.flight.departureDate),
                         departureCity: destination.flight.departureAirport.city,
                     },
                     to: {
-                        arrivalDate: destination.flight.arrivalDate,
+                        arrivalDate: formatDate(destination.flight.arrivalDate),
+                        arrivalTime: formatTime(destination.flight.arrivalDate),
                         arrivalCity: destination.flight.destinationAirport.city,
                         continent:
                             destination.flight.destinationAirport.continent,
