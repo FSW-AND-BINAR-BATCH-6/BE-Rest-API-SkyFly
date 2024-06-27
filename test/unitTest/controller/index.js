@@ -51,11 +51,11 @@ const serverFailed = async (
     prismaFunction,
     controllerFunction
 ) => {
-    res = {
-        status: jest.fn().mockReturnThis(),
-        jeson: jest.fn(),
-    };
-    next = jest.fn();
+    // res = {
+    //     status: jest.fn().mockReturnThis(),
+    //     json: jest.fn(),
+    // };
+    // next = jest.fn();
     
     const errorMessage = "Internal Server Error";
     prismaFunction.mockRejectedValue(new Error(errorMessage));
