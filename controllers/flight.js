@@ -228,12 +228,14 @@ const getAllFlight = async (req, res, next) => {
             "latest-departure": { departureDate: "desc" },
             "earliest-arrival": { arrivalDate: "asc" },
             "latest-arrival": { arrivalDate: "desc" },
-            "cheapest-price": { price: "asc" },
+            "lowest-price": { price: "asc" },
         };
 
         let orderBy = [];
+        let sortedBy = ""
 
         if (sort) {
+            sortedBy = sort;
             if (sort === "shortest-duration") {
                 orderBy = [{ departureDate: "asc" }, { arrivalDate: "asc" }];
             } else {
@@ -541,6 +543,7 @@ const getAllFlight = async (req, res, next) => {
             status: true,
             message: "All flight data retrieved successfully",
             totalItems: total,
+            sortedBy,
             pagination: {
                 totalPages: totalPages,
                 currentPage: currentPage,
