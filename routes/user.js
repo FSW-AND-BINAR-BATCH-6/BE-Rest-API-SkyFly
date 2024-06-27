@@ -13,7 +13,7 @@ const {
 
 router
     .route("/")
-    .get(authentication, checkRole(["ADMIN"]), userController.getAllUsers, )
+    .get(authentication, checkRole(["ADMIN"]), userController.getAllUsers,)
     .post(authentication, checkRole(["ADMIN"]), validator(userCreateSchema), userController.createUser);
 router
     .route("/:id")

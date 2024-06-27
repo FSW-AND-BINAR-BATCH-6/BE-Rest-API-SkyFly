@@ -168,6 +168,7 @@ describe("User API", () => {
             phoneNumber: "089653421423",
             familyName: "agus",
             role: "BUYER",
+            isVerified: true,
         };
 
         it("Success", async () => {
@@ -221,6 +222,7 @@ describe("User API", () => {
             phoneNumber: "08962394959",
             familyName: "Anto",
             role: "BUYER",
+            isVerified: true,
         };
 
         it("Success", async () => {
