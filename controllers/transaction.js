@@ -436,7 +436,8 @@ const snapPayment = async (req, res, next) => {
 
         const { error, seatNumber } = await checkSeatAvailability(
             seats,
-            flightId
+            flightId,
+            passengers
         );
 
         if (error.flight) {
@@ -563,7 +564,8 @@ const bankTransfer = async (req, res, next) => {
 
         const { error, seatNumber } = await checkSeatAvailability(
             seats,
-            flightId
+            flightId,
+            passengers
         );
 
         if (error.flight) {
@@ -766,7 +768,8 @@ const creditCard = async (req, res, next) => {
 
         const { error, seatNumber } = await checkSeatAvailability(
             seats,
-            flightId
+            flightId,
+            passengers
         );
 
         if (error.flight) {
@@ -907,7 +910,7 @@ const gopay = async (req, res, next) => {
         let { flightId } = req.query;
 
         const { passengers, orderer } = await parameterMidtrans(req.body);
-
+        console.log(passengers);
         const seats = await prisma.flightSeat.findMany({
             where: {
                 id: {
@@ -918,7 +921,8 @@ const gopay = async (req, res, next) => {
 
         const { error, seatNumber } = await checkSeatAvailability(
             seats,
-            flightId
+            flightId,
+            passengers
         );
 
         if (error.flight) {
@@ -926,7 +930,9 @@ const gopay = async (req, res, next) => {
                 createHttpError(404, { message: "Flight is not found" })
             );
         }
+        console.log(seats);
         if (error.seat) {
+            console.log("seat");
             return next(createHttpError(404, { message: "Seat is not found" }));
         }
         if (error.booked) {
@@ -1033,8 +1039,6 @@ const gopay = async (req, res, next) => {
 };
 
 const getAllTransactionByUserLoggedIn = async (req, res, next) => {
-    // get all transaction data from ticketTransaction & include ticketTransaction detail
-
     try {
         let { startDate, endDate, flightCode } = req.query;
 
@@ -1045,10 +1049,12 @@ const getAllTransactionByUserLoggedIn = async (req, res, next) => {
         const parseStartDate = new Date(startDate);
         const parseEndDate = new Date(endDate);
 
-        let transactionCondition;
+        let transactionCondition = {
+            userId: req.user.id,
+        };
         let flightCondition;
 
-        if (startDate || endDate) {
+        if (startDate && endDate) {
             transactionCondition = {
                 userId: req.user.id,
                 bookingDate: {
@@ -1056,14 +1062,29 @@ const getAllTransactionByUserLoggedIn = async (req, res, next) => {
                     lt: new Date(parseEndDate.setHours(23, 59, 59, 0)),
                 },
             };
-            if (flightCode) {
-                flightCondition = {
-                    code: {
-                        contains: flightCode,
-                        mode: "insensitive",
-                    },
-                };
-            }
+        } else if (startDate) {
+            transactionCondition = {
+                userId: req.user.id,
+                bookingDate: {
+                    gte: new Date(parseStartDate.setHours(0, 0, 0, 0)),
+                },
+            };
+        } else if (endDate) {
+            transactionCondition = {
+                userId: req.user.id,
+                bookingDate: {
+                    lt: new Date(parseEndDate.setHours(23, 59, 59, 0)),
+                },
+            };
+        }
+
+        if (flightCode) {
+            flightCondition = {
+                code: {
+                    contains: flightCode,
+                    mode: "insensitive",
+                },
+            };
         }
 
         const transactions = await prisma.ticketTransaction.findMany({
