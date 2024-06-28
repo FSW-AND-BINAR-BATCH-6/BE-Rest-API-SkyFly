@@ -30,6 +30,7 @@ router.use((req, res, next) => {
 
 router.get("/", authentication, getAllTransactionByUserLoggedIn);
 router.get("/:id", authentication, getTransactionById);
+// router.get("/:id", getTransactionById);
 router.get("/status/:orderId", authentication, getTransaction);
 
 // payment
@@ -43,7 +44,8 @@ router.put("/status/:orderId", authentication, updateTransaction);
 router.post("/cancel/:orderId", authentication, cancelTransaction);
 
 // dashboard action
-router.get("/admin", authentication, checkRole(["ADMIN"]), getAllTransaction);
+router.get("/admin/admin/admin", authentication, checkRole(["ADMIN"]), getAllTransaction);
+// router.get("/admin/admin/admin", getAllTransaction);
 router.get(
     "/admin/:id",
     authentication,
@@ -52,6 +54,8 @@ router.get(
 );
 router.put("/:id", authentication, checkRole(["ADMIN"]), updateTransaction);
 router.delete("/:id", authentication, checkRole(["ADMIN"]), deleteTransaction);
+// router.put("/:id", updateTransaction);
+// router.delete("/:id", deleteTransaction);
 router.delete(
     "/transactionDetail/:id",
     authentication,

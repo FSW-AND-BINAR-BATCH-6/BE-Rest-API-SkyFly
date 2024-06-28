@@ -49,7 +49,7 @@ model User {
     familyName        String?
     role              RoleUser            @default(BUYER)
     tickets           Ticket[]
-    auth              Auth?
+    auth              Auth?               
     ticketTransaction TicketTransaction[]
 }
 
