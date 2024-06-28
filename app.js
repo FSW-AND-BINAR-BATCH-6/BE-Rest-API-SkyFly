@@ -5,7 +5,7 @@ const router = require("./routes");
 const logger = require("morgan");
 const { MORGAN_FORMAT } = require("./config/logger");
 const helmet = require("helmet");
-const { rateLimit } = require("./lib/rateLimit");
+// const { rateLimit } = require("./lib/rateLimit");
 
 const app = express();
 
