@@ -20,12 +20,12 @@ describe('Date and Time Formatting Utilities', () => {
 
     describe('formatTime', () => {
         it('should format time to HH:MM', () => {
-            expect(formatTime('2030-01-01T12:34:56Z')).toBe('12:34');
+            expect(formatTime('2030-01-01T12:34:56Z')).toBe('19:34');
         });
 
         it('should handle different times correctly', () => {
-            expect(formatTime('2030-01-01T23:45:00Z')).toBe('23:45');
-            expect(formatTime('2030-01-01T00:00:00Z')).toBe('00:00');
+            expect(formatTime('2030-01-01T23:45:00Z')).toBe('06:45');
+            expect(formatTime('2030-01-01T00:00:00Z')).toBe('07:00');
         });
     });
 

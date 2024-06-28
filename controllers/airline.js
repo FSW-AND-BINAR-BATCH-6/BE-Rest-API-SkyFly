@@ -80,6 +80,7 @@ const createNewAirline = async (req, res, next) => {
         file
             ? (imageUrl = await uploadFile(file))
             : (imageUrl = "https://placehold.co/600x400");
+        console.log(imageUrl);
 
         const newAirline = await prisma.airline.create({
             data: {
@@ -87,7 +88,7 @@ const createNewAirline = async (req, res, next) => {
                 name,
                 code,
                 terminal,
-                image: imageUrl,
+                image: imageUrl
             },
         });
 

@@ -78,6 +78,12 @@ const userCreateSchema = Joi.object({
         .regex(/^(?!\s*$)[a-zA-Z\s]+$/)
         .optional(),
     role: Joi.string().valid("BUYER", "ADMIN").default("BUYER"), // Set default value for role
+    isVerified: Joi.boolean().optional(),
+    email: Joi.string().email().required(),
+    password: Joi.string().min(8).max(20),
+    confirmPassword: Joi.any().valid(Joi.ref("password")).messages({
+        "any.only": "Confirm password does not match password",
+    }),
 });
 
 const userUpdateSchema = Joi.object({
@@ -91,6 +97,7 @@ const userUpdateSchema = Joi.object({
         "any.only": "Confirm password does not match password",
     }),
     role: Joi.string().valid('ADMIN', 'BUYER').optional(),
+    isVerified: Joi.boolean().optional(),
 });
 
 

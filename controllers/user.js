@@ -2,6 +2,7 @@ const { PrismaClient } = require("@prisma/client");
 const createHttpError = require("http-errors");
 const { randomUUID } = require("crypto");
 const prisma = new PrismaClient();
+const bcrypt = require('bcrypt');
 
 const getAllUsers = async (req, res, next) => {
     try {
@@ -101,15 +102,43 @@ const getUserById = async (req, res, next) => {
 
 const createUser = async (req, res, next) => {
     try {
-        const data = req.body;
-        const newUser = await prisma.user.create({
-            data: {
-                id: randomUUID(),
-                name: data.name,
-                phoneNumber: data.phoneNumber,
-                familyName: data.familyName,
-                role: data.role || "BUYER", // Default value for role
-            },
+        const { name, phoneNumber, familyName, role, email, password, isVerified } = req.body;
+
+        const checkEmail = await prisma.auth.findUnique({
+            where: { email },
+            include: { user: true },
+        });
+
+        if (checkEmail) {
+            return next(createHttpError(409, { message: "Email has already been taken" }));
+        }
+
+        const hashedPassword = await bcrypt.hash(password, 10); // Menggunakan bcrypt langsung tanpa perlu fungsi async secretHash
+
+        const newUser = await prisma.$transaction(async (tx) => {
+            const user = await tx.user.create({
+                data: {
+                    id: randomUUID(), // Generate random UUID for user ID
+                    name,
+                    phoneNumber,
+                    familyName,
+                    role: role, 
+                    auth: {
+                        create: {
+                            id: randomUUID(), // Generate random UUID for auth ID
+                            email,
+                            password: hashedPassword,
+                            otpToken: null,
+                            isVerified: isVerified , 
+                            secretToken: null,
+                        },
+                    },
+                },
+                include: {
+                    auth: true, // Sertakan informasi auth untuk mendapatkan isVerified
+                },
+            });
+            return user;
         });
 
         res.status(201).json({
@@ -121,6 +150,7 @@ const createUser = async (req, res, next) => {
                 phoneNumber: newUser.phoneNumber,
                 familyName: newUser.familyName,
                 role: newUser.role,
+                isVerified: newUser.auth.isVerified, // Ambil isVerified dari informasi auth
             },
         });
     } catch (err) {
@@ -128,10 +158,13 @@ const createUser = async (req, res, next) => {
     }
 };
 
+
+
 const updateUser = async (req, res, next) => {
     try {
-        const { name, phoneNumber, familyName, role, password } = req.body;
+        const { name, phoneNumber, familyName, role, password, isVerified } = req.body;
         const userId = req.params.id;
+
         // Hash kata sandi baru jika ada
         let hashedPassword;
         if (password) {
@@ -148,6 +181,7 @@ const updateUser = async (req, res, next) => {
                     phoneNumber,
                     familyName,
                     role,
+                    isVerified, // Memasukkan isVerified dari body permintaan
                 },
             });
 
@@ -166,10 +200,12 @@ const updateUser = async (req, res, next) => {
             status: true,
             message: "User updated successfully",
             data: {
+                id: updatedUser.id,
                 name: updatedUser.name,
                 phoneNumber: updatedUser.phoneNumber,
                 familyName: updatedUser.familyName,
                 role: updatedUser.role,
+                isVerified: updatedUser.isVerified,
             },
         });
     } catch (error) {
