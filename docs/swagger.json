@@ -5253,6 +5253,86 @@
                 }
             }
         },
+        "/transactions/cancel/{id}": {
+            "post": {
+                "tags": ["Dashboards"],
+                "summary": "Return result HIT API get transaction detail by id",
+                "description": "This is an API for getting transaction detail based on Id",
+                "security": [
+                    {
+                        "bearerToken": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "8007ccf2-5981-42bd-ad45-556bd5d48470"
+                        },
+                        "description": "Order ID"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success getting transaction data based on Id",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "ticket transactions data retrieved successfully"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": {
+                                                "transaction_status": "cancel",
+                                                "payment_status": "accept",
+                                                "transaction_id": "79c7fb6a-f016-4981-9abc-a0a1f800cb08",
+                                                "order_id": "e9c6949d-c3c6-4472-92b4-13951d4b6399",
+                                                "merchant_id": "G179901768",
+                                                "currency": "IDR",
+                                                "gross_amount": "1545.00",
+                                                "payment_type": "qris",
+                                                "transaction_time": "2024-06-23 16:38:22"
+                                              }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "ID not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Transaction not found"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/transactions/transactionDetail/{id}": {
             "delete": {
                 "tags": ["Dashboards"],
