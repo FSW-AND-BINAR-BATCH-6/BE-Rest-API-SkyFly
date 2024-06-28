@@ -1125,64 +1125,74 @@
                                             "type": "object",
                                             "example": [
                                                 {
-                                                    "id": "23a57ad7-ba60-49da-82c3-02f918ae6b06",
-                                                    "code": "F7",
-                                                    "name": "Graff Zeppeline",
-                                                    "image": "https://placehold.co/600x400"
-                                                  },
-                                                  {
-                                                    "id": "3e48f509-5dc8-457b-b465-18da0739e5ba",
-                                                    "code": "G1",
-                                                    "name": "Graff Zeppeline",
-                                                    "image": "https://placehold.co/600x400"
-                                                  },
-                                                  {
-                                                    "id": "48c6e24f-4109-483a-bff6-3abe58f74128",
-                                                    "code": "GZ",
-                                                    "name": "Graff Zeppeline",
-                                                    "image": "https://placehold.co/600x400"
-                                                  },
-                                                  {
-                                                    "id": "bd2cff87-2b47-433a-9cb2-95a6a3155554",
-                                                    "code": "GZ",
-                                                    "name": "Graff Zeppeline",
-                                                    "image": "https://placehold.co/600x400"
-                                                  },
-                                                  {
-                                                    "id": "bfc03d45-f2e7-41e5-b388-95dafb8a7aa9",
-                                                    "code": "G+",
-                                                    "name": "Graff Zeppeline",
-                                                    "image": "https://placehold.co/600x400"
-                                                  },
-                                                  {
-                                                    "id": "c46bcaac-4894-4158-8dda-364a56dbda77",
-                                                    "code": "GZ",
-                                                    "name": "Graff Zeppeline",
-                                                    "image": "https://placehold.co/600x400"
-                                                  },
-                                                  {
-                                                    "id": "clxdebzui000lbi6ts4xcb38t",
+                                                    "id": "09a2ea45-b6cd-41dd-be83-8eff80966cb4",
                                                     "code": "SJ",
                                                     "name": "Sriwijaya Air",
-                                                    "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/1716536772224.png"
+                                                    "terminal": "Terminal 2",
+                                                    "image": "https://placehold.co/200x200"
                                                   },
                                                   {
-                                                    "id": "clxdebzui000mbi6t3do7ycdh",
+                                                    "id": "34dea79c-63ca-4532-8a87-d9bb110984df",
+                                                    "code": "GA",
+                                                    "name": "Garuda Indonesia",
+                                                    "terminal": "Terminal 3",
+                                                    "image": "https://placehold.co/200x200"
+                                                  },
+                                                  {
+                                                    "id": "69a09623-125d-4264-a94a-989d44c91a86",
+                                                    "code": "IE",
+                                                    "name": "Super Air Jet",
+                                                    "terminal": "Terminal 2",
+                                                    "image": "https://placehold.co/200x200"
+                                                  },
+                                                  {
+                                                    "id": "8745d6ef-39b0-4ff6-96d0-00174e833e56",
                                                     "code": "QG",
                                                     "name": "Citilink",
-                                                    "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/1716536772224.png"
+                                                    "terminal": "Terminal 3",
+                                                    "image": "https://placehold.co/200x200"
                                                   },
                                                   {
-                                                    "id": "clxdebzui000nbi6t28imr3wi",
+                                                    "id": "8abd50ca-87e4-49bd-bb24-30c93bf7da02",
+                                                    "code": "RA",
+                                                    "name": "Riau Airlines",
+                                                    "terminal": "Terminal 1",
+                                                    "image": "https://placehold.co/200x200"
+                                                  },
+                                                  {
+                                                    "id": "8cb97143-e3b0-42ff-a141-c3184df5f955",
                                                     "code": "JT",
                                                     "name": "Lion Air",
-                                                    "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/1716536772224.png"
+                                                    "terminal": "Terminal 1",
+                                                    "image": "https://placehold.co/200x200"
                                                   },
                                                   {
-                                                    "id": "clxdebzui000obi6t2jsf0h9p",
+                                                    "id": "8d4902aa-f475-45e5-955a-8df98f24f4af",
                                                     "code": "ID",
                                                     "name": "Batik Air",
-                                                    "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/1716536772224.png"
+                                                    "terminal": "Terminal 1",
+                                                    "image": "https://placehold.co/200x200"
+                                                  },
+                                                  {
+                                                    "id": "b97c73d9-c34e-47cd-980a-290cd34c39b0",
+                                                    "code": "IN",
+                                                    "name": "Nam Air",
+                                                    "terminal": "Terminal 2",
+                                                    "image": "https://placehold.co/200x200"
+                                                  },
+                                                  {
+                                                    "id": "cc2de033-d1ba-4c07-8609-766b028c8c61",
+                                                    "code": "KD",
+                                                    "name": "Kalimantan Airlines",
+                                                    "terminal": "Terminal 2",
+                                                    "image": "https://placehold.co/200x200"
+                                                  },
+                                                  {
+                                                    "id": "d4dd7a24-9fd6-4461-995a-da8d990934b8",
+                                                    "code": "FK",
+                                                    "name": "Graff Zeppeline",
+                                                    "terminal": "terminal 1",
+                                                    "image": "https://placehold.co/600x400"
                                                   }
                                             ]
                                         }
@@ -1211,11 +1221,19 @@
                                 "properties": {
                                     "code": {
                                         "type": "string",
-                                        "example": "GZ"
+                                        "example": "JZ"
                                     },
                                     "name": {
                                         "type": "string",
                                         "example": "Graff Zeppeline"
+                                    },
+                                    "image": {
+                                        "type": "string",
+                                        "example": ""
+                                    },
+                                    "terminal": {
+                                        "type": "string",
+                                        "example": "terminal 1"
                                     }
                                 }
                             }
@@ -1241,11 +1259,12 @@
                                         "data": {
                                             "type": "object",
                                             "example": {
-                                               "id": "b0677b87-0582-4a04-8b3a-d24c2d58dbd6",
-                                                "code": "GF",
+                                                "id": "d4dd7a24-9fd6-4461-995a-da8d990934b8",
+                                                "code": "JZ",
                                                 "name": "Graff Zeppeline",
+                                                "terminal": "terminal 1",
                                                 "image": "https://placehold.co/600x400"
-                                            }
+                                              }
                                         }
                                     }
                                 }
@@ -1312,7 +1331,7 @@
                         "required": true,
                         "schema": {
                             "type": "string",
-                            "example": "23a57ad7-ba60-49da-82c3-02f918ae6b02"
+                            "example": "23a57ad7-ba60-49da-82c3-02f918ae6b06"
                         },
                         "description": "Airline ID"
                     }
@@ -1379,7 +1398,7 @@
                                 "properties": {
                                     "code": {
                                         "type": "string",
-                                        "example": "FW"
+                                        "example": "FK"
                                     }
                                 }
                             }
@@ -1405,11 +1424,12 @@
                                         "data": {
                                             "type": "object",
                                             "example": {
-                                                "id": "23a57ad7-ba60-49da-82c3-02f918ae6b06",
-                                                "code": "FW",
+                                                "id": "d4dd7a24-9fd6-4461-995a-da8d990934b8",
+                                                "code": "FK",
                                                 "name": "Graff Zeppeline",
+                                                "terminal": "terminal 1",
                                                 "image": "https://placehold.co/600x400"
-                                            }
+                                              }
                                         }
                                     }
                                 }
@@ -1536,6 +1556,16 @@
                 ],
                 "parameters": [
                     {
+                        "name": "search",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "Soekarno-Hatta"
+                        },
+                        "description": "Search Airport"
+                    },
+                    {
                         "name": "page",
                         "in": "query",
                         "required": false,
@@ -1551,9 +1581,59 @@
                         "required": false,
                         "schema": {
                             "type": "integer",
-                            "example": 5
+                            "example": 10
                         },
                         "description": "Limit Page"
+                    },
+                    {
+                        "name": "code",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "CGK"
+                        },
+                        "description": "Airport Code"
+                    },
+                    {
+                        "name": "name",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "Soekarno-Hatta"
+                        },
+                        "description": "Airport Name"
+                    },
+                    {
+                        "name": "country",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "Indonesia"
+                        },
+                        "description": "Country"
+                    },
+                    {
+                        "name": "city",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "Jakarta"
+                        },
+                        "description": "City"
+                    },
+                    {
+                        "name": "continent",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "Asia"
+                        },
+                        "description": "Continent"
                     }
                 ],
                 "responses": {
@@ -1590,74 +1670,94 @@
                                             "type": "object",
                                             "example": [
                                                 {
-                                                    "id": "97990dda-c803-49c2-9e88-cb0ba517a3a3",
-                                                    "name": "APT Pranoto",
-                                                    "code": "AAP",
+                                                    "id": "clxk7r32c00004o2rcc6zfg74",
+                                                    "name": "Soekarno-Hatta International Airport",
+                                                    "code": "CGK",
                                                     "country": "Indonesia",
-                                                    "city": "Samarinda"
+                                                    "city": "Jakarta",
+                                                    "continent": "Asia",
+                                                    "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif"
                                                   },
                                                   {
-                                                    "id": "clxdebzu80001bi6t7nvrmwwv",
+                                                    "id": "clxk7r32c00014o2rd4hki1s6",
                                                     "name": "Ngurah Rai International Airport",
                                                     "code": "DPS",
                                                     "country": "Indonesia",
-                                                    "city": "Denpasar"
+                                                    "city": "Denpasar",
+                                                    "continent": "Asia",
+                                                    "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif"
                                                   },
                                                   {
-                                                    "id": "clxdebzu80002bi6ts93ddcll",
+                                                    "id": "clxk7r32c00024o2rhnph40g6",
                                                     "name": "Juanda International Airport",
                                                     "code": "SUB",
                                                     "country": "Indonesia",
-                                                    "city": "Surabaya"
+                                                    "city": "Surabaya",
+                                                    "continent": "Asia",
+                                                    "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif"
                                                   },
                                                   {
-                                                    "id": "clxdebzu80003bi6tfuhrcbbk",
+                                                    "id": "clxk7r32c00034o2rl34mc4nl",
                                                     "name": "Kuala Namu International Airport",
                                                     "code": "KNO",
                                                     "country": "Indonesia",
-                                                    "city": "Medan"
+                                                    "city": "Medan",
+                                                    "continent": "Asia",
+                                                    "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif"
                                                   },
                                                   {
-                                                    "id": "clxdebzu80004bi6tbd26fx57",
+                                                    "id": "clxk7r32c00044o2rzkw4t1wu",
                                                     "name": "Sultan Hasanuddin International Airport",
                                                     "code": "UPG",
                                                     "country": "Indonesia",
-                                                    "city": "Makassar"
+                                                    "city": "Makassar",
+                                                    "continent": "Asia",
+                                                    "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif"
                                                   },
                                                   {
-                                                    "id": "clxdebzu80005bi6tc1p3fjxo",
+                                                    "id": "clxk7r32d00054o2rnos3tfq2",
                                                     "name": "Ahmad Yani International Airport",
                                                     "code": "SRG",
                                                     "country": "Indonesia",
-                                                    "city": "Semarang"
+                                                    "city": "Semarang",
+                                                    "continent": "Asia",
+                                                    "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif"
                                                   },
                                                   {
-                                                    "id": "clxdebzu80006bi6t65qleu2r",
+                                                    "id": "clxk7r32d00064o2r8dh4vhvk",
                                                     "name": "Husein Sastranegara International Airport",
                                                     "code": "BDO",
                                                     "country": "Indonesia",
-                                                    "city": "Bandung"
+                                                    "city": "Bandung",
+                                                    "continent": "Asia",
+                                                    "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif"
                                                   },
                                                   {
-                                                    "id": "clxdebzu80007bi6tzccc25py",
+                                                    "id": "clxk7r32d00074o2r8msrqv8u",
                                                     "name": "Adisutjipto International Airport",
                                                     "code": "JOG",
                                                     "country": "Indonesia",
-                                                    "city": "Yogyakarta"
+                                                    "city": "Yogyakarta",
+                                                    "continent": "Asia",
+                                                    "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif"
                                                   },
                                                   {
-                                                    "id": "clxdebzu80008bi6tvmhnvuhf",
+                                                    "id": "clxk7r32d00084o2r6hfn1mig",
                                                     "name": "Sepinggan International Airport",
                                                     "code": "BPN",
                                                     "country": "Indonesia",
-                                                    "city": "Balikpapan"
+                                                    "city": "Balikpapan",
+                                                    "continent": "Asia",
+                                                    "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif"
                                                   },
                                                   {
-                                                    "id": "clxdebzu80009bi6tq4zzuvtk",
+                                                    "id": "clxk7r32d00094o2ryd5nghk1",
                                                     "name": "Sultan Syarif Kasim II International Airport",
                                                     "code": "PKU",
                                                     "country": "Indonesia",
-                                                    "city": "Pekanbaru"
+                                                    "city": "Pekanbaru",
+                                                    "continent": "Asia",
+                                                    "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif"
                                                   }
                                             ]
                                         }
@@ -1699,6 +1799,14 @@
                                     "city": {
                                         "type": "string",
                                         "example": "Samarinda"
+                                    },
+                                    "image": {
+                                        "type": "string",
+                                        "example": ""
+                                    },
+                                    "continent": {
+                                        "type": "string",
+                                        "example": "Asia"
                                     }
                                 }
                             }
@@ -1722,14 +1830,13 @@
                                             "example": "Airport created successfully"
                                         },
                                         "data": {
-                                            "type": "object",
-                                            "example": {
-                                                "id": "97990dda-c803-49c2-9e88-cb0ba517a3a3",
-                                                "name": "APT Pranoto",
-                                                "code": "AAP",
-                                                "country": "Indonesia",
-                                                "city": "Samarinda"
-                                            }
+                                            "id": "1ef2ca51-7cf2-44a4-ac7f-90e2022e4112",
+                                            "name": "APT Pranoto",
+                                            "code": "AAP",
+                                            "country": "Indonesia",
+                                            "city": "Samarinda",
+                                            "continent": "Asia",
+                                            "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/1718712945116.png"
                                         }
                                     }
                                 }
@@ -1796,7 +1903,7 @@
                         "required": true,
                         "schema": {
                             "type": "string",
-                            "example": "db423cc7-6342-4eb4-97c2-1e7c67d6455c"
+                            "example": "clxk7r32d00084o2r6hfn1mig"
                         },
                         "description": "Airport ID"
                     }
@@ -1820,12 +1927,14 @@
                                         "data": {
                                             "type": "object",
                                             "example": {
-                                                "id": "db423cc7-6342-4eb4-97c2-1e7c67d6455c",
-                                                "name": "APT Pranoto",
-                                                "code": "AAP",
+                                                "id": "clxk7r32d00084o2r6hfn1mig",
+                                                "name": "Sepinggan International Airport",
+                                                "code": "BPN",
                                                 "country": "Indonesia",
-                                                "city": "Samarinda"
-                                            }
+                                                "city": "Balikpapan",
+                                                "continent": "Asia",
+                                                "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif"
+                                              }
                                         }
                                     }
                                 }
@@ -1850,7 +1959,7 @@
                         "required": true,
                         "schema": {
                             "type": "string",
-                            "example": "db423cc7-6342-4eb4-97c2-1e7c67d6455c"
+                            "example": "1ef2ca51-7cf2-44a4-ac7f-90e2022e4112"
                         },
                         "description": "Airport ID"
                     }
@@ -1888,14 +1997,13 @@
                                             "example": "Airport updated successfully"
                                         },
                                         "data": {
-                                            "type": "object",
-                                            "example": {
-                                                "id": "db423cc7-6342-4eb4-97c2-1e7c67d6455c",
-                                                "name": "Aji Pangeran Tumenggung Pranoto",
-                                                "code": "AAP",
-                                                "country": "Indonesia",
-                                                "city": "Samarinda"
-                                            }
+                                            "id": "1ef2ca51-7cf2-44a4-ac7f-90e2022e4112",
+                                            "name": "Aji Pangeran Tumenggung Pranoto",
+                                            "code": "AAP",
+                                            "country": "Indonesia",
+                                            "city": "Samarinda",
+                                            "continent": "Asia",
+                                            "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/1718712945116.png"
                                         }
                                     }
                                 }
@@ -5145,6 +5253,86 @@
                 }
             }
         },
+        "/transactions/cancel/{id}": {
+            "post": {
+                "tags": ["Dashboards"],
+                "summary": "Return result HIT API get transaction detail by id",
+                "description": "This is an API for getting transaction detail based on Id",
+                "security": [
+                    {
+                        "bearerToken": []
+                    }
+                ],
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "8007ccf2-5981-42bd-ad45-556bd5d48470"
+                        },
+                        "description": "Order ID"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success getting transaction data based on Id",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "ticket transactions data retrieved successfully"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "example": {
+                                                "transaction_status": "cancel",
+                                                "payment_status": "accept",
+                                                "transaction_id": "79c7fb6a-f016-4981-9abc-a0a1f800cb08",
+                                                "order_id": "e9c6949d-c3c6-4472-92b4-13951d4b6399",
+                                                "merchant_id": "G179901768",
+                                                "currency": "IDR",
+                                                "gross_amount": "1545.00",
+                                                "payment_type": "qris",
+                                                "transaction_time": "2024-06-23 16:38:22"
+                                              }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "ID not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "string",
+                                            "example": false
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Transaction not found"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/transactions/transactionDetail/{id}": {
             "delete": {
                 "tags": ["Dashboards"],
@@ -7153,25 +7341,36 @@
                                             "type": "object",
                                             "example": [
                                                 {
-                                                    "id": "4d535c39-bf50-45ac-829f-005be5d046a7",
-                                                    "type": "Information",
-                                                    "notificationsTitle": "Pemberitahuan penerbangan",
-                                                    "notificationsContent": "Penerbangan anda ke Bali akan segera berangkat 2 jam lagi. ayo buruan ke gerbang keberangkatan",
-                                                    "date": "2030-01-01T00:00:00.000Z"
+                                                    "id": "1762ca3f-80e1-40fd-a61e-0badeebf8237",
+                                                    "type": "Update",
+                                                    "notificationsTitle": "Pembaruan Aplikasi",
+                                                    "notificationsContent": "Ada update baru loh buat aplikasi kami. Nikmati fitur baru sekarang!",
+                                                    "date": "2030-01-01",
+                                                    "time": "08:00"
                                                   },
                                                   {
-                                                    "id": "8da5aff1-8700-4322-80a9-d70213582f17",
-                                                    "type": "Promotions",
-                                                    "notificationsTitle": "Diskon 50% buat kamu, iya kamu 😘",
-                                                    "notificationsContent": "Dapatkan potongan 50% dalam pembelian tiket!, promo ini berlaku untuk semua penerbangan",
-                                                    "date": "2030-01-01T00:00:00.000Z"
-                                                  },
-                                                  {
-                                                    "id": "e91539fe-bf86-43cf-8105-c7f20dcad962",
+                                                    "id": "5ad5e7b5-6873-43a9-a496-cd980231fb9d",
                                                     "type": "Warning",
                                                     "notificationsTitle": "Pesawat kamu sudah mau berangkat!",
                                                     "notificationsContent": "Jangan sampai ketinggalan pesawat! ayo buruan Check-in, pesawat kamu akan berangkat sebentar lagi",
-                                                    "date": "2030-01-01T00:00:00.000Z"
+                                                    "date": "2030-01-01",
+                                                    "time": "08:00"
+                                                  },
+                                                  {
+                                                    "id": "678d45df-341a-4814-87d3-6ba2dbb1d602",
+                                                    "type": "Information",
+                                                    "notificationsTitle": "Pemberitahuan penerbangan",
+                                                    "notificationsContent": "Penerbangan anda ke Bali akan segera berangkat 2 jam lagi. ayo buruan ke gerbang keberangkatan",
+                                                    "date": "2030-01-01",
+                                                    "time": "08:00"
+                                                  },
+                                                  {
+                                                    "id": "6aae5e67-367b-4635-a5a2-bfda7588a68e",
+                                                    "type": "Promotions",
+                                                    "notificationsTitle": "Diskon 50% buat kamu, iya kamu 😘",
+                                                    "notificationsContent": "Dapatkan potongan 50% dalam pembelian tiket!, promo ini berlaku untuk semua penerbangan",
+                                                    "date": "2030-01-01",
+                                                    "time": "08:00"
                                                   }
                                             ]
                                         }
@@ -7336,7 +7535,7 @@
                                                 "notificationsTitle": "Pemberitahuan penerbangan",
                                                 "notificationsContent": "Penerbangan anda ke Bali akan segera berangkat 2 jam lagi. ayo buruan ke gerbang keberangkatan",
                                                 "date": "2030-01-01T00:00:00.000Z"
-                                            }
+                                              }
                                         }
                                     }
                                 }
