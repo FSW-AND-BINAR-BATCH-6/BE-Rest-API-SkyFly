@@ -5,7 +5,7 @@ const router = require("./routes");
 const logger = require("morgan");
 const { MORGAN_FORMAT } = require("./config/logger");
 const helmet = require("helmet");
-const { rateLimit } = require("./lib/rateLimit");
+// const { rateLimit } = require("./lib/rateLimit");
 
 const app = express();
 
@@ -16,27 +16,30 @@ app.set("views", __dirname + "/views");
 app.use(
     cors({
         origin: "*",
-        methods: "GET, POST, PUT, DELETE",
-        allowedHeaders: "Content-Type, Authorization",
+        methods: "GET, POST, PUT, DELETE, PATCH",
+        allowedHeaders: "Content-Type, Authorization, Accept, Accept-Language, Accept-Encoding",
+        exposedHeaders: "Content-Type, Authorization, Accept, Accept-Language, Accept-Encoding",
+        maxAge: 3600,
     })
 );
 
 //* Limit hit API from the same IP only 100 times per 15 minutes
-app.use(
-    rateLimit(
-        15 * 60 * 1000,
-        100,
-        "Too many requests from this IP, please try again later.",
-        true
-    )
-);
+// app.use(
+//     rateLimit(
+//         15 * 60 * 1000,
+//         100,
+//         "Too many requests from this IP, please try again later.",
+//         true
+//     )
+// );
 
-app.use(helmet());
+
 app.use(express.json());
 app.use(logger(MORGAN_FORMAT));
 app.use(express.urlencoded({ extended: true }));
 
 app.use(router);
+app.use(helmet());
 
 //* Error Response Handler
 // eslint-disable-next-line no-unused-vars

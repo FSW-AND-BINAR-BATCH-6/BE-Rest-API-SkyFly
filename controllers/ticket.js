@@ -107,56 +107,25 @@ const getAllTicket = async (req, res, next) => {
 
 const getTicketById = async (req, res, next) => {
     try {
-        const ticket = await prisma.ticket.findUnique({
-            where: { id: req.params.id },
+        const ticket = await prisma.ticket.findFirst({
+            where: { ticketTransactionId: req.params.ticketTransactionId },
             include: {
-                flight: {
-                    select: {
-                        id: true,
-                        departureDate: true,
-                        departureAirport: true,
-                        arrivalDate: true,
-                        destinationAirport: true,
-                        price: true,
-                        plane: true,
-                    },
-                },
+                flight: true,
                 user: {
-                    select: {
-                        id: true,
-                        name: true,
+                    include: {
+                        auth: {
+                            select: {
+                                email: true,
+                                isVerified: true,
+                                id: true,
+                            },
+                        },
                     },
                 },
-                seat: {
-                    select: {
-                        id: true,
-                        seatNumber: true,
-                        type: true,
-                    },
-                },
+                seat: true,
                 ticketTransaction: {
-                    select: {
-                        id: true,
-                        orderId: true,
-                        totalPrice: true,
-                        status: true,
-                        bookingDate: true,
-                    },
-                },
-                ticketTransactionDetail: {
-                    select: {
-                        id: true,
-                        transactionId: true,
-                        price: true,
-                        name: true,
-                        familyName: true,
-                        dob: true,
-                        citizenship: true,
-                        passport: true,
-                        issuingCountry: true,
-                        validityPeriod: true,
-                        flightId: true,
-                        seatId: true,
+                    include: {
+                        Transaction_Detail: true,
                     },
                 },
             },
@@ -271,8 +240,8 @@ const updateTicket = async (req, res, next) => {
         req.body;
 
     try {
-        const ticket = await prisma.ticket.findUnique({
-            where: { id: req.params.id },
+        const ticket = await prisma.ticket.findFirst({
+            where: { ticketTransactionId: req.params.ticketTransactionId },
             include: {
                 flight: true,
                 user: true,
@@ -309,8 +278,8 @@ const updateTicket = async (req, res, next) => {
 
 const deleteTicket = async (req, res, next) => {
     try {
-        const ticket = await prisma.ticket.findUnique({
-            where: { id: req.params.id },
+        const ticket = await prisma.ticket.findFirst({
+            where: { ticketTransactionId: req.params.ticketTransactionId },
         });
 
         if (!ticket) {
@@ -331,10 +300,16 @@ const deleteTicket = async (req, res, next) => {
 
 const generateTicket = async (req, res, next) => {
     try {
-        let data = [];
+        // Log request parameters to verify values
+        console.log("User ID:", req.user.id);
+        console.log("Ticket Transaction ID:", req.query.ticketTransactionId);
 
+        // Fetch tickets based on userId and ticketTransactionId
         const tickets = await prisma.ticket.findMany({
-            where: { userId: req.user.id },
+            where: {
+                userId: req.user.id,
+                ticketTransactionId: req.query.ticketTransactionId,
+            },
             include: {
                 user: {
                     include: {
@@ -364,13 +339,13 @@ const generateTicket = async (req, res, next) => {
             },
         });
 
-        data.push(...tickets);
+        // Log the first ticket data to verify what's fetched
+        console.log("First Ticket:", tickets[0]);
 
-        console.log(data[0]);
-
+        // Render the view with fetched data
         res.render("templates/ticket.ejs", {
-            data: data,
-            tickets: tickets,
+            data: tickets,
+            tickets: tickets, // You can omit this if data and tickets are the same
         });
     } catch (error) {
         next(createHttpError(500, { message: error.message }));
