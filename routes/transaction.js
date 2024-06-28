@@ -48,7 +48,8 @@ router.get("/admin/admin/admin", authentication, checkRole(["ADMIN"]), getAllTra
 // router.get("/admin/admin/admin", getAllTransaction);
 router.get(
     "/admin/:id",
-
+    authentication,
+    checkRole(["ADMIN"]),
     getAdminTransactionById
 );
 router.put("/:id", authentication, checkRole(["ADMIN"]), updateTransaction);
