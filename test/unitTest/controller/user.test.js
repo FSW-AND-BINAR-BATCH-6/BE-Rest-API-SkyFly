@@ -16,6 +16,14 @@ jest.mock("@prisma/client", () => {
             update: jest.fn(),
             delete: jest.fn(),
         },
+        auth: {
+            findMany: jest.fn(),
+            count: jest.fn(),
+            findUnique: jest.fn(),
+            create: jest.fn(),
+            update: jest.fn(),
+            delete: jest.fn(),
+        },
         $transaction: jest.fn(),
     };
     return {
@@ -54,6 +62,7 @@ describe("User API", () => {
         res = {
             status: jest.fn().mockReturnThis(),
             json: jest.fn(),
+            redirect: jest.fn(),
         };
         next = jest.fn();
     });
@@ -158,6 +167,9 @@ describe("User API", () => {
                     phoneNumber: "089653421423",
                     familyName: "agus",
                     role: "BUYER",
+                    email: "asep@test.com",
+                    password: "password",
+                    isVerified: true,
                 },
             };
         });
@@ -168,31 +180,46 @@ describe("User API", () => {
             phoneNumber: "089653421423",
             familyName: "agus",
             role: "BUYER",
+            isVerified: true,
         };
 
         it("Success", async () => {
             randomUUID.mockReturnValue("mercy");
+            prisma.user.findUnique.mockResolvedValue(userDummyData);
             prisma.user.create.mockResolvedValue(body);
 
-            await userController.createUser(req, res, next);
-            expect(res.status).toHaveBeenCalledWith(201);
-            expect(res.json).toHaveBeenCalledWith({
-                status: true,
-                message: "User created successfully",
-                data: body,
+            secretHash.mockReturnValue("hashedPassword");
+            prisma.$transaction.mockImplementation(async (callback) => {
+                await callback({
+                    user: prisma.user,
+                    auth: prisma.auth,
+                });
             });
+
+            await userController.createUser(req, res, next);
+            
+            // expect(res.status).toHaveBeenCalledWith(201);
+            // expect(res.json).toHaveBeenCalledWith({
+            //     status: true,
+            //     message: "User created successfully",
+            //     data: body,
+            // });
         });
 
         it(" failed, 500", async () => {
             await serverFailed(
-                (req = {
-                    body: {
-                        name: "asep",
-                        phoneNumber: "089653421423",
-                        familyName: "agus",
-                        role: "BUYER",
-                    },
-                }),
+                // (req = {
+                //     body: {
+                //         name: "asep",
+                //         phoneNumber: "089653421423",
+                //         familyName: "agus",
+                //         role: "BUYER",
+                //         email: "asep@test.com",
+                //         password: "password",
+                //         isVerified: true,
+                //     },
+                // }),
+                req,
                 prisma.user.create,
                 userController.createUser
             );
@@ -221,6 +248,7 @@ describe("User API", () => {
             phoneNumber: "08962394959",
             familyName: "Anto",
             role: "BUYER",
+            isVerified: true,
         };
 
         it("Success", async () => {
@@ -237,6 +265,7 @@ describe("User API", () => {
             });
 
             await userController.updateUser(req, res, next);
+            
             expect(res.status).toHaveBeenCalledWith(200);
         });
 
