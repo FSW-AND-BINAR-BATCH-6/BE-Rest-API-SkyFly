@@ -122,14 +122,14 @@ const createUser = async (req, res, next) => {
                     name,
                     phoneNumber,
                     familyName,
-                    role: role, 
+                    role: role,
                     auth: {
                         create: {
                             id: randomUUID(), // Generate random UUID for auth ID
                             email,
                             password: hashedPassword,
                             otpToken: null,
-                            isVerified: isVerified , 
+                            isVerified: isVerified,
                             secretToken: null,
                         },
                     },
@@ -181,7 +181,6 @@ const updateUser = async (req, res, next) => {
                     phoneNumber,
                     familyName,
                     role,
-                    isVerified, // Memasukkan isVerified dari body permintaan
                 },
             });
 
@@ -189,7 +188,10 @@ const updateUser = async (req, res, next) => {
             if (hashedPassword) {
                 await tx.auth.update({
                     where: { userId: userId },
-                    data: { password: hashedPassword },
+                    data: {
+                        password: hashedPassword,
+                        isVerified,
+                    },
                 });
             }
 
