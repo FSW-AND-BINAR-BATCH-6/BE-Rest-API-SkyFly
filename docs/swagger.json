@@ -7261,25 +7261,36 @@
                                             "type": "object",
                                             "example": [
                                                 {
-                                                    "id": "4d535c39-bf50-45ac-829f-005be5d046a7",
-                                                    "type": "Information",
-                                                    "notificationsTitle": "Pemberitahuan penerbangan",
-                                                    "notificationsContent": "Penerbangan anda ke Bali akan segera berangkat 2 jam lagi. ayo buruan ke gerbang keberangkatan",
-                                                    "date": "2030-01-01T00:00:00.000Z"
+                                                    "id": "1762ca3f-80e1-40fd-a61e-0badeebf8237",
+                                                    "type": "Update",
+                                                    "notificationsTitle": "Pembaruan Aplikasi",
+                                                    "notificationsContent": "Ada update baru loh buat aplikasi kami. Nikmati fitur baru sekarang!",
+                                                    "date": "2030-01-01",
+                                                    "time": "08:00"
                                                   },
                                                   {
-                                                    "id": "8da5aff1-8700-4322-80a9-d70213582f17",
-                                                    "type": "Promotions",
-                                                    "notificationsTitle": "Diskon 50% buat kamu, iya kamu 😘",
-                                                    "notificationsContent": "Dapatkan potongan 50% dalam pembelian tiket!, promo ini berlaku untuk semua penerbangan",
-                                                    "date": "2030-01-01T00:00:00.000Z"
-                                                  },
-                                                  {
-                                                    "id": "e91539fe-bf86-43cf-8105-c7f20dcad962",
+                                                    "id": "5ad5e7b5-6873-43a9-a496-cd980231fb9d",
                                                     "type": "Warning",
                                                     "notificationsTitle": "Pesawat kamu sudah mau berangkat!",
                                                     "notificationsContent": "Jangan sampai ketinggalan pesawat! ayo buruan Check-in, pesawat kamu akan berangkat sebentar lagi",
-                                                    "date": "2030-01-01T00:00:00.000Z"
+                                                    "date": "2030-01-01",
+                                                    "time": "08:00"
+                                                  },
+                                                  {
+                                                    "id": "678d45df-341a-4814-87d3-6ba2dbb1d602",
+                                                    "type": "Information",
+                                                    "notificationsTitle": "Pemberitahuan penerbangan",
+                                                    "notificationsContent": "Penerbangan anda ke Bali akan segera berangkat 2 jam lagi. ayo buruan ke gerbang keberangkatan",
+                                                    "date": "2030-01-01",
+                                                    "time": "08:00"
+                                                  },
+                                                  {
+                                                    "id": "6aae5e67-367b-4635-a5a2-bfda7588a68e",
+                                                    "type": "Promotions",
+                                                    "notificationsTitle": "Diskon 50% buat kamu, iya kamu 😘",
+                                                    "notificationsContent": "Dapatkan potongan 50% dalam pembelian tiket!, promo ini berlaku untuk semua penerbangan",
+                                                    "date": "2030-01-01",
+                                                    "time": "08:00"
                                                   }
                                             ]
                                         }
@@ -7444,7 +7455,7 @@
                                                 "notificationsTitle": "Pemberitahuan penerbangan",
                                                 "notificationsContent": "Penerbangan anda ke Bali akan segera berangkat 2 jam lagi. ayo buruan ke gerbang keberangkatan",
                                                 "date": "2030-01-01T00:00:00.000Z"
-                                            }
+                                              }
                                         }
                                     }
                                 }
