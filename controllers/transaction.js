@@ -1533,7 +1533,7 @@ const updateTransaction = async (req, res, next) => {
     // pake db transaction yak.. contoh ada di atas / di auth controller -> update user logged in
     // kalau perlu bikin function baru buat update transactionDetail satuan
     const { id } = req.params;
-    const { totalPrice, status, transactionDetails } = req.body;
+    const { totalPrice, tax, status, transactionDetails } = req.body;
 
     try {
         await prisma.$transaction(async (tx) => {
@@ -1550,6 +1550,7 @@ const updateTransaction = async (req, res, next) => {
                 where: { id: id },
                 data: {
                     totalPrice,
+                    tax,
                     status,
                 },
                 include: {
