@@ -43,7 +43,7 @@ router.put("/status/:orderId", authentication, updateTransaction);
 router.post("/cancel/:orderId", authentication, cancelTransaction);
 
 // dashboard action
-router.get("/admin", authentication, checkRole(["ADMIN"]), getAllTransaction);
+router.get("/admin/admin/admin", authentication, checkRole(["ADMIN"]), getAllTransaction);
 router.get(
     "/admin/:id",
     authentication,
