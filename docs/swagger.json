@@ -2173,6 +2173,16 @@
                         "description": "Search Departure Date"
                     },
                     {
+                        "name": "returnDate",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "2024-06-12"
+                        },
+                        "description": "Search Return Date"
+                    },
+                    {
                         "name": "minPrice",
                         "in": "query",
                         "required": false,
@@ -2218,9 +2228,49 @@
                         "required": false,
                         "schema": {
                             "type": "string",
-                            "example": ""
+                            "example": "In%20Flight%20Entertainment"
                         },
                         "description": "Facilities"
+                    },
+                    {
+                        "name": "adults",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 1
+                        },
+                        "description": "Passanger - Adult"
+                    },
+                    {
+                        "name": "children",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 0
+                        },
+                        "description": "Passanger - Child"
+                    },
+                    {
+                        "name": "infants",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "integer",
+                            "example": 0
+                        },
+                        "description": "Passanger - Infant"
+                    },
+                    {
+                        "name": "seatClass",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "ECONOMY"
+                        },
+                        "description": "Seat Class"
                     }
                 ],
                 "summary": "Return result HIT API get all flights data",
@@ -2243,164 +2293,155 @@
                                         },
                                         "totalItems": {
                                             "type": "integer",
-                                            "example": 4
+                                            "example": 1
                                         },
                                         "pagination": {
                                             "type": "object",
                                             "example": {
                                                 "totalPages": 1,
                                                 "currentPage": 1,
-                                                "pageItems": 4,
+                                                "pageItems": 2,
                                                 "nextPage": null,
                                                 "prevPage": null
+                                            }
+                                        },
+                                        "priceRanges": {
+                                            "type": "object",
+                                            "example": {
+                                                "ECONOMY": {
+                                                    "minPrice": "IDR 500.00",
+                                                    "maxPrice": "IDR 1,500,000.00"
+                                                    },
+                                                    "BUSINESS": {
+                                                    "minPrice": null,
+                                                    "maxPrice": null
+                                                    },
+                                                    "FIRST": {
+                                                    "minPrice": null,
+                                                    "maxPrice": null
+                                                    }
                                             }
                                         },
                                         "data": {
                                             "type": "object",
                                             "example": [
                                                 {
-                                                    "id": "clx43xg9900075fz6vvr0islw",
-                                                    "planeId": "clx43nfzg000n4sdazxheyjf9",
-                                                    "departureDate": "2024-06-06T10:00:30.000Z",
-                                                    "code": "JT-CGK-4",
+                                                    "id": "clxlhepav0001ior63tvy5nxw",
+                                                    "planeId": "851e3a98-23a6-40c6-a7da-cf4b217b84a3",
+                                                    "plane": {
+                                                      "name": "Sriwijaya Air",
+                                                      "code": "SJ",
+                                                      "image": "https://placehold.co/200x200",
+                                                      "terminal": "Terminal 1"
+                                                    },
+                                                    "departureDate": "2024-06-06",
+                                                    "departureTime": "17:00",
+                                                    "code": "SJ-CGK-1",
                                                     "departureAirport": {
-                                                      "id": "clx43nfz500004sdais1hns9z",
+                                                      "id": "clxlhdcsn000010fl81hqju0h",
                                                       "name": "Soekarno-Hatta International Airport",
                                                       "code": "CGK",
                                                       "country": "Indonesia",
-                                                      "city": "Jakarta"
+                                                      "city": "Jakarta",
+                                                      "continent": "Asia",
+                                                      "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif"
                                                     },
                                                     "transit": {
-                                                      "arrivalDate": "2024-06-07T11:00:00.000Z",
-                                                      "departureDate": "2024-06-07T11:15:00.000Z",
+                                                      "status": true,
+                                                      "arrivalDate": "2024-06-06",
+                                                      "arrivalTime": "18:00",
+                                                      "departureDate": "2024-06-06",
+                                                      "departureTime": "18:00",
                                                       "transitAirport": {
-                                                        "id": "clx43nfz500034sdar4rikgb0",
+                                                        "id": "clxlhdcso000310fl6qq6fhzx",
                                                         "name": "Kuala Namu International Airport",
                                                         "code": "KNO",
                                                         "country": "Indonesia",
-                                                        "city": "Medan"
+                                                        "city": "Medan",
+                                                        "continent": "Asia",
+                                                        "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif"
                                                       }
                                                     },
-                                                    "arrivalDate": "2024-05-23T11:45:00.000Z",
+                                                    "arrivalDate": "2024-06-06",
+                                                    "arrivalTime": "18:30",
                                                     "destinationAirport": {
-                                                      "id": "clx43nfz500084sda50n6hdsx",
-                                                      "name": "Sepinggan International Airport",
-                                                      "code": "BPN",
+                                                      "id": "clxlhdcso000610fl6m6r7dpu",
+                                                      "name": "Husein Sastranegara International Airport",
+                                                      "code": "BDO",
                                                       "country": "Indonesia",
-                                                      "city": "Balikpapan"
+                                                      "city": "Bandung",
+                                                      "continent": "Asia",
+                                                      "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif"
                                                     },
-                                                    "capacity": 64,
-                                                    "discount": 70,
-                                                    "price": 300000,
-                                                    "facilities": "In Flight Entertainment"
-                                                  },
+                                                    "capacity": 63,
+                                                    "discount": 50,
+                                                    "price": 500,
+                                                    "facilities": "20KG Baggage, Cabin Baggage 7KG, In Flight Entertainment",
+                                                    "duration": "1h 29m",
+                                                    "class": {
+                                                      "seatClass": "ECONOMY",
+                                                      "seatPrice": 500
+                                                    }
+                                                  }
+                                                ],
+                                                "returnFlights": [
                                                   {
-                                                    "id": "clx46roz80001xn3i7oyg132p",
-                                                    "planeId": "clx43nfzg000n4sdazxheyjf9",
-                                                    "departureDate": "2024-06-06T10:00:30.000Z",
-                                                    "code": "JT-CGK-1",
+                                                    "id": "clxlheul80003ior6ab20poro",
+                                                    "planeId": "851e3a98-23a6-40c6-a7da-cf4b217b84a3",
+                                                    "plane": {
+                                                      "name": "Sriwijaya Air",
+                                                      "code": "SJ",
+                                                      "terminal": "Terminal 1",
+                                                      "image": "https://placehold.co/200x200"
+                                                    },
+                                                    "departureDate": "2024-06-12",
+                                                    "departureTime": "17:00",
+                                                    "code": "SJ-BDO-1",
                                                     "departureAirport": {
-                                                      "id": "clx43nfz500004sdais1hns9z",
-                                                      "name": "Soekarno-Hatta International Airport",
-                                                      "code": "CGK",
+                                                      "id": "clxlhdcso000610fl6m6r7dpu",
+                                                      "name": "Husein Sastranegara International Airport",
+                                                      "code": "BDO",
                                                       "country": "Indonesia",
-                                                      "city": "Jakarta"
+                                                      "city": "Bandung",
+                                                      "continent": "Asia",
+                                                      "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif"
                                                     },
                                                     "transit": {
-                                                      "arrivalDate": "2024-06-07T11:00:00.000Z",
-                                                      "departureDate": "2024-06-07T11:15:00.000Z",
+                                                      "arrivalDate": "2024-06-12",
+                                                      "arrivalTime": "18:00",
+                                                      "departureDate": "2024-06-12",
+                                                      "departureTime": "18:00",
                                                       "transitAirport": {
-                                                        "id": "clx43nfz500034sdar4rikgb0",
+                                                        "id": "clxlhdcso000310fl6qq6fhzx",
                                                         "name": "Kuala Namu International Airport",
                                                         "code": "KNO",
                                                         "country": "Indonesia",
-                                                        "city": "Medan"
-                                                      }
+                                                        "city": "Medan",
+                                                        "continent": "Asia",
+                                                        "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif"
+                                                      },
+                                                      "status": true
                                                     },
-                                                    "arrivalDate": "2024-05-23T11:45:00.000Z",
+                                                    "arrivalDate": "2024-06-12",
+                                                    "arrivalTime": "18:30",
                                                     "destinationAirport": {
-                                                      "id": "clx43nfz500084sda50n6hdsx",
-                                                      "name": "Sepinggan International Airport",
-                                                      "code": "BPN",
-                                                      "country": "Indonesia",
-                                                      "city": "Balikpapan"
-                                                    },
-                                                    "capacity": 64,
-                                                    "discount": 100,
-                                                    "price": 0,
-                                                    "facilities": "In Flight Entertainment"
-                                                  },
-                                                  {
-                                                    "id": "clx46s36q0003xn3idvf37a5j",
-                                                    "planeId": "clx43nfzg000n4sdazxheyjf9",
-                                                    "departureDate": "2024-06-06T10:00:30.000Z",
-                                                    "code": "JT-CGK-2",
-                                                    "departureAirport": {
-                                                      "id": "clx43nfz500004sdais1hns9z",
+                                                      "id": "clxlhdcsn000010fl81hqju0h",
                                                       "name": "Soekarno-Hatta International Airport",
                                                       "code": "CGK",
                                                       "country": "Indonesia",
-                                                      "city": "Jakarta"
+                                                      "city": "Jakarta",
+                                                      "continent": "Asia",
+                                                      "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif"
                                                     },
-                                                    "transit": {
-                                                      "arrivalDate": "2024-06-07T11:00:00.000Z",
-                                                      "departureDate": "2024-06-07T11:15:00.000Z",
-                                                      "transitAirport": {
-                                                        "id": "clx43nfz500034sdar4rikgb0",
-                                                        "name": "Kuala Namu International Airport",
-                                                        "code": "KNO",
-                                                        "country": "Indonesia",
-                                                        "city": "Medan"
-                                                      }
-                                                    },
-                                                    "arrivalDate": "2024-05-23T11:45:00.000Z",
-                                                    "destinationAirport": {
-                                                      "id": "clx43nfz500084sda50n6hdsx",
-                                                      "name": "Sepinggan International Airport",
-                                                      "code": "BPN",
-                                                      "country": "Indonesia",
-                                                      "city": "Balikpapan"
-                                                    },
-                                                    "capacity": 64,
-                                                    "discount": 70,
-                                                    "price": 300000,
-                                                    "facilities": "In Flight Entertainment"
-                                                  },
-                                                  {
-                                                    "id": "clx7knj3n00032qgl4od87vw3",
-                                                    "planeId": "clx43nfzg000n4sdazxheyjf9",
-                                                    "departureDate": "2024-06-06T10:00:30.000Z",
-                                                    "code": "JT-CGK-2",
-                                                    "departureAirport": {
-                                                      "id": "clx43nfz500004sdais1hns9z",
-                                                      "name": "Soekarno-Hatta International Airport",
-                                                      "code": "CGK",
-                                                      "country": "Indonesia",
-                                                      "city": "Jakarta"
-                                                    },
-                                                    "transit": {
-                                                      "arrivalDate": "2024-06-07T11:00:00.000Z",
-                                                      "departureDate": "2024-06-07T11:15:00.000Z",
-                                                      "transitAirport": {
-                                                        "id": "clx43nfz500034sdar4rikgb0",
-                                                        "name": "Kuala Namu International Airport",
-                                                        "code": "KNO",
-                                                        "country": "Indonesia",
-                                                        "city": "Medan"
-                                                      }
-                                                    },
-                                                    "arrivalDate": "2024-05-23T11:45:00.000Z",
-                                                    "destinationAirport": {
-                                                      "id": "clx43nfz500084sda50n6hdsx",
-                                                      "name": "Sepinggan International Airport",
-                                                      "code": "BPN",
-                                                      "country": "Indonesia",
-                                                      "city": "Balikpapan"
-                                                    },
-                                                    "capacity": 64,
-                                                    "discount": 70,
-                                                    "price": 300000,
-                                                    "facilities": "In Flight Entertainment"
+                                                    "capacity": 63,
+                                                    "discount": 50,
+                                                    "price": 500,
+                                                    "facilities": "20KG Baggage, Cabin Baggage 7KG, In Flight Entertainment",
+                                                    "duration": "1h 29m",
+                                                    "class": {
+                                                      "seatClass": "ECONOMY",
+                                                      "seatPrice": 500
+                                                    }
                                                   }
                                             ]
                                         }
@@ -2439,22 +2480,6 @@
                                         "type": "string",
                                         "example": "clx43nfz500004sdais1hns9z"
                                     },
-                                    "arrivalDate": {
-                                        "type": "string",
-                                        "example": "2024-05-23 11:45:00"
-                                    },
-                                    "destinationAirportId": {
-                                        "type": "string",
-                                        "example": "clx43nfz500084sda50n6hdsx"
-                                    },
-                                    "price": {
-                                        "type": "integer",
-                                        "example": 1000000
-                                    },
-                                    "transitAirportId": {
-                                        "type": "string",
-                                        "example": "clx43nfz500034sdar4rikgb0"
-                                    },
                                     "transitArrivalDate": {
                                         "type": "string",
                                         "example": "2024-06-07 11:00:00"
@@ -2463,6 +2488,18 @@
                                         "type": "string",
                                         "example": "2024-06-07 11:15:00"
                                     },
+                                    "transitAirportId": {
+                                        "type": "string",
+                                        "example": "clx43nfz500034sdar4rikgb0"
+                                    },
+                                    "arrivalDate": {
+                                        "type": "string",
+                                        "example": "2024-05-23 11:45:00"
+                                    },
+                                    "destinationAirportId": {
+                                        "type": "string",
+                                        "example": "clx43nfz500084sda50n6hdsx"
+                                    },
                                     "capacity": {
                                         "type": "integer",
                                         "example": 64
@@ -2470,6 +2507,10 @@
                                     "discount": {
                                         "type": "string",
                                         "example": "70.0"
+                                    },
+                                    "price": {
+                                        "type": "integer",
+                                        "example": 1000000
                                     },
                                     "facilities": {
                                         "type": "string",
@@ -2699,7 +2740,7 @@
                         "required": true,
                         "schema": {
                             "type": "string",
-                            "example": "clx43qmf100016qxfhzx241yx"
+                            "example": "clxk221vq0001jo3koe04zb7p"
                         },
                         "description": "flight ID"
                     }
@@ -2723,50 +2764,67 @@
                                         "data": {
                                             "type": "object",
                                             "example": {
-                                                "id": "clxkt98yw000njnepyaschw9t",
-                                                "planeId": "ed5025ac-cc90-421e-88b4-efa413472820",
+                                                "id": "clxlh5a4e0003nsry71q51wjk",
+                                                "planeId": "34f6c7d1-554a-496a-a484-cfd1397fb47d",
                                                 "plane": {
-                                                "name": "Garuda Indonesia",
-                                                "code": "GA",
-                                                "image": "https://placehold.co/200x200",
-                                                "terminal": "Terminal 3"
+                                                  "name": "Batik Air",
+                                                  "code": "ID",
+                                                  "image": "https://placehold.co/200x200",
+                                                  "terminal": "Terminal 3"
                                                 },
-                                                "departureDate": "2024-06-01",
-                                                "departureTime": "08:00",
-                                                "code": "GA.CGK.DPS",
+                                                "departureDate": "2024-06-12",
+                                                "departureTime": "17:00",
+                                                "code": "ID-BDO-1",
                                                 "departureAirport": {
-                                                "id": "clxkt96nc0000jnep3x78psc1",
-                                                "name": "Soekarno-Hatta International Airport",
-                                                "code": "CGK",
-                                                "country": "Indonesia",
-                                                "city": "Jakarta",
-                                                "continent": "Asia",
-                                                "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif"
+                                                  "id": "clxlgy9pr0006hdtrynztzvkd",
+                                                  "name": "Husein Sastranegara International Airport",
+                                                  "code": "BDO",
+                                                  "country": "Indonesia",
+                                                  "city": "Bandung",
+                                                  "continent": "Asia",
+                                                  "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif"
                                                 },
                                                 "transit": {
-                                                "status": false
+                                                  "status": true,
+                                                  "arrivalDate": "2024-06-12",
+                                                  "arrivalTime": "18:00",
+                                                  "departureDate": "2024-06-12",
+                                                  "departureTime": "18:00",
+                                                  "transitAirport": {
+                                                    "id": "clxlgy9pr0009hdtr7zx88hef",
+                                                    "name": "Sultan Syarif Kasim II International Airport",
+                                                    "code": "PKU",
+                                                    "country": "Indonesia",
+                                                    "city": "Pekanbaru",
+                                                    "continent": "Asia",
+                                                    "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif"
+                                                  }
                                                 },
-                                                "arrivalDate": "2024-06-01",
-                                                "arrivalTime": "12:00",
+                                                "arrivalDate": "2024-06-12",
+                                                "arrivalTime": "18:30",
                                                 "destinationAirport": {
-                                                "id": "clxkt96nd0001jnep2risax1u",
-                                                "name": "Ngurah Rai International Airport",
-                                                "code": "DPS",
-                                                "country": "Indonesia",
-                                                "city": "Denpasar",
-                                                "continent": "Asia",
-                                                "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif"
+                                                  "id": "clxlgy9pr0000hdtrjwf63tvm",
+                                                  "name": "Soekarno-Hatta International Airport",
+                                                  "code": "CGK",
+                                                  "country": "Indonesia",
+                                                  "city": "Jakarta",
+                                                  "continent": "Asia",
+                                                  "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif"
                                                 },
-                                                "capacity": 72,
-                                                "discount": null,
-                                                "price": 1500000,
-                                                "facilities": null,
-                                                "duration": "4h 0m",
+                                                "capacity": 64,
+                                                "discount": 50,
+                                                "price": 500,
+                                                "facilities": "20KG Baggage, Cabin Baggage 7KG, In Flight Entertainment",
+                                                "duration": "1h 29m",
                                                 "seatClasses": [
-                                                "ECONOMY"
+                                                  "ECONOMY",
+                                                  "BUSINESS",
+                                                  "FIRST"
                                                 ],
                                                 "prices": {
-                                                "ECONOMY": 1500000
+                                                  "ECONOMY": null,
+                                                  "BUSINESS": null,
+                                                  "FIRST": null
                                                 }
                                             }
                                         }
@@ -2813,7 +2871,7 @@
                         "required": true,
                         "schema": {
                             "type": "string",
-                            "example": "clx7kgcrn00012qglr9pt9rs5"
+                            "example": "clxk221vq0001jo3koe04zb7p"
                         },
                         "description": "flight ID"
                     }
@@ -2827,35 +2885,35 @@
                                 "properties": {
                                     "planeId": {
                                         "type": "string",
-                                        "example": "clxcri9vs000l11ptuvazogmc"
+                                        "example": "1921659e-f792-4485-b980-107034dbbdae"
                                     },
                                     "departureDate": {
                                         "type": "string",
-                                        "example": "2024-06-06T10:00:30.000Z"
+                                        "example": "2024-06-06 10:00:30"
                                     },
                                     "departureAirportId": {
                                         "type": "string",
-                                        "example": "clxcri9vm000011ptbbsmc9co"
+                                        "example": "clxk1prda0000qdcn12jq8ejk"
                                     },
                                     "transitArrivalDate": {
                                         "type": "string",
-                                        "example": "2024-06-06T11:00:00.000Z"
+                                        "example": "2024-06-06 11:00:00"
                                     },
                                     "transitDepartureDate":{
                                         "type": "string",
-                                        "example": "2024-06-06T11:15:00.000Z"
+                                        "example": "2024-06-06 11:15:00"
                                     },
                                     "transitAirportId":{
                                         "type": "string",
-                                        "example": "clxcri9vm000611ptanvcw8lb"
+                                        "example": "clxk1prdb0005qdcn23jfeycc"
                                     },
                                     "arrivalDate": {
                                         "type": "string",
-                                        "example": "2024-06-06T11:45:00.000Z"
+                                        "example": "2024-06-06 12:00:00"
                                     },
                                     "destinationAirportId": {
                                         "type": "string",
-                                        "example": "clxcri9vm000511ptt7dvx1xa"
+                                        "example": "clxk1prdb0006qdcnjiw27rae"
                                     },
                                     "capacity":{
                                         "type": "integer",
@@ -2863,15 +2921,15 @@
                                     },
                                     "discount": {
                                         "type": "string",
-                                        "example": "70.0"
+                                        "example": "50.0"
                                     },
                                     "price": {
                                         "type": "integer",
-                                        "example": 30000
+                                        "example": 1000
                                     },
                                     "facilities": {
                                         "type": "string",
-                                        "example": "In Flight Entertainment"
+                                        "example": "20KG Baggage, Cabin Baggage 7KG, In Flight Entertainment"
                                     }
                                 }
                             }
@@ -2898,57 +2956,63 @@
                                             "type": "object",
                                             "example": {
                                                 "beforeUpdate": {
-                                                "id": "clxcriakg001o11ptitx6jie7",
-                                                "planeId": "clxcri9vs000l11ptuvazogmc",
-                                                "departureDate": "2024-06-04T11:00:00.000Z",
-                                                "departureAirportId": "clxcri9vm000011ptbbsmc9co",
-                                                "arrivalDate": "2024-06-04T15:00:00.000Z",
-                                                "destinationAirportId": "clxcri9vm000411pth0w0csji",
-                                                "transitAirportId": null,
-                                                "transitArrivalDate": null,
-                                                "transitDepartureDate": null,
-                                                "capacity": 72,
-                                                "price": 1400000,
-                                                "discount": null,
-                                                "facilities": null,
-                                                "code": "SJ.CGK.UPG"
-                                                },
+                                                    "id": "clxk221vq0001jo3koe04zb7p",
+                                                    "planeId": "1921659e-f792-4485-b980-107034dbbdae",
+                                                    "departureDate": "2024-06-06T10:00:30.000Z",
+                                                    "departureAirportId": "clxk1prda0000qdcn12jq8ejk",
+                                                    "arrivalDate": "2024-06-06T12:00:00.000Z",
+                                                    "destinationAirportId": "clxk1prdb0006qdcnjiw27rae",
+                                                    "transitAirportId": "clxk1prdb0005qdcn23jfeycc",
+                                                    "transitArrivalDate": "2024-06-06T11:00:00.000Z",
+                                                    "transitDepartureDate": "2024-06-06T11:15:00.000Z",
+                                                    "capacity": 63,
+                                                    "price": 500,
+                                                    "discount": 50,
+                                                    "facilities": "20KG Baggage, Cabin Baggage 7KG, In Flight Entertainment",
+                                                    "code": "ID-CGK-1"
+                                                    },
                                                 "afterUpdate": {
-                                                "id": "clxcriakg001o11ptitx6jie7",
-                                                "planeId": "clxcri9vs000l11ptuvazogmc",
-                                                "departureDate": "2024-06-06T10:00:30.000Z",
-                                                "departureAirportId": "clxcri9vm000011ptbbsmc9co",
-                                                "arrivalDate": "2024-06-06T11:45:00.000Z",
-                                                "destinationAirportId": "clxcri9vm000511ptt7dvx1xa",
-                                                "transitAirportId": "clxcri9vm000611ptanvcw8lb",
-                                                "transitArrivalDate": "2024-06-06T11:00:00.000Z",
-                                                "transitDepartureDate": "2024-06-06T11:15:00.000Z",
-                                                "capacity": 64,
-                                                "price": 30000,
-                                                "discount": 70,
-                                                "facilities": "In Flight Entertainment",
-                                                "code": "SJ.CGK.UPG",
-                                                "departureAirport": {
-                                                    "id": "clxcri9vm000011ptbbsmc9co",
-                                                    "name": "Soekarno-Hatta International Airport",
-                                                    "code": "CGK",
-                                                    "country": "Indonesia",
-                                                    "city": "Jakarta"
-                                                },
-                                                "transitAirport": {
-                                                    "id": "clxcri9vm000611ptanvcw8lb",
-                                                    "name": "Husein Sastranegara International Airport",
-                                                    "code": "BDO",
-                                                    "country": "Indonesia",
-                                                    "city": "Bandung"
-                                                },
-                                                "destinationAirport": {
-                                                    "id": "clxcri9vm000511ptt7dvx1xa",
-                                                    "name": "Ahmad Yani International Airport",
-                                                    "code": "SRG",
-                                                    "country": "Indonesia",
-                                                    "city": "Semarang"
-                                                }
+                                                    "id": "clxk221vq0001jo3koe04zb7p",
+                                                    "planeId": "1921659e-f792-4485-b980-107034dbbdae",
+                                                    "departureDate": "2024-06-06T10:00:30.000Z",
+                                                    "departureAirportId": "clxk1prda0000qdcn12jq8ejk",
+                                                    "arrivalDate": "2024-06-06T12:00:00.000Z",
+                                                    "destinationAirportId": "clxk1prdb0006qdcnjiw27rae",
+                                                    "transitAirportId": "clxk1prdb0005qdcn23jfeycc",
+                                                    "transitArrivalDate": "2024-06-06T11:00:00.000Z",
+                                                    "transitDepartureDate": "2024-06-06T11:15:00.000Z",
+                                                    "capacity": 64,
+                                                    "price": 500,
+                                                    "discount": 50,
+                                                    "facilities": "20KG Baggage, Cabin Baggage 7KG, In Flight Entertainment",
+                                                    "code": "ID-CGK-1",
+                                                    "departureAirport": {
+                                                        "id": "clxk1prda0000qdcn12jq8ejk",
+                                                        "name": "Soekarno-Hatta International Airport",
+                                                        "code": "CGK",
+                                                        "country": "Indonesia",
+                                                        "city": "Jakarta",
+                                                        "continent": "Asia",
+                                                        "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif"
+                                                    },
+                                                    "transitAirport": {
+                                                        "id": "clxk1prdb0005qdcn23jfeycc",
+                                                        "name": "Ahmad Yani International Airport",
+                                                        "code": "SRG",
+                                                        "country": "Indonesia",
+                                                        "city": "Semarang",
+                                                        "continent": "Asia",
+                                                        "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif"
+                                                    },
+                                                    "destinationAirport": {
+                                                        "id": "clxk1prdb0006qdcnjiw27rae",
+                                                        "name": "Husein Sastranegara International Airport",
+                                                        "code": "BDO",
+                                                        "country": "Indonesia",
+                                                        "city": "Bandung",
+                                                        "continent": "Asia",
+                                                        "image": "https://tnvdosywgayukanmlhqw.supabase.co/storage/v1/object/public/Final/public/airplanes/bangkok.jfif"
+                                                    }
                                                 }
                                             }
                                         }
@@ -3067,20 +3131,20 @@
                                         "deletedData": {
                                             "type": "object",
                                             "example": {
-                                                "id": "clx7kgcrn00012qglr9pt9rs5",
-                                                "planeId": "clx43nfzg000n4sdazxheyjf9",
+                                                "id": "clxk221vq0001jo3koe04zb7p",
+                                                "planeId": "1921659e-f792-4485-b980-107034dbbdae",
                                                 "departureDate": "2024-06-06T10:00:30.000Z",
-                                                "departureAirportId": "clx43nfz500004sdais1hns9z",
-                                                "arrivalDate": "2024-05-23T11:45:00.000Z",
-                                                "destinationAirportId": "clx43nfz500084sda50n6hdsx",
-                                                "transitAirportId": "clx43nfz500034sdar4rikgb0",
-                                                "transitArrivalDate": "2024-06-07T11:00:00.000Z",
-                                                "transitDepartureDate": "2024-06-07T11:15:00.000Z",
+                                                "departureAirportId": "clxk1prda0000qdcn12jq8ejk",
+                                                "arrivalDate": "2024-06-06T12:00:00.000Z",
+                                                "destinationAirportId": "clxk1prdb0006qdcnjiw27rae",
+                                                "transitAirportId": "clxk1prdb0005qdcn23jfeycc",
+                                                "transitArrivalDate": "2024-06-06T11:00:00.000Z",
+                                                "transitDepartureDate": "2024-06-06T11:15:00.000Z",
                                                 "capacity": 64,
-                                                "price": 300000,
-                                                "discount": 70,
-                                                "facilities": "In Flight Entertainment",
-                                                "code": "JT-CGK-1"
+                                                "price": 500,
+                                                "discount": 50,
+                                                "facilities": "20KG Baggage, Cabin Baggage 7KG, In Flight Entertainment",
+                                                "code": "ID-CGK-1"
                                             }
                                         }
                                     }
@@ -4536,6 +4600,18 @@
                 "tags": ["Tickets"],
                 "summary": "Return result HIT API generate ticket",
                 "description": "This is an API for generating ticket",
+                "parameters": [
+                    {
+                        "name": "ticketTransactionId",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "QG-CGK-QG.CGK.BDO-1B"
+                        },
+                        "description": "ID Ticket Transaction"
+                    }
+                ],
                 "security": [
                     {
                         "bearerToken": []
