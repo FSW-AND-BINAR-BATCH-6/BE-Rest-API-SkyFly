@@ -669,7 +669,7 @@ const bankTransfer = async (req, res, next) => {
 
             await prisma.$transaction(async (tx) => {
                 const response = await coreApi.charge(parameter);
-
+                console.log(req.user.id);
                 const transaction = await tx.ticketTransaction.create({
                     data: {
                         userId: req.user.id, // req.user.id (from user loggedIn)

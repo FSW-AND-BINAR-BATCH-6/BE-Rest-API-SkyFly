@@ -21,7 +21,7 @@ router
     .post(authentication, validator(TicketSchema), createTicket);
 
 router
-    .route("/:id")
+    .route("/:ticketTransactionId")
     .get(authentication, getTicketById)
     .put(authentication, validator(UpdateTicketSchema), updateTicket)
     .delete(authentication, checkRole(["ADMIN"]), deleteTicket);
