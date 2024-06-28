@@ -3,6 +3,7 @@ const createHttpError = require("http-errors");
 const { randomUUID } = require("crypto");
 const prisma = new PrismaClient();
 const bcrypt = require('bcrypt');
+const { secretHash } = require("../utils/hashSalt");
 
 const getAllUsers = async (req, res, next) => {
     try {
@@ -165,38 +166,54 @@ const updateUser = async (req, res, next) => {
         const { name, phoneNumber, familyName, role, password, isVerified } = req.body;
         const userId = req.params.id;
 
-        // Hash kata sandi baru jika ada
         let hashedPassword;
         if (password) {
             hashedPassword = await secretHash(password);
         }
 
-        // Lakukan transaksi untuk memastikan konsistensi data
-        const updatedUser = await prisma.$transaction(async (tx) => {
-            // Perbarui data pengguna
-            const userUpdate = await tx.user.update({
-                where: { id: userId },
-                data: {
-                    name,
-                    phoneNumber,
-                    familyName,
-                    role,
-                },
+     // Lakukan transaksi untuk memastikan konsistensi data
+     const updatedUser = await prisma.$transaction(async (tx) => {
+        // Perbarui data pengguna
+        const userUpdate = await tx.user.update({
+            where: { id: userId },
+            data: {
+                name,
+                phoneNumber,
+                familyName,
+                role,
+            },
+        });
+
+        let hashedPassword;
+        let data = {
+            isVerified,
+        };
+        if (password) {
+            hashedPassword = await secretHash(password);
+            data = {
+                password: hashedPassword,
+                isVerified: isVerified,
+            };
+            await prisma.$transaction(async (tx) => {
+                let cekAuth = await tx.auth.getAllUsers({
+                    where: {
+                        userId: userId
+                    }
+                });
+                console.log(cekAuth);
+                await tx.auth.update({
+                    where: {
+                        userId: userId
+                    },
+                    data: data
+                });
             });
 
-            // Perbarui kata sandi jika ada
-            if (hashedPassword) {
-                await tx.auth.update({
-                    where: { userId: userId },
-                    data: {
-                        password: hashedPassword,
-                        isVerified,
-                    },
-                });
-            }
+        }
 
-            return userUpdate;
-        });
+        return userUpdate;
+    });
+    console.log(res.data);
 
         res.status(200).json({
             status: true,
@@ -214,6 +231,7 @@ const updateUser = async (req, res, next) => {
         next(createHttpError(500, { message: error.message }));
     }
 };
+
 
 const deleteUser = async (req, res, next) => {
     try {
