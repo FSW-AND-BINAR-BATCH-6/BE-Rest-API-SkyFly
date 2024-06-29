@@ -13,7 +13,6 @@ describe("User Integration Test", () => {
                 password: "password",
             });
         token = response.body._token;
-        console.log(`Bearer ${token}`);
     });
 
     describe("getAllUsers", () => {
@@ -28,13 +27,12 @@ describe("User Integration Test", () => {
     describe("createUser", () => {
         it("success", async () => {
             const response = await request(baseUrl)
-                .post("/api/v1/users/").send(
-                    {
-                        "name": "padadang",
-                        "phoneNumber": "0821823476",
-                        "familyName": "dudung"
-                    }
-                )
+                .post("/api/v1/users/")
+                .send({
+                    name: "padadang",
+                    phoneNumber: "0821823476",
+                    familyName: "dudung",
+                })
                 .set("Authorization", `Bearer ${token}`);
             expect(response.statusCode).toBe(201);
         });
@@ -52,14 +50,13 @@ describe("User Integration Test", () => {
     describe("updateUser", () => {
         it("success", async () => {
             const response = await request(baseUrl)
-                .put("/api/v1/users/4b10e307-80d3-487d-8cf3-fd05068daa8e").send(
-                    {
-                        "name": "bimo",
-                        "phoneNumber": "082182347623",
-                        "familyName": "dudung",
-                        "role": "ADMIN"
-                    }
-                )
+                .put("/api/v1/users/4b10e307-80d3-487d-8cf3-fd05068daa8e")
+                .send({
+                    name: "bimo",
+                    phoneNumber: "082182347623",
+                    familyName: "dudung",
+                    role: "ADMIN",
+                })
                 .set("Authorization", `Bearer ${token}`);
             expect(response.statusCode).toBe(200);
         });
@@ -73,5 +70,4 @@ describe("User Integration Test", () => {
     //         expect(response.statusCode).toBe(200);
     //     });
     // });
-
 });

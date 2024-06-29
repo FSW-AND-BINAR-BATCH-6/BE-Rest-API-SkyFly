@@ -16,7 +16,7 @@ const RegisterSchema = Joi.object({
     name: Joi.string()
         .min(3)
         .max(30)
-        .regex(/^(?!\s*$)[a-zA-Z\s]+$/) //will allow user to input only alphabet and won't accept if there is only blank space
+        .regex(/^(?!\s*$)[a-zA-Z\s]+$/, "only alphabet characters is allowed")
         .required(),
     email: Joi.string()
         .email({
@@ -33,7 +33,7 @@ const updateUserLoginSchema = Joi.object({
     name: Joi.string()
         .min(3)
         .max(30)
-        .regex(/^(?!\s*$)[a-zA-Z\s]+$/),
+        .regex(/^(?!\s*$)[a-zA-Z\s]+$/, "only alphabet characters is allowed"),
     email: Joi.string().email({
         minDomainSegments: 2,
         maxDomainSegments: 3,
@@ -71,11 +71,11 @@ const forgetPasswordSchema = Joi.object({
 // user
 const userCreateSchema = Joi.object({
     name: Joi.string()
-        .regex(/^(?!\s*$)[a-zA-Z\s]+$/)
+        .regex(/^(?!\s*$)[a-zA-Z\s]+$/, "only alphabet characters is allowed")
         .required(),
     phoneNumber: Joi.string().min(10).max(16).optional(),
     familyName: Joi.string()
-        .regex(/^(?!\s*$)[a-zA-Z\s]+$/)
+        .regex(/^(?!\s*$)[a-zA-Z\s]+$/, "only alphabet characters is allowed")
         .optional(),
     role: Joi.string().valid("BUYER", "ADMIN").default("BUYER"), // Set default value for role
     isVerified: Joi.boolean().optional(),
@@ -87,25 +87,25 @@ const userCreateSchema = Joi.object({
 });
 
 const userUpdateSchema = Joi.object({
-    name: Joi.string().regex(/^(?!\s*$)[a-zA-Z\s]+$/),
+    name: Joi.string().regex(
+        /^(?!\s*$)[a-zA-Z\s]+$/,
+        "only alphabet characters is allowed"
+    ),
     phoneNumber: Joi.string().min(10).max(16),
     familyName: Joi.string()
-        .regex(/^(?!\s*$)[a-zA-Z\s]+$/)
+        .regex(/^(?!\s*$)[a-zA-Z\s]+$/, "only alphabet characters is allowed")
         .optional(),
     password: Joi.string().min(8).max(20),
     confirmPassword: Joi.any().valid(Joi.ref("password")).messages({
         "any.only": "Confirm password does not match password",
     }),
-    role: Joi.string().valid('ADMIN', 'BUYER').optional(),
+    role: Joi.string().valid("ADMIN", "BUYER").optional(),
     isVerified: Joi.boolean().optional(),
 });
 
-
 // flight
 const createFlightSchema = Joi.object({
-    planeId: Joi.string()
-        .regex(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/)
-        .required(),
+    planeId: Joi.string().required(),
     departureDate: Joi.date().iso().required().messages({
         "date.format":
             '"departureDate" must be in ISO format, eg: 2024-01-07 09:30:00',
@@ -140,13 +140,15 @@ const createFlightSchema = Joi.object({
 });
 
 const updateFlightSchema = Joi.object({
-    planeId: Joi.string()
-        .regex(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/),
+    planeId: Joi.string(),
     departureDate: Joi.date().iso().messages({
         "date.format":
             '"departureDate" must be in ISO format, eg: 2024-01-07 09:30:00',
     }),
-    departureAirportId: Joi.string().regex(/^[a-zA-Z0-9]*$/),
+    departureAirportId: Joi.string().regex(
+        /^[a-zA-Z0-9]*$/,
+        "only alphabet numeric characters is allowed"
+    ),
     arrivalDate: Joi.date().iso().messages({
         "date.format":
             '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
@@ -160,7 +162,10 @@ const updateFlightSchema = Joi.object({
         "date.format":
             '"arrivalDate" must be in ISO format, eg: 2024-01-07 09:30:00',
     }),
-    destinationAirportId: Joi.string().regex(/^[a-zA-Z0-9]*$/),
+    destinationAirportId: Joi.string().regex(
+        /^[a-zA-Z0-9]*$/,
+        "only alphabet numeric characters is allowed"
+    ),
     discount: Joi.number().min(0).max(100),
     price: Joi.number().required(),
     capacity: Joi.number().min(2).max(850),
@@ -186,10 +191,12 @@ const UpdateTicketSchema = Joi.object({
 
 // flightSeat
 const createSeatSchema = Joi.object({
-    flightId: Joi.string()
-        .regex(/^[a-zA-Z0-9]*$/)
+    flightId: Joi.string().required(),
+    seatNumber: Joi.string()
+        .min(2)
+        .max(4)
+        .regex(/^[a-zA-Z0-9]*$/, "only alphabet numeric characters is allowed")
         .required(),
-    seatNumber: Joi.string().min(2).max(4).required(),
     type: Joi.string().valid("ECONOMY", "BUSINESS", "FIRST").required(),
     status: Joi.string()
         .valid("AVAILABLE", "OCCUPIED", "BOOKED")
@@ -198,7 +205,9 @@ const createSeatSchema = Joi.object({
 
 const updateSeatSchema = Joi.object({
     seatNumber: Joi.string()
-        .regex(/^[a-zA-Z0-9]*$/)
+        .min(2)
+        .max(4)
+        .regex(/^[a-zA-Z0-9]*$/, "only alphabet numeric characters is allowed")
         .required(),
     status: Joi.string().valid("AVAILABLE", "OCCUPIED", "BOOKED").required(),
 });
@@ -208,12 +217,15 @@ const createAirlineSchema = Joi.object({
     name: Joi.string()
         .min(6)
         .max(20)
-        .regex(/^(?!\s*$)[a-zA-Z\s]+$/)
+        .regex(/^(?!\s*$)[a-zA-Z\s]+$/, "only alphabet characters is allowed")
         .required(),
     code: Joi.string()
         .min(2)
         .max(2)
-        .regex(/^(?!\s*$)[a-zA-Z\s]+$/)
+        .regex(
+            /^(?!\s*$)[a-zA-Z\s]+$/,
+            "only alphabet numeric characters is allowed"
+        )
         .required(),
     terminal: Joi.string().required(),
 });
@@ -222,11 +234,11 @@ const updateAirlineSchema = Joi.object({
     name: Joi.string()
         .min(6)
         .max(20)
-        .regex(/^(?!\s*$)[a-zA-Z\s]+$/),
+        .regex(/^(?!\s*$)[a-zA-Z\s]+$/, "only alphabet characters is allowed"),
     code: Joi.string()
         .min(2)
         .max(2)
-        .regex(/^(?!\s*$)[a-zA-Z\s]+$/),
+        .regex(/^(?!\s*$)[a-zA-Z\s]+$/, "only alphabet characters is allowed"),
     terminal: Joi.string(),
 });
 
@@ -235,18 +247,18 @@ const createAirportSchema = Joi.object({
     name: Joi.string()
         .min(2)
         .max(70)
-        .regex(/^(?!\s*$)[a-zA-Z\s]+$/)
+        .regex(/^(?!\s*$)[a-zA-Z\s]+$/, "only alphabet characters is allowed")
         .required(),
     code: Joi.string()
         .min(3)
         .max(3)
-        .regex(/^(?!\s*$)[a-zA-Z\s]+$/)
+        .regex(/^(?!\s*$)[a-zA-Z\s]+$/, "only alphabet characters is allowed")
         .required(),
     country: Joi.string()
-        .regex(/^(?!\s*$)[a-zA-Z\s]+$/)
+        .regex(/^(?!\s*$)[a-zA-Z\s]+$/, "only alphabet characters is allowed")
         .required(),
     city: Joi.string()
-        .regex(/^(?!\s*$)[a-zA-Z\s]+$/)
+        .regex(/^(?!\s*$)[a-zA-Z\s]+$/, "only alphabet characters is allowed")
         .required(),
     continent: Joi.string().required(),
 });
@@ -255,20 +267,23 @@ const updateAirportSchema = Joi.object({
     name: Joi.string()
         .min(2)
         .max(70)
-        .regex(/^(?!\s*$)[a-zA-Z\s]+$/),
+        .regex(/^(?!\s*$)[a-zA-Z\s]+$/, "only alphabet characters is allowed"),
     code: Joi.string()
         .min(3)
-        .regex(/^(?!\s*$)[a-zA-Z\s]+$/)
+        .regex(/^(?!\s*$)[a-zA-Z\s]+$/, "only alphabet characters is allowed")
         .max(3),
     country: Joi.string()
         .min(3)
         .max(25)
-        .regex(/^(?!\s*$)[a-zA-Z\s]+$/),
+        .regex(/^(?!\s*$)[a-zA-Z\s]+$/, "only alphabet characters is allowed"),
     city: Joi.string()
         .min(3)
         .max(40)
-        .regex(/^(?!\s*$)[a-zA-Z\s]+$/),
-    continent: Joi.string(),
+        .regex(/^(?!\s*$)[a-zA-Z\s]+$/, "only alphabet characters is allowed"),
+    continent: Joi.string().regex(
+        /^(?!\s*$)[a-zA-Z\s]+$/,
+        "only alphabet characters is allowed"
+    ),
 });
 
 // transaction
@@ -423,16 +438,18 @@ const updateTransactionSchema = Joi.object({
 // Notifications
 
 const createNotificationsSchema = Joi.object({
-    type: Joi.string().valid('Warning', 'Information', 'Update', 'Promotions').required(),
+    type: Joi.string()
+        .valid("Warning", "Information", "Update", "Promotions")
+        .required(),
     title: Joi.string().required(),
     content: Joi.string().required(),
-})
+});
 
 const updateNotificationsSchema = Joi.object({
-    type: Joi.string().valid('Warning', 'Information', 'Update', 'Promotions'),
+    type: Joi.string().valid("Warning", "Information", "Update", "Promotions"),
     title: Joi.string(),
     content: Joi.string(),
-})
+});
 
 module.exports = {
     LoginSchema,
@@ -459,5 +476,5 @@ module.exports = {
     SnapSchema,
     updateTransactionSchema,
     createNotificationsSchema,
-    updateNotificationsSchema
+    updateNotificationsSchema,
 };
