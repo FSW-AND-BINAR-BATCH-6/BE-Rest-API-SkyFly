@@ -80,7 +80,9 @@ async function main() {
 
     generateFlights();
 
-    const flightArray = Array.from(flightData).map((flight) => JSON.parse(flight));
+    const flightArray = Array.from(flightData).map((flight) =>
+        JSON.parse(flight)
+    );
 
     // Create flights and capture their ids
     for (const flight of flightArray) {

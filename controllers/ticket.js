@@ -300,10 +300,6 @@ const deleteTicket = async (req, res, next) => {
 
 const generateTicket = async (req, res, next) => {
     try {
-        // Log request parameters to verify values
-        console.log("User ID:", req.user.id);
-        console.log("Ticket Transaction ID:", req.query.ticketTransactionId);
-
         // Fetch tickets based on userId and ticketTransactionId
         const tickets = await prisma.ticket.findMany({
             where: {
@@ -338,9 +334,6 @@ const generateTicket = async (req, res, next) => {
                 },
             },
         });
-
-        // Log the first ticket data to verify what's fetched
-        console.log("First Ticket:", tickets[0]);
 
         // Render the view with fetched data
         res.render("templates/ticket.ejs", {

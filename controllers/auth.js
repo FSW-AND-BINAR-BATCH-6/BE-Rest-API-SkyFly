@@ -82,11 +82,9 @@ const handleRegister = async (req, res, next) => {
             OTPToken: user.otpToken,
             urlTokenVerification,
         });
-        
-        
+
         await sendEmail(email, `${payload.emailTitle} | SkyFly Team C1`, html);
-        
-        console.log(user.secretToken)
+
         res.status(200).json({
             status: true,
             message:

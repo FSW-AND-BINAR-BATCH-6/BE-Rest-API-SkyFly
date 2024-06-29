@@ -31,7 +31,7 @@ const getSeatStatus = async (seatId) => {
     if (!transactionDetail || !transactionDetail.transaction) {
         return "AVAILABLE";
     }
-    
+
     const { orderId } = transactionDetail.transaction;
 
     const encodedServerKey = Buffer.from(
@@ -78,7 +78,7 @@ const getAllSeats = async (req, res, next) => {
         const offset = (page - 1) * limit;
         const type = req.query.type || null;
 
-        const where =  type? { type } : {};
+        const where = type ? { type } : {};
 
         const seats = await prisma.flightSeat.findMany({
             where,
@@ -155,7 +155,6 @@ const getSeatsByFlightId = async (req, res, next) => {
         const seatsWithStatus = await Promise.all(
             sortedSeats.map(async (seat) => {
                 const status = await getSeatStatus(seat.id);
-                console.log(status)
                 return { ...seat, status };
             })
         );
@@ -323,5 +322,4 @@ module.exports = {
     createSeat,
     updateSeat,
     deleteSeat,
-    
 };

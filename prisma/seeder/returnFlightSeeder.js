@@ -5,15 +5,19 @@ async function main() {
     const generateFlights = (startDate, endDate, routes) => {
         const flights = [];
         const currentDate = new Date(startDate);
-    
+
         while (currentDate <= endDate) {
-            routes.forEach(route => {
+            routes.forEach((route) => {
                 flights.push({
                     planeCode: route.planeCode,
                     departureDate: new Date(currentDate),
                     departureCity: route.departureCity,
                     departureCityCode: route.departureCityCode,
-                    arrivalDate: new Date(new Date(currentDate).setHours(currentDate.getHours() + route.duration)),
+                    arrivalDate: new Date(
+                        new Date(currentDate).setHours(
+                            currentDate.getHours() + route.duration
+                        )
+                    ),
                     destinationCity: route.destinationCity,
                     destinationCityCode: route.destinationCityCode,
                     capacity: route.capacity,
@@ -22,10 +26,10 @@ async function main() {
             });
             currentDate.setDate(currentDate.getDate() + 1);
         }
-    
+
         return flights;
     };
-    
+
     const routes = [
         {
             planeCode: "GA",
@@ -48,10 +52,10 @@ async function main() {
             price: 1500000,
         },
     ];
-    
+
     const startDate = new Date("2024-07-01T12:00:00Z");
     const endDate = new Date("2024-07-20T12:00:00Z");
-    
+
     const flights = generateFlights(startDate, endDate, routes);
 
     const airlinesMap = await prisma.airline.findMany();
@@ -83,7 +87,6 @@ async function main() {
             flightData.push(data);
         }
     }
-    console.log(flightData);
 
     const flightSeats = [];
 
