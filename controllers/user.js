@@ -43,7 +43,7 @@ const getAllUsers = async (req, res, next) => {
             where: {
                 name: {
                     contains: search,
-                    mode: "insensitive", // Optional: to make the search case insensitive
+                    mode: "insensitive",
                 },
             },
         });
@@ -191,49 +191,19 @@ const updateUser = async (req, res, next) => {
                     role,
                 },
             });
-     // Lakukan transaksi untuk memastikan konsistensi data
-     const updatedUser = await prisma.$transaction(async (tx) => {
-        // Perbarui data pengguna
-        const userUpdate = await tx.user.update({
-            where: { id: userId },
-            data: {
-                name,
-                phoneNumber,
-                familyName,
-                role,
-            },
-        });
 
-        let hashedPassword;
-        let data = {
-            isVerified,
-        };
-        if (password) {
-            hashedPassword = await secretHash(password);
-            data = {
-                password: hashedPassword,
-                isVerified: isVerified,
-            };
-            await prisma.$transaction(async (tx) => {
-                let cekAuth = await tx.auth.getAllUsers({
-                    where: {
-                        userId: userId
-                    }
-                });
-                console.log(cekAuth);
+            if (hashedPassword) {
                 await tx.auth.update({
-                    where: {
-                        userId: userId
+                    where: { userId: userId },
+                    data: {
+                        password: hashedPassword,
+                        isVerified,
                     },
-                    data: data
                 });
-            });
+            }
 
-        }
-
-        return userUpdate;
-    });
-    console.log(res.data);
+            return userUpdate;
+        });
 
         res.status(200).json({
             status: true,
@@ -251,7 +221,6 @@ const updateUser = async (req, res, next) => {
         next(createHttpError(500, { message: error.message }));
     }
 };
-
 
 const deleteUser = async (req, res, next) => {
     try {
