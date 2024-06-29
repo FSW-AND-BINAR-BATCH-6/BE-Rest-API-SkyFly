@@ -2,7 +2,7 @@ const { PrismaClient } = require("@prisma/client");
 const createHttpError = require("http-errors");
 const { randomUUID } = require("crypto");
 const prisma = new PrismaClient();
-const bcrypt = require('bcrypt');
+const { secretHash } = require("../utils/hashSalt");
 
 const getAllUsers = async (req, res, next) => {
     try {
@@ -15,7 +15,7 @@ const getAllUsers = async (req, res, next) => {
             where: {
                 name: {
                     contains: search,
-                    mode: "insensitive", // Optional: to make the search case insensitive
+                    mode: "insensitive",
                 },
             },
             select: {
@@ -102,7 +102,15 @@ const getUserById = async (req, res, next) => {
 
 const createUser = async (req, res, next) => {
     try {
-        const { name, phoneNumber, familyName, role, email, password, isVerified } = req.body;
+        const {
+            name,
+            phoneNumber,
+            familyName,
+            role,
+            email,
+            password,
+            isVerified,
+        } = req.body;
 
         const checkEmail = await prisma.auth.findUnique({
             where: { email },
@@ -110,10 +118,14 @@ const createUser = async (req, res, next) => {
         });
 
         if (checkEmail) {
-            return next(createHttpError(409, { message: "Email has already been taken" }));
+            return next(
+                createHttpError(409, {
+                    message: "Email has already been taken",
+                })
+            );
         }
 
-        const hashedPassword = await bcrypt.hash(password, 10); // Menggunakan bcrypt langsung tanpa perlu fungsi async secretHash
+        const hashedPassword = await secretHash(password);
 
         const newUser = await prisma.$transaction(async (tx) => {
             const user = await tx.user.create({
@@ -158,22 +170,18 @@ const createUser = async (req, res, next) => {
     }
 };
 
-
-
 const updateUser = async (req, res, next) => {
     try {
-        const { name, phoneNumber, familyName, role, password, isVerified } = req.body;
+        const { name, phoneNumber, familyName, role, password, isVerified } =
+            req.body;
         const userId = req.params.id;
 
-        // Hash kata sandi baru jika ada
         let hashedPassword;
         if (password) {
             hashedPassword = await secretHash(password);
         }
 
-        // Lakukan transaksi untuk memastikan konsistensi data
         const updatedUser = await prisma.$transaction(async (tx) => {
-            // Perbarui data pengguna
             const userUpdate = await tx.user.update({
                 where: { id: userId },
                 data: {
@@ -184,7 +192,6 @@ const updateUser = async (req, res, next) => {
                 },
             });
 
-            // Perbarui kata sandi jika ada
             if (hashedPassword) {
                 await tx.auth.update({
                     where: { userId: userId },
