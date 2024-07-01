@@ -236,23 +236,10 @@
                     "200": {
                         "description": "Login success",
                         "content": {
-                            "application/json": {
+                            "text/html": {
                                 "schema": {
-                                    "type": "object",
-                                    "properties": {
-                                        "status": {
-                                            "type": "boolean",
-                                            "example": true
-                                        },
-                                        "message": {
-                                            "type": "string",
-                                            "example": "User logged in successfully"
-                                        },
-                                        "_token": {
-                                            "type": "string",
-                                            "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNsd2hoaThrMjAwMDYzMjFlaGJxdzQ5ZWUiLCJuYW1lIjoiQWxpY2UiLCJlbWFpbCI6ImFsaWNlQHRlc3QuY29tIiwicGhvbmVOdW1iZXIiOiI2MjgxMjM0NTY3ODkiLCJpYXQiOjE3MTYzNjE4ODgsImV4cCI6MTcxNjQ0ODI4OH0.a74iFFNbBH1WoYABtONscTY4-2LdD7qjtaGnBkEEA4Q"
-                                        }
-                                    }
+                                    "type": "https",
+                                    "example": "https://skyfly.vercel.app/login?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEwNTQ2OTU5NjU2NjU0NzMwNTkxOSIsIm5hbWUiOiJWSUVSWSBOVUdST0hPIiwiZW1haWwiOiJ2aWVyeTE1MTAyMDAyQGdtYWlsLmNvbSIsImlhdCI6MTcxOTgwMzk2NywiZXhwIjoxNzE5ODkwMzY3fQ.Zg82UJbVHz4Tco4IYS5gnc0FnFB1Jbr3HQ0iGkSIUYs"
                                 }
                             }
                         }
