@@ -82,11 +82,9 @@ const handleRegister = async (req, res, next) => {
             OTPToken: user.otpToken,
             urlTokenVerification,
         });
-        
-        
+
         await sendEmail(email, `${payload.emailTitle} | SkyFly Team C1`, html);
-        
-        console.log(user.secretToken)
+
         res.status(200).json({
             status: true,
             message:
@@ -164,11 +162,13 @@ const handleLoginGoogle = async (req, res, next) => {
 
         const token = await generateJWT(payload);
 
-        return res.status(200).json({
-            status: true,
-            message: "User logged in successfully",
-            _token: token,
-        });
+        res.redirect(`https://skyfly.vercel.app/login?token=${token}`);
+
+        // return res.status(200).json({
+        //     status: true,
+        //     message: "User logged in successfully",
+        //     _token: token,
+        // });
     } catch (error) {
         next(createHttpError(500, { message: error.message }));
     }

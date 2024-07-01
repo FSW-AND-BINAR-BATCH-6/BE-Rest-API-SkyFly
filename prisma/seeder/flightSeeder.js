@@ -1,11 +1,12 @@
 const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
+
 async function main() {
     const airlinesMap = await prisma.airline.findMany();
     const airportsMap = await prisma.airport.findMany();
 
-    const maxFlights = 2000;
+    const maxFlights = 1000;
 
     const AirlinesArray = airlinesMap.map((data) => data);
     const AirportArray = airportsMap.map((data) => data);
@@ -15,7 +16,7 @@ async function main() {
     const generateFlights = () => {
         const capacity = 72;
         const price = 1500000;
-        const startDate = new Date("2024-06-01T08:00:00Z");
+        const startDate = new Date("2024-07-01T08:00:00Z");
         const msPerDay = 24 * 60 * 60 * 1000;
 
         let currentDate = new Date(startDate);
@@ -48,7 +49,7 @@ async function main() {
                     code: `${airline.code}.${departureAirport.code}.${destinationAirport.code}`,
                 };
 
-                const returnAirline = shuffledAirlines[1] || airline; 
+                const returnAirline = shuffledAirlines[1] || airline;
                 const returnDepartureDate = new Date(
                     departureDate.getTime() + msPerDay
                 );
@@ -79,8 +80,14 @@ async function main() {
 
     generateFlights();
 
-    for (const flight of flightData) {
-        await prisma.flight.create({ data: JSON.parse(flight) });
+    const flightArray = Array.from(flightData).map((flight) =>
+        JSON.parse(flight)
+    );
+
+    // Create flights and capture their ids
+    for (const flight of flightArray) {
+        const createdFlight = await prisma.flight.create({ data: flight });
+        flight.id = createdFlight.id; // Assign the created flight id to the flight object
     }
 
     const flightSeats = [];
@@ -98,13 +105,14 @@ async function main() {
             });
         }
     }
-    for (const flight of flightData) {
+
+    for (const flight of flightArray) {
         for (const seat of flightSeats) {
-            let price = flight.price;
+            let seatPrice = seat.price;
             if (seat.type === "BUSINESS") {
-                price *= 1.5;
+                seatPrice *= 1.5;
             } else if (seat.type === "FIRST") {
-                price *= 2;
+                seatPrice *= 2;
             }
             await prisma.flightSeat.create({
                 data: {
@@ -112,7 +120,7 @@ async function main() {
                     seatNumber: seat.seatNumber,
                     isBooked: seat.isBooked,
                     type: seat.type,
-                    price: price,
+                    price: seatPrice,
                 },
             });
         }

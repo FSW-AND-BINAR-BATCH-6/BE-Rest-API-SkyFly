@@ -2,41 +2,61 @@ const { PrismaClient } = require("@prisma/client");
 
 const prisma = new PrismaClient();
 async function main() {
-    const flights = [
+    const generateFlights = (startDate, endDate, routes) => {
+        const flights = [];
+        const currentDate = new Date(startDate);
+
+        while (currentDate <= endDate) {
+            routes.forEach((route) => {
+                flights.push({
+                    planeCode: route.planeCode,
+                    departureDate: new Date(currentDate),
+                    departureCity: route.departureCity,
+                    departureCityCode: route.departureCityCode,
+                    arrivalDate: new Date(
+                        new Date(currentDate).setHours(
+                            currentDate.getHours() + route.duration
+                        )
+                    ),
+                    destinationCity: route.destinationCity,
+                    destinationCityCode: route.destinationCityCode,
+                    capacity: route.capacity,
+                    price: route.price,
+                });
+            });
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
+
+        return flights;
+    };
+
+    const routes = [
         {
             planeCode: "GA",
-            departureDate: new Date("2024-06-01T08:00:00Z"),
             departureCity: "Jakarta",
             departureCityCode: "CGK",
-            arrivalDate: new Date("2024-06-01T12:00:00Z"),
             destinationCity: "Denpasar",
             destinationCityCode: "DPS",
+            duration: 4,
             capacity: 72,
             price: 1500000,
         },
         {
             planeCode: "GA",
-            departureDate: new Date("2024-07-10T08:00:00Z"),
             departureCity: "Denpasar",
             departureCityCode: "DPS",
-            arrivalDate: new Date("2024-07-10T12:00:00Z"),
             destinationCity: "Jakarta",
             destinationCityCode: "CGK",
-            capacity: 72,
-            price: 1500000,
-        },
-        {
-            planeCode: "GA",
-            departureDate: new Date("2024-06-10T08:00:00Z"),
-            departureCity: "Denpasar",
-            departureCityCode: "DPS",
-            arrivalDate: new Date("2024-06-10T12:00:00Z"),
-            destinationCity: "Jakarta",
-            destinationCityCode: "CGK",
+            duration: 4,
             capacity: 72,
             price: 1500000,
         },
     ];
+
+    const startDate = new Date("2024-07-01T12:00:00Z");
+    const endDate = new Date("2024-07-20T12:00:00Z");
+
+    const flights = generateFlights(startDate, endDate, routes);
 
     const airlinesMap = await prisma.airline.findMany();
     const airportsMap = await prisma.airport.findMany();
@@ -67,7 +87,6 @@ async function main() {
             flightData.push(data);
         }
     }
-    console.log(flightData);
 
     const flightSeats = [];
 

@@ -13,56 +13,33 @@ const getAllTicket = async (req, res, next) => {
         const offset = (page - 1) * limit;
 
         const tickets = await prisma.ticket.findMany({
-            select: {
-                id: true,
-                code: true,
-                flight: {
-                    select: {
-                        id: true,
-                        departureDate: true,
-                        departureAirport: true,
-                        arrivalDate: true,
-                        destinationAirport: true,
-                        price: true,
-                    },
-                },
+            include: {
                 user: {
-                    select: {
-                        id: true,
-                        name: true,
-                        phoneNumber: true,
-                    },
-                },
-                seat: {
-                    select: {
-                        id: true,
-                        seatNumber: true,
-                        type: true,
+                    include: {
+                        auth: {
+                            select: {
+                                id: true,
+                                email: true,
+                                isVerified: true,
+                            },
+                        },
                     },
                 },
                 ticketTransaction: {
-                    select: {
-                        id: true,
-                        orderId: true,
-                        totalPrice: true,
-                        status: true,
-                        bookingDate: true,
+                    include: {
+                        Transaction_Detail: {
+                            include: {
+                                seat: true,
+                            },
+                        },
                     },
                 },
-                ticketTransactionDetail: {
-                    select: {
-                        id: true,
-                        transactionId: true,
-                        price: true,
-                        name: true,
-                        familyName: true,
-                        dob: true,
-                        citizenship: true,
-                        passport: true,
-                        issuingCountry: true,
-                        validityPeriod: true,
-                        flightId: true,
-                        seatId: true,
+                flight: {
+                    include: {
+                        plane: true,
+                        departureAirport: true,
+                        transitAirport: true,
+                        destinationAirport: true,
                     },
                 },
             },
@@ -107,8 +84,11 @@ const getAllTicket = async (req, res, next) => {
 
 const getTicketById = async (req, res, next) => {
     try {
-        const ticket = await prisma.ticket.findFirst({
-            where: { ticketTransactionId: req.params.ticketTransactionId },
+        const ticket = await prisma.ticket.findMany({
+            where: {
+                // userId: req.user.id,
+                ticketTransactionId: req.params.ticketTransactionId,
+            },
             include: {
                 flight: true,
                 user: {
@@ -122,10 +102,13 @@ const getTicketById = async (req, res, next) => {
                         },
                     },
                 },
-                seat: true,
                 ticketTransaction: {
                     include: {
-                        Transaction_Detail: true,
+                        Transaction_Detail: {
+                            include: {
+                                seat: true,
+                            },
+                        },
                     },
                 },
             },
@@ -300,10 +283,6 @@ const deleteTicket = async (req, res, next) => {
 
 const generateTicket = async (req, res, next) => {
     try {
-        // Log request parameters to verify values
-        console.log("User ID:", req.user.id);
-        console.log("Ticket Transaction ID:", req.query.ticketTransactionId);
-
         // Fetch tickets based on userId and ticketTransactionId
         const tickets = await prisma.ticket.findMany({
             where: {
@@ -338,9 +317,6 @@ const generateTicket = async (req, res, next) => {
                 },
             },
         });
-
-        // Log the first ticket data to verify what's fetched
-        console.log("First Ticket:", tickets[0]);
 
         // Render the view with fetched data
         res.render("templates/ticket.ejs", {

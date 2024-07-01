@@ -1,6 +1,5 @@
 const createHttpError = require("http-errors");
 
-
 const unitTest = async (
     prisma,
     controller,
@@ -35,7 +34,6 @@ const unitTest = async (
         if (statusOutcome.status) {
             expect(res.status).toHaveBeenCalledWith(code);
         } else if (!statusOutcome.status) {
-            console.log(errorMessage);
             expect(next).toHaveBeenCalledWith(
                 createHttpError(code, { message: errorMessage })
             );
@@ -46,17 +44,13 @@ const unitTest = async (
     }
 };
 
-const serverFailed = async (
-    req,
-    prismaFunction,
-    controllerFunction
-) => {
+const serverFailed = async (req, prismaFunction, controllerFunction) => {
     // res = {
     //     status: jest.fn().mockReturnThis(),
     //     json: jest.fn(),
     // };
     // next = jest.fn();
-    
+
     const errorMessage = "Internal Server Error";
     prismaFunction.mockRejectedValue(new Error(errorMessage));
     await controllerFunction(req, res, next);

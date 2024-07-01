@@ -272,7 +272,6 @@ const notification = async (req, res) => {
                 const existingTicket = await prisma.ticket.findUnique({
                     where: { code: uniqueCode },
                 });
-                console.log("capture - tiket akan dibuat");
 
                 if (existingTicket) {
                     return next(
@@ -292,7 +291,6 @@ const notification = async (req, res) => {
                     },
                 });
 
-                console.log("capture - masuk tiket dibuat");
                 res.status(200).json({ message: "OK" });
             });
         }
@@ -372,8 +370,6 @@ const notification = async (req, res) => {
                 );
             }
 
-            console.log("settlement - tiket akan dibuat");
-
             await prisma.ticket.create({
                 data: {
                     userId: dataTransaction.userId,
@@ -389,7 +385,7 @@ const notification = async (req, res) => {
                     ticketTransaction: true,
                 },
             });
-            console.log("settlement - tiket dibuat");
+
             res.status(200).json({ message: "OK" });
         });
     } else if (
@@ -669,7 +665,7 @@ const bankTransfer = async (req, res, next) => {
 
             await prisma.$transaction(async (tx) => {
                 const response = await coreApi.charge(parameter);
-                console.log(req.user.id);
+
                 const transaction = await tx.ticketTransaction.create({
                     data: {
                         userId: req.user.id, // req.user.id (from user loggedIn)
@@ -930,9 +926,8 @@ const gopay = async (req, res, next) => {
                 createHttpError(404, { message: "Flight is not found" })
             );
         }
-        console.log(seats);
+
         if (error.seat) {
-            console.log("seat");
             return next(createHttpError(404, { message: "Seat is not found" }));
         }
         if (error.booked) {
