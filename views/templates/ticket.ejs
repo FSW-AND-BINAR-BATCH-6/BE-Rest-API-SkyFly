@@ -83,14 +83,20 @@
             <div class="ticket">
                 <div class="ticket-header">
                     <h1>Boarding Pass</h1>
-                    <img src="public/assets/airplane.jpg" alt="Logo" />
+                    <img
+                        src="https://mfmdbtmhyjrykpmwmspo.supabase.co/storage/v1/object/public/image/skyfly.png"
+                        alt="Logo"
+                    />
                 </div>
                 <% if (data.length > 0) { %> <% data.forEach((ticket, index) =>
                 { %>
                 <div class="ticket">
                     <div class="ticket-header">
                         <h1>Boarding Pass</h1>
-                        <img src="public/assets/airplane.jpg" alt="Logo" />
+                        <img
+                            src="<%= ticket.flight.plane.image %>"
+                            alt="Logo Airline"
+                        />
                     </div>
                     <div class="ticket-section">
                         <h2>Ticket Code: <%= ticket.code %></h2>
@@ -207,23 +213,14 @@
                 <% }) %> <% } else { %>
                 <p>No tickets found.</p>
                 <% } %>
-                <div class="row">
+                <div class="row" style="margin-top: 5px">
                     <div class="col-4">
-                        <img
-                            src="/BE-Rest-API-SkyFly/public/assets/airplane.png"
-                        />
                         <p>Show e-ticket and ID during check-in</p>
                     </div>
                     <div class="col-4">
-                        <img
-                            src="/BE-Rest-API-SkyFly/public/assets/clock.png"
-                        />
                         <p>Check-in at least 90 minutes before departure</p>
                     </div>
                     <div class="col-4">
-                        <img
-                            src="/BE-Rest-API-SkyFly/public/assets/about.png"
-                        />
                         <p>Time indicated is local airport time</p>
                     </div>
                 </div>
