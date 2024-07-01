@@ -93,7 +93,10 @@
                 <div class="ticket">
                     <div class="ticket-header">
                         <h1>Boarding Pass</h1>
-                        <img src="<%= ticket.flight.plane.image %>" alt="Logo" />
+                        <img
+                            src="<%= ticket.flight.plane.image %>"
+                            alt="Logo Airline"
+                        />
                     </div>
                     <div class="ticket-section">
                         <h2>Ticket Code: <%= ticket.code %></h2>
@@ -210,7 +213,7 @@
                 <% }) %> <% } else { %>
                 <p>No tickets found.</p>
                 <% } %>
-                <div class="row" style="margin-top: 5px;">
+                <div class="row" style="margin-top: 5px">
                     <div class="col-4">
                         <p>Show e-ticket and ID during check-in</p>
                     </div>
