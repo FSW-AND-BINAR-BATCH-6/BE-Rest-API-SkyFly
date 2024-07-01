@@ -105,7 +105,7 @@ npm run start
 | **Project Title** | _SKY-FLY_                                                                                                                                   |
 |                   |                                                                                                                                             |
 | **Note**          | _Binar KM6_                                                                                                                                 |
-|                   | [Trello Team C1 Binar KM6](https://trello.com/c/2XzOhXim/60-c1-binar-km6-fsw-x-and)                                                         |
+|                   | [Click Up Team C1 Binar KM6](https://sharing.clickup.com/l/h/6-901802176957-1/d15d783c1111dbd)                                                         |
 |                   | [Daily Stand-Up Team C1 Binar KM6](https://docs.google.com/spreadsheets/d/1aCpje7mQnG5uhmBOh9sEThQKYgatLdNpPoSoQK6VUvk/edit#gid=1785037003) |
 |                   | [Deployed API](https://backend-skyfly-c1.vercel.app/api-docs/)                                                                              |
 
